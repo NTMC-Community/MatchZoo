@@ -46,7 +46,7 @@ class rank_eval():
         all_precision = self.precision(y_true, y_pred, k=k)
         res.update({'p@%d'%(i+1):all_precision[i] for i in k})
         res.update({'ndcg@%d'%(i+1):all_ndcg[i] for i in need})
-        ret = dict([k:v if k in metrics for k,v in res.items()])
+        ret = {k:v for k,v in res.items() if k in metrics}
         return ret
     def map(self, y_true, y_pred):
         c = self.zipped(y_true, y_pred)
