@@ -2,12 +2,14 @@
 import sys
 import random
 import numpy as np
-from .base import *
+from rank_io import *
 
 class PairGenerator():
-    def __init__(self, rel_file, config):
+    def __init__(self, rel_file, data1, data2, config):
         rel = read_relation(filename=rel_file)
         self.pair_list = self.make_pair(rel)
+        self.data1 = data1
+        self.data2 = data2
         self.config = config
 
     def make_pair(self, rel):
@@ -29,7 +31,8 @@ class PairGenerator():
         print 'Pair Instance Count:', len(pair_list)
         return pair_list
         
-    def get_batch(self, data1, data2):
+    @property
+    def get_batch(self):
         config = self.config
         X1 = np.zeros((config['batch_size']*2, config['data1_maxlen']), dtype=np.int32)
         X1_len = np.zeros((config['batch_size']*2,), dtype=np.int32)
@@ -42,21 +45,29 @@ class PairGenerator():
         X2[:] = config['fill_word']
         for i in range(config['batch_size']):
             d1, d2p, d2n = random.choice(self.pair_list)
-            d1_len = min(config['data1_maxlen'], len(data1[d1]))
-            d2p_len = min(config['data2_maxlen'], len(data2[d2p]))
-            d2n_len = min(config['data2_maxlen'], len(data2[d2n]))
-            X1[i*2,   :d1_len],  X1_len[i*2]   = data1[d1][:d1_len],   d1_len
-            X2[i*2,   :d2p_len], X2_len[i*2]   = data2[d2p][:d2p_len], d2p_len
-            X1[i*2+1, :d1_len],  X1_len[i*2+1] = data1[d1][:d1_len],   d1_len
-            X2[i*2+1, :d2n_len], X2_len[i*2+1] = data2[d2n][:d2n_len], d2n_len
+            d1_len = min(config['data1_maxlen'], len(self.data1[d1]))
+            d2p_len = min(config['data2_maxlen'], len(self.data2[d2p]))
+            d2n_len = min(config['data2_maxlen'], len(self.data2[d2n]))
+            X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
+            X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
+            X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
+            X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
             
-        return X1, X1_len, X2, X2_len, Y
+        return X1, X1_len, X2, X2_len, Y    
+    @property
+    def num_pairs(self):
+        return len(self.pair_list)
    
 class ListGenerator():
-    def __init__(self, rel_file, config):
-        rel = read_relation(filename=rel_file)
-        self.list_list = self.make_list(rel)
+    def __init__(self, rel_file=None, data1=None, data2=None, config={}):
+        if rel_file is not None:
+            rel = read_relation(filename=rel_file)
+            self.list_list = self.make_list(rel)
+            self.num_list = len(self.list_list)
+        self.data1 = data1
+        self.data2 = data2
         self.config = config
+        self.point = 0
 
     def make_list(self, rel):
         list_list = {}
@@ -69,9 +80,11 @@ class ListGenerator():
         print 'List Instance Count:', len(list_list)
         return list_list.items()
 
-    def get_batch(self, data1, data2):
+    @property
+    def get_batch(self):
         config = self.config
-        for i, (d1, d2_list) in enumerate(self.list_list):
+        while self.point < self.num_list:
+            d1, d2_list = self.list_list[self.point]
             X1 = np.zeros((len(d2_list), config['data1_maxlen']), dtype=np.int32)
             X1_len = np.zeros((len(d2_list),), dtype=np.int32)
             X2 = np.zeros((len(d2_list), config['data2_maxlen']), dtype=np.int32)
@@ -79,13 +92,45 @@ class ListGenerator():
             Y = np.zeros((len(d2_list),), dtype= np.int32)
             X1[:] = config['fill_word']
             X2[:] = config['fill_word']
-            d1_len = min(config['data1_maxlen'], len(data1[d1]))
+            d1_len = min(config['data1_maxlen'], len(self.data1[d1]))
             for j, (l, d2) in enumerate(d2_list):
-                d2_len = min(config['data2_maxlen'], len(data2[d2]))
-                X1[j, :d1_len], X1_len[j] = data1[d1][:d1_len], d1_len
-                X2[j, :d2_len], X2_len[j] = data2[d2][:d2_len], d2_len
+                d2_len = min(config['data2_maxlen'], len(self.data2[d2]))
+                X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
+                X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
                 Y[j] = l
+            self.point += 1
             yield X1, X1_len, X2, X2_len, Y
+
+    @property
+    def reset(self):
+        self.point = 0
+
+    def get_all_data(self):
+        config = self.config
+        x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls = [], [], [], [], []
+        while self.point < self.num_list:
+            d1, d2_list = self.list_list[self.point]
+            X1 = np.zeros((len(d2_list), config['data1_maxlen']), dtype=np.int32)
+            X1_len = np.zeros((len(d2_list),), dtype=np.int32)
+            X2 = np.zeros((len(d2_list), config['data2_maxlen']), dtype=np.int32)
+            X2_len = np.zeros((len(d2_list),), dtype=np.int32)
+            Y = np.zeros((len(d2_list),), dtype= np.int32)
+            X1[:] = config['fill_word']
+            X2[:] = config['fill_word']
+            d1_len = min(config['data1_maxlen'], len(self.data1[d1]))
+            for j, (l, d2) in enumerate(d2_list):
+                d2_len = min(config['data2_maxlen'], len(self.data2[d2]))
+                X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
+                X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
+                Y[j] = l
+            self.point += 1
+            x1_ls.append(X1)
+            x1_len_ls.append(X1_len)
+            x2_ls.append(X2)
+            x2_len_ls.append(X2_len)
+            y_ls.append(Y)
+        return x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls
+            #yield X1, X1_len, X2, X2_len, Y
 
 #pair_gen = PairGenerator(Letor07Path + '/relation.train.fold1.txt', config)
 #list_gen = ListGenerator(Letor07Path + '/relation.test.fold1.txt', config)
