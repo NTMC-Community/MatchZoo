@@ -30,54 +30,12 @@ def create_pretrained_embedding(pretrained_weights_path, trainable=False, **kwar
     embedding = Embedding(in_dim, out_dim, weights=[pretrained_weights], trainable=False, **kwargs)
     return embedding
 
-def matching(config):
-    query = Input(name='query', shape=(config['data1_maxlen'],))
-    print K.int_shape(query)
-    doc = Input(name='doc', shape=(config['data2_maxlen'],))
-    print K.int_shape(doc)
-    embedding = Embedding(config['vocab_size'], config['embed_size'])
-    q_embed = embedding(query)
-    d_embed = embedding(doc)
-    print K.int_shape(q_embed)
-    print K.int_shape(d_embed)
-
-    #dot = K.batch_dot(q_embed, d_embed, axes=[2, 2])
-    #dot = Merge([q_embed, d_embed], mode='dot', dot_axes=1)
-    z = Dot(axes=[2, 2])([q_embed, d_embed])
-    z = Dropout(0.2)(z)
-    print K.int_shape(z)
-    z = Reshape((config['data1_maxlen'], config['data2_maxlen'], 1))(z)
-    print K.int_shape(z)
-    conv2d_0 = Conv2D(8, (3, 3), padding='same', activation='relu')
-    conv2d_1 = Conv2D(8, (3, 3), padding='same', activation='relu')
-    mpool = MaxPooling2D(pool_size=(3,3), strides=(3, 3), padding='same')
-    z = conv2d_0(z)
-    print 'conv 1: ', K.int_shape(z)
-    z = mpool(z)
-    print 'mpool 1: ', K.int_shape(z)
-    z = conv2d_1(z)
-    print 'conv 2: ', K.int_shape(z)
-    z = mpool(z)
-    print 'mpool 2: ', K.int_shape(z)
-    z = Flatten()(z)
-    print K.int_shape(z)
-    out_ = Dense(1)(z)
-    print K.int_shape(out_)
-    #loss = merge([out_], mode=rank_hinge_loss, name='loss', output_shape=(1,))
-
-    model = Model(inputs=[query, doc], outputs=out_)
-
-    #val = model.predict([np.array([[1, 5]]),np.array([[2, 3, 4]])])
-    #print val
-    #print val.shape
-    return model
-
 if __name__ == '__main__':
     base_dir = '/home/fanyixing/MatchZoo/sample_data/'
     #base_dir = '/home/fanyixing/SouGou/origin_cut_all/'
     query_file = base_dir + 'query.txt'
     doc_file = base_dir + 'doc.txt'
-    embed_file = base_dir + 'embed_sogou_d50_norm'
+    #embed_file = base_dir + 'embed_sogou_d50_norm'
     train_rel_file = base_dir + 'relation.train.fold0.txt'
     valid_rel_file = base_dir + 'relation.valid.fold0.txt'
     test_rel_file = base_dir + 'relation.test.fold0.txt'
@@ -86,7 +44,7 @@ if __name__ == '__main__':
     print 'Total queries : %d ...'%(len(queries))
     docs =  read_data(doc_file)
     print 'Total docs : %d ...'%(len(docs))
-    embed = read_embedding(embed_file)
+    #embed = read_embedding(embed_file)
 
     config = {}
     #config['vocab_size'] = 360287 + 1
