@@ -4,6 +4,7 @@ from __future__ import print_function
 import sys
 import random
 import numpy as np
+import math
 import keras
 from keras import backend as K
 from keras.callbacks import Callback
@@ -44,8 +45,8 @@ class rank_eval():
         res['map'] = self.map(y_true, y_pred)
         all_ndcg = self.ndcg(y_true, y_pred, k=k)
         all_precision = self.precision(y_true, y_pred, k=k)
-        res.update({'p@%d'%(i+1):all_precision[i] for i in k})
-        res.update({'ndcg@%d'%(i+1):all_ndcg[i] for i in need})
+        res.update({'p@%d'%(i+1):all_precision[i] for i in range(k)})
+        res.update({'ndcg@%d'%(i+1):all_ndcg[i] for i in range(k)})
         ret = {k:v for k,v in res.items() if k in metrics}
         return ret
     def map(self, y_true, y_pred):
@@ -66,16 +67,18 @@ class rank_eval():
         c = self.zipped(y_true, y_pred)
         c_g = sorted(c, key=lambda x:x[0], reverse=True)
         c_p = sorted(c, key=lambda x:x[1], reverse=True)
-        idcg = [0. for i in range(k)]
-        dcg = [0. for i in range(k)]
+        #idcg = [0. for i in range(k)]
+        idcg = np.zeros([k], dtype=np.float32)
+        dcg = np.zeros([k], dtype=np.float32)
+        #dcg = [0. for i in range(k)]
         for i, (g,p) in enumerate(c_g):
             if g > self.rel_threshold:
-                idcg[i:] += (np.pow(2., g) - 1.) / np.log(2. + i)
+                idcg[i:] += (math.pow(2., g) - 1.) / math.log(2. + i)
             if i >= k:
                 break
         for i, (g,p) in enumerate(c_p):
             if g > self.rel_threshold:
-                dcg[i:] += (np.pow(2., g) - 1.) / np.log(2. + i)
+                dcg[i:] += (math.pow(2., g) - 1.) / math.log(2. + i)
             if i >= k:
                 break
         for idx, v in enumerate(idcg):
@@ -90,6 +93,7 @@ class rank_eval():
         ipos = 0
         s = 0.
         precision = [0. for i in range(k)]
+        precision = np.zeros([k], dtype=np.float32) #[0. for i in range(k)]
         for i, (g,p) in enumerate(c):
             if g > self.rel_threshold:
                 precision[i:] += 1

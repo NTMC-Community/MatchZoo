@@ -101,11 +101,11 @@ if __name__ == '__main__':
 
     pair_gen = PairGenerator(train_rel_file, data1=queries, data2=docs, config=config)
     list_gen = ListGenerator(test_rel_file, data1=queries, data2=docs, config=config)
-    x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls = list_gen.get_all_data()
+    #x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls = list_gen.get_all_data()
 
     model = match_pyramid(config)
-    for (x1, x1_len, x2, x2_len, y_true) in list_gen.get_batch:
-       print(y_true)
+    #for (x1, x1_len, x2, x2_len, y_true) in list_gen.get_batch:
+    #   print(y_true)
     #eval_map = MAP_eval(validation_data = list_gen, rel_threshold=0)
     #eval_map = MAP_eval(x1_ls, x2_ls, y_ls, rel_threshold=0)
     rank_eval = rank_eval(rel_threshold = 0.)
@@ -120,13 +120,13 @@ if __name__ == '__main__':
                     epochs = 1,
                     verbose = 1
                     ) #callbacks=[eval_map])
-            if i % 100 == 0:
+            if i % 2 == 0:
                 res = [0., 0., 0.] 
                 num_valid = 0
                 for (x1, x1_len, x2, x2_len, y_true) in list_gen.get_batch:
                     print y_true
                     y_pred = model.predict({'query': x1, 'doc': x2})
-                    curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred)
+                    curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=['map', 'ndcg@3', 'ndcg@5'])
                     res[0] += curr_res['map']
                     res[1] += curr_res['ndcg@3']
                     res[2] += curr_res['ndcg@5']
@@ -134,9 +134,9 @@ if __name__ == '__main__':
                 res[0] /= num_valid
                 res[1] /= num_valid
                 res[2] /= num_valid
-                list_gen.reset()
                 print 'epoch: %d, batch : %d , map: %f, ndcg@3: %f, ndcg@5: %f ...'%(k, i, res[0], res[1], res[2])
                 sys.stdout.flush()
+                list_gen.reset
     
 
 
