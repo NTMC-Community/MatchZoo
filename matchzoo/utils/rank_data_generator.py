@@ -5,11 +5,16 @@ import numpy as np
 from rank_io import *
 
 class PairGenerator():
-    def __init__(self, rel_file, data1, data2, config):
+    def __init__(self, data1, data2, config):
+        rel_file = config['relation_train']
         rel = read_relation(filename=rel_file)
         self.pair_list = self.make_pair(rel)
         self.data1 = data1
         self.data2 = data2
+        self.batch_size = config['batch_size']
+        self.data1_maxlen = config['text1_maxlen']
+        self.data2_maxlen = config['text2_maxlen']
+        self.fill_word = config['fill_word']
         self.config = config
 
     def make_pair(self, rel):
@@ -34,20 +39,20 @@ class PairGenerator():
     @property
     def get_batch(self):
         config = self.config
-        X1 = np.zeros((config['batch_size']*2, config['data1_maxlen']), dtype=np.int32)
-        X1_len = np.zeros((config['batch_size']*2,), dtype=np.int32)
-        X2 = np.zeros((config['batch_size']*2, config['data2_maxlen']), dtype=np.int32)
-        X2_len = np.zeros((config['batch_size']*2,), dtype=np.int32)
-        Y = np.zeros((config['batch_size']*2,), dtype=np.int32)
+        X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
+        X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
+        X2 = np.zeros((self.batch_size*2, self.data2_maxlen), dtype=np.int32)
+        X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
+        Y = np.zeros((self.batch_size*2,), dtype=np.int32)
 
         Y[::2] = 1
-        X1[:] = config['fill_word']
-        X2[:] = config['fill_word']
-        for i in range(config['batch_size']):
+        X1[:] = self.fill_word
+        X2[:] = self.fill_word
+        for i in range(self.batch_size):
             d1, d2p, d2n = random.choice(self.pair_list)
-            d1_len = min(config['data1_maxlen'], len(self.data1[d1]))
-            d2p_len = min(config['data2_maxlen'], len(self.data2[d2p]))
-            d2n_len = min(config['data2_maxlen'], len(self.data2[d2n]))
+            d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+            d2p_len = min(self.data2_maxlen, len(self.data2[d2p]))
+            d2n_len = min(self.data2_maxlen, len(self.data2[d2n]))
             X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
             X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
             X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
@@ -85,9 +90,9 @@ class ListGenerator():
         config = self.config
         while self.point < self.num_list:
             d1, d2_list = self.list_list[self.point]
-            X1 = np.zeros((len(d2_list), config['data1_maxlen']), dtype=np.int32)
+            X1 = np.zeros((len(d2_list), self.data1_maxlen), dtype=np.int32)
             X1_len = np.zeros((len(d2_list),), dtype=np.int32)
-            X2 = np.zeros((len(d2_list), config['data2_maxlen']), dtype=np.int32)
+            X2 = np.zeros((len(d2_list), self.data2_maxlen), dtype=np.int32)
             X2_len = np.zeros((len(d2_list),), dtype=np.int32)
             Y = np.zeros((len(d2_list),), dtype= np.int32)
             X1[:] = config['fill_word']
