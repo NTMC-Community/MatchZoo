@@ -10,10 +10,10 @@ from keras.layers import *
 from keras.layers import Reshape, Embedding,Merge, Dot
 from keras.optimizers import Adam
 
-sys.path.append('/home/fanyixing/MatchZoo/matchzoo/losses/')
-sys.path.append('/home/fanyixing/MatchZoo/matchzoo/metrics/')
-sys.path.append('/home/fanyixing/MatchZoo/matchzoo/utils/')
-sys.path.append('/home/fanyixing/MatchZoo/matchzoo/models/')
+sys.path.append('../matchzoo/losses/')
+sys.path.append('../matchzoo/metrics/')
+sys.path.append('../matchzoo/utils/')
+sys.path.append('../matchzoo/models/')
 from rank_io import *
 from rank_data_generator import *
 from rank_losses import *
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     #embed = read_embedding(embed_file)
 
     config = {}
-    config['basedir'] = '/home/fanyixing/MatchZoo/sample_data/'
+    config['basedir'] = '../sample_data/'
     config['text1_corpus']  = 'query.txt'
     config['text2_corpus'] = 'doc.txt'
     config['relation_train'] = 'relation.train.fold0.txt'
