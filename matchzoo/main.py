@@ -30,10 +30,13 @@ def train(config):
     loss = []
     for lobj in config['losses']:
       loss.append(rank_losses.get(lobj))
+    metrics = []
+    for mobj in config['metrics']:
+        metrics.append(mobj)
     #model.compile(optimizer=keras.optimizers.Adam(lr=global_conf['learning_rate']), loss=rank_losses.get(config['losses'][0]))
     model.compile(optimizer=optimizer, loss=loss)
 
-    for k in range(global_conf['num_epochs']):
+    for i_e in range(global_conf['num_epochs']):
         num_batch = pair_gen.num_pairs / input_conf['batch_size']
         for i in range(num_batch):
             x1, x1_len, x2, x2_len, y = pair_gen.get_batch
@@ -42,19 +45,15 @@ def train(config):
                     verbose = 1
                     ) #callbacks=[eval_map])
             if i % 100 == 0:
-                res = [0., 0., 0.] 
+                res = dict([[k,0.] for k in metrics])
                 num_valid = 0
-                for (x1, x1_len, x2, x2_len, y_true) in list_gen.get_batch:
+                for (x1, x1_len, x2, x2_len, y_true, _) in list_gen.get_batch:
                     y_pred = model.predict({'query': x1, 'doc': x2})
-                    curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=['map', 'ndcg@3', 'ndcg@5'])
-                    res[0] += curr_res['map']
-                    res[1] += curr_res['ndcg@3']
-                    res[2] += curr_res['ndcg@5']
+                    curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
+                    for k,v in curr_res.items():
+                        res[k] += v
                     num_valid += 1
-                res[0] /= num_valid
-                res[1] /= num_valid
-                res[2] /= num_valid
-                print 'epoch: %d, batch : %d , map: %f, ndcg@3: %f, ndcg@5: %f ...'%(k, i, res[0], res[1], res[2])
+                print 'epoch: %d, batch: %d,' %( i_e, i), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
                 sys.stdout.flush()
                 list_gen.reset
     model.save_weights(weights_file)
@@ -68,34 +67,46 @@ def test(config):
 
     global_conf = config["global"]
     weights_file = global_conf['weights_file']
-    save_trec_file = global_conf['save_trec_file']
 
     model = Model.from_config(config['model'])
     model.load_weights(weights_file)
     rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
 
-    res = [0., 0., 0.] 
+    metrics = []
+    for mobj in config['metrics']:
+        metrics.append(mobj)
+    res = dict([[k,0.] for k in metrics])
     num_valid = 0
-    for (x1, x1_len, x2, x2_len, y_true) in list_gen.get_batch:
+    res_scores = {} 
+    for (x1, x1_len, x2, x2_len, y_true, id_pairs) in list_gen.get_batch:
         y_pred = model.predict({'query': x1, 'doc': x2})
-        curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=['map', 'ndcg@3', 'ndcg@5'])
-        res[0] += curr_res['map']
-        res[1] += curr_res['ndcg@3']
-        res[2] += curr_res['ndcg@5']
+        curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
+        for k,v in curr_res.items():
+            res[k] += v
+        y_pred = np.squeeze(y_pred)
+        for p, y in zip(id_pairs, y_pred):
+            if p[0] not in res_scores:
+                res_scores[p[0]] = {}
+            res_scores[p[0]][p[1]] = y
         num_valid += 1
-    res[0] /= num_valid
-    res[1] /= num_valid
-    res[2] /= num_valid
-    print 'epoch: %d, batch : %d , map: %f, ndcg@3: %f, ndcg@5: %f ...'%(k, i, res[0], res[1], res[2])
+    if config['outputs']['save_test_format'] == 'trec':
+        with open(config['outputs']['save_test_file'], 'w') as f:
+            for qid, dinfo in res_scores.items():
+                dinfo = sorted(dinfo.items(), key=lambda d:d[1], reverse=True)
+                for inum,(did, score) in enumerate(dinfo):
+                    print >> f, '%s\tQ0\t%s\t%d\t%f\t%s'%(qid, did, inum, score, config['net_name'])
+    print 'Test results: ', '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
+    #print 'epoch: %d, batch : %d , map: %f, ndcg@3: %f, ndcg@5: %f ...'%(k, i, res[0], res[1], res[2])
     sys.stdout.flush()
     return
 
 def main(argv):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--phase', default='train', help='Phase: Can be train, val or test')
-    parser.add_argument('--model_file', default=False, help='MatchZoo model file for the chosen model')
+    parser.add_argument('--phase', default='train', help='Phase: Can be train or test, the default value is train.')
+    parser.add_argument('--model_file', default='./models/matchzoo.model', help='Model_file: MatchZoo model file for the chosen model.')
     args = parser.parse_args()
     model_file =  args.model_file
+    print model_file
     with open(model_file, 'r') as f:
         config = json.load(f)
     phase = args.phase
@@ -106,18 +117,4 @@ def main(argv):
     return
 
 if __name__=='__main__':
-    '''
-    if len(sys.argv) < 3:
-        help()
-        exit(1)
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--phase', default='train', help='Phase: Can be train, val or test')
-    parser.add_argument('--model_file', default=False, help='MatchZoo model file for the chosen model')
-    args = parser.parse_args()
-    '''
     main(sys.argv)
-    '''
-    with open(config_file, 'r') as f:
-        config = json.load(f)
-        main(config)
-    '''
