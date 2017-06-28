@@ -46,13 +46,21 @@ def read_relation(filename):
     return data
 
 # Read Data Dict
-def read_data(filename):
+def read_data(filename, word_dict = None):
     data = {}
     for line in open(filename):
         line = line.strip().split()
-        data[line[0]] = map(int, line[2:])
+        tid = line[0]
+        if word_dict == None:
+            data[tid] = map(int, line[2:])
+        else:
+            data[tid] = []
+            for w in line[2:]:
+                if w not in word_dict:
+                    word_dict[w] = len(word_dict)
+                data[tid].append(word_dict[w])
     print '[%s]\n\tData size: %s' % (filename, len(data))
-    return data
+    return data, word_dict
 
 # Convert Embedding Dict 2 numpy array
 def convert_embed_2_numpy(embed_dict, max_size=0, embed=None):

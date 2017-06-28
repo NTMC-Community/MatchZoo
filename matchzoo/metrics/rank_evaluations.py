@@ -8,7 +8,7 @@ import math
 import keras
 from keras import backend as K
 from keras.callbacks import Callback
-sys.path.append('/home/fanyixing/MatchZoo/matchzoo/utils/')
+sys.path.append('./utils/')
 from rank_data_generator import *
 
 class LossEarlyStopping(Callback):

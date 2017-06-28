@@ -10,10 +10,10 @@ from keras.layers import *
 from keras.layers import Reshape, Embedding,Merge, Dot
 from keras.optimizers import Adam
 
-sys.path.append('/home/fanyixing/MatchZoo/matchzoo/losses/')
-sys.path.append('/home/fanyixing/MatchZoo/matchzoo/metrics/')
-sys.path.append('/home/fanyixing/MatchZoo/matchzoo/utils/')
-sys.path.append('/home/fanyixing/MatchZoo/matchzoo/models/')
+sys.path.append('../matchzoo/losses/')
+sys.path.append('../matchzoo/metrics/')
+sys.path.append('../matchzoo/utils/')
+sys.path.append('../matchzoo/models/')
 from rank_io import *
 from rank_data_generator import *
 from rank_losses import *
@@ -31,37 +31,56 @@ def create_pretrained_embedding(pretrained_weights_path, trainable=False, **kwar
     return embedding
 
 if __name__ == '__main__':
-    base_dir = '/home/fanyixing/MatchZoo/sample_data/'
+    #base_dir = '/home/fanyixing/MatchZoo/sample_data/'
     #base_dir = '/home/fanyixing/SouGou/origin_cut_all/'
-    query_file = base_dir + 'query.txt'
-    doc_file = base_dir + 'doc.txt'
+    #query_file = base_dir + 'query.txt'
+    #doc_file = base_dir + 'doc.txt'
     #embed_file = base_dir + 'embed_sogou_d50_norm'
-    train_rel_file = base_dir + 'relation.train.fold0.txt'
-    valid_rel_file = base_dir + 'relation.valid.fold0.txt'
-    test_rel_file = base_dir + 'relation.test.fold0.txt'
 
-    queries = read_data(query_file)
-    print 'Total queries : %d ...'%(len(queries))
-    docs =  read_data(doc_file)
-    print 'Total docs : %d ...'%(len(docs))
     #embed = read_embedding(embed_file)
 
     config = {}
+    config['text1_corpus']  = '../sample_data/query.txt'
+    config['text2_corpus'] = '../sample_data/doc.txt'
+    config['relation_train'] = '../sample_data/relation.train.fold0.txt'
+    config['relation_test'] = '../sample_data/relation.test.fold0.txt'
     #config['vocab_size'] = 360287 + 1
     config['vocab_size'] = 26075 + 1
     config['embed_size'] = 100
-    config['data1_maxlen'] = 5
-    config['data2_maxlen'] = 50
-    config['batch_size'] = 100
+    config['text1_maxlen'] = 5
+    config['text2_maxlen'] = 50
+    config['batch_size'] = 1
     config['fill_word'] = 26075
+    #config['fill_word'] = 360287
     config['learning_rate'] = 0.0001
     config['epochs'] = 1 
 
-    pair_gen = PairGenerator(train_rel_file, data1=queries, data2=docs, config=config)
-    list_gen = ListGenerator(test_rel_file, data1=queries, data2=docs, config=config)
+    query_file = config['text1_corpus']
+    doc_file = config['text2_corpus']
+    #train_rel_file = base_dir + config['relation_train']
+    #valid_rel_file = base_dir + config['relation_valid']
+    #test_rel_file = base_dir + config['relation_test']
+
+    word_dict = {}
+    queries, _ = read_data(query_file)
+    print 'Total queries : %d ...'%(len(queries))
+    docs, _ =  read_data(doc_file)
+    print 'Total docs : %d ...'%(len(docs))
+
+    pair_gen = PairGenerator(data1=queries, data2=docs, config=config)
+    list_gen = ListGenerator(data1=queries, data2=docs, config=config)
     #x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls = list_gen.get_all_data()
 
-    model = match_pyramid(config)
+    model_old = match_pyramid(config)
+    import json
+    #json_obj = json.loads(model.to_json())
+    json_obj = model_old.get_config()
+    json.dump(json_obj, file("match_pyramid.json", "w"), indent=2)
+    model = Model.from_config(json_obj)
+
+    
+    #exit(0)
+
     #for (x1, x1_len, x2, x2_len, y_true) in list_gen.get_batch:
     #   print(y_true)
     #eval_map = MAP_eval(validation_data = list_gen, rel_threshold=0)
@@ -78,12 +97,12 @@ if __name__ == '__main__':
                     epochs = 1,
                     verbose = 1
                     ) #callbacks=[eval_map])
-            if i % 2 == 0:
+            if i % 100 == 0:
                 res = [0., 0., 0.] 
                 num_valid = 0
                 for (x1, x1_len, x2, x2_len, y_true) in list_gen.get_batch:
-                    print y_true
                     y_pred = model.predict({'query': x1, 'doc': x2})
+                    print y_pred
                     curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=['map', 'ndcg@3', 'ndcg@5'])
                     res[0] += curr_res['map']
                     res[1] += curr_res['ndcg@3']
