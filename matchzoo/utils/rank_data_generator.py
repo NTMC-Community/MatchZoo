@@ -9,6 +9,9 @@ class PairGenerator():
         rel_file = config['relation_train']
         rel = read_relation(filename=rel_file)
         self.pair_list = self.make_pair(rel)
+        print self.pair_list[0:10]
+        print len(self.pair_list)
+        exit(0)
         self.data1 = data1
         self.data2 = data2
         self.batch_size = config['batch_size']
