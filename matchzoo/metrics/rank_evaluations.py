@@ -5,28 +5,11 @@ import sys
 import random
 import numpy as np
 import math
-import keras
-from keras import backend as K
-from keras.callbacks import Callback
-sys.path.append('./utils/')
-from rank_data_generator import *
-
-class LossEarlyStopping(Callback):
-    def __init__(self, metric, value, mode='less'):
-        super().__init__()
-        self.metric = metric
-        self.value = value
-        self.mode = mode
-
-    def on_epoch_end(self, epoch, logs={}):
-        if self.mode == 'less':
-            if logs[self.metric] < self.value:
-                self.model.stop_training = True
-                print('Early stopping -{} is {} than {}'.format(self.metric, self.mode, self.value))
-            if self.mode == 'more':
-                if logs[self.metric] > self.value:
-                    self.model.stop_training = True
-                    print('Early stopping - {} is {} than {}'.format(self.metric, self.mode, self.value))
+#import keras
+#from keras import backend as K
+#from keras.callbacks import Callback
+#sys.path.append('./utils/')
+#from ..utils.rank_data_generator import *
 
 class rank_eval():
     def __init__(self, rel_threshold=0.):
@@ -135,7 +118,6 @@ class MAP_eval(Callback):
         score = self.eval_map()
         print('MAP for epoch %d is %f'%(epoch, score))
         self.maps.append(score)
-'''
 class MAP_eval(Callback):
     def __init__(self, x1_ls, x2_ls, y_ls, rel_threshold = 0):
         self.x1_ls = x1_ls
@@ -174,7 +156,7 @@ class MAP_eval(Callback):
         score = self.eval_map()
         print('MAP for epoch %d is %f'%(epoch, score))
         self.maps.append(score)
-
+'''
 def eval_map(y_true, y_pred, rel_thre=0):
     s = 0.
     y_true = np.squeeze(y_true)
