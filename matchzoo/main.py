@@ -9,6 +9,7 @@ import keras.backend as K
 from keras.models import Sequential, Model
 
 from utils import *
+from inputs import *
 from metrics import *
 from losses import *
 
@@ -36,28 +37,30 @@ def train(config):
     #model.compile(optimizer=keras.optimizers.Adam(lr=global_conf['learning_rate']), loss=rank_losses.get(config['losses'][0]))
     model.compile(optimizer=optimizer, loss=loss)
 
+    num_batch = 10#pair_gen.num_pairs / input_conf['batch_size']
+    train_data_generator = pair_gen.get_batch_generator()
+
     for i_e in range(global_conf['num_epochs']):
-        num_batch = pair_gen.num_pairs / input_conf['batch_size']
-        for i in range(num_batch):
-            x1, x1_len, x2, x2_len, y = pair_gen.get_batch
-            model.fit({'query':x1, 'doc':x2}, y, batch_size=input_conf['batch_size']*2,
+        model.fit_generator(
+                    train_data_generator,
+                    steps_per_epoch = num_batch,
                     epochs = 1,
                     verbose = 1
-                    ) #callbacks=[eval_map])
-            if i % 100 == 0:
-                res = dict([[k,0.] for k in metrics])
-                num_valid = 0
-                for (x1, x1_len, x2, x2_len, y_true, _) in list_gen.get_batch:
-                    y_pred = model.predict({'query': x1, 'doc': x2})
-                    curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
-                    for k,v in curr_res.items():
-                        res[k] += v
-                    num_valid += 1
-                print 'epoch: %d, batch: %d,' %( i_e, i), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
-                sys.stdout.flush()
-                list_gen.reset
+                ) #callbacks=[eval_map])
+        res = dict([[k,0.] for k in metrics])
+        num_valid = 0
+        for (x1, x1_len, x2, x2_len, y_true, _) in list_gen.get_batch:
+            y_pred = model.predict({'query': x1, 'doc': x2})
+            curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
+            for k,v in curr_res.items():
+                res[k] += v
+            num_valid += 1
+        print 'epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
+        sys.stdout.flush()
+        list_gen.reset
     model.save_weights(weights_file)
     return
+
 def predict(config):
     input_conf = config['inputs']
     print input_conf

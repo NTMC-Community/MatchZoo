@@ -1,7 +1,5 @@
 # note: 
 from .preprocess import *
-from .rank_data_generator import PairGenerator
-from .rank_data_generator import ListGenerator
 from .rank_io import read_word_dict
 from .rank_io import read_embedding
 from .rank_io import read_data_old_version

@@ -3,7 +3,7 @@
 import sys
 import random
 import numpy as np
-from ..utils.rank_io import *
+from utils.rank_io import *
 
 class PairGenerator():
     def __init__(self, data1, data2, config):
@@ -119,6 +119,11 @@ class PairGenerator():
         else:
             return self.get_batch_static()
 
+    def get_batch_generator(self):
+        while True:
+            X1, X1_len, X2, X2_len, Y = self.get_batch()
+            yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len}, Y)
+
     @property
     def num_pairs(self):
         return len(self.pair_list)
@@ -151,6 +156,7 @@ class ListGenerator():
     @property
     def get_batch(self):
         while self.point < self.num_list:
+            ID_pairs = []
             d1, d2_list = self.list_list[self.point]
             X1 = np.zeros((len(d2_list), self.data1_maxlen), dtype=np.int32)
             X1_len = np.zeros((len(d2_list),), dtype=np.int32)
@@ -164,9 +170,10 @@ class ListGenerator():
                 d2_len = min(self.data2_maxlen, len(self.data2[d2]))
                 X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
                 X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
+                ID_pairs.append((d1, d2))
                 Y[j] = l
             self.point += 1
-            yield X1, X1_len, X2, X2_len, Y
+            yield X1, X1_len, X2, X2_len, Y, ID_pairs
 
     @property
     def reset(self):
