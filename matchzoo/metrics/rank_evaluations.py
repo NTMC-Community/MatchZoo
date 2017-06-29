@@ -12,7 +12,7 @@ class rank_eval():
     def zipped(self, y_true, y_pred):
         y_true = np.squeeze(y_true)
         y_pred = np.squeeze(y_pred)
-        c = zip(y_pred, y_true)
+        c = zip(y_true, y_pred)
         random.shuffle(c)
         return c
 
@@ -30,12 +30,12 @@ class rank_eval():
     def map(self, y_true, y_pred):
         c = self.zipped(y_true, y_pred)
         c = sorted(c, key=lambda x:x[1], reverse=True)
-        ipos = 0
+        ipos = 0.
         s = 0.
         for i, (g,p) in enumerate(c):
             if g > self.rel_threshold:
-                ipos += 1
-                s += ipos / ( i + 1)
+                ipos += 1.
+                s += ipos / ( 1. + i )
         if ipos == 0:
             return 0.
         else:
