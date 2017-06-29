@@ -58,7 +58,7 @@ def train(config):
                 list_gen.reset
     model.save_weights(weights_file)
     return
-def test(config):
+def predict(config):
     input_conf = config['inputs']
     print input_conf
     queries, _ = read_data(input_conf['text1_corpus'])
@@ -95,25 +95,24 @@ def test(config):
                 dinfo = sorted(dinfo.items(), key=lambda d:d[1], reverse=True)
                 for inum,(did, score) in enumerate(dinfo):
                     print >> f, '%s\tQ0\t%s\t%d\t%f\t%s'%(qid, did, inum, score, config['net_name'])
-    print 'Test results: ', '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
+    print 'Predict results: ', '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
     #print 'epoch: %d, batch : %d , map: %f, ndcg@3: %f, ndcg@5: %f ...'%(k, i, res[0], res[1], res[2])
     sys.stdout.flush()
     return
 
 def main(argv):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--phase', default='train', help='Phase: Can be train or test, the default value is train.')
+    parser.add_argument('--phase', default='train', help='Phase: Can be train or predict, the default value is train.')
     parser.add_argument('--model_file', default='./models/matchzoo.model', help='Model_file: MatchZoo model file for the chosen model.')
     args = parser.parse_args()
     model_file =  args.model_file
-    print model_file
     with open(model_file, 'r') as f:
         config = json.load(f)
     phase = args.phase
     if args.phase == 'train':
         train(config)
     else:
-        test(config)
+        predict(config)
     return
 
 if __name__=='__main__':
