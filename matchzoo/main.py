@@ -13,6 +13,7 @@ from metrics import *
 from losses import *
 
 def train(config):
+    history = LossHistory()
     input_conf = config['inputs']
     print input_conf
     queries, _ = read_data(input_conf['text1_corpus'])
@@ -36,14 +37,21 @@ def train(config):
     #model.compile(optimizer=keras.optimizers.Adam(lr=global_conf['learning_rate']), loss=rank_losses.get(config['losses'][0]))
     model.compile(optimizer=optimizer, loss=loss)
 
+    #dense_out_f = K.function([model.get_input(train=False)], model.out_.get_outpus(train=False))
+    get_10_layer_output = K.function([model.layers[0].input, K.learning_phase()], [model.layers[10].output])
     for i_e in range(global_conf['num_epochs']):
         num_batch = pair_gen.num_pairs / input_conf['batch_size']
         for i in range(num_batch):
             x1, x1_len, x2, x2_len, y = pair_gen.get_batch
+            print model.layers[10]
+            print model.layers[10].output
+            #W = model.layers[10].W.get_value(borrow = True)
             model.fit({'query':x1, 'doc':x2}, y, batch_size=input_conf['batch_size']*2,
                     epochs = 1,
-                    verbose = 1
-                    ) #callbacks=[eval_map])
+                    verbose = 1,
+                    callbacks = [history]) #callbacks=[eval_map])
+            print history.losses
+            print history.output
             if i % 100 == 0:
                 res = dict([[k,0.] for k in metrics])
                 num_valid = 0

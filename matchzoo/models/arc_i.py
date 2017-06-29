@@ -6,7 +6,7 @@ from keras.layers import *
 from keras.layers import Reshape, Embedding,Merge, Dot
 from keras.optimizers import Adam
 
-def match_pyramid(config):
+def arc_i(config):
     query = Input(name='query', shape=(config['text1_maxlen'],))
     #print K.int_shape(query)
     doc = Input(name='doc', shape=(config['text2_maxlen'],))
@@ -15,26 +15,17 @@ def match_pyramid(config):
     embedding = Embedding(config['vocab_size'], config['embed_size'], weights=[config['embed']], trainable = False)
     q_embed = embedding(query)
     d_embed = embedding(doc)
-    #print K.int_shape(q_embed)
-    #print K.int_shape(d_embed)
 
-    z = Dot(axes=[2, 2])([q_embed, d_embed])
-    #z = Dropout(0.2)(z)
-    #print K.int_shape(z)
-    z = Reshape((config['text1_maxlen'], config['text2_maxlen'], 1))(z)
-    #print K.int_shape(z)
-    conv2d0 = Conv2D(32, (3, 3), padding='same', activation='relu')
-    conv2d1 = Conv2D(32, (3, 3), padding='same', activation='relu')
-    mpool0 = MaxPooling2D(pool_size=(3,3), strides=(3, 3), padding='same')
-    mpool1 = MaxPooling2D(pool_size=(3,3), strides=(3, 3), padding='same')
-    z = conv2d0(z)
-    #print 'conv 1: ', K.int_shape(z)
-    z = mpool0(z)
-    #print 'mpool 1: ', K.int_shape(z)
-    z = conv2d1(z)
-    #print 'conv 2: ', K.int_shape(z)
-    z = mpool1(z)
-    #print 'mpool 2: ', K.int_shape(z)
+    conv = Convolution1D(filters = 64, kernel_size=(3, 3), padding='same', activation='relu',strides=1)
+    mpool = MaxPooling1D(pool_size = 3)
+
+    q_conv = conv(q_embed)
+    q_mp = mpool(q_conv)
+    d_conv = conv(d_embed)
+    d_mp = mpool(d_conv)
+    z = Concatenate()([q_mp, d_mp])
+
+    #print K.int_shape(q_embed)
     z = Flatten()(z)
     #print K.int_shape(z)
     out_ = Dense(1)(z)

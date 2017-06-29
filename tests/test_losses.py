@@ -18,7 +18,7 @@ from rank_io import *
 from rank_data_generator import *
 from rank_losses import *
 from rank_evaluations import *
-from match_pyramid import *
+from arc_i import *
 
 
 MAX_Q_LEN = 5
@@ -36,32 +36,38 @@ if __name__ == '__main__':
     #query_file = base_dir + 'query.txt'
     #doc_file = base_dir + 'doc.txt'
     #embed_file = base_dir + 'embed_sogou_d50_norm'
+    embed_file = '/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/embed_wiki-pdc_d50_norm'
 
-    #embed = read_embedding(embed_file)
+    embed = read_embedding(embed_file)
 
     config = {}
-    config['text1_corpus']  = '../sample_data/query.txt'
-    config['text2_corpus'] = '../sample_data/doc.txt'
-    config['relation_train'] = '../sample_data/relation.train.fold0.txt'
-    config['relation_test'] = '../sample_data/relation.test.fold0.txt'
-    #config['vocab_size'] = 360287 + 1
-    config['vocab_size'] = 26075 + 1
+    #config['text1_corpus']  = '../sample_data/query.txt'
+    config['text1_corpus']  = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/qid_query.txt",
+    #config['text2_corpus'] = '../sample_data/doc.txt'
+    config['text2_corpus'] = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/docid_doc.txt",
+    #config['relation_train'] = '../sample_data/relation.train.fold0.txt'
+    config['relation_train'] = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/relation.train.fold1.txt",
+    config['relation_test'] = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/relation.test.fold1.txt"
+    config['vocab_size'] = 193367 + 1
+    #config['vocab_size'] = 26075 + 1
     config['embed_size'] = 100
     config['text1_maxlen'] = 5
     config['text2_maxlen'] = 50
     config['batch_size'] = 1
-    config['fill_word'] = 26075
-    #config['fill_word'] = 360287
+    #config['fill_word'] = 26075
+    config['fill_word'] = 193367
     config['learning_rate'] = 0.0001
     config['epochs'] = 1 
 
     query_file = config['text1_corpus']
     doc_file = config['text2_corpus']
+    config['embed'] = embed
     #train_rel_file = base_dir + config['relation_train']
     #valid_rel_file = base_dir + config['relation_valid']
     #test_rel_file = base_dir + config['relation_test']
 
     word_dict = {}
+    print query_file
     queries, _ = read_data(query_file)
     print 'Total queries : %d ...'%(len(queries))
     docs, _ =  read_data(doc_file)
@@ -71,11 +77,11 @@ if __name__ == '__main__':
     list_gen = ListGenerator(data1=queries, data2=docs, config=config)
     #x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls = list_gen.get_all_data()
 
-    model_old = match_pyramid(config)
+    model_old = arc_i(config)
     import json
     #json_obj = json.loads(model.to_json())
     json_obj = model_old.get_config()
-    json.dump(json_obj, file("match_pyramid.json", "w"), indent=2)
+    json.dump(json_obj, file("arc_i.json", "w"), indent=2)
     model = Model.from_config(json_obj)
 
     
