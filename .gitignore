@@ -3,3 +3,6 @@
 *.swp
 *.weights
 *.trec
+*.ranklist
+qrels.*
+trec_eval

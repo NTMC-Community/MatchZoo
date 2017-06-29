@@ -204,8 +204,3 @@ class ListGenerator():
             y_ls.append(Y)
         return x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls
             #yield X1, X1_len, X2, X2_len, Y
-
-#pair_gen = PairGenerator(Letor07Path + '/relation.train.fold1.txt', config)
-#list_gen = ListGenerator(Letor07Path + '/relation.test.fold1.txt', config)
-#x1, x1_len, x2, x2_len, Y, F = pair_gen.get_batch(query_data, doc_data)
-#print F
