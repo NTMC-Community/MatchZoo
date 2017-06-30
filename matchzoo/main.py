@@ -214,8 +214,10 @@ def main(argv):
     phase = args.phase
     if args.phase == 'train':
         train(config)
-    else:
+    elif args.phase == 'predict':
         predict(config)
+    else:
+        print 'Phase Error.'
     return
 
 if __name__=='__main__':
