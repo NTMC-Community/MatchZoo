@@ -22,7 +22,10 @@ if __name__=='__main__':
     config['vocab_size'] = 193367 + 1
     config['embed_size'] = 50
     config['text1_maxlen'] = 5
-    config['hist_size'] = 60
+    config['batch_size'] = 2
+    config['hist_size'] = 10
+    config['use_iter'] = False 
+    config['query_per_iter'] = True
     config['text2_maxlen'] = 50
     config['fill_word'] = 193367
     config['relation_train'] = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/relation.train.fold1.txt"
@@ -39,3 +42,10 @@ if __name__=='__main__':
 
     pair_gen = DRMM_PairGenerator( embed = embed, data1=queries, data2=docs, config=config)
     train_genfun = pair_gen.get_batch_generator()
+    inum = 0
+    for dinputs, y in train_genfun:
+        print dinputs['query']
+        print dinputs['doc']
+        inum += 1
+        if inum > 10:
+            break
