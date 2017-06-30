@@ -32,19 +32,22 @@ def check(config):
 def build(config):
     query = Input(name='query', shape=(config['text1_maxlen'],))
     doc = Input(name='doc', shape=(config['text2_maxlen'],))
+    dpool_index = Input(name='dpool_index', shape=[config['text1_maxlen'], config['text2_maxlen'], 3], dtype='int32')
 
     embedding = Embedding(config['vocab_size'], config['embed_size'], weights=[config['embed']], trainable = False)
     q_embed = embedding(query)
     d_embed = embedding(doc)
 
-    z = Dot(axes=[2, 2])([q_embed, d_embed])
-    z = Reshape((config['text1_maxlen'], config['text2_maxlen'], 1))(z)
+    cross = Dot(axes=[2, 2])([q_embed, d_embed])
+    cross_reshape = Reshape((config['text1_maxlen'], config['text2_maxlen'], 1))(cross)
+
     conv2d = Conv2D(config['kernel_count'], config['kernel_size'], padding='same', activation='relu')
     dpool = DynamicMaxPooling(config['dpool_size'][0], config['dpool_size'][1])
-    z = conv2d(z)
-    z = dpool(z)
-    z = Flatten()(z)
-    out_ = Dense(1)(z)
 
-    model = Model(inputs=[query, doc], outputs=out_)
+    conv1 = conv2d(cross_reshape)
+    pool1 = dpool([conv1, dpool_index])
+    pool1_flat = Flatten()(pool1)
+    out_ = Dense(1)(pool1_flat)
+
+    model = Model(inputs=[query, doc, dpool_index], outputs=out_)
     return model

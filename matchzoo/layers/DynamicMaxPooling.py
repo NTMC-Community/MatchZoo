@@ -11,12 +11,14 @@ class DynamicMaxPooling(Layer):
         super(DynamicMaxPooling, self).__init__(**kwargs)
 
     def build(self, input_shape):
-        self.dpool_index = Input(name='dpool_index', shape=[input_shape[1], input_shape[2], 3], dtype='int32')
-        self.msize1 = input_shape[1]
-        self.msize2 = input_shape[2]
+        #self.dpool_index = Input(name='dpool_index', shape=[input_shape[1], input_shape[2], 3], dtype='int32')
+        input_shape_one = input_shape[0]
+        self.msize1 = input_shape_one[1]
+        self.msize2 = input_shape_one[2]
         super(DynamicMaxPooling, self).build(input_shape)  # Be sure to call this somewhere!
 
-    def call(self, x):
+    def call(self, data):
+        x, self.dpool_index = data
         x_expand = K.tf.gather_nd(x, self.dpool_index)
         x_pool = K.tf.nn.max_pool(x_expand, 
                     [1, self.msize1 / self.psize1, self.msize2 / self.psize2, 1], 
@@ -25,7 +27,8 @@ class DynamicMaxPooling(Layer):
         return x_pool
 
     def compute_output_shape(self, input_shape):
-        return (input_shape[0], self.psize1, self.psize2, input_shape[3])
+        input_shape_one = input_shape[0]
+        return (None, self.psize1, self.psize2, input_shape_one[3])
 
     @staticmethod
     def dynamic_pooling_index(len1, len2, max_len1, max_len2):
