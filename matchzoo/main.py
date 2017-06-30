@@ -34,8 +34,6 @@ def train(config):
     model.compile(optimizer=optimizer, loss=loss)
     print '[Model] Model Compile Done.'
 
-    history = LossHistory()
-
     # read input config
     input_conf = config['inputs']
     share_input_conf = input_conf['share']

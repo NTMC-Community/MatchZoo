@@ -16,14 +16,16 @@ def arc_i(config):
     q_embed = embedding(query)
     d_embed = embedding(doc)
 
-    conv = Convolution1D(filters = 64, kernel_size=(3, 3), padding='same', activation='relu',strides=1)
-    mpool = MaxPooling1D(pool_size = 3)
+    conv = Convolution1D(filters = 64, kernel_size=3, padding='same', activation='relu',strides=1)
+    mpool = MaxPooling1D(pool_size = 2, padding = 'same')
 
     q_conv = conv(q_embed)
     q_mp = mpool(q_conv)
     d_conv = conv(d_embed)
     d_mp = mpool(d_conv)
-    z = Concatenate()([q_mp, d_mp])
+    q_z = Flatten()(q_mp)
+    d_z = Flatten()(d_mp)
+    z = Concatenate()([q_z, d_z])
 
     #print K.int_shape(q_embed)
     z = Flatten()(z)
