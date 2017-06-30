@@ -21,8 +21,30 @@ def train(config):
     optimizer = global_conf['optimizer']
     weights_file = global_conf['weights_file']
     num_batch = global_conf['num_batch']
+    model_type = global_conf['model_type']
 
-    model = Model.from_config(config['model'])
+    if model_type == 'JSON':
+        model = Model.from_config(config['model'])
+    elif model_type == 'PY':
+        model_config = config['model']
+        model_config.update(config['inputs']['share'])
+
+        # spacial config for embedding
+        if 'embed_path' in model_config:
+            embed_dict = read_embedding(filename=model_config['embed_path'])
+            _PAD_ = model_config['fill_word']
+            embed_dict[_PAD_] = np.zeros((model_config['embed_size'], ), dtype=np.float32)
+            model_config['embed'] = np.float32(np.random.uniform(-0.02, 0.02, [model_config['vocab_size'], model_config['embed_size']]))
+            model_config['embed'] = convert_embed_2_numpy(embed_dict, embed = model_config['embed'])
+
+        sys.path.insert(0, model_config['model_path'])
+        from importlib import import_module
+        mo = import_module(model_config['model_py'])
+        if mo.check(model_config):
+            model = mo.build(model_config)
+        else:
+            exit(1)
+
     rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
 
     loss = []
@@ -33,8 +55,6 @@ def train(config):
         metrics.append(mobj)
     model.compile(optimizer=optimizer, loss=loss)
     print '[Model] Model Compile Done.'
-
-    history = LossHistory()
 
     # read input config
     input_conf = config['inputs']
