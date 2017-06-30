@@ -63,7 +63,7 @@ class PairGenerator():
                         for high_d2 in rel_set[d1][high_label]:
                             for low_d2 in rel_set[d1][low_label]:
                                 pair_list.append( (d1, high_d2, low_d2) )
-            print 'Pair Instance Count:', len(pair_list)
+            #print 'Pair Instance Count:', len(pair_list)
             yield pair_list
         
     def get_batch_static(self):
@@ -136,7 +136,6 @@ class ListGenerator():
             self.num_list = len(self.list_list)
         self.data1 = data1
         self.data2 = data2
-        self.batch_size = config['batch_size']
         self.data1_maxlen = config['text1_maxlen']
         self.data2_maxlen = config['text2_maxlen']
         self.fill_word = config['fill_word']
@@ -153,11 +152,10 @@ class ListGenerator():
         print 'List Instance Count:', len(list_list)
         return list_list.items()
 
-    @property
     def get_batch(self):
-        while self.point < self.num_list:
+        for point in range(self.num_list):
             ID_pairs = []
-            d1, d2_list = self.list_list[self.point]
+            d1, d2_list = self.list_list[point]
             X1 = np.zeros((len(d2_list), self.data1_maxlen), dtype=np.int32)
             X1_len = np.zeros((len(d2_list),), dtype=np.int32)
             X2 = np.zeros((len(d2_list), self.data2_maxlen), dtype=np.int32)
@@ -172,10 +170,12 @@ class ListGenerator():
                 X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
                 ID_pairs.append((d1, d2))
                 Y[j] = l
-            self.point += 1
             yield X1, X1_len, X2, X2_len, Y, ID_pairs
 
-    @property
+    def get_batch_generator(self):
+        for X1, X1_len, X2, X2_len, Y, ID_pairs in self.get_batch():
+            yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'ID': ID_pairs}, Y)
+
     def reset(self):
         self.point = 0
 
