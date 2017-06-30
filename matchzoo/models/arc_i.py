@@ -28,7 +28,6 @@ def arc_i(config):
     z = Concatenate()([q_z, d_z])
 
     #print K.int_shape(q_embed)
-    z = Flatten()(z)
     #print K.int_shape(z)
     out_ = Dense(1)(z)
     #print K.int_shape(out_)
