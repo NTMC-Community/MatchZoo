@@ -14,7 +14,6 @@ from metrics import *
 from losses import *
 
 def train(config):
-    history = LossHistory()
     input_conf = config['inputs']
     print input_conf
     queries, _ = read_data(input_conf['text1_corpus'])

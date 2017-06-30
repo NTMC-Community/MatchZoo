@@ -66,7 +66,7 @@ def read_data(filename, word_dict = None):
 def convert_embed_2_numpy(embed_dict, max_size=0, embed=None):
     feat_size = len(embed_dict[embed_dict.keys()[0]])
     if embed is None:
-        embed = np.zeros( (feat_size, max_size), dtype = np.float32 )
+        embed = np.zeros( (max_size, feat_size), dtype = np.float32 )
     for k in embed_dict:
         embed[k] = np.array(embed_dict[k])
     print 'Generate numpy embed:', embed.shape
