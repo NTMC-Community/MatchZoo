@@ -127,7 +127,7 @@ def train(config):
             print '[Eval] @ %s' % tag
             num_valid = 0
             for input_data, y_true in genfun:
-                y_pred = model.predict(input_data)
+                y_pred = model.predict(input_data, batch_size=len(y_true))
                 curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
                 for k, v in curr_res.items():
                     res[k] += v
