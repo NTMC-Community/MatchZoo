@@ -40,13 +40,14 @@ if __name__ == '__main__':
 
 
     config = {}
-    #config['text1_corpus']  = '../sample_data/query.txt'
     config['text1_corpus'] = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/qid_query.txt"
-    #config['text2_corpus'] = '../sample_data/doc.txt'
     config['text2_corpus'] = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/docid_doc.txt"
-    #config['relation_train'] = '../sample_data/relation.train.fold0.txt'
     config['relation_train'] = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/relation.train.fold1.txt"
     config['relation_test'] = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/relation.test.fold1.txt"
+    #config['text1_corpus']  = '../sample_data/query.txt'
+    #config['text2_corpus'] = '../sample_data/doc.txt'
+    #config['relation_train'] = '../sample_data/relation.train.fold0.txt'
+    #config['relation_train'] = '../sample_data/relation.test.fold0.txt'
     config['vocab_size'] = 193367 + 1
     #config['vocab_size'] = 26075 + 1
     config['embed_size'] = 50
