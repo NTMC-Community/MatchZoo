@@ -4,7 +4,8 @@ import os
 import sys
 import random
 import numpy as np
-from utils.rank_io import *
+sys.path.append('../utils/')
+from rank_io import *
 
 class DRMM_PairGenerator():
     def __init__(self, embed, data1, data2, config):
@@ -72,6 +73,8 @@ class DRMM_PairGenerator():
         mhist = np.zeros((self.data1_maxlen, self.hist_size), dtype=np.float32)
         mm = t1_rep.dot(np.transpose(t2_rep))
         for (i,j), v in np.ndenumerate(mm):
+            if i >= self.data1_maxlen:
+                break
             vid = int((v + 1.) / 2. * ( self.hist_size - 1.))
             mhist[i][vid] += 1.
         mhist += 1.
@@ -88,19 +91,19 @@ class DRMM_PairGenerator():
 
         Y[::2] = 1
         X1[:] = self.fill_word
-        X2[:] = self.fill_word
+        #X2[:] = self.fill_word
         for i in range(self.batch_size):
             d1, d2p, d2n = random.choice(self.pair_list)
             d1_len = min(self.data1_maxlen, len(self.data1[d1]))
-            d2p_len = min(self.data2_maxlen, len(self.data2[d2p]))
-            d2n_len = min(self.data2_maxlen, len(self.data2[d2n]))
+            d2p_len = len(self.data2[d2p])
+            d2n_len = len(self.data2[d2n])
             d1_embed = self.embed[self.data1[d1]]
             d2p_embed = self.embed[self.data2[d2p]]
             d2n_embed = self.embed[self.data2[d2n]]
             X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
             X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
-            X2[i*2], X2_len[i*2]   = cal_hist(d1_embed, d2p_embed), d2p_len
-            X2[i*2+1], X2_len[i*2+1] = cal_hist(d1_embed, d2n_embed), d2n_len
+            X2[i*2], X2_len[i*2]   = self.cal_hist(d1_embed, d2p_embed), d2p_len
+            X2[i*2+1], X2_len[i*2+1] = self.cal_hist(d1_embed, d2n_embed), d2n_len
             
         return X1, X1_len, X2, X2_len, Y    
 
@@ -116,19 +119,19 @@ class DRMM_PairGenerator():
 
                 Y[::2] = 1
                 X1[:] = self.fill_word
-                X2[:] = self.fill_word
+                #X2[:] = 0.
                 for i in range(self.batch_size):
                     d1, d2p, d2n = random.choice(self.pair_list)
                     d1_len = min(self.data1_maxlen, len(self.data1[d1]))
-                    d2p_len = min(self.data2_maxlen, len(self.data2[d2p]))
-                    d2n_len = min(self.data2_maxlen, len(self.data2[d2n]))
+                    d2p_len = len(self.data2[d2p])
+                    d2n_len = len(self.data2[d2n])
                     d1_embed = self.embed[self.data1[d1]]
                     d2p_embed = self.embed[self.data2[d2p]]
                     d2n_embed = self.embed[self.data2[d2n]]
                     X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
                     X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
-                    X2[i*2], X2_len[i*2]   = cal_hist(d1_embed, d2p_embed), d2p_len
-                    X2[i*2+1], X2_len[i*2+1] = cal_hist(d1_embed, d2n_embed), d2n_len
+                    X2[i*2], X2_len[i*2]   = self.cal_hist(d1_embed, d2p_embed), d2p_len
+                    X2[i*2+1], X2_len[i*2+1] = self.cal_hist(d1_embed, d2n_embed), d2n_len
                     
                 yield X1, X1_len, X2, X2_len, Y
 
