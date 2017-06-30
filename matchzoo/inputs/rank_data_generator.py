@@ -124,7 +124,7 @@ class PairGenerator():
         while True:
             X1, X1_len, X2, X2_len, Y = self.get_batch()
             if self.config['use_dpool']:
-                yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'dynamic_max_pooling_1/dpool_index': DynamicMaxPooling.dynamic_pooling_index(X1_len, X2_len, self.config['text1_maxlen'], self.config['text2_maxlen'])}, Y)
+                yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'dpool_index': DynamicMaxPooling.dynamic_pooling_index(X1_len, X2_len, self.config['text1_maxlen'], self.config['text2_maxlen'])}, Y)
             else:
                 yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len}, Y)
 
@@ -134,6 +134,7 @@ class PairGenerator():
    
 class ListGenerator():
     def __init__(self, data1=None, data2=None, config={}):
+        self.config = config
         if 'relation_test' in config:
             rel = read_relation(filename=config['relation_test'])
             self.list_list = self.make_list(rel)
@@ -179,7 +180,7 @@ class ListGenerator():
     def get_batch_generator(self):
         for X1, X1_len, X2, X2_len, Y, ID_pairs in self.get_batch():
             if self.config['use_dpool']:
-                yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'dynamic_max_pooling_1/dpool_index': DynamicMaxPooling.dynamic_pooling_index(X1_len, X2_len, self.config['text1_maxlen'], self.config['text2_maxlen']), 'ID': ID_pairs}, Y)
+                yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'dpool_index': DynamicMaxPooling.dynamic_pooling_index(X1_len, X2_len, self.config['text1_maxlen'], self.config['text2_maxlen']), 'ID': ID_pairs}, Y)
             else:
                 yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'ID': ID_pairs}, Y)
 
