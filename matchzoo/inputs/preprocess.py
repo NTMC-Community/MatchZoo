@@ -9,29 +9,19 @@ from nltk.stem import SnowballStemmer
 
 
 class Preprocess(object):
-    """Abstract preprocess class
-    # Properties
-        word_dict:
-        rword_dict:
-        word_stats:
-        text1:
-        text2:
-        relation:
-    # Methods
-        rare_word_remove(): remove rare words(e.g. high-frequency words and low-frequency words)
-        run(): 
-    """
 
     _valid_lang = ['en', 'cn']
     _stemmer = SnowballStemmer('english')
 
-    def __init__(self, lang='en',
+    def __init__(self,
+                 lang='en',
                  stop_words=list(),
                  min_freq=1,
                  max_freq=sys.maxint,
-                 min_len=1,
+                 min_len=0,
                  max_len=sys.maxint,
-                 word_dict=None):
+                 word_dict=None,
+                 words_useless=None):
         assert lang.lower() in Preprocess._valid_lang, 'Wrong language type: %s' % lang
         self._lang = lang
         self._stop_words = stop_words
@@ -40,18 +30,19 @@ class Preprocess(object):
         self._min_len = min_len
         self._max_len = max_len
         self._word_dict = word_dict
-    
+        self._words_useless = words_useless
+        self._words_df = dict()
+
     def run(self, file_path):
         dids, docs = Preprocess.load(file_path)
         docs = Preprocess.word_seg(docs, self._lang)
+        dids, docs = Preprocess.doc_filter(dids, docs, self._min_len, self._max_len)
         docs = Preprocess.word_stem(docs)
-        dids, docs = Preprocess.word_filter(docs,
-                                            dids=dids,
-                                            stop_words=self._stop_words,
-                                            min_freq=self._min_freq,
-                                            max_freq=self._max_freq,
-                                            min_len=self._min_len,
-                                            max_len=self._max_len)
+        docs, self._words_useless, self._words_df = Preprocess.word_filter(docs,
+                                                                           words_useless=self._words_useless,
+                                                                           stop_words=self._stop_words,
+                                                                           min_freq=self._min_freq,
+                                                                           max_freq=self._max_freq)
         docs, self._word_dict = Preprocess.word_index(docs, word_dict=self._word_dict)
         return dids, docs
 
@@ -102,33 +93,33 @@ class Preprocess(object):
         return wdf
 
     @staticmethod
-    def word_filter(docs, dids=None, stop_words=list(), min_freq=1, max_freq=sys.maxint, min_len=1, max_len=sys.maxint):
-        ws_filter = set()
-        # filter with stop_words
-        ws_filter.update(stop_words)
-        # filter with min_freq and max_freq
-        wdf = Preprocess.cal_doc_freq(docs)
-        for w in wdf:
-            if min_freq > wdf[w] or max_freq < wdf[w]:
-                ws_filter.add(w)
-        # filter with min_len and max_len
-        if dids is None:
-            docs = [ws for ws in docs if min_len <= len(ws) <= max_len]
-        else:
-            new_docs = list()
-            new_dids = list()
-            for i in range(len(docs)):
-                if min_len <= len(docs[i]) <= max_len:
-                    new_docs.append(docs[i])
-                    new_dids.append(dids[i])
-            docs = new_docs
-            dids = new_dids
-        # filter with illegal words
-        docs = [[w for w in ws if w not in ws_filter] for ws in docs]
-        if dids is None:
-            return docs
-        else:
-            return dids, docs
+    def word_filter(docs,
+                    words_useless=None,
+                    stop_words=list(),
+                    min_freq=1,
+                    max_freq=sys.maxint):
+        if words_useless is None:
+            words_useless = set()
+            # filter with stop_words
+            words_useless.update(stop_words)
+            # filter with min_freq and max_freq
+            wdf = Preprocess.cal_doc_freq(docs)
+            for w in wdf:
+                if min_freq > wdf[w] or max_freq < wdf[w]:
+                    words_useless.add(w)
+        # filter with useless words
+        docs = [[w for w in ws if w not in words_useless] for ws in docs]
+        return docs, words_useless, wdf
+
+    @staticmethod
+    def doc_filter(dids, docs, min_len=1, max_len=sys.maxint):
+        new_docs = list()
+        new_dids = list()
+        for i in range(len(docs)):
+            if min_len <= len(docs[i]) <= max_len:
+                new_docs.append(docs[i])
+                new_dids.append(dids[i])
+        return new_dids, new_docs
 
     @staticmethod
     def word_stem(docs):
@@ -150,24 +141,63 @@ class Preprocess(object):
         docs = [[word_dict[w] for w in ws if w in word_dict] for ws in docs]
         return docs, word_dict
 
+    @staticmethod
+    def save_lines(file_path, lines):
+        f = open(file_path, 'w')
+        for line in lines:
+            f.write(line + "\n")
+        f.close()
+
+    @staticmethod
+    def load_lines(file_path):
+        f = open(file_path, 'r')
+        lines = f.readlines()
+        f.close()
+        return lines
+
+    @staticmethod
+    def save_dict(file_path, dic):
+        lines = ['%s %s' % (k, v) for k, v in dic.iteritems()]
+        Preprocess.save_lines(file_path, lines)
+
+    @staticmethod
+    def load_dict(file_path):
+        lines = Preprocess.load_lines(file_path)
+        dic = dict()
+        for line in lines:
+            k, v = line.split()
+            dic[k] = v
+        return dic
+
+    def save_words_useless(self, words_useless_fp):
+        Preprocess.save_lines(words_useless_fp, self._words_useless)
+
+    def load_words_useless(self, words_useless_fp):
+        self._words_useless = set(Preprocess.load_lines(words_useless_fp))
+
+    def save_word_dict(self, word_dict_fp):
+        Preprocess.save_dict(word_dict_fp, self._word_dict)
+
+    def load_word_dict(self, word_dict_fp):
+        self._word_dict = Preprocess.load_dict(word_dict_fp)
+
+    def save_words_df(self, words_df_fp):
+        Preprocess.save_dict(words_df_fp, self._words_df)
+
+    def load_words_df(self, words_df_fp):
+        self._words_df = Preprocess.load_dict(words_df_fp)
+
 
 def _test():
     file_path = '/Users/houjianpeng/tmp/txt'
-    # dids, docs = Preprocess.load(file_path)
-    # docs = Preprocess.word_seg_en(docs)
-    # docs = Preprocess.word_seg_cn(docs)
-    # docs = Preprocess.word_seg(docs, 'en')
-    # dids, docs = Preprocess.word_filter(docs, dids=dids)
-    # docs = Preprocess.word_stem(docs)
-    # docs, word_dict = Preprocess.word_index(docs)
-    # print(dids)
-    # print(docs)
-    # print(word_dict)
     preprocessor = Preprocess()
     dids, docs = preprocessor.run(file_path)
     print(dids)
     print(docs)
-    print(preprocessor._word_dict)
+    preprocessor.save_word_dict(file_path + '.word_dict')
+    preprocessor.save_words_df(file_path + '.words_df')
+    preprocessor.save_words_useless(file_path + '.words_useless')
+    preprocessor.load_words_useless(file_path + '.words_useless')
 
 
 if __name__ == '__main__':
