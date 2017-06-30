@@ -68,10 +68,21 @@ class DRMM_PairGenerator():
             #print 'Pair Instance Count:', len(pair_list)
             yield pair_list
         
+    def cal_hist(self, t1_rep, t2_rep):
+        mhist = np.zeros((self.data1_maxlen, self.hist_size), dtype=np.float32)
+        mm = t1_rep.dot(np.transpose(t2_rep))
+        for (i,j), v in np.ndenumerate(mm):
+            vid = int((v + 1.) / 2. * ( self.hist_size - 1.))
+            mhist[i][vid] += 1.
+        mhist += 1.
+        mhist = np.log10(mhist)
+        return mhist
+
+
     def get_batch_static(self):
         X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
         X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
-        X2 = np.zeros((self.batch_size*2, self.data1_maxlen, self.hist_size), dtype=np.int32)
+        X2 = np.zeros((self.batch_size*2, self.data1_maxlen, self.hist_size), dtype=np.float32)
         X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
         Y = np.zeros((self.batch_size*2,), dtype=np.int32)
 
@@ -83,10 +94,13 @@ class DRMM_PairGenerator():
             d1_len = min(self.data1_maxlen, len(self.data1[d1]))
             d2p_len = min(self.data2_maxlen, len(self.data2[d2p]))
             d2n_len = min(self.data2_maxlen, len(self.data2[d2n]))
+            d1_embed = self.embed[self.data1[d1]]
+            d2p_embed = self.embed[self.data2[d2p]]
+            d2n_embed = self.embed[self.data2[d2n]]
             X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
-            X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
             X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
-            X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
+            X2[i*2], X2_len[i*2]   = cal_hist(d1_embed, d2p_embed), d2p_len
+            X2[i*2+1], X2_len[i*2+1] = cal_hist(d1_embed, d2n_embed), d2n_len
             
         return X1, X1_len, X2, X2_len, Y    
 
@@ -96,7 +110,7 @@ class DRMM_PairGenerator():
             for _ in range(self.config['batch_per_iter']):
                 X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
                 X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
-                X2 = np.zeros((self.batch_size*2, self.data2_maxlen), dtype=np.int32)
+                X2 = np.zeros((self.batch_size*2, self.data1_maxlen, self.hist_size), dtype=np.float32)
                 X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
                 Y = np.zeros((self.batch_size*2,), dtype=np.int32)
 
@@ -108,10 +122,13 @@ class DRMM_PairGenerator():
                     d1_len = min(self.data1_maxlen, len(self.data1[d1]))
                     d2p_len = min(self.data2_maxlen, len(self.data2[d2p]))
                     d2n_len = min(self.data2_maxlen, len(self.data2[d2n]))
+                    d1_embed = self.embed[self.data1[d1]]
+                    d2p_embed = self.embed[self.data2[d2p]]
+                    d2n_embed = self.embed[self.data2[d2n]]
                     X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
-                    X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
                     X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
-                    X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
+                    X2[i*2], X2_len[i*2]   = cal_hist(d1_embed, d2p_embed), d2p_len
+                    X2[i*2+1], X2_len[i*2+1] = cal_hist(d1_embed, d2n_embed), d2n_len
                     
                 yield X1, X1_len, X2, X2_len, Y
 
@@ -129,3 +146,4 @@ class DRMM_PairGenerator():
     @property
     def num_pairs(self):
         return len(self.pair_list)
+
