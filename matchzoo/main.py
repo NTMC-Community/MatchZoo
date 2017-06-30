@@ -41,30 +41,32 @@ def train(config):
     share_input_conf = input_conf['share']
 
     # list all input tags and construct tags config
-    tag = input_conf.keys()
-    tag.remove('share')
     input_train_conf = OrderedDict()
     input_eval_conf = OrderedDict()
-    for t in tag:
-        if input_conf[t]['phase'] == 'TRAIN':
-            input_train_conf[t] = {}
-            input_train_conf[t].update(share_input_conf)
-            input_train_conf[t].update(input_conf[t])
-        elif input_conf[t]['phase'] == 'EVAL':
-            input_eval_conf[t] = {}
-            input_eval_conf[t].update(share_input_conf)
-            input_eval_conf[t].update(input_conf[t])
-    print '[Input] Process %d Input Tags. %s.' % (len(tag), tag)
+    for tag in input_conf.keys():
+        if 'phase' not in input_conf[tag]:
+            continue
+        if input_conf[tag]['phase'] == 'TRAIN':
+            input_train_conf[tag] = {}
+            input_train_conf[tag].update(share_input_conf)
+            input_train_conf[tag].update(input_conf[tag])
+        elif input_conf[tag]['phase'] == 'EVAL':
+            input_eval_conf[tag] = {}
+            input_eval_conf[tag].update(share_input_conf)
+            input_eval_conf[tag].update(input_conf[tag])
+    print '[Input] Process Input Tags. %s in TRAIN, %s in EVAL.' % (input_train_conf.keys(), input_eval_conf.keys())
 
     # collect dataset identification
     dataset = {}
-    for t in input_conf:
-        if 'text1_corpus' in input_conf[t]:
-            datapath = input_conf[t]['text1_corpus']
+    for tag in input_conf:
+        if tag != 'share' and input_conf[tag]['phase'] == 'PREDICT':
+            continue
+        if 'text1_corpus' in input_conf[tag]:
+            datapath = input_conf[tag]['text1_corpus']
             if datapath not in dataset:
                 dataset[datapath], _ = read_data(datapath)
-        if 'text2_corpus' in input_conf[t]:
-            datapath = input_conf[t]['text2_corpus']
+        if 'text2_corpus' in input_conf[tag]:
+            datapath = input_conf[tag]['text2_corpus']
             if datapath not in dataset:
                 dataset[datapath], _ = read_data(datapath)
     print '[Dataset] %s Dataset Load Done.' % len(dataset)
@@ -89,8 +91,6 @@ def train(config):
                                      config = conf )  
         eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
-
-
     for i_e in range(global_conf['num_epochs']):
         print '[Train] @ %s epoch.' % i_e
         for tag, genfun in train_genfun.items():
@@ -112,20 +112,13 @@ def train(config):
                 for k, v in curr_res.items():
                     res[k] += v
                 num_valid += 1
-            print 'epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
+            print '[Eval] epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
             sys.stdout.flush()
             eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
     model.save_weights(weights_file)
-    return
 
 def predict(config):
-    input_conf = config['inputs']
-    print input_conf
-    queries, _ = read_data(input_conf['text1_corpus'])
-    docs, _ = read_data(input_conf['text2_corpus'])
-    list_gen = ListGenerator(data1=queries, data2=docs, config=input_conf)
-
     global_conf = config["global"]
     weights_file = global_conf['weights_file']
 
@@ -137,29 +130,78 @@ def predict(config):
     for mobj in config['metrics']:
         metrics.append(mobj)
     res = dict([[k,0.] for k in metrics])
-    num_valid = 0
-    res_scores = {} 
-    for (x1, x1_len, x2, x2_len, y_true, id_pairs) in list_gen.get_batch:
-        y_pred = model.predict({'query': x1, 'doc': x2})
-        curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
-        for k,v in curr_res.items():
-            res[k] += v
-        y_pred = np.squeeze(y_pred)
-        for p, y in zip(id_pairs, y_pred):
-            if p[0] not in res_scores:
-                res_scores[p[0]] = {}
-            res_scores[p[0]][p[1]] = y
-        num_valid += 1
-    if config['outputs']['save_test_format'] == 'trec':
-        with open(config['outputs']['save_test_file'], 'w') as f:
-            for qid, dinfo in res_scores.items():
-                dinfo = sorted(dinfo.items(), key=lambda d:d[1], reverse=True)
-                for inum,(did, score) in enumerate(dinfo):
-                    print >> f, '%s\tQ0\t%s\t%d\t%f\t%s'%(qid, did, inum, score, config['net_name'])
-    print 'Predict results: ', '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
-    #print 'epoch: %d, batch : %d , map: %f, ndcg@3: %f, ndcg@5: %f ...'%(k, i, res[0], res[1], res[2])
-    sys.stdout.flush()
-    return
+
+    ######## Read input config ########
+
+    input_conf = config['inputs']
+    share_input_conf = input_conf['share']
+
+    # list all input tags and construct tags config
+    input_predict_conf = OrderedDict()
+    for tag in input_conf.keys():
+        if 'phase' not in input_conf[tag]:
+            continue
+        if input_conf[tag]['phase'] == 'PREDICT':
+            input_predict_conf[tag] = {}
+            input_predict_conf[tag].update(share_input_conf)
+            input_predict_conf[tag].update(input_conf[tag])
+    print '[Input] Process Input Tags. %s in PREDICT.' % (input_predict_conf.keys())
+
+    # collect dataset identification
+    dataset = {}
+    for tag in input_conf:
+        if tag == 'share' or input_conf[tag]['phase'] == 'PREDICT':
+            if 'text1_corpus' in input_conf[tag]:
+                datapath = input_conf[tag]['text1_corpus']
+                if datapath not in dataset:
+                    dataset[datapath], _ = read_data(datapath)
+            if 'text2_corpus' in input_conf[tag]:
+                datapath = input_conf[tag]['text2_corpus']
+                if datapath not in dataset:
+                    dataset[datapath], _ = read_data(datapath)
+    print '[Dataset] %s Dataset Load Done.' % len(dataset)
+
+    # initial data generator
+    predict_gen = OrderedDict()
+    predict_genfun = OrderedDict()
+
+    for tag, conf in input_predict_conf.items():
+        print conf
+        predict_gen[tag] = ListGenerator( data1 = dataset[conf['text1_corpus']],
+                                     data2 = dataset[conf['text2_corpus']],
+                                     config = conf )  
+        predict_genfun[tag] = predict_gen[tag].get_batch_generator()
+
+    ######## Read output config ########
+    output_conf = config['outputs']
+
+    for tag, genfun in predict_genfun.items():
+        print '[Predict] @ %s' % tag
+        num_valid = 0
+        res_scores = {} 
+        for input_data, y_true in genfun:
+            y_pred = model.predict(input_data)
+            curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
+            for k, v in curr_res.items():
+                res[k] += v
+
+            y_pred = np.squeeze(y_pred)
+            for p, y in zip(input_data['ID'], y_pred):
+                if p[0] not in res_scores:
+                    res_scores[p[0]] = {}
+                res_scores[p[0]][p[1]] = y
+
+            num_valid += 1
+
+        if tag in output_conf:
+            if output_conf[tag]['save_format'] == 'TREC':
+                with open(output_conf[tag]['save_path'], 'w') as f:
+                    for qid, dinfo in res_scores.items():
+                        dinfo = sorted(dinfo.items(), key=lambda d:d[1], reverse=True)
+                        for inum,(did, score) in enumerate(dinfo):
+                            print >> f, '%s\tQ0\t%s\t%d\t%f\t%s'%(qid, did, inum, score, config['net_name'])
+        print '[Predict] results: ', '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()])
+        sys.stdout.flush()
 
 def main(argv):
     parser = argparse.ArgumentParser()
