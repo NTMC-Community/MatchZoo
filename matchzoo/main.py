@@ -15,14 +15,9 @@ from inputs import *
 from metrics import *
 from losses import *
 
-def train(config):
-    # read basic config
+def load_model(config):
     global_conf = config["global"]
-    optimizer = global_conf['optimizer']
-    weights_file = global_conf['weights_file']
-    num_batch = global_conf['num_batch']
     model_type = global_conf['model_type']
-
     if model_type == 'JSON':
         model = Model.from_config(config['model'])
     elif model_type == 'PY':
@@ -44,6 +39,17 @@ def train(config):
             model = mo.build(model_config)
         else:
             exit(1)
+    return model
+
+
+def train(config):
+    # read basic config
+    global_conf = config["global"]
+    optimizer = global_conf['optimizer']
+    weights_file = global_conf['weights_file']
+    num_batch = global_conf['num_batch']
+
+    model = load_model(config)
 
     rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
 
@@ -132,7 +138,7 @@ def train(config):
                 for k, v in curr_res.items():
                     res[k] += v
                 num_valid += 1
-            print '[Eval] epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
+            print '[Eval] epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()])
             sys.stdout.flush()
             eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
@@ -142,10 +148,10 @@ def predict(config):
     global_conf = config["global"]
     weights_file = global_conf['weights_file']
 
-    model = Model.from_config(config['model'])
+    model = load_model(config)
     model.load_weights(weights_file)
-    rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
 
+    rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
     metrics = []
     for mobj in config['metrics']:
         metrics.append(mobj)
@@ -200,7 +206,7 @@ def predict(config):
         num_valid = 0
         res_scores = {} 
         for input_data, y_true in genfun:
-            y_pred = model.predict(input_data)
+            y_pred = model.predict(input_data, batch_size=len(y_true) )
             curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
             for k, v in curr_res.items():
                 res[k] += v
