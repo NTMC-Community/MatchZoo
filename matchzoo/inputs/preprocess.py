@@ -1,58 +1,204 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
 
-import os
+from __future__ import print_function
+from nltk.tokenize import word_tokenize
+import jieba
 import sys
+from nltk.stem import SnowballStemmer
 
 
 class Preprocess(object):
-    """Abstract preprocess class
-    # Properties
-        word_dict:
-        rword_dict:
-        word_stats:
-        text1:
-        text2:
-        relation:
-    # Methods
-        rare_word_remove(): remove rare words(e.g. high-frequency words and low-frequency words)
-        run(): 
-    """
-    def __init__(self, text1_file, text2_file):
-        self.word_dict = {}
-        self.word_stats = {}
-        self.text1 = {}
-        self.text2 = {}
-        return
-    
-    def run(self):
-        return 
 
-    def remap(self, text1_file):
-        return
+    _valid_lang = ['en', 'cn']
+    _stemmer = SnowballStemmer('english')
 
-    def rare_word_remove(self):
-        return
+    def __init__(self,
+                 lang='en',
+                 stop_words=list(),
+                 min_freq=1,
+                 max_freq=sys.maxint,
+                 min_len=0,
+                 max_len=sys.maxint,
+                 word_dict=None,
+                 words_useless=None):
+        assert lang.lower() in Preprocess._valid_lang, 'Wrong language type: %s' % lang
+        self._lang = lang
+        self._stop_words = stop_words
+        self._min_freq = min_freq
+        self._max_freq = max_freq
+        self._min_len = min_len
+        self._max_len = max_len
+        self._word_dict = word_dict
+        self._words_useless = words_useless
+        self._words_df = dict()
 
-    def frequency_word_remove(self):
-        return
+    def run(self, file_path):
+        dids, docs = Preprocess.load(file_path)
+        docs = Preprocess.word_seg(docs, self._lang)
+        dids, docs = Preprocess.doc_filter(dids, docs, self._min_len, self._max_len)
+        docs = Preprocess.word_stem(docs)
+        docs, self._words_useless, self._words_df = Preprocess.word_filter(docs,
+                                                                           words_useless=self._words_useless,
+                                                                           stop_words=self._stop_words,
+                                                                           min_freq=self._min_freq,
+                                                                           max_freq=self._max_freq)
+        docs, self._word_dict = Preprocess.word_index(docs, word_dict=self._word_dict)
+        return dids, docs
 
-    def stop_word_remove(self, stopword=[]):
-        return 
+    @staticmethod
+    def parse(line):
+        subs = line.split(' ', 1)
+        if 1 == len(subs):
+            return subs[0], ''
+        else:
+            return subs[0], subs[1]
 
-    def stem(self):
-        return
+    @staticmethod
+    def load(file_path):
+        dids = list()
+        docs = list()
+        f = open(file_path, 'r')
+        for line in f:
+            line = line.strip()
+            if '' != line:
+                did, doc = Preprocess.parse(line)
+                dids.append(did)
+                docs.append(doc)
+        return dids, docs
 
-    @worddict.setter
-    def worddict(self, worddict):
-        self.word_dict = worddict
+    @staticmethod
+    def word_seg_en(docs):
+        docs = [word_tokenize(sent) for sent in docs]
+        return docs
 
-    def save_worddict(self, file_path):
-        return
+    @staticmethod
+    def word_seg_cn(docs):
+        docs = [list(jieba.cut(sent)) for sent in docs]
+        return docs
 
-    def save_text1(self, file_path):
-        return
+    @staticmethod
+    def word_seg(docs, lang):
+        assert lang.lower() in Preprocess._valid_lang, 'Wrong language type: %s' % lang
+        docs = getattr(Preprocess, '%s_%s' % (sys._getframe().f_code.co_name, lang))(docs)
+        return docs
 
-    def save_text2(self, file_path):
-        return
+    @staticmethod
+    def cal_doc_freq(docs):
+        wdf = dict()
+        for ws in docs:
+            ws = set(ws)
+            for w in ws:
+                wdf[w] = wdf.get(w, 0) + 1
+        return wdf
+
+    @staticmethod
+    def word_filter(docs,
+                    words_useless=None,
+                    stop_words=list(),
+                    min_freq=1,
+                    max_freq=sys.maxint):
+        if words_useless is None:
+            words_useless = set()
+            # filter with stop_words
+            words_useless.update(stop_words)
+            # filter with min_freq and max_freq
+            wdf = Preprocess.cal_doc_freq(docs)
+            for w in wdf:
+                if min_freq > wdf[w] or max_freq < wdf[w]:
+                    words_useless.add(w)
+        # filter with useless words
+        docs = [[w for w in ws if w not in words_useless] for ws in docs]
+        return docs, words_useless, wdf
+
+    @staticmethod
+    def doc_filter(dids, docs, min_len=1, max_len=sys.maxint):
+        new_docs = list()
+        new_dids = list()
+        for i in range(len(docs)):
+            if min_len <= len(docs[i]) <= max_len:
+                new_docs.append(docs[i])
+                new_dids.append(dids[i])
+        return new_dids, new_docs
+
+    @staticmethod
+    def word_stem(docs):
+        docs = [[Preprocess._stemmer.stem(w) for w in ws] for ws in docs]
+        return docs
+
+    @staticmethod
+    def build_word_dict(docs):
+        word_dict = dict()
+        for ws in docs:
+            for w in ws:
+                word_dict.setdefault(w, len(word_dict))
+        return word_dict
+
+    @staticmethod
+    def word_index(docs, word_dict=None):
+        if word_dict is None:
+            word_dict = Preprocess.build_word_dict(docs)
+        docs = [[word_dict[w] for w in ws if w in word_dict] for ws in docs]
+        return docs, word_dict
+
+    @staticmethod
+    def save_lines(file_path, lines):
+        f = open(file_path, 'w')
+        for line in lines:
+            f.write(line + "\n")
+        f.close()
+
+    @staticmethod
+    def load_lines(file_path):
+        f = open(file_path, 'r')
+        lines = f.readlines()
+        f.close()
+        return lines
+
+    @staticmethod
+    def save_dict(file_path, dic):
+        lines = ['%s %s' % (k, v) for k, v in dic.iteritems()]
+        Preprocess.save_lines(file_path, lines)
+
+    @staticmethod
+    def load_dict(file_path):
+        lines = Preprocess.load_lines(file_path)
+        dic = dict()
+        for line in lines:
+            k, v = line.split()
+            dic[k] = v
+        return dic
+
+    def save_words_useless(self, words_useless_fp):
+        Preprocess.save_lines(words_useless_fp, self._words_useless)
+
+    def load_words_useless(self, words_useless_fp):
+        self._words_useless = set(Preprocess.load_lines(words_useless_fp))
+
+    def save_word_dict(self, word_dict_fp):
+        Preprocess.save_dict(word_dict_fp, self._word_dict)
+
+    def load_word_dict(self, word_dict_fp):
+        self._word_dict = Preprocess.load_dict(word_dict_fp)
+
+    def save_words_df(self, words_df_fp):
+        Preprocess.save_dict(words_df_fp, self._words_df)
+
+    def load_words_df(self, words_df_fp):
+        self._words_df = Preprocess.load_dict(words_df_fp)
+
+
+def _test():
+    file_path = '/Users/houjianpeng/tmp/txt'
+    preprocessor = Preprocess()
+    dids, docs = preprocessor.run(file_path)
+    print(dids)
+    print(docs)
+    preprocessor.save_word_dict(file_path + '.word_dict')
+    preprocessor.save_words_df(file_path + '.words_df')
+    preprocessor.save_words_useless(file_path + '.words_useless')
+    preprocessor.load_words_useless(file_path + '.words_useless')
+
+
+if __name__ == '__main__':
+    _test()

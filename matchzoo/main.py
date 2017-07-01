@@ -15,6 +15,33 @@ from inputs import *
 from metrics import *
 from losses import *
 
+def load_model(config):
+    global_conf = config["global"]
+    model_type = global_conf['model_type']
+    if model_type == 'JSON':
+        model = Model.from_config(config['model'])
+    elif model_type == 'PY':
+        model_config = config['model']
+        model_config.update(config['inputs']['share'])
+
+        # spacial config for embedding
+        if 'embed_path' in model_config:
+            embed_dict = read_embedding(filename=model_config['embed_path'])
+            _PAD_ = model_config['fill_word']
+            embed_dict[_PAD_] = np.zeros((model_config['embed_size'], ), dtype=np.float32)
+            model_config['embed'] = np.float32(np.random.uniform(-0.02, 0.02, [model_config['vocab_size'], model_config['embed_size']]))
+            model_config['embed'] = convert_embed_2_numpy(embed_dict, embed = model_config['embed'])
+
+        sys.path.insert(0, model_config['model_path'])
+        from importlib import import_module
+        mo = import_module(model_config['model_py'])
+        if mo.check(model_config):
+            model = mo.build(model_config)
+        else:
+            exit(1)
+    return model
+
+
 def train(config):
     # read basic config
     global_conf = config["global"]
@@ -22,7 +49,8 @@ def train(config):
     weights_file = global_conf['weights_file']
     num_batch = global_conf['num_batch']
 
-    model = Model.from_config(config['model'])
+    model = load_model(config)
+
     rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
 
     loss = []
@@ -105,12 +133,12 @@ def train(config):
             print '[Eval] @ %s' % tag
             num_valid = 0
             for input_data, y_true in genfun:
-                y_pred = model.predict(input_data)
+                y_pred = model.predict(input_data, batch_size=len(y_true))
                 curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
                 for k, v in curr_res.items():
                     res[k] += v
                 num_valid += 1
-            print '[Eval] epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()]), ' ...'
+            print '[Eval] epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()])
             sys.stdout.flush()
             eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
@@ -120,10 +148,10 @@ def predict(config):
     global_conf = config["global"]
     weights_file = global_conf['weights_file']
 
-    model = Model.from_config(config['model'])
+    model = load_model(config)
     model.load_weights(weights_file)
-    rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
 
+    rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
     metrics = []
     for mobj in config['metrics']:
         metrics.append(mobj)
@@ -178,7 +206,7 @@ def predict(config):
         num_valid = 0
         res_scores = {} 
         for input_data, y_true in genfun:
-            y_pred = model.predict(input_data)
+            y_pred = model.predict(input_data, batch_size=len(y_true) )
             curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
             for k, v in curr_res.items():
                 res[k] += v
