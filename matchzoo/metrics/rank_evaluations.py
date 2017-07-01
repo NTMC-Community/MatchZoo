@@ -70,25 +70,26 @@ class rank_eval():
         c = sorted(c, key=lambda x:x[1], reverse=True)
         ipos = 0
         s = 0.
-        precision = [0. for i in range(k)]
         precision = np.zeros([k], dtype=np.float32) #[0. for i in range(k)]
         for i, (g,p) in enumerate(c):
             if g > self.rel_threshold:
                 precision[i:] += 1
+            if i >= k:
+                break
         precision = [v / (idx + 1) for idx, v in enumerate(precision)]
         return precision
 
-def eval_map(y_true, y_pred, rel_thre=0):
+def eval_map(y_true, y_pred, rel_threshold=0):
     s = 0.
     y_true = np.squeeze(y_true)
     y_pred = np.squeeze(y_pred)
-    c = zip(y_pred, y_true)
+    c = zip(y_true, y_pred)
     random.shuffle(c)
-    c = sorted(c, key=lambda x:x[0], reverse=True)
+    c = sorted(c, key=lambda x:x[1], reverse=True)
     ipos = 0
-    for j, (p,g) in enumerate(c):
-        if g > rel_thre:
-            ipos += 1
+    for j, (g, p) in enumerate(c):
+        if g > rel_threshold:
+            ipos += 1.
             s += ipos / ( j + 1.)
     if ipos == 0:
         s = 0.
@@ -96,13 +97,51 @@ def eval_map(y_true, y_pred, rel_thre=0):
         s /= ipos
     return s
 
-def eval_ndcg(y_true, y_pred, k = 10):
+def eval_ndcg(y_true, y_pred, k = 10, rel_threshold=0.):
+    if k <= 0:
+        return 0.
     s = 0.
-    return s
+    y_true = np.squeeze(y_true)
+    y_pred = np.squeeze(y_pred)
+    c = zip(y_true, y_pred)
+    random.shuffle(c)
+    c_g = sorted(c, key=lambda x:x[0], reverse=True)
+    c_p = sorted(c, key=lambda x:x[1], reverse=True)
+    idcg = 0.
+    ndcg = 0.
+    for i, (g,p) in enumerate(c_g):
+        if i >= k:
+            break
+        if g > rel_threshold:
+            idcg += (math.pow(2., g) - 1.) / math.log(2. + i)
+    for i, (g,p) in enumerate(c_p):
+        if i >= k:
+            break
+        if g > rel_threshold:
+            ndcg += (math.pow(2., g) - 1.) / math.log(2. + i)
+    if idcg == 0.:
+        return 0.
+    else:
+        return ndcg / idcg
 
-def eval_precision(y_true, y_pred, k = 10):
+def eval_precision(y_true, y_pred, k = 10, rel_threshold=0.):
+    if k <= 0:
+        return 0.
     s = 0.
-    return s
+    y_true = np.squeeze(y_true)
+    y_pred = np.squeeze(y_pred)
+    c = zip(y_true, y_pred)
+    random.shuffle(c)
+    c = sorted(c, key=lambda x:x[1], reverse=True)
+    ipos = 0
+    precision = 0.
+    for i, (g,p) in enumerate(c):
+        if i >= k:
+            break
+        if g > rel_threshold:
+            precision += 1
+    precision /=  k
+    return precision
 
 def eval_mrr(y_true, y_pred, k = 10):
     s = 0.
