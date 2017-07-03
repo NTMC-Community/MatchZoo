@@ -11,6 +11,7 @@ import keras.backend as K
 from keras.models import Sequential, Model
 
 from utils import *
+import inputs
 from inputs import *
 from metrics import *
 from losses import *
@@ -95,14 +96,18 @@ def train(config):
 
     for tag, conf in input_train_conf.items():
         print conf
-        train_gen[tag] = DRMM_PairGenerator( data1 = dataset[conf['text1_corpus']],
+        generator = inputs.get(conf['input_type'])
+        #train_gen[tag] = DRMM_PairGenerator( data1 = dataset[conf['text1_corpus']],
+        train_gen[tag] = generator( data1 = dataset[conf['text1_corpus']],
                                       data2 = dataset[conf['text2_corpus']],
                                       config = conf )
         train_genfun[tag] = train_gen[tag].get_batch_generator()
 
     for tag, conf in input_eval_conf.items():
         print conf
-        eval_gen[tag] = DRMM_ListGenerator( data1 = dataset[conf['text1_corpus']],
+        generator = inputs.get(conf['input_type'])
+        #eval_gen[tag] = DRMM_ListGenerator( data1 = dataset[conf['text1_corpus']],
+        eval_gen[tag] = generator( data1 = dataset[conf['text1_corpus']],
                                      data2 = dataset[conf['text2_corpus']],
                                      config = conf )  
         eval_genfun[tag] = eval_gen[tag].get_batch_generator()
@@ -154,6 +159,14 @@ def predict(config):
     input_conf = config['inputs']
     share_input_conf = input_conf['share']
 
+    if 'embed_path' in share_input_conf:
+        embed_dict = read_embedding(filename=share_input_conf['embed_path'])
+        _PAD_ = share_input_conf['fill_word']
+        embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
+        config['inputs']['share']['embed'] = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
+        config['inputs']['share']['embed'] = convert_embed_2_numpy(embed_dict, embed = model_config['embed'])
+        print '[Embedding] Embedding Load Done.'
+
     # list all input tags and construct tags config
     input_predict_conf = OrderedDict()
     for tag in input_conf.keys():
@@ -179,21 +192,14 @@ def predict(config):
                     dataset[datapath], _ = read_data(datapath)
     print '[Dataset] %s Dataset Load Done.' % len(dataset)
 
-    if 'embed_path' in share_input_conf:
-        embed_dict = read_embedding(filename=share_input_conf['embed_path'])
-        _PAD_ = share_input_conf['fill_word']
-        embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
-        config['inputs']['share']['embed'] = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
-        config['inputs']['share']['embed'] = convert_embed_2_numpy(embed_dict, embed = model_config['embed'])
-        print '[Embedding] Embedding Load Done.'
-
     # initial data generator
     predict_gen = OrderedDict()
     predict_genfun = OrderedDict()
 
     for tag, conf in input_predict_conf.items():
         print conf
-        predict_gen[tag] = ListGenerator( data1 = dataset[conf['text1_corpus']],
+        generator = inputs.get(conf['input_type'])
+        predict_gen[tag] = generator( data1 = dataset[conf['text1_corpus']],
                                      data2 = dataset[conf['text2_corpus']],
                                      config = conf )  
         predict_genfun[tag] = predict_gen[tag].get_batch_generator()

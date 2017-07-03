@@ -2,6 +2,7 @@
 
 import sys
 import random
+import six
 import numpy as np
 from utils.rank_io import *
 from layers import DynamicMaxPooling

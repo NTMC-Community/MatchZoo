@@ -2,6 +2,7 @@
 
 import os
 import sys
+import six
 import random
 import numpy as np
 #sys.path.append('../utils/')
