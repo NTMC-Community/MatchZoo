@@ -24,14 +24,6 @@ def load_model(config):
         model_config = config['model']
         model_config.update(config['inputs']['share'])
 
-        # spacial config for embedding
-        if 'embed_path' in model_config:
-            embed_dict = read_embedding(filename=model_config['embed_path'])
-            _PAD_ = model_config['fill_word']
-            embed_dict[_PAD_] = np.zeros((model_config['embed_size'], ), dtype=np.float32)
-            model_config['embed'] = np.float32(np.random.uniform(-0.02, 0.02, [model_config['vocab_size'], model_config['embed_size']]))
-            model_config['embed'] = convert_embed_2_numpy(embed_dict, embed = model_config['embed'])
-
         sys.path.insert(0, model_config['model_path'])
         from importlib import import_module
         mo = import_module(model_config['model_py'])
@@ -49,22 +41,20 @@ def train(config):
     weights_file = global_conf['weights_file']
     num_batch = global_conf['num_batch']
 
-    model = load_model(config)
-
-    rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
-
-    loss = []
-    for lobj in config['losses']:
-      loss.append(rank_losses.get(lobj))
-    metrics = []
-    for mobj in config['metrics']:
-        metrics.append(mobj)
-    model.compile(optimizer=optimizer, loss=loss)
-    print '[Model] Model Compile Done.'
-
     # read input config
     input_conf = config['inputs']
     share_input_conf = input_conf['share']
+
+
+    # collect embedding 
+    if 'embed_path' in share_input_conf:
+        embed_dict = read_embedding(filename=share_input_conf['embed_path'])
+        _PAD_ = share_input_conf['fill_word']
+        embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
+        embed = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
+        embed = convert_embed_2_numpy(embed_dict, embed = embed)
+        share_input_conf['embed'] = convert_embed_2_numpy(embed_dict, embed = embed)
+        print '[Embedding] Embedding Load Done.'
 
     # list all input tags and construct tags config
     input_train_conf = OrderedDict()
@@ -105,17 +95,31 @@ def train(config):
 
     for tag, conf in input_train_conf.items():
         print conf
-        train_gen[tag] = PairGenerator( data1 = dataset[conf['text1_corpus']],
+        train_gen[tag] = DRMM_PairGenerator( data1 = dataset[conf['text1_corpus']],
                                       data2 = dataset[conf['text2_corpus']],
                                       config = conf )
         train_genfun[tag] = train_gen[tag].get_batch_generator()
 
     for tag, conf in input_eval_conf.items():
         print conf
-        eval_gen[tag] = ListGenerator( data1 = dataset[conf['text1_corpus']],
+        eval_gen[tag] = DRMM_ListGenerator( data1 = dataset[conf['text1_corpus']],
                                      data2 = dataset[conf['text2_corpus']],
                                      config = conf )  
         eval_genfun[tag] = eval_gen[tag].get_batch_generator()
+
+    ######### Load Model #########
+    model = load_model(config)
+
+    rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
+
+    loss = []
+    for lobj in config['losses']:
+      loss.append(rank_losses.get(lobj))
+    metrics = []
+    for mobj in config['metrics']:
+        metrics.append(mobj)
+    model.compile(optimizer=optimizer, loss=loss)
+    print '[Model] Model Compile Done.'
 
     for i_e in range(global_conf['num_epochs']):
         print '[Train] @ %s epoch.' % i_e
@@ -145,18 +149,6 @@ def train(config):
     model.save_weights(weights_file)
 
 def predict(config):
-    global_conf = config["global"]
-    weights_file = global_conf['weights_file']
-
-    model = load_model(config)
-    model.load_weights(weights_file)
-
-    rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
-    metrics = []
-    for mobj in config['metrics']:
-        metrics.append(mobj)
-    res = dict([[k,0.] for k in metrics])
-
     ######## Read input config ########
 
     input_conf = config['inputs']
@@ -187,6 +179,14 @@ def predict(config):
                     dataset[datapath], _ = read_data(datapath)
     print '[Dataset] %s Dataset Load Done.' % len(dataset)
 
+    if 'embed_path' in share_input_conf:
+        embed_dict = read_embedding(filename=share_input_conf['embed_path'])
+        _PAD_ = share_input_conf['fill_word']
+        embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
+        config['inputs']['share']['embed'] = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
+        config['inputs']['share']['embed'] = convert_embed_2_numpy(embed_dict, embed = model_config['embed'])
+        print '[Embedding] Embedding Load Done.'
+
     # initial data generator
     predict_gen = OrderedDict()
     predict_genfun = OrderedDict()
@@ -200,6 +200,19 @@ def predict(config):
 
     ######## Read output config ########
     output_conf = config['outputs']
+
+    ######## Load Model ########
+    global_conf = config["global"]
+    weights_file = global_conf['weights_file']
+
+    model = load_model(config)
+    model.load_weights(weights_file)
+
+    rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
+    metrics = []
+    for mobj in config['metrics']:
+        metrics.append(mobj)
+    res = dict([[k,0.] for k in metrics])
 
     for tag, genfun in predict_genfun.items():
         print '[Predict] @ %s' % tag
