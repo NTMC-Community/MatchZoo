@@ -9,14 +9,15 @@ sys.path.append('../matchzoo/utils/')
 sys.path.append('../matchzoo/models/')
 sys.path.append('../matchzoo/inputs/')
 
-from drmm_data_generator import *
+import pair_generator
+import list_generator
 from rank_io import *
 
 
 if __name__=='__main__':
-    embed_file = '/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/embed_wiki-pdc_d50_norm'
-    query_file = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/qid_query.txt"
-    doc_file = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/docid_doc.txt"
+    embed_file = '../data/mq2007/embed_wiki-pdc_d50_norm'
+    query_file = "../data/mq2007/qid_query.txt"
+    doc_file = "../data/mq2007/docid_doc.txt"
 
     config = {}
     config['vocab_size'] = 193367 + 1
@@ -28,10 +29,11 @@ if __name__=='__main__':
     config['query_per_iter'] = True
     config['text2_maxlen'] = 50
     config['fill_word'] = 193367
-    config['relation_train'] = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/relation.train.fold1.txt"
-    config['relation_test'] = "/data/textnet/data/LetorMQ2007/textnet-letor-mq2007-r5w/relation.test.fold1.txt"
+    config['relation_train'] = "../data/mq2007/relation.train.fold1.txt"
+    config['relation_test'] = "../data/mq2007/relation.test.fold1.txt"
     embed = read_embedding(embed_file)
     embed = convert_embed_2_numpy(embed, config['vocab_size'])
+    config['embed'] = embed
 
     word_dict = {}
     print query_file
@@ -40,7 +42,7 @@ if __name__=='__main__':
     docs, _ =  read_data(doc_file)
     print 'Total docs : %d ...'%(len(docs))
 
-    pair_gen = DRMM_PairGenerator( embed = embed, data1=queries, data2=docs, config=config)
+    pair_gen = DRMM_PairGenerator( data1=queries, data2=docs, config=config)
     train_genfun = pair_gen.get_batch_generator()
     inum = 0
     for dinputs, y in train_genfun:

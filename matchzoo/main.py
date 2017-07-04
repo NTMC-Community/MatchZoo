@@ -96,7 +96,7 @@ def train(config):
 
     for tag, conf in input_train_conf.items():
         print conf
-        generator = inputs.get(conf['input_type'])
+        generator = pair_generator.get(conf['input_type'])
         #train_gen[tag] = DRMM_PairGenerator( data1 = dataset[conf['text1_corpus']],
         train_gen[tag] = generator( data1 = dataset[conf['text1_corpus']],
                                       data2 = dataset[conf['text2_corpus']],
@@ -105,7 +105,7 @@ def train(config):
 
     for tag, conf in input_eval_conf.items():
         print conf
-        generator = inputs.get(conf['input_type'])
+        generator = list_generator.get(conf['input_type'])
         #eval_gen[tag] = DRMM_ListGenerator( data1 = dataset[conf['text1_corpus']],
         eval_gen[tag] = generator( data1 = dataset[conf['text1_corpus']],
                                      data2 = dataset[conf['text2_corpus']],
@@ -198,7 +198,7 @@ def predict(config):
 
     for tag, conf in input_predict_conf.items():
         print conf
-        generator = inputs.get(conf['input_type'])
+        generator = list_generator.get(conf['input_type'])
         predict_gen[tag] = generator( data1 = dataset[conf['text1_corpus']],
                                      data2 = dataset[conf['text2_corpus']],
                                      config = conf )  
