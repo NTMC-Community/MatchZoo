@@ -4,7 +4,7 @@ MatchingZoom is a toolkit for text matching. It was developed with a focus on fa
 ## Overview
 The architecture of the MatchZoo toolit is depicited in Figure 
 <div align='center'>
-<img src="./sample_data/matchzoo.png" width = "400" height = "200" alt="图片名称" align=center />
+<img src="./data/matchzoo.png" width = "400" height = "200" alt="图片名称" align=center />
 </div>
 There are three major modules in the toolkit, namely data preparation, model construction, training and evaluation, respectively. These three modules are actually organized as a pipeline of data flow.
 
