@@ -12,10 +12,14 @@ from DynamicMaxPooling import *
 
 def check(config):
 
+    def set_default(config, k, v):
+        if k not in config:
+            config[k] = v
+
     def default_config(config):
-        config['kernel_count'] = 32
-        config['kernel_size'] = [3, 3]
-        config['dpool_size'] = [3, 10]
+        set_default(config, 'kernel_count', 32)
+        set_default(config, 'kernel_size', [3, 3])
+        set_default(config, 'dpool_size', [3, 10])
         return config
 
     config = default_config(config)
