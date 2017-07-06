@@ -52,8 +52,7 @@ def train(config):
         embed_dict = read_embedding(filename=share_input_conf['embed_path'])
         _PAD_ = share_input_conf['fill_word']
         embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
-        embed = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
-        embed = convert_embed_2_numpy(embed_dict, embed = embed)
+        embed = np.float32(np.random.uniform(-0.2, 0.2, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
         share_input_conf['embed'] = convert_embed_2_numpy(embed_dict, embed = embed)
         print '[Embedding] Embedding Load Done.'
 
@@ -136,10 +135,10 @@ def train(config):
                     epochs = 1,
                     verbose = 1
                 ) #callbacks=[eval_map])
-        res = dict([[k,0.] for k in metrics])
         
         for tag, genfun in eval_genfun.items():
             print '[Eval] @ %s' % tag
+            res = dict([[k,0.] for k in metrics])
             num_valid = 0
             for input_data, y_true in genfun:
                 y_pred = model.predict(input_data, batch_size=len(y_true))
@@ -159,12 +158,14 @@ def predict(config):
     input_conf = config['inputs']
     share_input_conf = input_conf['share']
 
+    # collect embedding 
     if 'embed_path' in share_input_conf:
         embed_dict = read_embedding(filename=share_input_conf['embed_path'])
         _PAD_ = share_input_conf['fill_word']
         embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
-        config['inputs']['share']['embed'] = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
-        config['inputs']['share']['embed'] = convert_embed_2_numpy(embed_dict, embed = model_config['embed'])
+        embed = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
+        embed = convert_embed_2_numpy(embed_dict, embed = embed)
+        share_input_conf['embed'] = convert_embed_2_numpy(embed_dict, embed = embed)
         print '[Embedding] Embedding Load Done.'
 
     # list all input tags and construct tags config
@@ -231,10 +232,10 @@ def predict(config):
                 res[k] += v
 
             y_pred = np.squeeze(y_pred)
-            for p, y in zip(input_data['ID'], y_pred):
+            for p, y, t in zip(input_data['ID'], y_pred, y_true):
                 if p[0] not in res_scores:
                     res_scores[p[0]] = {}
-                res_scores[p[0]][p[1]] = y
+                res_scores[p[0]][p[1]] = (y, t)
 
             num_valid += 1
 
@@ -242,9 +243,16 @@ def predict(config):
             if output_conf[tag]['save_format'] == 'TREC':
                 with open(output_conf[tag]['save_path'], 'w') as f:
                     for qid, dinfo in res_scores.items():
-                        dinfo = sorted(dinfo.items(), key=lambda d:d[1], reverse=True)
-                        for inum,(did, score) in enumerate(dinfo):
+                        dinfo = sorted(dinfo.items(), key=lambda d:d[1][0], reverse=True)
+                        for inum,(did, (score, gt)) in enumerate(dinfo):
                             print >> f, '%s\tQ0\t%s\t%d\t%f\t%s'%(qid, did, inum, score, config['net_name'])
+            elif output_conf[tag]['save_format'] == 'TEXTNET':
+                with open(output_conf[tag]['save_path'], 'w') as f:
+                    for qid, dinfo in res_scores.items():
+                        dinfo = sorted(dinfo.items(), key=lambda d:d[1][0], reverse=True)
+                        for inum,(did, (score, gt)) in enumerate(dinfo):
+                            print >> f, '%s %s %s %s'%(gt, qid, did, score)
+
         print '[Predict] results: ', '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()])
         sys.stdout.flush()
 
