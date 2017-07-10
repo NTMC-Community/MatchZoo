@@ -11,7 +11,7 @@ import keras.backend as K
 from keras.models import Sequential, Model
 
 from utils import *
-import inputs
+#import inputs
 from inputs import *
 from metrics import *
 from losses import *
@@ -20,19 +20,15 @@ def load_model(config):
     global_conf = config["global"]
     model_type = global_conf['model_type']
     if model_type == 'JSON':
-        model = Model.from_config(config['model'])
+        mo = Model.from_config(config['model'])
     elif model_type == 'PY':
         model_config = config['model']
         model_config.update(config['inputs']['share'])
-
         sys.path.insert(0, model_config['model_path'])
-        from importlib import import_module
-        mo = import_module(model_config['model_py'])
-        if mo.check(model_config):
-            model = mo.build(model_config)
-        else:
-            exit(1)
-    return model
+
+        model = import_object(model_config['model_py'], model_config)
+        mo = model.build()
+    return mo
 
 
 def train(config):

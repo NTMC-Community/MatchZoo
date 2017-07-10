@@ -5,53 +5,54 @@ from keras.models import Sequential, Model
 from keras.layers import *
 from keras.layers import Reshape, Embedding,Merge, Dot
 from keras.optimizers import Adam
+from model import BasicModel
 
 import sys
 sys.path.append('../matchzoo/layers/')
 from DynamicMaxPooling import *
 
-def check(config):
 
-    def set_default(config, k, v):
-        if k not in config:
-            config[k] = v
-
-    def default_config(config):
-        set_default(config, 'kernel_count', 32)
-        set_default(config, 'kernel_size', [3, 3])
-        set_default(config, 'dpool_size', [3, 10])
-        return config
-
-    config = default_config(config)
-    check_list = [ 'text1_maxlen', 'text2_maxlen', 
+class MatchPyramid(BasicModel):
+    def __init__(self, config):
+        super(MatchPyramid, self).__init__(config)
+        self.__name = 'MatchPyramid'
+        self.check_list = [ 'text1_maxlen', 'text2_maxlen', 
                    'embed', 'embed_size', 'vocab_size',
                    'kernel_size', 'kernel_count',
                    'dpool_size']
-    for e in check_list:
-        if e not in config:
-            print '[Model] Error %s not in config' % e
-            return False
-    return True
+        self.setup(config)
+        if not self.check():
+            raise TypeError('[MatchPyramid] parameter check wrong')
+        print '[MatchPyramid] init done'
+        
+    def setup(self, config):
+        if not isinstance(config, dict):
+            raise TypeError('parameter config should be dict:', config)
+            
+        self.set_default('kernel_count', 32)
+        self.set_default('kernel_size', [3, 3])
+        self.set_default('dpool_size', [3, 10])
+        self.config.update(config)
 
-def build(config):
-    query = Input(name='query', shape=(config['text1_maxlen'],))
-    doc = Input(name='doc', shape=(config['text2_maxlen'],))
-    dpool_index = Input(name='dpool_index', shape=[config['text1_maxlen'], config['text2_maxlen'], 3], dtype='int32')
+    def build(self):
+        query = Input(name='query', shape=(self.config['text1_maxlen'],))
+        doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
+        dpool_index = Input(name='dpool_index', shape=[self.config['text1_maxlen'], self.config['text2_maxlen'], 3], dtype='int32')
 
-    embedding = Embedding(config['vocab_size'], config['embed_size'], weights=[config['embed']], trainable = False)
-    q_embed = embedding(query)
-    d_embed = embedding(doc)
+        embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = False)
+        q_embed = embedding(query)
+        d_embed = embedding(doc)
 
-    cross = Dot(axes=[2, 2])([q_embed, d_embed])
-    cross_reshape = Reshape((config['text1_maxlen'], config['text2_maxlen'], 1))(cross)
+        cross = Dot(axes=[2, 2])([q_embed, d_embed])
+        cross_reshape = Reshape((self.config['text1_maxlen'], self.config['text2_maxlen'], 1))(cross)
 
-    conv2d = Conv2D(config['kernel_count'], config['kernel_size'], padding='same', activation='relu')
-    dpool = DynamicMaxPooling(config['dpool_size'][0], config['dpool_size'][1])
+        conv2d = Conv2D(self.config['kernel_count'], self.config['kernel_size'], padding='same', activation='relu')
+        dpool = DynamicMaxPooling(self.config['dpool_size'][0], self.config['dpool_size'][1])
 
-    conv1 = conv2d(cross_reshape)
-    pool1 = dpool([conv1, dpool_index])
-    pool1_flat = Flatten()(pool1)
-    out_ = Dense(1)(pool1_flat)
+        conv1 = conv2d(cross_reshape)
+        pool1 = dpool([conv1, dpool_index])
+        pool1_flat = Flatten()(pool1)
+        out_ = Dense(1)(pool1_flat)
 
-    model = Model(inputs=[query, doc, dpool_index], outputs=out_)
-    return model
+        model = Model(inputs=[query, doc, dpool_index], outputs=out_)
+        return model
