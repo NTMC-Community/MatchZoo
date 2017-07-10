@@ -8,18 +8,13 @@ from utils.rank_io import *
 from layers import DynamicMaxPooling
 from keras.utils.generic_utils import deserialize_keras_object
 
-class ListGenerator(object):
-    def __init__(self, data1=None, data2=None, config={}):
+class ListBasicGenerator(object):
+    def __init__(self, config={}):
         self.config = config
         if 'relation_test' in config:
             rel = read_relation(filename=config['relation_test'])
             self.list_list = self.make_list(rel)
             self.num_list = len(self.list_list)
-        self.data1 = data1
-        self.data2 = data2
-        self.data1_maxlen = config['text1_maxlen']
-        self.data2_maxlen = config['text2_maxlen']
-        self.fill_word = config['fill_word']
         self.point = 0
 
     def make_list(self, rel):
@@ -32,6 +27,26 @@ class ListGenerator(object):
             list_list[d1] = sorted(list_list[d1], reverse = True)
         print 'List Instance Count:', len(list_list)
         return list_list.items()
+
+    def get_batch(self):
+        pass
+
+    def get_batch_generator(self):
+        pass
+
+    def reset(self):
+        self.point = 0
+
+    def get_all_data(self):
+        pass
+class ListGenerator(ListBasicGenerator):
+    def __init__(self, config={}):
+        super(ListGenerator, self).__init__(config=config)
+        self.data1 = config['data1']
+        self.data2 = config['data2']
+        self.data1_maxlen = config['text1_maxlen']
+        self.data2_maxlen = config['text2_maxlen']
+        self.fill_word = config['fill_word']
 
     def get_batch(self):
         for point in range(self.num_list):
@@ -60,9 +75,6 @@ class ListGenerator(object):
             else:
                 yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'ID': ID_pairs}, Y)
 
-    def reset(self):
-        self.point = 0
-
     def get_all_data(self):
         x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls = [], [], [], [], []
         while self.point < self.num_list:
@@ -88,11 +100,16 @@ class ListGenerator(object):
             y_ls.append(Y)
         return x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls
 
-class DRMM_ListGenerator(ListGenerator):
-    def __init__(self, data1=None, data2=None, config={}):
+class DRMM_ListGenerator(ListBasicGenerator):
+    def __init__(self, config={}):
+        super(DRMM_ListGenerator, self).__init__(config=config)
+        self.data1 = config['data1']
+        self.data2 = config['data2']
+        self.data1_maxlen = config['text1_maxlen']
+        self.data2_maxlen = config['text2_maxlen']
+        self.fill_word = config['fill_word']
         self.embed = config['embed']
         self.hist_size = config['hist_size']
-        super(DRMM_ListGenerator, self).__init__(data1=data1, data2=data2, config=config)
 
     def cal_hist(self, t1_rep, t2_rep, data1_maxlen, hist_size):
         mhist = np.zeros((data1_maxlen, hist_size), dtype=np.float32)
@@ -127,6 +144,9 @@ class DRMM_ListGenerator(ListGenerator):
                 Y[j] = l
             yield X1, X1_len, X2, X2_len, Y, ID_pairs
 
+    def get_batch_generator(self):
+        for X1, X1_len, X2, X2_len, Y, ID_pairs in self.get_batch():
+            yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'ID': ID_pairs}, Y)
     def get_all_data(self):
         x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls = [], [], [], [], []
         while self.point < self.num_list:

@@ -89,21 +89,28 @@ def train(config):
     eval_gen = OrderedDict()
     eval_genfun = OrderedDict()
 
+
     for tag, conf in input_train_conf.items():
         print conf
+        conf['data1'] = dataset[conf['text1_corpus']]
+        conf['data2'] = dataset[conf['text2_corpus']]
         generator = pair_generator.get(conf['input_type'])
         #train_gen[tag] = DRMM_PairGenerator( data1 = dataset[conf['text1_corpus']],
-        train_gen[tag] = generator( data1 = dataset[conf['text1_corpus']],
-                                      data2 = dataset[conf['text2_corpus']],
+        train_gen[tag] = generator( 
+                                      #data1 = dataset[conf['text1_corpus']],
+                                      #data2 = dataset[conf['text2_corpus']],
                                       config = conf )
         train_genfun[tag] = train_gen[tag].get_batch_generator()
 
     for tag, conf in input_eval_conf.items():
         print conf
+        conf['data1'] = dataset[conf['text1_corpus']]
+        conf['data2'] = dataset[conf['text2_corpus']]
         generator = list_generator.get(conf['input_type'])
         #eval_gen[tag] = DRMM_ListGenerator( data1 = dataset[conf['text1_corpus']],
-        eval_gen[tag] = generator( data1 = dataset[conf['text1_corpus']],
-                                     data2 = dataset[conf['text2_corpus']],
+        eval_gen[tag] = generator( 
+                                     #data1 = dataset[conf['text1_corpus']],
+                                     #data2 = dataset[conf['text2_corpus']],
                                      config = conf )  
         eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
@@ -195,9 +202,12 @@ def predict(config):
 
     for tag, conf in input_predict_conf.items():
         print conf
+        conf['data1'] = dataset[conf['text1_corpus']]
+        conf['data2'] = dataset[conf['text2_corpus']]
         generator = list_generator.get(conf['input_type'])
-        predict_gen[tag] = generator( data1 = dataset[conf['text1_corpus']],
-                                     data2 = dataset[conf['text2_corpus']],
+        predict_gen[tag] = generator( 
+                                    #data1 = dataset[conf['text1_corpus']],
+                                    #data2 = dataset[conf['text2_corpus']],
                                      config = conf )  
         predict_genfun[tag] = predict_gen[tag].get_batch_generator()
 

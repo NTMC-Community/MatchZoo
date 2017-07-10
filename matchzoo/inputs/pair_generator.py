@@ -8,21 +8,15 @@ from utils.rank_io import *
 from layers import DynamicMaxPooling
 from keras.utils.generic_utils import deserialize_keras_object
 
-class PairGenerator(object):
-    def __init__(self, data1, data2, config):
+class PairBasicGenerator(object):
+    def __init__(self, config):
         self.config = config
         rel_file = config['relation_train']
         rel = read_relation(filename=rel_file)
-        self.data1 = data1
-        self.data2 = data2
         self.batch_size = config['batch_size']
-        self.data1_maxlen = config['text1_maxlen']
-        self.data2_maxlen = config['text2_maxlen']
-        self.fill_word = config['fill_word']
         if config['use_iter']:
             self.pair_list_iter = self.make_pair_iter(rel)
             self.pair_list = []
-            self.batch_iter = self.get_batch_iter()
         else:
             self.pair_list = self.make_pair_static(rel)
             self.pair_list_iter = None
@@ -70,6 +64,37 @@ class PairGenerator(object):
             yield pair_list
         
     def get_batch_static(self):
+        pass
+
+    def get_batch_iter(self):
+        pass
+
+    def get_batch(self):
+        if self.config['use_iter']:
+            return self.batch_iter.next()
+        else:
+            return self.get_batch_static()
+
+    def get_batch_generator(self):
+        pass
+
+    @property
+    def num_pairs(self):
+        return len(self.pair_list)
+
+class PairGenerator(PairBasicGenerator):
+    def __init__(self, config):
+        super(PairGenerator, self).__init__(config=config)
+        self.config = config
+        self.data1 = config['data1']
+        self.data2 = config['data2']
+        self.data1_maxlen = config['text1_maxlen']
+        self.data2_maxlen = config['text2_maxlen']
+        self.fill_word = config['fill_word']
+        if config['use_iter']:
+            self.batch_iter = self.get_batch_iter()
+
+    def get_batch_static(self):
         X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
         X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
         X2 = np.zeros((self.batch_size*2, self.data2_maxlen), dtype=np.int32)
@@ -116,12 +141,6 @@ class PairGenerator(object):
                     
                 yield X1, X1_len, X2, X2_len, Y
 
-    def get_batch(self):
-        if self.config['use_iter']:
-            return self.batch_iter.next()
-        else:
-            return self.get_batch_static()
-
     def get_batch_generator(self):
         while True:
             X1, X1_len, X2, X2_len, Y = self.get_batch()
@@ -130,15 +149,16 @@ class PairGenerator(object):
             else:
                 yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len}, Y)
 
-    @property
-    def num_pairs(self):
-        return len(self.pair_list)
-
-class DRMM_PairGenerator(PairGenerator):
-    def __init__(self, data1, data2, config):
+class DRMM_PairGenerator(PairBasicGenerator):
+    def __init__(self, config):
+        super(DRMM_PairGenerator, self).__init__(config=config)
+        self.data1 = config['data1']
+        self.data2 = config['data2']
+        self.data1_maxlen = config['text1_maxlen']
+        self.data2_maxlen = config['text2_maxlen']
         self.embed = config['embed']
         self.hist_size = config['hist_size']
-        super(DRMM_PairGenerator, self).__init__(data1=data1, data2=data2, config=config)
+        self.fill_word = config['fill_word']
 
     def cal_hist(self, t1_rep, t2_rep, data1_maxlen, hist_size):
         mhist = np.zeros((data1_maxlen, hist_size), dtype=np.float32)
