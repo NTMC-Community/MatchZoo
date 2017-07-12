@@ -10,10 +10,12 @@ from keras.utils.generic_utils import deserialize_keras_object
 
 class PairBasicGenerator(object):
     def __init__(self, config):
+        self.__name = 'PairBasicGenerator'
         self.config = config
         rel_file = config['relation_train']
         rel = read_relation(filename=rel_file)
         self.batch_size = config['batch_size']
+        self.check_list = ['relation_train', 'batch_size']
         if config['use_iter']:
             self.pair_list_iter = self.make_pair_iter(rel)
             self.pair_list = []
@@ -21,6 +23,12 @@ class PairBasicGenerator(object):
             self.pair_list = self.make_pair_static(rel)
             self.pair_list_iter = None
 
+    def check(self):
+        for e in self.check_list:
+            if e not in self.config:
+                print '[%s] Error %s not in config' % (self.__name, e)
+                return False
+        return True
     def make_pair_static(self, rel):
         rel_set = {}
         pair_list = []
@@ -85,14 +93,19 @@ class PairBasicGenerator(object):
 class PairGenerator(PairBasicGenerator):
     def __init__(self, config):
         super(PairGenerator, self).__init__(config=config)
+        self.__name = 'PairGenerator'
         self.config = config
         self.data1 = config['data1']
         self.data2 = config['data2']
         self.data1_maxlen = config['text1_maxlen']
         self.data2_maxlen = config['text2_maxlen']
         self.fill_word = config['fill_word']
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'fill_word'])
         if config['use_iter']:
             self.batch_iter = self.get_batch_iter()
+        if not self.check():
+            raise TypeError('[PairGenerator] parameter check wrong.')
+        print '[PairGenerator] init done'
 
     def get_batch_static(self):
         X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
@@ -152,6 +165,7 @@ class PairGenerator(PairBasicGenerator):
 class DRMM_PairGenerator(PairBasicGenerator):
     def __init__(self, config):
         super(DRMM_PairGenerator, self).__init__(config=config)
+        self.__name = 'DRMM_PairGenerator'
         self.data1 = config['data1']
         self.data2 = config['data2']
         self.data1_maxlen = config['text1_maxlen']
@@ -159,6 +173,12 @@ class DRMM_PairGenerator(PairBasicGenerator):
         self.embed = config['embed']
         self.hist_size = config['hist_size']
         self.fill_word = config['fill_word']
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'embed', 'hist_size', 'fill_word'])
+        if config['use_iter']:
+            self.batch_iter = self.get_batch_iter()
+        if not self.check():
+            raise TypeError('[DRMM_PairGenerator] parameter check wrong.')
+        print '[DRMM_PairGenerator] init done'
 
     def cal_hist(self, t1_rep, t2_rep, data1_maxlen, hist_size):
         mhist = np.zeros((data1_maxlen, hist_size), dtype=np.float32)

@@ -10,12 +10,21 @@ from keras.utils.generic_utils import deserialize_keras_object
 
 class ListBasicGenerator(object):
     def __init__(self, config={}):
+        self.__name = 'ListBasicGenerator'
         self.config = config
         if 'relation_test' in config:
             rel = read_relation(filename=config['relation_test'])
             self.list_list = self.make_list(rel)
             self.num_list = len(self.list_list)
+        self.check_list = []
         self.point = 0
+
+    def check(self):
+        for e in self.check_list:
+            if e not in self.config:
+                print '[%s] Error %s not in config' % (self.__name, e)
+                return False
+        return True
 
     def make_list(self, rel):
         list_list = {}
@@ -42,11 +51,16 @@ class ListBasicGenerator(object):
 class ListGenerator(ListBasicGenerator):
     def __init__(self, config={}):
         super(ListGenerator, self).__init__(config=config)
+        self.__name = 'ListGenerator'
         self.data1 = config['data1']
         self.data2 = config['data2']
         self.data1_maxlen = config['text1_maxlen']
         self.data2_maxlen = config['text2_maxlen']
         self.fill_word = config['fill_word']
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen'])
+        if not self.check():
+            raise TypeError('[ListGenerator] parameter check wrong.')
+        print '[ListGenerator] init done'
 
     def get_batch(self):
         for point in range(self.num_list):
@@ -110,6 +124,10 @@ class DRMM_ListGenerator(ListBasicGenerator):
         self.fill_word = config['fill_word']
         self.embed = config['embed']
         self.hist_size = config['hist_size']
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'fill_word', 'embed', 'hist_size'])
+        if not self.check():
+            raise TypeError('[DRMM_ListGenerator] parameter check wrong.')
+        print '[DRMM_ListGenerator] init done'
 
     def cal_hist(self, t1_rep, t2_rep, data1_maxlen, hist_size):
         mhist = np.zeros((data1_maxlen, hist_size), dtype=np.float32)
