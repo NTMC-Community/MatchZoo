@@ -4,6 +4,5 @@
 *.weights
 *.trec
 *.ranklist
-*.config
 qrels.*
 trec_eval
