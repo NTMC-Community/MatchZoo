@@ -1,4 +1,5 @@
 # MatchZoo
+----
 MatchingZoom is a toolkit for text matching. It was developed with a focus on facilitate the designing, comparing and sharing of deep text matching models. 
 
 ## Overview
@@ -22,6 +23,46 @@ Moreover, the toolkit has implemented two schools of representative deep text ma
 
 ### Training and Evaluation
 For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up di erent objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text.
+
+## Models
+
+1. DRMM
+2. MatchPyramid
+3. Match-SRNN
+4. ARC-I
+5. ARC-II
+6. DSSM
+7. CDSSM
+
+## Performance
+
+## Usage
+python main.py --phase train --model_file ./models/drmm.config
+
+## Environment
+* python2.7+ 
+* tensorflow 1.2
+* keras 2.05
+
+## Model Detail:
+
+1. DRMM
+-------
+this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf">A Deep Relevance Matching Model for Ad-hoc Retrieval</a>.
+
+- model file: models/drmm.py
+- config file: models/drmm.config
+
+2. DSSM
+-------
+this model is an implementation of ...
+3. MatchPyramid
+-------
+this model is an implementation of ...
+4. ARC-I
+-------
+this model is an implementation of ...
+
 
 Acknowledgements
 =====
