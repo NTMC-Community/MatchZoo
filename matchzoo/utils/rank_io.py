@@ -60,6 +60,8 @@ def read_data(filename, word_dict = None):
                 if w not in word_dict:
                     word_dict[w] = len(word_dict)
                 data[tid].append(word_dict[w])
+                if len(data[tid] > 500):
+                    break
     print '[%s]\n\tData size: %s' % (filename, len(data))
     return data, word_dict
 
