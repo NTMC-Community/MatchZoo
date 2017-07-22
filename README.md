@@ -28,11 +28,9 @@ For learning the deep matching models, the toolkit provides a variety of objecti
 
 1. DRMM
 2. MatchPyramid
-3. Match-SRNN
-4. ARC-I
-5. ARC-II
-6. DSSM
-7. CDSSM
+3. ARC-I
+4. DSSM
+5. CDSSM
 
 ## Performance
 
@@ -53,16 +51,38 @@ this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/pap
 - model file: models/drmm.py
 - config file: models/drmm.config
 
-2. DSSM
+2. MatchPyramid
 -------
-this model is an implementation of ...
-3. MatchPyramid
--------
-this model is an implementation of ...
-4. ARC-I
--------
-this model is an implementation of ...
+this model is an implementation of <a href="https://arxiv.org/abs/1602.06359"> Text Matching as Image Recognition</a>
 
+- model file: models/matchpyramid.py
+- config file: models/matchpyramid.config
+
+3. ARC-I
+-------
+this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Convolutional Neural Network Architectures for Matching Natural Language Sentences</a>
+
+- model file: models/arci.py
+- model config: models/arci.config
+
+4. DSSM
+-------
+this model is an implementation of <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/cikm2013_DSSM_fullversion.pdf">Learning Deep Structured Semantic Models for Web Search using Clickthrough Data</a>
+
+- model file: models/dssm.py
+- config file: models/dssm.config
+
+5. CDSSM
+-------
+under development ....
+
+6. ARC-II
+-------
+under development ....
+
+7. Match-SRNN
+-------
+under development ....
 
 Acknowledgements
 =====
