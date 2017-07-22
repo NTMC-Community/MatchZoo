@@ -354,7 +354,6 @@ class NgramUtil(object):
         elif nterm == 4:
             return NgramUtil.fourterms(words, join_string)
 
-
 def _test_preprocess():
     file_path = '/Users/houjianpeng/tmp/txt'
     preprocessor = Preprocess()
