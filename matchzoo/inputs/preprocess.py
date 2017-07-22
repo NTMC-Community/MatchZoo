@@ -368,7 +368,7 @@ def _test_preprocess():
 
 def _test_ngram():
     words = 'hello, world! hello, deep!'
-    print(NgramUtil.ngrams(list(words), 2, ''))
+    print(NgramUtil.ngrams(list(words), 3, ''))
 
 if __name__ == '__main__':
     _test_ngram()
