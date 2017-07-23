@@ -5,7 +5,9 @@ from __future__ import print_function
 from nltk.tokenize import word_tokenize
 import jieba
 import sys
+import numpy as np
 from nltk.stem import SnowballStemmer
+from ..utils.rank_io import *
 
 
 class Preprocess(object):
@@ -354,6 +356,19 @@ class NgramUtil(object):
         elif nterm == 4:
             return NgramUtil.fourterms(words, join_string)
 
+def cal_hist(t1_rep, t2_rep, qnum, hist_size):
+    #qnum = len(t1_rep)
+    mhist = np.zeros((qnum, hist_size), dtype=np.float32)
+    mm = t1_rep.dot(np.transpose(t2_rep))
+    for (i,j), v in np.ndenumerate(mm):
+        if i >= qnum:
+            break
+        vid = int((v + 1.) / 2. * (hist_size - 1.))
+        mhist[i][vid] += 1.
+    mhist += 1.
+    mhist = np.log10(mhist)
+    return mhist.flatten()
+
 def _test_preprocess():
     file_path = '/Users/houjianpeng/tmp/txt'
     preprocessor = Preprocess()
@@ -369,6 +384,33 @@ def _test_preprocess():
 def _test_ngram():
     words = 'hello, world! hello, deep!'
     print(NgramUtil.ngrams(list(words), 3, ''))
+
+def _test_hist():
+    embedfile = '../data/mq2007/'
+    queryfile = ''
+    docfile = ''
+    relfile = ''
+    histfile = ''
+    embed_dict = read_embedding(filename = embedfile)
+    _PAD_ = 16796
+    embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
+    embed = np.float32(np.random.uniform(-0.2, 0.2, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
+    embed = convert_embed_2_numpy(embed_dict, embed = embed)
+
+    query = read_data(queryfile)
+    doc = read_data(docfile)
+    rel = read_relation(relfile)
+    for label, d1, d2 in rel:
+        assert d1 in query
+        assert d2 in doc
+        qnum = len(query[d1])
+        d1_embed = embed[query[d1]]
+        d2_embed = emebd[doc[d2]]
+        curr_hist = cal_hist(d1, d2, qnum, 30)
+        print qnum
+        print curr_hist
+
+
 
 if __name__ == '__main__':
     _test_ngram()
