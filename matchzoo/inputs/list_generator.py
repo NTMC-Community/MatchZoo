@@ -127,7 +127,7 @@ class DRMM_ListGenerator(ListBasicGenerator):
         self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'fill_word', 'embed', 'hist_size'])
         if not self.check():
             raise TypeError('[DRMM_ListGenerator] parameter check wrong.')
-        print '[DRMM_ListGenerator] init done'
+        print '[DRMM_ListGenerator] init done, list number: %d. ' % (self.num_list)
 
     def cal_hist(self, t1_rep, t2_rep, data1_maxlen, hist_size):
         mhist = np.zeros((data1_maxlen, hist_size), dtype=np.float32)
