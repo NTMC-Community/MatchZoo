@@ -13,14 +13,14 @@ class PairBasicGenerator(object):
         self.__name = 'PairBasicGenerator'
         self.config = config
         rel_file = config['relation_train']
-        rel = read_relation(filename=rel_file)
+        self.rel = read_relation(filename=rel_file)
         self.batch_size = config['batch_size']
         self.check_list = ['relation_train', 'batch_size']
         if config['use_iter']:
-            self.pair_list_iter = self.make_pair_iter(rel)
+            self.pair_list_iter = self.make_pair_iter(self.rel)
             self.pair_list = []
         else:
-            self.pair_list = self.make_pair_static(rel)
+            self.pair_list = self.make_pair_static(self.rel)
             self.pair_list_iter = None
 
     def check(self):
@@ -174,22 +174,40 @@ class DRMM_PairGenerator(PairBasicGenerator):
         self.hist_size = config['hist_size']
         self.fill_word = config['fill_word']
         self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'embed', 'hist_size', 'fill_word'])
+        self.use_hist_feats = False
+        if 'hist_feats_file' in config:
+            hist_feats = read_features(config['hist_feats_file'])
+            self.hist_feats = {}
+            for idx, (label, d1, d2) in enumerate(self.rel):
+                self.hist_feats[(d1, d2)] = hist_feats[idx]
+            self.use_hist_feats = True
         if config['use_iter']:
             self.batch_iter = self.get_batch_iter()
         if not self.check():
             raise TypeError('[DRMM_PairGenerator] parameter check wrong.')
         print '[DRMM_PairGenerator] init done'
 
-    def cal_hist(self, t1_rep, t2_rep, data1_maxlen, hist_size):
+    def cal_hist(self, t1, t2, data1_maxlen, hist_size):
         mhist = np.zeros((data1_maxlen, hist_size), dtype=np.float32)
-        mm = t1_rep.dot(np.transpose(t2_rep))
-        for (i,j), v in np.ndenumerate(mm):
-            if i >= data1_maxlen:
-                break
-            vid = int((v + 1.) / 2. * ( hist_size - 1.))
-            mhist[i][vid] += 1.
-        mhist += 1.
-        mhist = np.log10(mhist)
+        d1len = len(self.data1[t1]) 
+        if self.use_hist_feats:
+            assert (t1, t2) in self.hist_feats
+            caled_hist = np.reshape(self.hist_feats[(t1, t2)], (d1len, hist_size))
+            if d1len < data1_maxlen:
+                mhist[:d1len, :] = caled_hist[:, :]
+            else:
+                mhist[:, :] = caled_hist[:data1_maxlen, :]
+        else:
+            t1_rep = self.embed[self.data1[t1]]
+            t2_rep = self.embed[self.data2[t2]]
+            mm = t1_rep.dot(np.transpose(t2_rep))
+            for (i,j), v in np.ndenumerate(mm):
+                if i >= data1_maxlen:
+                    break
+                vid = int((v + 1.) / 2. * ( hist_size - 1.))
+                mhist[i][vid] += 1.
+            mhist += 1.
+            mhist = np.log10(mhist)
         return mhist
 
     def get_batch_static(self):
@@ -207,13 +225,10 @@ class DRMM_PairGenerator(PairBasicGenerator):
             d1_len = min(self.data1_maxlen, len(self.data1[d1]))
             d2p_len = len(self.data2[d2p])
             d2n_len = len(self.data2[d2n])
-            d1_embed = self.embed[self.data1[d1]]
-            d2p_embed = self.embed[self.data2[d2p]]
-            d2n_embed = self.embed[self.data2[d2n]]
             X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
             X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
-            X2[i*2], X2_len[i*2]   = self.cal_hist(d1_embed, d2p_embed, self.data1_maxlen, self.hist_size), d2p_len
-            X2[i*2+1], X2_len[i*2+1] = self.cal_hist(d1_embed, d2n_embed, self.data1_maxlen, self.hist_size), d2n_len
+            X2[i*2], X2_len[i*2]   = self.cal_hist(d1, d2p, self.data1_maxlen, self.hist_size), d2p_len
+            X2[i*2+1], X2_len[i*2+1] = self.cal_hist(d1, d2n, self.data1_maxlen, self.hist_size), d2n_len
             
         return X1, X1_len, X2, X2_len, Y    
 
@@ -235,13 +250,10 @@ class DRMM_PairGenerator(PairBasicGenerator):
                     d1_len = min(self.data1_maxlen, len(self.data1[d1]))
                     d2p_len = len(self.data2[d2p])
                     d2n_len = len(self.data2[d2n])
-                    d1_embed = self.embed[self.data1[d1]]
-                    d2p_embed = self.embed[self.data2[d2p]]
-                    d2n_embed = self.embed[self.data2[d2n]]
                     X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
                     X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
-                    X2[i*2], X2_len[i*2]   = self.cal_hist(d1_embed, d2p_embed, self.data1_maxlen, self.hist_size), d2p_len
-                    X2[i*2+1], X2_len[i*2+1] = self.cal_hist(d1_embed, d2n_embed, self.data1_maxlen, self.hist_size), d2n_len
+                    X2[i*2], X2_len[i*2]   = self.cal_hist(d1, d2p, self.data1_maxlen, self.hist_size), d2p_len
+                    X2[i*2+1], X2_len[i*2+1] = self.cal_hist(d1, d2n, self.data1_maxlen, self.hist_size), d2n_len
                     
                 yield X1, X1_len, X2, X2_len, Y
 

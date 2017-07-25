@@ -46,6 +46,16 @@ def read_relation(filename, verbose=True):
         print '[%s]\n\tInstance size: %s' % (filename, len(data))
     return data
 
+# Read varied-length features without id
+def read_features(filename, verbose=True):
+    features = []
+    for line in open(filename):
+        line = line.strip().split()
+        features.append(map(float, line))
+    if verbose:
+        print '[%s]\n\tFeature size: %s' % (filename, len(features))
+    return features
+
 # Read Data Dict
 def read_data(filename, word_dict = None):
     data = {}
@@ -60,8 +70,6 @@ def read_data(filename, word_dict = None):
                 if w not in word_dict:
                     word_dict[w] = len(word_dict)
                 data[tid].append(word_dict[w])
-                if len(data[tid] > 500):
-                    break
     print '[%s]\n\tData size: %s' % (filename, len(data))
     return data, word_dict
 
