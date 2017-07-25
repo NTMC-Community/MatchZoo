@@ -7,6 +7,8 @@ from keras.layers import Input, Embedding, Dense, Activation, Merge, Lambda, Per
 from keras.layers import Reshape, Dot
 from keras.activations import softmax
 
+from model import BasicModel
+
 
 class DSSM(BasicModel):
     def __init__(self, config):
@@ -42,8 +44,8 @@ class DSSM(BasicModel):
         mlp = mlp_work(self.config['text1_maxlen'])
         rq = mlp(query)
         rd = mlp(doc)
-        out_ = Merge([rq, rd], mode='cos', dot_axis=1)
-        #out_ = Dot( axes= [1, 1])([rq, rd])
+        #out_ = Merge([rq, rd], mode='cos', dot_axis=1)
+        out_ = Dot( axes= [1, 1], normalize=True)([rq, rd])
 
         model = Model(inputs=[query, doc], outputs=[out_])
         return model
