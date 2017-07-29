@@ -25,9 +25,8 @@ setup(
         "License :: OSI Approved :: BSD License"],
     install_requires=[
       'keras == 2.0.6',
-	  'tensorflow == 1.2',
+      'tensorflow == 1.1.0',
       'nltk == 3.2.3',
       'numpy == 1.12.1',
-      'setuptools == 36.2.2',
       'six == 1.10.0']
 )
