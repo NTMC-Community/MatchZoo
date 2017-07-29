@@ -1,0 +1,86 @@
+# DRMM model examples
+
+This file provides the example on how to train the DRMM [A Deep Relevance Matching Model for Ad-hoc Retrieval](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf). 
+
+## generate the match histogram of the dataset.
+``` bash
+python generate_match_hist.py
+
+## configure the model of DRMM
+cd ../matchzoo/models/
+
+## example of the configuration
+{
+  "net_name": "drmm",
+  "global":{
+      "model_type": "PY",
+      "weights_file": "./models/drmm.weights",
+      "num_epochs": 1000,
+      "num_batch": 10,
+      "optimizer": "adam",
+      "learning_rate": 0.0001
+  },
+  "inputs": {
+    "share": {
+        "text1_corpus": "../data/mq2007/qid_query.txt",
+        "text2_corpus": "../data/mq2007/docid_doc.txt",
+        "use_dpool": true,
+        "fill_word": 193367,
+        "embed_size": 1,
+        "vocab_size": 193368,
+        "embed_path": "../data/mq2007/embed.idf",
+        "hist_size": 60,
+        "text1_maxlen": 5,
+        "text2_maxlen": 100
+    },
+    "train": {
+        "input_type": "DRMM_PairGenerator", 
+        "phase": "TRAIN",
+        "use_iter": false,
+        "query_per_iter": 50,
+        "batch_per_iter": 5,
+        "batch_size": 20,
+        "relation_train": "../data/mq2007/relation.train.fold1.txt",
+        "hist_feats_file": "../data/mq2007/relation.train.fold1.hist.60.txt"
+    },
+    "valid": {
+        "input_type": "DRMM_ListGenerator", 
+        "phase": "EVAL",
+        "relation_test": "../data/mq2007/relation.test.fold1.txt",
+        "hist_feats_file": "../data/mq2007/relation.test.fold1.hist.60.txt"
+    },
+    "test": {
+        "input_type": "DRMM_ListGenerator", 
+        "phase": "EVAL",
+        "relation_test": "../data/mq2007/relation.test.fold1.txt",
+        "hist_feats_file": "../data/mq2007/relation.test.fold1.hist.60.txt"
+    },
+    "predict": {
+        "input_type": "DRMM_ListGenerator", 
+        "phase": "PREDICT",
+        "relation_test": "../data/mq2007/relation.test.fold1.txt",
+        "hist_feats_file": "../data/mq2007/relation.test.fold1.hist.60.txt"
+    }
+  },
+  "outputs": {
+    "predict": {
+      "save_format": "TREC",
+      "save_path": "predict.test.fold1.txt"
+    }
+  },
+  "model": {
+    "model_path": "./models/",
+    "model_py": "drmm.DRMM",
+    "num_layers": 2,
+    "hidden_sizes": [5, 1]
+  },
+  "losses": [ "rank_hinge_loss" ],
+  "metrics": [ "ndcg@3", "ndcg@5", "map" ]
+}
+
+## train the model of DRMM
+cd ..
+python main.py --phase train --model_file models/drmm.config
+
+## predict the dataset of DRMM
+python main.py --phase predict --model_file models/drmm.config
