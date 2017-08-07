@@ -8,7 +8,7 @@ class BasicModel(object):
     def __init__(self, config):
         self._name = 'BasicModel'
         self.config = {}
-        self.chech_list = []
+        self.check_list = []
         #self.setup(config)
         #self.check()
 
