@@ -31,8 +31,8 @@ For learning the deep matching models, the toolkit provides a variety of objecti
 3. ARC-I
 4. DSSM
 5. CDSSM
+6. ARC-II
 
-## Performance
 
 ## Usage
 python main.py --phase train --model_file ./models/drmm.config
