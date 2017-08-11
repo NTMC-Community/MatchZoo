@@ -4,5 +4,6 @@
 *.weights
 *.trec
 *.ranklist
+*.DS_Store
 qrels.*
 trec_eval
