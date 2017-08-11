@@ -74,11 +74,17 @@ this model is an implementation of <a href="https://www.microsoft.com/en-us/rese
 
 5. CDSSM
 -------
-under development ....
+this model is an implementation of <a href="https://www.microsoft.com/en-us/research/publication/learning-semantic-representations-using-convolutional-neural-networks-for-web-search/">Learning Semantic Representations Using Convolutional Neural Networks for Web Search</a>
+
+- model file: models/cdssm.py
+- config file: models/cdssm.config
 
 6. ARC-II
 -------
-under development ....
+this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Convolutional Neural Network Architectures for Matching Natural Language Sentences</a>
+
+- model file: models/arcii.py
+- model config: models/arcii.config
 
 7. Match-SRNN
 -------
