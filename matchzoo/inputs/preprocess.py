@@ -391,8 +391,8 @@ def _test_hist():
     embedfile = '../../data/mq2007/embed_wiki-pdc_d50_norm'
     queryfile = '../../data/mq2007/qid_query.txt'
     docfile = '../../data/mq2007/docid_doc.txt'
-    relfile = '../../data/mq2007/relation.test.fold1.txt'
-    histfile = '../../data/mq2007/relation.test.fold1.hist-30.txt'
+    relfile = '../../data/mq2007/relation.test.fold5.txt'
+    histfile = '../../data/mq2007/relation.test.fold5.hist-30.txt'
     embed_dict = read_embedding(filename = embedfile)
     print('after read embedding ...')
     _PAD_ = 193367
@@ -416,6 +416,7 @@ def _test_hist():
         curr_hist = cal_hist(d1_embed, d2_embed, qnum, 30)
         curr_hist = curr_hist.tolist()
         fout.write(' '.join(map(str, curr_hist)))
+        fout.write('\n')
         print(qnum)
         #print(curr_hist)
     fout.close()
@@ -423,5 +424,5 @@ def _test_hist():
 
 
 if __name__ == '__main__':
-    #_test_ngram()
-    _test_hist()
+    _test_ngram()
+    #_test_hist()
