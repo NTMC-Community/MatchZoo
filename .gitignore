@@ -6,5 +6,8 @@
 *.ranklist
 *.DS_Store
 data/*
+build/
+log/*
+matchzoo/log/*
 qrels.*
 trec_eval
