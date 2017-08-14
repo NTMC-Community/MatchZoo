@@ -7,6 +7,10 @@ from keras.layers import Reshape, Embedding,Merge, Dot
 from keras.optimizers import Adam
 from model import BasicModel
 
+import sys
+sys.path.append('../matchzoo/layers/')
+from DynamicMaxPooling import *
+from Match import *
 
 class ARCII(BasicModel):
     def __init__(self, config):
@@ -43,11 +47,15 @@ class ARCII(BasicModel):
         q_conv1 = Conv1D(self.config['kernel_count'], self.config['kernel_size'], padding='same') (q_embed)
         d_conv1 = Conv1D(self.config['kernel_count'], self.config['kernel_size'], padding='same') (d_embed)
 
-        q_pool1 = MaxPooling1D(pool_size=self.config['q_pool_size']) (q_conv1)
-        d_pool1 = MaxPooling1D(pool_size=self.config['d_pool_size']) (d_conv1)
+        cross = Match(match_type='plus')([q_conv1, d_conv1])
 
-        pool1 = Concatenate(axis=1) ([q_pool1, d_pool1])
+        cross_reshape = Reshape((self.config['text1_maxlen'], self.config['text2_maxlen'], 1))(cross)
 
+        conv2d = Conv2D(self.config['kernel_count'], self.config['kernel_size'], padding='same', activation='relu')
+        dpool = DynamicMaxPooling(self.config['dpool_size'][0], self.config['dpool_size'][1])
+
+        conv1 = conv2d(cross_reshape)
+        pool1 = dpool([conv1, dpool_index])
         pool1_flat = Flatten()(pool1)
         out_ = Dense(1)(pool1_flat)
 
