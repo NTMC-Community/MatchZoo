@@ -42,11 +42,11 @@ class Preprocess(object):
         docs = Preprocess.word_seg(docs, self._lang)
         dids, docs = Preprocess.doc_filter(dids, docs, self._min_len, self._max_len)
         docs = Preprocess.word_stem(docs)
-        docs, self._words_useless, self._words_df = Preprocess.word_filter(docs,
-                                                                           words_useless=self._words_useless,
-                                                                           stop_words=self._stop_words,
-                                                                           min_freq=self._min_freq,
-                                                                           max_freq=self._max_freq)
+        docs, self._words_useless = Preprocess.word_filter(docs,
+                                                           words_useless=self._words_useless,
+                                                           stop_words=self._stop_words,
+                                                           min_freq=self._min_freq,
+                                                           max_freq=self._max_freq)
         docs, self._word_dict = Preprocess.word_index(docs, word_dict=self._word_dict)
         return dids, docs
 
@@ -64,6 +64,7 @@ class Preprocess(object):
         docs = list()
         f = open(file_path, 'r')
         for line in f:
+            line = line.decode('utf8')
             line = line.strip()
             if '' != line:
                 did, doc = Preprocess.parse(line)
@@ -113,7 +114,7 @@ class Preprocess(object):
                     words_useless.add(w)
         # filter with useless words
         docs = [[w for w in ws if w not in words_useless] for ws in docs]
-        return docs, words_useless, wdf
+        return docs, words_useless
 
     @staticmethod
     def doc_filter(dids, docs, min_len=1, max_len=sys.maxint):
@@ -149,6 +150,7 @@ class Preprocess(object):
     def save_lines(file_path, lines):
         f = open(file_path, 'w')
         for line in lines:
+            line = line.encode('utf8')
             f.write(line + "\n")
         f.close()
 
@@ -424,5 +426,22 @@ def _test_hist():
 
 
 if __name__ == '__main__':
-    _test_ngram()
+    #_test_ngram()
     #_test_hist()
+    path = '/home/fanyixing/dataset/marco/'
+    infile_path = path + 'did.test.txt'
+    outfile_path = path + 'did.test.processed.txt'
+    #infile_path = './did.train.txt'
+    #outfile_path = 'did.train.processed.txt'
+    dictfile_path = path + 'word_dict.txt'
+    dffile_path = path + 'word_df.txt'
+    preprocessor = Preprocess(min_freq = 5)
+    preprocessor.load_word_dict(dictfile_path)
+    preprocessor.load_words_df(dffile_path)
+    dids, docs = preprocessor.run(infile_path)
+
+    fout = open(outfile_path,'w')
+    for inum,did in enumerate(dids):
+        fout.write('%s\t%s\n'%(did, ' '.join(map(str,docs[inum]))))
+    fout.close()
+    print('Done ...')

@@ -108,9 +108,6 @@ The following people contributed to the development of the MatchZoo project：
 - **Yanyan Lan**
     - Institute of Computing Technolgy, Chinese Academy of Sciences
     - [HomePage](http://www.bigdatalab.ac.cn/~lanyanyan/)
-- **Jun Xu**
-    - Institute of Computing Technolgy, Chinese Academy of Sciences
-    - [HomePage](http://www.bigdatalab.ac.cn/~junxu/)
 - **Xueqi Cheng**
     - Institute of Computing Technolgy, Chinese Academy of Sciences 
     - [HomePage](http://www.bigdatalab.ac.cn/~cxq/)

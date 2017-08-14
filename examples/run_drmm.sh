@@ -1,6 +1,6 @@
 
 # generate match histogram
-python generate_match_hist.py
+python test_histogram_generator.py 
 
 cd ../matchzoo
 
