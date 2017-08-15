@@ -96,6 +96,16 @@ this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Co
 -------
 under development ....
 
+##Citation
+```
+@article{fan2017matchzoo,
+  title={MatchZoo: A Toolkit for Deep Text Matching},
+  author={Fan, Yixing and Pang, Liang and Hou, JianPeng and Guo, Jiafeng and Lan, Yanyan and Cheng, Xueqi},
+  journal={arXiv preprint arXiv:1707.07270},
+  year={2017}
+}
+```
+
 Acknowledgements
 =====
 The following people contributed to the development of the MatchZoo project：
