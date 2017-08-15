@@ -7,7 +7,7 @@ def read(fname):
 setup(
     name = "MatchZoo",
     version = "1.0",
-    author = "Yixing Fan, Liang Pang, Jianpeng Hou, Jiafeng Guo, Yanyan Lan, Jun Xu, Xueqi Cheng",
+    author = "Yixing Fan, Liang Pang, Jianpeng Hou, Jiafeng Guo, Yanyan Lan, Xueqi Cheng",
     author_email = "fanyixing@software.ict.ac.cn",
     description = ("MatchingZoom is a toolkit for text matching."
                     "It was developed with a focus on enabling fast experimentation."),
