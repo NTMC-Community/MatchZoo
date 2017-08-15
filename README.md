@@ -97,6 +97,7 @@ this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Co
 under development ....
 
 ##Citation
+
 ```
 @article{fan2017matchzoo,
   title={MatchZoo: A Toolkit for Deep Text Matching},
