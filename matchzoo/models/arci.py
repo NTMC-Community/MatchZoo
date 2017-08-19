@@ -34,7 +34,7 @@ class ARCI(BasicModel):
     def build(self):
         query = Input(name='query', shape=(self.config['text1_maxlen'],))
         doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
-        dpool_index = Input(name='dpool_index', shape=[self.config['text1_maxlen'], self.config['text2_maxlen'], 3], dtype='int32')
+        #dpool_index = Input(name='dpool_index', shape=[self.config['text1_maxlen'], self.config['text2_maxlen'], 3], dtype='int32')
 
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = False)
         q_embed = embedding(query)
@@ -51,5 +51,6 @@ class ARCI(BasicModel):
         pool1_flat = Flatten()(pool1)
         out_ = Dense(1)(pool1_flat)
 
-        model = Model(inputs=[query, doc, dpool_index], outputs=out_)
+        #model = Model(inputs=[query, doc, dpool_index], outputs=out_)
+        model = Model(inputs=[query, doc], outputs=out_)
         return model

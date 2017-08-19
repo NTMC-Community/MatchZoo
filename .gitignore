@@ -5,7 +5,10 @@
 *.trec
 *.ranklist
 *.DS_Store
-data/*
+data/mq2008/*
+data/mq2007
+data/robust/*
+data/tmp
 build/
 log/*
 matchzoo/log/*

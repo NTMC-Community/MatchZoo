@@ -11,7 +11,6 @@ from nltk.stem import SnowballStemmer
 sys.path.append('../utils/')
 from rank_io import *
 
-
 class Preprocess(object):
 
     _valid_lang = ['en', 'cn']
@@ -70,6 +69,7 @@ class Preprocess(object):
                 did, doc = Preprocess.parse(line)
                 dids.append(did)
                 docs.append(doc)
+        f.close()
         return dids, docs
 
     @staticmethod
