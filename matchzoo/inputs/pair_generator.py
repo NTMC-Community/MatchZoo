@@ -262,6 +262,86 @@ class DRMM_PairGenerator(PairBasicGenerator):
             X1, X1_len, X2, X2_len, Y = self.get_batch()
             yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len}, Y)
 
+class PairGenerator_Feats(PairBasicGenerator):
+    def __init__(self, config):
+        super(PairGenerator_Feats, self).__init__(config=config)
+        self.__name = 'PairGenerator'
+        self.config = config
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'fill_word', 'pair_feat_size', 'pair_feat_file'])
+        if not self.check():
+            raise TypeError('[PairGenerator] parameter check wrong.')
+
+        self.data1 = config['data1']
+        self.data2 = config['data2']
+        self.data1_maxlen = config['text1_maxlen']
+        self.data2_maxlen = config['text2_maxlen']
+        self.fill_word = config['fill_word']
+        self.pair_feat_size = config['pair_feat_size']
+        pair_feats = read_features(config['pair_feat_file'])
+        self.pair_feats = {}
+        for idx, (label, d1, d2) in enumerate(self.rel):
+            self.pair_feats[(d1, d2)] = pair_feats[idx]
+        if config['use_iter']:
+            self.batch_iter = self.get_batch_iter()
+        print '[PairGenerator] init done'
+
+    def get_batch_static(self):
+        X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
+        X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
+        X2 = np.zeros((self.batch_size*2, self.data2_maxlen), dtype=np.int32)
+        X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
+        X3 = np.zeros((self.batch_size * 2, self.pair_feat_size), dtype=np.float32)
+        Y = np.zeros((self.batch_size*2,), dtype=np.int32)
+
+        Y[::2] = 1
+        X1[:] = self.fill_word
+        X2[:] = self.fill_word
+        for i in range(self.batch_size):
+            d1, d2p, d2n = random.choice(self.pair_list)
+            d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+            d2p_len = min(self.data2_maxlen, len(self.data2[d2p]))
+            d2n_len = min(self.data2_maxlen, len(self.data2[d2n]))
+            X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
+            X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
+            X3[i*2,   :self.pair_feat_size]    = self.pair_feats[(d1, d2p)][:self.pair_feat_size]
+            X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
+            X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
+            X3[i*2+1, :self.pair_feat_size]    = self.pair_feats[(d1, d2n)][:self.pair_feat_size]
+            
+        return X1, X1_len, X2, X2_len, X3, Y    
+
+    def get_batch_iter(self):
+        while True:
+            self.pair_list = self.pair_list_iter.next()
+            for _ in range(self.config['batch_per_iter']):
+                X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
+                X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
+                X2 = np.zeros((self.batch_size*2, self.data2_maxlen), dtype=np.int32)
+                X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
+                X3 = np.zeros((self.batch_size*2, self.pair_feat_size), dtype=np.float32)
+                Y = np.zeros((self.batch_size*2,), dtype=np.int32)
+
+                Y[::2] = 1
+                X1[:] = self.fill_word
+                X2[:] = self.fill_word
+                for i in range(self.batch_size):
+                    d1, d2p, d2n = random.choice(self.pair_list)
+                    d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+                    d2p_len = min(self.data2_maxlen, len(self.data2[d2p]))
+                    d2n_len = min(self.data2_maxlen, len(self.data2[d2n]))
+                    X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
+                    X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
+                    X3[i*2,   :self.pair_feat_size]    = self.pair_feats[(d1, d2p)][:self.pair_feat_size]
+                    X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
+                    X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
+                    X3[i*2+1, :self.pair_feat_size]    = self.pair_feats[(d1, d2n)][:self.pair_feat_size]
+                    
+                yield X1, X1_len, X2, X2_len, X3, Y
+
+    def get_batch_generator(self):
+        while True:
+            X1, X1_len, X2, X2_len, X3, Y = self.get_batch()
+            yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'pair_feats': X3}, Y)
 def serialize(generator):
     return generator.__name__
 

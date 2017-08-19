@@ -140,7 +140,7 @@ def train(config):
                 ) #callbacks=[eval_map])
         
         for tag, genfun in eval_genfun.items():
-            print '[Eval] @ %s' % tag
+            print '[Eval] @ %s ' % tag,
             res = dict([[k,0.] for k in metrics])
             num_valid = 0
             for input_data, y_true in genfun:
@@ -149,7 +149,7 @@ def train(config):
                 for k, v in curr_res.items():
                     res[k] += v
                 num_valid += 1
-            print '[Eval] epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()])
+            print 'epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()])
             sys.stdout.flush()
             eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
@@ -228,7 +228,7 @@ def predict(config):
     res = dict([[k,0.] for k in metrics])
 
     for tag, genfun in predict_genfun.items():
-        print '[Predict] @ %s' % tag
+        print '[Predict] @ %s ' % tag,
         num_valid = 0
         res_scores = {} 
         for input_data, y_true in genfun:
