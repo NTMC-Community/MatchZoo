@@ -1,13 +1,11 @@
 # note:
 import six
 from keras.utils.generic_utils import deserialize_keras_object
-from .rank_evaluations import rank_eval
-from .rank_evaluations import eval_map
-from .rank_evaluations import eval_ndcg
-from .rank_evaluations import eval_precision
-from .rank_evaluations import eval_mrr
-
-from .evaluations import * 
+from .evaluations import map
+from .evaluations import ndcg
+from .evaluations import precision
+from .evaluations import mrr
+from .evaluations import mse
 
 def serialize(generator):
     return generator.__name__

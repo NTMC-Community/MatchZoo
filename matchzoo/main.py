@@ -11,9 +11,8 @@ import keras.backend as K
 from keras.models import Sequential, Model
 
 from utils import *
-#from inputs import *
 import inputs
-from metrics import *
+import metrics
 from losses import *
 
 def load_model(config):
@@ -88,9 +87,9 @@ def train(config):
 
     # initial data generator
     train_gen = OrderedDict()
-    train_genfun = OrderedDict()
+    #train_genfun = OrderedDict()
     eval_gen = OrderedDict()
-    eval_genfun = OrderedDict()
+    #eval_genfun = OrderedDict()
 
 
     for tag, conf in input_train_conf.items():
@@ -99,7 +98,7 @@ def train(config):
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
         train_gen[tag] = generator( config = conf )
-        train_genfun[tag] = train_gen[tag].get_batch_generator()
+        #train_genfun[tag] = train_gen[tag].get_batch_generator()
 
     for tag, conf in input_eval_conf.items():
         print conf
@@ -107,25 +106,29 @@ def train(config):
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
         eval_gen[tag] = generator( config = conf )  
-        eval_genfun[tag] = eval_gen[tag].get_batch_generator()
+        #eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
     ######### Load Model #########
     model = load_model(config)
 
-    rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
-
     loss = []
     for lobj in config['losses']:
       loss.append(rank_losses.get(lobj))
-    metrics = []
+    eval_metrics = OrderedDict()
     for mobj in config['metrics']:
-        metrics.append(mobj)
+        mobj = mobj.lower()
+        if '@' in mobj:
+            mt_key, mt_val = mobj.split('@', 1)
+            eval_metrics[mobj] = metrics.get(mt_key)(int(mt_val))
+        else:
+            eval_metrics[mobj] = metrics.get(mobj)
     model.compile(optimizer=optimizer, loss=loss)
     print '[Model] Model Compile Done.'
 
     for i_e in range(global_conf['num_epochs']):
         print '[Train] @ %s epoch.' % i_e
-        for tag, genfun in train_genfun.items():
+        for tag, generator in train_gen.items():
+            genfun = generator.get_batch_generator()
             print '[Train] @ %s' % tag
             model.fit_generator(
                     genfun,
@@ -134,19 +137,20 @@ def train(config):
                     verbose = 1
                 ) #callbacks=[eval_map])
         
-        for tag, genfun in eval_genfun.items():
+        for tag, generator in eval_gen.items():
+            genfun = generator.get_batch_generator()
             print '[Eval] @ %s ' % tag,
-            res = dict([[k,0.] for k in metrics])
+            res = dict([[k,0.] for k in eval_metrics.keys()])
             num_valid = 0
             for input_data, y_true in genfun:
                 y_pred = model.predict(input_data, batch_size=len(y_true))
-                curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
-                for k, v in curr_res.items():
-                    res[k] += v
+                for k, eval_func in eval_metrics.items():
+                    res[k] += eval_func(y_true = y_true, y_pred = y_pred)
                 num_valid += 1
+            generator.reset()
             print 'epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()])
             sys.stdout.flush()
-            eval_genfun[tag] = eval_gen[tag].get_batch_generator()
+            #eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
     model.save_weights(weights_file)
 
@@ -163,7 +167,7 @@ def predict(config):
         embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
         embed = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
         share_input_conf['embed'] = convert_embed_2_numpy(embed_dict, embed = embed)
-        print '[Embedding] Embedding Load Done.'
+    print '[Embedding] Embedding Load Done.'
 
     # list all input tags and construct tags config
     input_predict_conf = OrderedDict()
@@ -192,18 +196,17 @@ def predict(config):
 
     # initial data generator
     predict_gen = OrderedDict()
-    predict_genfun = OrderedDict()
+    #predict_genfun = OrderedDict()
 
     for tag, conf in input_predict_conf.items():
         print conf
         conf['data1'] = dataset[conf['text1_corpus']]
         conf['data2'] = dataset[conf['text2_corpus']]
-        generator = list_generator.get(conf['input_type'])
+        generator = inputs.get(conf['input_type'])
         predict_gen[tag] = generator( 
                                     #data1 = dataset[conf['text1_corpus']],
                                     #data2 = dataset[conf['text2_corpus']],
                                      config = conf )  
-        predict_genfun[tag] = predict_gen[tag].get_batch_generator()
 
     ######## Read output config ########
     output_conf = config['outputs']
@@ -215,21 +218,26 @@ def predict(config):
     model = load_model(config)
     model.load_weights(weights_file)
 
-    rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
-    metrics = []
+    eval_metrics = OrderedDict()
     for mobj in config['metrics']:
-        metrics.append(mobj)
-    res = dict([[k,0.] for k in metrics])
+        mobj = mobj.lower()
+        if '@' in mobj:
+            mt_key, mt_val = mobj.split('@', 1)
+            eval_metrics[mobj] = metrics.get(mt_key)(int(mt_val))
+        else:
+            eval_metrics[mobj] = metrics.get(mobj)
+    res = dict([[k,0.] for k in eval_metrics.keys()])
 
-    for tag, genfun in predict_genfun.items():
+    for tag, generator in predict_gen.items():
+        genfun = generator.get_batch_generator()
         print '[Predict] @ %s ' % tag,
         num_valid = 0
         res_scores = {} 
         for input_data, y_true in genfun:
             y_pred = model.predict(input_data, batch_size=len(y_true) )
-            curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, metrics=metrics)
-            for k, v in curr_res.items():
-                res[k] += v
+
+            for k, eval_func in eval_metrics.items():
+                res[k] += eval_func(y_true = y_true, y_pred = y_pred)
 
             y_pred = np.squeeze(y_pred)
             for p, y, t in zip(input_data['ID'], y_pred, y_true):
@@ -238,6 +246,7 @@ def predict(config):
                 res_scores[p[0]][p[1]] = (y, t)
 
             num_valid += 1
+        generator.reset()
 
         if tag in output_conf:
             if output_conf[tag]['save_format'] == 'TREC':
