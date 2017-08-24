@@ -6,6 +6,7 @@ import numpy as np
 import six
 import keras
 from keras import backend as K
+from keras.losses import *
 from keras.layers import Lambda
 from keras.utils.generic_utils import deserialize_keras_object
 

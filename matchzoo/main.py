@@ -11,8 +11,8 @@ import keras.backend as K
 from keras.models import Sequential, Model
 
 from utils import *
-#import inputs
-from inputs import *
+#from inputs import *
+import inputs
 from metrics import *
 from losses import *
 
@@ -50,7 +50,10 @@ def train(config):
         embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
         embed = np.float32(np.random.uniform(-0.2, 0.2, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
         share_input_conf['embed'] = convert_embed_2_numpy(embed_dict, embed = embed)
-        print '[Embedding] Embedding Load Done.'
+    else:
+        embed = np.float32(np.random.uniform(-0.2, 0.2, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
+        share_input_conf['embed'] = embed
+    print '[Embedding] Embedding Load Done.'
 
     # list all input tags and construct tags config
     input_train_conf = OrderedDict()
@@ -94,24 +97,16 @@ def train(config):
         print conf
         conf['data1'] = dataset[conf['text1_corpus']]
         conf['data2'] = dataset[conf['text2_corpus']]
-        generator = pair_generator.get(conf['input_type'])
-        #train_gen[tag] = DRMM_PairGenerator( data1 = dataset[conf['text1_corpus']],
-        train_gen[tag] = generator( 
-                                      #data1 = dataset[conf['text1_corpus']],
-                                      #data2 = dataset[conf['text2_corpus']],
-                                      config = conf )
+        generator = inputs.get(conf['input_type'])
+        train_gen[tag] = generator( config = conf )
         train_genfun[tag] = train_gen[tag].get_batch_generator()
 
     for tag, conf in input_eval_conf.items():
         print conf
         conf['data1'] = dataset[conf['text1_corpus']]
         conf['data2'] = dataset[conf['text2_corpus']]
-        generator = list_generator.get(conf['input_type'])
-        #eval_gen[tag] = DRMM_ListGenerator( data1 = dataset[conf['text1_corpus']],
-        eval_gen[tag] = generator( 
-                                     #data1 = dataset[conf['text1_corpus']],
-                                     #data2 = dataset[conf['text2_corpus']],
-                                     config = conf )  
+        generator = inputs.get(conf['input_type'])
+        eval_gen[tag] = generator( config = conf )  
         eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
     ######### Load Model #########
@@ -167,7 +162,6 @@ def predict(config):
         _PAD_ = share_input_conf['fill_word']
         embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
         embed = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
-        embed = convert_embed_2_numpy(embed_dict, embed = embed)
         share_input_conf['embed'] = convert_embed_2_numpy(embed_dict, embed = embed)
         print '[Embedding] Embedding Load Done.'
 
