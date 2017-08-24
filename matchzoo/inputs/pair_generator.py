@@ -2,20 +2,19 @@
 
 import sys
 import random
-import six
 import numpy as np
 from utils.rank_io import *
 from layers import DynamicMaxPooling
-from keras.utils.generic_utils import deserialize_keras_object
 
 class PairBasicGenerator(object):
     def __init__(self, config):
         self.__name = 'PairBasicGenerator'
         self.config = config
-        rel_file = config['relation_train']
+        rel_file = config['relation_file']
         self.rel = read_relation(filename=rel_file)
         self.batch_size = config['batch_size']
-        self.check_list = ['relation_train', 'batch_size']
+        self.check_list = ['relation_file', 'batch_size']
+        self.point = 0
         if config['use_iter']:
             self.pair_list_iter = self.make_pair_iter(self.rel)
             self.pair_list = []
@@ -89,6 +88,9 @@ class PairBasicGenerator(object):
     @property
     def num_pairs(self):
         return len(self.pair_list)
+
+    def reset(self):
+        self.point = 0
 
 class PairGenerator(PairBasicGenerator):
     def __init__(self, config):
@@ -342,24 +344,4 @@ class PairGenerator_Feats(PairBasicGenerator):
         while True:
             X1, X1_len, X2, X2_len, X3, Y = self.get_batch()
             yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'pair_feats': X3}, Y)
-def serialize(generator):
-    return generator.__name__
-
-def deserialize(name, custom_objects=None):
-    return deserialize_keras_object(name,
-                                    module_objects=globals(),
-                                    custom_objects=custom_objects,
-                                    printable_module_name='loss function')
-
-def get(identifier):
-    if identifier is None:
-        return None
-    if isinstance(identifier, six.string_types):
-        identifier = str(identifier)
-        return deserialize(identifier)
-    elif callable(identifier):
-        return identifier
-    else:
-        raise ValueError('Could not interpret '
-                         'loss function identifier:', identifier)
 

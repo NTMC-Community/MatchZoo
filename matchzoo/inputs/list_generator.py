@@ -2,18 +2,16 @@
 
 import sys
 import random
-import six
 import numpy as np
 from utils.rank_io import *
 from layers import DynamicMaxPooling
-from keras.utils.generic_utils import deserialize_keras_object
 
 class ListBasicGenerator(object):
     def __init__(self, config={}):
         self.__name = 'ListBasicGenerator'
         self.config = config
-        if 'relation_test' in config:
-            self.rel = read_relation(filename=config['relation_test'])
+        if 'relation_file' in config:
+            self.rel = read_relation(filename=config['relation_file'])
             self.list_list = self.make_list(self.rel)
             self.num_list = len(self.list_list)
         self.check_list = []
@@ -281,23 +279,3 @@ class ListGenerator_Feats(ListBasicGenerator):
             y_ls.append(Y)
         return x1_ls, x1_len_ls, x2_ls, x2_len_ls, x3_ls,  y_ls
 
-def serialize(generator):
-    return generator.__name__
-
-def deserialize(name, custom_objects=None):
-    return deserialize_keras_object(name,
-                                    module_objects=globals(),
-                                    custom_objects=custom_objects,
-                                    printable_module_name='loss function')
-
-def get(identifier):
-    if identifier is None:
-        return None
-    if isinstance(identifier, six.string_types):
-        identifier = str(identifier)
-        return deserialize(identifier)
-    elif callable(identifier):
-        return identifier
-    else:
-        raise ValueError('Could not interpret '
-                         'loss function identifier:', identifier)
