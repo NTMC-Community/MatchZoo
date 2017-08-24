@@ -100,6 +100,37 @@ class Preparation(object):
         rel_test = relations[valid_end:]
         return rel_train, rel_valid, rel_test
 
+    @staticmethod
+    def split_train_valid_test_for_ranking(relations, ratio=[0.8, 0.1, 0.1]):
+        qid_group = set()
+        for r, q, d in relations:
+            qid_group.add(q)
+        qid_group = list(qid_group)
+
+        random.shuffle(qid_group)
+        total_rel = len(qid_group)
+        num_train = int(total_rel * ratio[0])
+        num_valid = int(total_rel * ratio[1])
+        valid_end = num_train + num_valid
+
+        qid_train = qid_group[: num_train]
+        qid_valid = qid_group[num_train: valid_end]
+        qid_test = qid_group[valid_end:]
+
+        def select_rel_by_qids(qids):
+            rels = []
+            qids = set(qids)
+            for r, q, d in relations:
+                if q in qids:
+                    rels.append( (r, q, d) )
+            return rels
+
+        rel_train = select_rel_by_qids(qid_train)
+        rel_valid = select_rel_by_qids(qid_valid)
+        rel_test = select_rel_by_qids(qid_test)
+
+        return rel_train, rel_valid, rel_test
+
 if __name__ == '__main__':
     prepare = Preparation()
     basedir = '../../data/example/'

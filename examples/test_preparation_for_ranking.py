@@ -9,7 +9,7 @@ from preprocess import *
 
 
 if __name__ == '__main__':
-    basedir = '../data/example/classification/'
+    basedir = '../data/example/ranking/'
 
     # transform query/document pairs into corpus file and relation file
     prepare = Preparation()
@@ -18,7 +18,7 @@ if __name__ == '__main__':
     print('total relations : %d ...' % (len(rels)))
     prepare.save_corpus(basedir + 'corpus.txt', corpus)
 
-    rel_train, rel_valid, rel_test = prepare.split_train_valid_test(rels, [0.8, 0.1, 0.1])
+    rel_train, rel_valid, rel_test = prepare.split_train_valid_test_for_ranking(rels, [0.4, 0.3, 0.3])
     prepare.save_relation(basedir + 'relation_train.txt', rel_train)
     prepare.save_relation(basedir + 'relation_valid.txt', rel_valid)
     prepare.save_relation(basedir + 'relation_test.txt', rel_test)
