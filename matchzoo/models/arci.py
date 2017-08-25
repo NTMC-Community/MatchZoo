@@ -13,9 +13,10 @@ class ARCI(BasicModel):
         super(ARCI, self).__init__(config)
         self.__name = 'ARCI'
         self.check_list = [ 'text1_maxlen', 'text2_maxlen', 
-                   'embed', 'embed_size', 'vocab_size',
+                   'embed', 'embed_size', 'train_embed',  'vocab_size',
                    'kernel_size', 'kernel_count',
                    'q_pool_size', 'd_pool_size']
+        self.embed_trainable = config['train_embed']
         self.setup(config)
         if not self.check():
             raise TypeError('[ARCI] parameter check wrong')
@@ -36,7 +37,7 @@ class ARCI(BasicModel):
         doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
         #dpool_index = Input(name='dpool_index', shape=[self.config['text1_maxlen'], self.config['text2_maxlen'], 3], dtype='int32')
 
-        embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = False)
+        embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = self.embed_trainable)
         q_embed = embedding(query)
         d_embed = embedding(doc)
 

@@ -1,5 +1,6 @@
 
 # generate match histogram
+python test_preparation_for_ranking.py
 python test_histogram_generator.py 
 
 cd ../matchzoo
