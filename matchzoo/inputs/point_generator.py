@@ -31,6 +31,7 @@ class PointGenerator(object):
         return True
 
     def get_batch(self, randomly=True):
+        ID_pairs = []
         X1 = np.zeros((self.batch_size, self.data1_maxlen), dtype=np.int32)
         X1_len = np.zeros((self.batch_size,), dtype=np.int32)
         X2 = np.zeros((self.batch_size, self.data2_maxlen), dtype=np.int32)
@@ -49,17 +50,18 @@ class PointGenerator(object):
             d2_len = min(self.data2_maxlen, len(self.data2[d2]))
             X1[i, :d1_len], X1_len[i]   = self.data1[d1][:d1_len], d1_len
             X2[i, :d2_len], X2_len[i]   = self.data2[d2][:d2_len], d2_len
-        return X1, X1_len, X2, X2_len, Y    
+            ID_pairs.append((d1, d2))
+        return X1, X1_len, X2, X2_len, Y, ID_pairs
 
     def get_batch_generator(self):
         if self.is_train:
             while True:
-                X1, X1_len, X2, X2_len, Y = self.get_batch()
+                X1, X1_len, X2, X2_len, Y, ID_pairs = self.get_batch()
                 yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len}, Y)
         else:
             while self.point + self.batch_size <= self.total_rel_num:
-                X1, X1_len, X2, X2_len, Y = self.get_batch(randomly = False)
-                yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len}, Y)
+                X1, X1_len, X2, X2_len, Y, ID_pairs = self.get_batch(randomly = False)
+                yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'ID':ID_pairs}, Y)
 
     def reset(self):
         self.point = 0

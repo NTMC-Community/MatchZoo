@@ -22,6 +22,7 @@ class BasicModel(object):
     def check(self):
         for e in self.check_list:
             if e not in self.config:
+                print(e)
                 print '[Model] Error %s not in config' % e
                 return False
         return True

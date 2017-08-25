@@ -87,9 +87,7 @@ def train(config):
 
     # initial data generator
     train_gen = OrderedDict()
-    #train_genfun = OrderedDict()
     eval_gen = OrderedDict()
-    #eval_genfun = OrderedDict()
 
 
     for tag, conf in input_train_conf.items():
@@ -98,7 +96,6 @@ def train(config):
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
         train_gen[tag] = generator( config = conf )
-        #train_genfun[tag] = train_gen[tag].get_batch_generator()
 
     for tag, conf in input_eval_conf.items():
         print conf
@@ -106,7 +103,6 @@ def train(config):
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
         eval_gen[tag] = generator( config = conf )  
-        #eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
     ######### Load Model #########
     model = load_model(config)
@@ -150,7 +146,6 @@ def train(config):
             generator.reset()
             print 'epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()])
             sys.stdout.flush()
-            #eval_genfun[tag] = eval_gen[tag].get_batch_generator()
 
     model.save_weights(weights_file)
 
@@ -167,6 +162,9 @@ def predict(config):
         embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
         embed = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
         share_input_conf['embed'] = convert_embed_2_numpy(embed_dict, embed = embed)
+    else:
+        embed = np.float32(np.random.uniform(-0.2, 0.2, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
+        share_input_conf['embed'] = embed
     print '[Embedding] Embedding Load Done.'
 
     # list all input tags and construct tags config
@@ -196,7 +194,6 @@ def predict(config):
 
     # initial data generator
     predict_gen = OrderedDict()
-    #predict_genfun = OrderedDict()
 
     for tag, conf in input_predict_conf.items():
         print conf
