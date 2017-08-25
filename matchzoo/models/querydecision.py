@@ -17,6 +17,7 @@ class QueryDecision(BasicModel):
                    'embed', 'embed_size', 'vocab_size',
                    'kernel_size', 'kernel_count',
                    'q_pool_size', 'd_pool_size', 'pair_feat_size']
+        self.embed_trainable = config['train_embed']
         self.setup(config)
         if not self.check():
             raise TypeError('[QueryDecision] parameter check wrong')
@@ -46,7 +47,7 @@ class QueryDecision(BasicModel):
         query_len = Input(name='query_len', shape=(1,))
         pair_feats = Input(name='pair_feats', shape=(self.config['pair_feat_size'],))
 
-        embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = False)
+        embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = self.embed_trainable)
 
         q_embed = embedding(query)
         d_embed = embedding(doc)
