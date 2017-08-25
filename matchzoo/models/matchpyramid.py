@@ -20,6 +20,7 @@ class MatchPyramid(BasicModel):
                    'embed', 'embed_size', 'vocab_size',
                    'kernel_size', 'kernel_count',
                    'dpool_size']
+        self.embed_trainable = config['train_embed']
         self.setup(config)
         if not self.check():
             raise TypeError('[MatchPyramid] parameter check wrong')
@@ -39,7 +40,7 @@ class MatchPyramid(BasicModel):
         doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
         dpool_index = Input(name='dpool_index', shape=[self.config['text1_maxlen'], self.config['text2_maxlen'], 3], dtype='int32')
 
-        embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = False)
+        embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = self.embed_trainable)
         q_embed = embedding(query)
         d_embed = embedding(doc)
 

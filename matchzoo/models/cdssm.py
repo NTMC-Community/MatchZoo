@@ -16,6 +16,7 @@ class CDSSM(BasicModel):
         self.check_list = [ 'text1_maxlen', 'text2_maxlen', 
                    'vocab_size', 'embed_size',
                    'filters', 'kernel_size', 'hidden_size']
+        self.embed_trainable = config['train_embed']
         self.setup(config)
         if not self.check():
             raise TypeError('[CDSSM] parameter check wrong')
@@ -33,7 +34,7 @@ class CDSSM(BasicModel):
         query = Input(name='query', shape=(self.config['text1_maxlen'],))
         doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
 
-        wordhashing = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable=True)
+        wordhashing = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable=self.embed_trainable)
         q_embed = wordhashing(query)
         d_embed = wordhashing(doc)
         conv1d = Convolution1D(self.config['filters'], self.config['kernel_size'], padding='same', activation='relu')
