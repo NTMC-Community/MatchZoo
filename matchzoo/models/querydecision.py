@@ -15,7 +15,8 @@ class QueryDecision(BasicModel):
         self.__name = 'QueryDecision'
         self.check_list = [ 'text1_maxlen', 'text2_maxlen', 
                    'embed', 'embed_size', 'vocab_size',
-                   'kernel_size', 'kernel_count',
+                   'q_kernel_size', 'q_kernel_count',
+                   'd_kernel_size', 'd_kernel_count',
                    'q_pool_size', 'd_pool_size', 'pair_feat_size']
         self.embed_trainable = config['train_embed']
         self.setup(config)
@@ -27,8 +28,10 @@ class QueryDecision(BasicModel):
         if not isinstance(config, dict):
             raise TypeError('parameter config should be dict:', config)
             
-        self.set_default('kernel_count', 32)
-        self.set_default('kernel_size', 3)
+        self.set_default('q_kernel_count', 32)
+        self.set_default('q_kernel_size', 3)
+        self.set_default('d_kernel_count', 32)
+        self.set_default('d_kernel_size', 3)
         self.set_default('q_pool_size', 2)
         self.set_default('d_pool_size', 2)
         self.config.update(config)
@@ -59,15 +62,15 @@ class QueryDecision(BasicModel):
         print('[Embedding] doc_embed:\t%s' % str(d_embed.get_shape().as_list())) 
 
         q_conv1 = Conv1D(
-                self.config['kernel_count'], 
-                self.config['kernel_size'], 
+                self.config['q_kernel_count'], 
+                self.config['q_kernel_size'], 
                 padding='same', 
                 activity_regularizer=regularizers.l2(0.01)
                 ) (q_embed)
         print('[Conv1D] query_conv1:\t%s' % str(q_conv1.get_shape().as_list())) 
         d_conv1 = Conv1D(
-                self.config['kernel_count'], 
-                self.config['kernel_size'], 
+                self.config['d_kernel_count'], 
+                self.config['d_kernel_size'], 
                 padding='same', 
                 activity_regularizer=regularizers.l2(0.01)
                 ) (d_embed)
@@ -81,7 +84,6 @@ class QueryDecision(BasicModel):
         pool1 = Concatenate(axis=1) ([q_pool1, d_pool1])
         print('[Concatenate] pool1:\t%s' % str(pool1.get_shape().as_list())) 
 
-        #pool1_flat = Flatten()(pool1)
         pool1_flat = Reshape((-1,))(pool1)
 
         average = Lambda(lambda x: tf.reduce_mean(x, axis=1), output_shape=(1, self.config['embed_size'], ))(q_embed)
@@ -89,7 +91,6 @@ class QueryDecision(BasicModel):
         #average = Lambda(lambda x: tf.reduce_min(x, axis=1), output_shape=(1, self.config['embed_size'], ))(q_embed)
         #average = Lambda(lambda x: tf.reduce_sum(x[0], axis=1)/x[1], output_shape=(1, self.config['embed_size'], ))([q_embed, query_len])
         average = Reshape((-1,))(average)
-        #average = Reshape((-1,))(q_embed)
 
         #attr_feats = Concatenate(axis=1)([average, query_feats])
         #attr_feats = query_feats
@@ -107,9 +108,9 @@ class QueryDecision(BasicModel):
         print('[Attention] Attention Matching:\t%s' % str(feat.get_shape().as_list())) 
         #feat = Lambda(query_noatten)([pool1_flat, pair_feats])
 
-        out_ = Lambda(lambda x: tf.reduce_sum(x, axis=1, keep_dims=True), output_shape=(1, ))(feat)
+        #out_ = Lambda(lambda x: tf.reduce_sum(x, axis=1, keep_dims=True), output_shape=(1, ))(feat)
         #out_ = Dense(1)(feat)
-        #out_ = Dense(1, kernel_initializer='normal')(pool1_flat)
+        out_ = Dense(1)(pool1_flat)
         #out_ = Dense(1)(pair_feats)
         print('[Dense] Matching Score:\t%s' % str(out_.get_shape().as_list())) 
 
