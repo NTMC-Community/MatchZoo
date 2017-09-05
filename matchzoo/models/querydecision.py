@@ -46,14 +46,25 @@ class QueryDecision(BasicModel):
         doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
         query_len = Input(name='query_len', shape=(1,))
         pair_feats = Input(name='pair_feats', shape=(self.config['pair_feat_size'],))
+        query_feats = Input(name='query_feats', shape=(self.config['text1_maxlen'],))
 
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = self.embed_trainable)
 
         q_embed = embedding(query)
         d_embed = embedding(doc)
 
-        q_conv1 = Conv1D(self.config['kernel_count'], self.config['kernel_size'], padding='same', activity_regularizer=regularizers.l2(0.01)) (q_embed)
-        d_conv1 = Conv1D(self.config['kernel_count'], self.config['kernel_size'], padding='same', activity_regularizer=regularizers.l2(0.01)) (d_embed)
+        q_conv1 = Conv1D(
+                self.config['kernel_count'], 
+                self.config['kernel_size'], 
+                padding='same', 
+                activity_regularizer=regularizers.l2(0.01)
+                ) (q_embed)
+        d_conv1 = Conv1D(
+                self.config['kernel_count'], 
+                self.config['kernel_size'], 
+                padding='same', 
+                activity_regularizer=regularizers.l2(0.01)
+                ) (d_embed)
 
         q_pool1 = MaxPooling1D(pool_size=self.config['q_pool_size']) (q_conv1)
         d_pool1 = MaxPooling1D(pool_size=self.config['d_pool_size']) (d_conv1)
@@ -63,13 +74,18 @@ class QueryDecision(BasicModel):
         #pool1_flat = Flatten()(pool1)
         pool1_flat = Reshape((-1,))(pool1)
 
-        #average = Lambda(lambda x: tf.reduce_mean(x, axis=1), output_shape=(1, self.config['embed_size'], ))(q_embed)
+        average = Lambda(lambda x: tf.reduce_mean(x, axis=1), output_shape=(1, self.config['embed_size'], ))(q_embed)
         #average = Lambda(lambda x: tf.reduce_min(x, axis=1), output_shape=(1, self.config['embed_size'], ))(q_embed)
-        average = Lambda(lambda x: tf.reduce_sum(x[0], axis=1)/x[1], output_shape=(1, self.config['embed_size'], ))([q_embed, query_len])
+        #average = Lambda(lambda x: tf.reduce_sum(x[0], axis=1)/x[1], output_shape=(1, self.config['embed_size'], ))([q_embed, query_len])
+        average = Reshape((-1,))(average)
+        #average = Reshape((-1,))(q_embed)
 
         print(average.get_shape().as_list())
+        #attr_feats = Concatenate(axis=1)([average, query_feats])
+        #attr_feats = query_feats
+        #print(attr_feats.get_shape().as_list())
+
         attr = Dense(1, activation='sigmoid', use_bias=False)(average)
-        attr = Reshape((1,))(attr)
         print(attr.get_shape().as_list())
 
         pool1_flat_d = Dense(1)(pool1_flat)
@@ -78,11 +94,14 @@ class QueryDecision(BasicModel):
         print(pair_feats_d.get_shape().as_list())
 
         feat = Lambda(query_atten)([pool1_flat_d, pair_feats_d, attr])
+        print(feat.get_shape().as_list())
         #feat = Lambda(query_noatten)([pool1_flat, pair_feats])
 
+        #out_ = Lambda(lambda x: tf.reduce_sum(x, axis=1, keep_dims=True), output_shape=(1, ))(feat)
         out_ = Dense(1)(feat)
-        #out_ = Dense(1)(pool1_flat)
+        #out_ = Dense(1, kernel_initializer='normal')(pool1_flat)
         #out_ = Dense(1)(pair_feats)
+        print(out_.get_shape().as_list())
 
-        model = Model(inputs=[query, doc, query_len, pair_feats], outputs=out_)
+        model = Model(inputs=[query, doc, query_len, pair_feats, query_feats], outputs=out_)
         return model

@@ -208,7 +208,7 @@ class ListGenerator_Feats(ListBasicGenerator):
     def __init__(self, config={}):
         super(ListGenerator_Feats, self).__init__(config=config)
         self.__name = 'ListGenerator'
-        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'pair_feat_size', 'pair_feat_file'])
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'pair_feat_size', 'pair_feat_file', 'idf_file'])
         if not self.check():
             raise TypeError('[ListGenerator] parameter check wrong.')
 
@@ -219,6 +219,8 @@ class ListGenerator_Feats(ListBasicGenerator):
         self.fill_word = config['fill_word']
         self.pair_feat_size = config['pair_feat_size']
         pair_feats = read_features(config['pair_feat_file'])
+        idf_feats =  read_embedding(config['idf_file'])
+        self.idf_feats = convert_embed_2_numpy(idf_feats, len(idf_feats))
         self.pair_feats = {}
         for idx, (label, d1, d2) in enumerate(self.rel):
             self.pair_feats[(d1, d2)] = pair_feats[idx]
@@ -234,6 +236,7 @@ class ListGenerator_Feats(ListBasicGenerator):
             X2 = np.zeros((len(d2_list), self.data2_maxlen), dtype=np.int32)
             X2_len = np.zeros((len(d2_list),), dtype=np.int32)
             X3 = np.zeros((len(d2_list), self.pair_feat_size), dtype=np.float32)
+            X4 = np.zeros((len(d2_list), self.data1_maxlen), dtype=np.float32)
             Y = np.zeros((len(d2_list),), dtype= np.int32)
             X1[:] = self.fill_word
             X2[:] = self.fill_word
@@ -243,16 +246,17 @@ class ListGenerator_Feats(ListBasicGenerator):
                 X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
                 X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
                 X3[j, :self.pair_feat_size] = self.pair_feats[(d1, d2)]
+                X4[j, :d1_len] = self.idf_feats[self.data1[d1][:d1_len]].reshape((-1,))
                 ID_pairs.append((d1, d2))
                 Y[j] = l
-            yield X1, X1_len, X2, X2_len, X3, Y, ID_pairs
+            yield X1, X1_len, X2, X2_len, X3, X4, Y, ID_pairs
 
     def get_batch_generator(self):
-        for X1, X1_len, X2, X2_len, X3, Y, ID_pairs in self.get_batch():
-            yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'pair_feats': X3, 'ID': ID_pairs}, Y)
+        for X1, X1_len, X2, X2_len, X3, X4, Y, ID_pairs in self.get_batch():
+            yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'pair_feats': X3, 'query_feats': X4, 'ID': ID_pairs}, Y)
 
     def get_all_data(self):
-        x1_ls, x1_len_ls, x2_ls, x2_len_ls, x3_ls, y_ls = [], [], [], [], [], []
+        x1_ls, x1_len_ls, x2_ls, x2_len_ls, x3_ls, x4_ls, y_ls = [], [], [], [], [], [], []
         while self.point < self.num_list:
             d1, d2_list = self.list_list[self.point]
             X1 = np.zeros((len(d2_list), self.data1_maxlen), dtype=np.int32)
@@ -260,6 +264,7 @@ class ListGenerator_Feats(ListBasicGenerator):
             X2 = np.zeros((len(d2_list), self.data2_maxlen), dtype=np.int32)
             X2_len = np.zeros((len(d2_list),), dtype=np.int32)
             X3 = np.zeros((len(d2_list), self.pair_feat_size), dtype=np.float32)
+            X4 = np.zeros((len(d2_list), self.data1_maxlen), dtype=np.float32)
             Y = np.zeros((len(d2_list),), dtype= np.int32)
             X1[:] = self.fill_word
             X2[:] = self.fill_word
@@ -269,6 +274,7 @@ class ListGenerator_Feats(ListBasicGenerator):
                 X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
                 X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
                 X3[j, :self.pair_feat_size] = self.pair_feats[(d1, d2)]
+                X4[j, :d1_len] = self.idf_feats[self.data1[d1][:d1_len]],reshape((-1,))
                 Y[j] = l
             self.point += 1
             x1_ls.append(X1)
@@ -277,5 +283,5 @@ class ListGenerator_Feats(ListBasicGenerator):
             x2_len_ls.append(X2_len)
             x3_ls.append(X3)
             y_ls.append(Y)
-        return x1_ls, x1_len_ls, x2_ls, x2_len_ls, x3_ls,  y_ls
+        return x1_ls, x1_len_ls, x2_ls, x2_len_ls, x3_ls, x4_ls,  y_ls
 
