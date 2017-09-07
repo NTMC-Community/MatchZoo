@@ -40,7 +40,6 @@ class DSSM(BasicModel):
 
         def mlp_work(input_dim):
             seq = Sequential()
-            #seq.add(SparseFullyConnectedLayer(self.config['hidden_sizes'][0], input_dim=input_dim, activation='relu'))
             seq.add(Dense(self.config['hidden_sizes'][0], activation='relu', input_shape=(input_dim,)))
             for i in range(self.config['num_layers']-1):
                 seq.add(Dense(self.config['hidden_sizes'][i+1], activation='relu'))
@@ -49,22 +48,9 @@ class DSSM(BasicModel):
         mlp = mlp_work(self.config['feat_size'])
         rq = mlp(query)
         rd = mlp(doc)
-        '''
-        #sfcl = SparseFullyConnectedLayer(self.config['hidden_sizes'][0], input_dim=self.config['feat_size'], activation='relu') 
-        #print('sfcl')
-        #q1 = sfcl(query)
-        #print('[sfcl] query:\t%s' % str(q1.get_shape().as_list())) 
-        #d1 = SparseFullyConnectedLayer(self.config['hidden_sizes'][0], input_dim=self.config['feat_size'], activation='relu')(doc)
-        q1 = Dense(self.config['hidden_sizes'][0], activation='relu')(query)
-        d1 = Dense(self.config['hidden_sizes'][0], activation='relu')(doc)
-        q2 = Dense(self.config['hidden_sizes'][1], activation='relu')(q1)
-        d2 = Dense(self.config['hidden_sizes'][1], activation='relu')(d1)
-        '''
-
 
         #out_ = Merge([rq, rd], mode='cos', dot_axis=1)
         out_ = Dot( axes= [1, 1], normalize=True)([rq, rd])
-        #out_ = Dot( axes= [1, 1], normalize=True)([q2, d2])
 
         model = Model(inputs=[query, doc], outputs=[out_])
         return model
