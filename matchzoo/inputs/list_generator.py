@@ -5,6 +5,7 @@ import random
 import numpy as np
 from utils.rank_io import *
 from layers import DynamicMaxPooling
+import scipy.sparse as sp
 
 class ListBasicGenerator(object):
     def __init__(self, config={}):
@@ -108,6 +109,80 @@ class ListGenerator(ListBasicGenerator):
             x1_ls.append(X1)
             x1_len_ls.append(X1_len)
             x2_ls.append(X2)
+            x2_len_ls.append(X2_len)
+            y_ls.append(Y)
+        return x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls
+
+class DSSM_ListGenerator(ListBasicGenerator):
+    def __init__(self, config={}):
+        super(DSSM_ListGenerator, self).__init__(config=config)
+        self.__name = 'DSSM_ListGenerator'
+        self.data1 = config['data1']
+        self.data2 = config['data2']
+        self.feat_size = config['feat_size']
+        self.check_list.extend(['data1', 'data2', 'feat_size'])
+        if not self.check():
+            raise TypeError('[DSSM_ListGenerator] parameter check wrong.')
+        print '[DSSM_ListGenerator] init done'
+
+    def transfer_feat_dense2sparse(self, dense_feat):
+        data = []
+        indices = []
+        indptr = [0]
+        for feat in dense_feat:
+            for val in feat:
+                indices.append(val)
+                data.append(1)
+            indptr.append(indptr[-1] + len(feat))
+        return sp.csr_matrix((data, indices, indptr), shape=(len(dense_feat), self.feat_size), dtype="float32")
+
+    def get_batch(self):
+        for point in range(self.num_list):
+            ID_pairs = []
+            d1, d2_list = self.list_list[point]
+            #X1 = np.zeros((len(d2_list), self.feat_size), dtype=np.float32)
+            X1_len = np.zeros((len(d2_list),), dtype=np.int32)
+            #X2 = np.zeros((len(d2_list), self.feat_size), dtype=np.float32)
+            X2_len = np.zeros((len(d2_list),), dtype=np.int32)
+            Y = np.zeros((len(d2_list),), dtype= np.int32)
+            d1_len = len(self.data1[d1])
+            X1, X2 = [], []
+            for j, (l, d2) in enumerate(d2_list):
+                X1_len[j] = d1_len
+                X1.append(self.data1[d1])
+                d2_len = len(self.data2[d2])
+                X2_len[j] = d2_len
+                X2.append(self.data2[d2])
+                ID_pairs.append((d1, d2))
+                Y[j] = l
+            yield self.transfer_feat_dense2sparse(X1).toarray(), X1_len, self.transfer_feat_dense2sparse(X2).toarray(), X2_len, Y, ID_pairs
+
+    def get_batch_generator(self):
+        for X1, X1_len, X2, X2_len, Y, ID_pairs in self.get_batch():
+            yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'ID': ID_pairs}, Y)
+
+    def get_all_data(self):
+        x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls = [], [], [], [], []
+        while self.point < self.num_list:
+            d1, d2_list = self.list_list[self.point]
+            #X1 = np.zeros((len(d2_list), self.feat_size), dtype=np.float32)
+            X1_len = np.zeros((len(d2_list),), dtype=np.int32)
+            #X2 = np.zeros((len(d2_list), self.feat_size), dtype=np.float32)
+            X2_len = np.zeros((len(d2_list),), dtype=np.int32)
+            Y = np.zeros((len(d2_list),), dtype= np.int32)
+            X1, X2 = [], []
+            d1_len = len(self.data1[d1])
+            for j, (l, d2) in enumerate(d2_list):
+                d2_len = len(self.data2[d2])
+                X1_len[j] = d1_len
+                X1.append(self.data1[d1])
+                X2_len[j] = d2_len
+                X2.append(self.data2[d2])
+                Y[j] = l
+            self.point += 1
+            x1_ls.append(self.transfer_feat_dense2sparse(X1).toarray())
+            x1_len_ls.append(X1_len)
+            x2_ls.append(self.transfer_feat_dense2sparse(X2).toarray())
             x2_len_ls.append(X2_len)
             y_ls.append(Y)
         return x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls

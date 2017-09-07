@@ -5,6 +5,7 @@ import random
 import numpy as np
 from utils.rank_io import *
 from layers import DynamicMaxPooling
+import scipy.sparse as sp
 
 class PairBasicGenerator(object):
     def __init__(self, config):
@@ -163,6 +164,84 @@ class PairGenerator(PairBasicGenerator):
                 yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'dpool_index': DynamicMaxPooling.dynamic_pooling_index(X1_len, X2_len, self.config['text1_maxlen'], self.config['text2_maxlen'])}, Y)
             else:
                 yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len}, Y)
+
+class DSSM_PairGenerator(PairBasicGenerator):
+    def __init__(self, config):
+        super(DSSM_PairGenerator, self).__init__(config=config)
+        self.__name = 'DSSM_PairGenerator'
+        self.data1 = config['data1']
+        self.data2 = config['data2']
+        self.feat_size = config['feat_size']
+        self.check_list.extend(['data1', 'data2', 'feat_size'])
+        if config['use_iter']:
+            self.batch_iter = self.get_batch_iter()
+        if not self.check():
+            raise TypeError('[DSSM_PairGenerator] parameter check wrong.')
+        print '[DSSM_PairGenerator] init done'
+
+    def transfer_feat_dense2sparse(self, dense_feat):
+        data = []
+        indices = []
+        indptr = [0]
+        for feat in dense_feat:
+            for val in feat:
+                indices.append(val)
+                data.append(1)
+            indptr.append(indptr[-1] + len(feat))
+        return sp.csr_matrix((data, indices, indptr), shape=(len(dense_feat), self.feat_size), dtype="float32")
+    def get_batch_static(self):
+        #X1 = np.zeros((self.batch_size*2, self.feat_size), dtype=np.float32)
+        X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
+        #X2 = np.zeros((self.batch_size*2, self.feat_size), dtype=np.float32)
+        X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
+        Y = np.zeros((self.batch_size*2,), dtype=np.int32)
+
+        Y[::2] = 1
+        X1, X2 = [], []
+        for i in range(self.batch_size):
+            d1, d2p, d2n = random.choice(self.pair_list)
+            d1_len = len(self.data1[d1])
+            d2p_len = len(self.data2[d2p])
+            d2n_len = len(self.data2[d2n])
+            X1_len[i*2], X1_len[i*2+1]  = d1_len,  d1_len
+            X2_len[i*2], X2_len[i*2+1]  = d2p_len, d2n_len
+            X1.append(self.data1[d1])
+            X1.append(self.data1[d1])
+            X2.append(self.data2[d2p])
+            X2.append(self.data2[d2n])
+            
+        return self.transfer_feat_dense2sparse(X1).toarray(), X1_len, self.transfer_feat_dense2sparse(X2).toarray(), X2_len, Y    
+
+    def get_batch_iter(self):
+        while True:
+            self.pair_list = self.pair_list_iter.next()
+            for _ in range(self.config['batch_per_iter']):
+                #X1 = np.zeros((self.batch_size*2, self.feat_num), dtype=np.float32)
+                X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
+                #X2 = np.zeros((self.batch_size*2, self.feat_size), dtype=np.float32)
+                X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
+                Y = np.zeros((self.batch_size*2,), dtype=np.int32)
+
+                Y[::2] = 1
+                X1, X2 = [], []
+                for i in range(self.batch_size):
+                    d1, d2p, d2n = random.choice(self.pair_list)
+                    d1_len = len(self.data1[d1])
+                    d2p_len = len(self.data2[d2p])
+                    d2n_len = len(self.data2[d2n])
+                    X1_len[i*2],  X1_len[i*2+1]   = d1_len, d1_len
+                    X2_len[i*2],  X2_len[i*2+1]   = d2p_len, d2n_len
+                    X1.append(self.data1[d1])
+                    X1.append(self.data1[d1])
+                    X2.append(self.data2[d2p])
+                    X2.append(self.data2[d2n])
+                    
+                yield self.transfer_feat_dense2sparse(X1).toarray(), X1_len, self.transfer_feat_dense2sparse(X2).toarray(), X2_len, Y
+
+    def get_batch_generator(self):
+        while True:
+            X1, X1_len, X2, X2_len, Y = self.get_batch()
+            yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len}, Y)
 
 class DRMM_PairGenerator(PairBasicGenerator):
     def __init__(self, config):

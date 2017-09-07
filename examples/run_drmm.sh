@@ -9,7 +9,7 @@ cd ../matchzoo
 #cd models
 
 # train the model
-python --phase train --model_file models/drmm.config
+python main.py --phase train --model_file models/drmm.config
 
 # test the model
-python --phase predict --model_file models/drmm.config
+python main.py --phase predict --model_file models/drmm.config

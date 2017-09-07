@@ -31,7 +31,7 @@ if __name__ == '__main__':
     preprocessor.save_word_dict(basedir + 'word_dict.txt')
     #preprocessor.save_words_df(basedir + 'word_df.txt')
 
-    fout = open(basedir + 'corpus_prerocessed.txt','w')
+    fout = open(basedir + 'corpus_preprocessed.txt','w')
     for inum,did in enumerate(dids):
         fout.write('%s\t%s\n'%(did, ' '.join(map(str,docs[inum]))))
     fout.close()

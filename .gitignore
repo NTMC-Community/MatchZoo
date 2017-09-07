@@ -1,6 +1,7 @@
 *.pyc
 *.log
 *.swp
+*.bak
 *.weights
 *.trec
 *.ranklist

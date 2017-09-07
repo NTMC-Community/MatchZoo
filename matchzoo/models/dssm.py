@@ -1,20 +1,23 @@
-
 # -*- coding=utf-8 -*-
+
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
 from keras.layers import Input, Embedding, Dense, Activation, Merge, Lambda, Permute
 from keras.layers import Reshape, Dot
 from keras.activations import softmax
+import tensorflow as tf
 
 from model import BasicModel
-
+import sys
+sys.path.append('../matchzoo/layers/')
+from SparseFullyConnectedLayer import *
 
 class DSSM(BasicModel):
     def __init__(self, config):
         super(DSSM, self).__init__(config)
         self.__name = 'DSSM'
-        self.check_list = [ 'text1_maxlen', 'text2_maxlen', 
+        self.check_list = [ 'feat_size', 
                    'num_layers', 'hidden_sizes']
         self.setup(config)
         if not self.check():
@@ -30,22 +33,38 @@ class DSSM(BasicModel):
         self.config.update(config)
 
     def build(self):
-        query = Input(name='query', shape=(self.config['text1_maxlen'],))
-        doc = Input(name='doc', shape=(self.config['text2_maxlen']))
+        query = Input(name='query', shape=(self.config['feat_size'],))#, sparse=True)
+        print('[Input] query:\t%s' % str(query.get_shape().as_list())) 
+        doc = Input(name='doc', shape=(self.config['feat_size'],))#, sparse=True)
+        print('[Input] doc:\t%s' % str(doc.get_shape().as_list())) 
 
         def mlp_work(input_dim):
             seq = Sequential()
-            seq.add(SparseFullyConnectedLayer(self.config['hidden_layers'][0], input_dim=input_dim, activation='relu'))
+            #seq.add(SparseFullyConnectedLayer(self.config['hidden_sizes'][0], input_dim=input_dim, activation='relu'))
+            seq.add(Dense(self.config['hidden_sizes'][0], activation='relu', input_shape=(input_dim,)))
             for i in range(self.config['num_layers']-1):
                 seq.add(Dense(self.config['hidden_sizes'][i+1], activation='relu'))
             return seq
             
-        assert self.config['text1_maxlen'] == self.config['text2_maxlen']
-        mlp = mlp_work(self.config['text1_maxlen'])
+        mlp = mlp_work(self.config['feat_size'])
         rq = mlp(query)
         rd = mlp(doc)
+        '''
+        #sfcl = SparseFullyConnectedLayer(self.config['hidden_sizes'][0], input_dim=self.config['feat_size'], activation='relu') 
+        #print('sfcl')
+        #q1 = sfcl(query)
+        #print('[sfcl] query:\t%s' % str(q1.get_shape().as_list())) 
+        #d1 = SparseFullyConnectedLayer(self.config['hidden_sizes'][0], input_dim=self.config['feat_size'], activation='relu')(doc)
+        q1 = Dense(self.config['hidden_sizes'][0], activation='relu')(query)
+        d1 = Dense(self.config['hidden_sizes'][0], activation='relu')(doc)
+        q2 = Dense(self.config['hidden_sizes'][1], activation='relu')(q1)
+        d2 = Dense(self.config['hidden_sizes'][1], activation='relu')(d1)
+        '''
+
+
         #out_ = Merge([rq, rd], mode='cos', dot_axis=1)
         out_ = Dot( axes= [1, 1], normalize=True)([rq, rd])
+        #out_ = Dot( axes= [1, 1], normalize=True)([q2, d2])
 
         model = Model(inputs=[query, doc], outputs=[out_])
         return model
