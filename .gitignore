@@ -5,6 +5,7 @@
 *.weights
 *.trec
 *.ranklist
+*.config
 *.DS_Store
 data/mq2008/*
 data/mq2007
