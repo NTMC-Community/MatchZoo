@@ -17,8 +17,7 @@ class DSSM(BasicModel):
     def __init__(self, config):
         super(DSSM, self).__init__(config)
         self.__name = 'DSSM'
-        self.check_list = [ 'feat_size', 
-                   'num_layers', 'hidden_sizes']
+        self.check_list = [ 'feat_size', 'hidden_sizes']
         self.setup(config)
         if not self.check():
             raise TypeError('[DSSM] parameter check wrong')
@@ -28,7 +27,6 @@ class DSSM(BasicModel):
         if not isinstance(config, dict):
             raise TypeError('parameter config should be dict:', config)
             
-        self.set_default('num_layers', 2)
         self.set_default('hidden_sizes', [300, 128])
         self.config.update(config)
 
@@ -40,15 +38,20 @@ class DSSM(BasicModel):
 
         def mlp_work(input_dim):
             seq = Sequential()
-            seq.add(Dense(self.config['hidden_sizes'][0], activation='relu', input_shape=(input_dim,)))
-            for i in range(self.config['num_layers']-1):
-                seq.add(Dense(self.config['hidden_sizes'][i+1], activation='relu'))
+            #seq.add(SparseFullyConnectedLayer(self.config['hidden_sizes'][0], input_dim=input_dim, activation='relu'))
+            num_hidden_layers = len(self.config['hidden_sizes'])
+            if num_hidden_layers == 1:
+                seq.add(Dense(self.config['hidden_sizes'][0], input_shape=(input_dim,)))
+            else:
+                seq.add(Dense(self.config['hidden_sizes'][0], activation='relu', input_shape=(input_dim,)))
+                for i in range(num_hidden_layers-2):
+                    seq.add(Dense(self.config['hidden_sizes'][i+1], activation='relu'))
+                seq.add(Dense(self.config['hidden_sizes'][num_hidden_layers-1]))
             return seq
             
         mlp = mlp_work(self.config['feat_size'])
         rq = mlp(query)
         rd = mlp(doc)
-
         #out_ = Merge([rq, rd], mode='cos', dot_axis=1)
         out_ = Dot( axes= [1, 1], normalize=True)([rq, rd])
 
