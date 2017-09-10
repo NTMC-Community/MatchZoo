@@ -5,7 +5,10 @@
 *.weights
 *.trec
 *.ranklist
+*.config
 *.DS_Store
+matchzoo/models/*.config
+matchzoo/models/querydecision*
 data/mq2008/*
 data/mq2007
 data/robust/*

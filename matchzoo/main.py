@@ -31,6 +31,8 @@ def load_model(config):
 
 
 def train(config):
+
+    print(json.dumps(config, indent=2))
     # read basic config
     global_conf = config["global"]
     optimizer = global_conf['optimizer']
@@ -152,6 +154,7 @@ def train(config):
 def predict(config):
     ######## Read input config ########
 
+    print(json.dumps(config, indent=2))
     input_conf = config['inputs']
     share_input_conf = input_conf['share']
 
