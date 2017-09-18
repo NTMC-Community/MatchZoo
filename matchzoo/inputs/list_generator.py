@@ -11,6 +11,7 @@ class ListBasicGenerator(object):
     def __init__(self, config={}):
         self.__name = 'ListBasicGenerator'
         self.config = config
+        self.batch_list = config['batch_list']
         if 'relation_file' in config:
             self.rel = read_relation(filename=config['relation_file'])
             self.list_list = self.make_list(self.rel)
@@ -62,56 +63,89 @@ class ListGenerator(ListBasicGenerator):
         print '[ListGenerator] init done'
 
     def get_batch(self):
-        for point in range(self.num_list):
+        #for point in range(self.num_list):
+        while self.point < self.num_list:
+            currbatch = []
+            if self.point + self.batch_list <= self.num_list:
+                currbatch = self.list_list[self.point: self.point+self.batch_list]
+                self.point += self.batch_list
+            else:
+                currbatch = self.list_list[self.point:]
+                self.point = self.num_list
+
+            bsize = 0
+            for pt in currbatch:
+                bsize += len(pt[1])
             ID_pairs = []
-            d1, d2_list = self.list_list[point]
-            X1 = np.zeros((len(d2_list), self.data1_maxlen), dtype=np.int32)
-            X1_len = np.zeros((len(d2_list),), dtype=np.int32)
-            X2 = np.zeros((len(d2_list), self.data2_maxlen), dtype=np.int32)
-            X2_len = np.zeros((len(d2_list),), dtype=np.int32)
-            Y = np.zeros((len(d2_list),), dtype= np.int32)
+            list_count = [0]
+            X1 = np.zeros((bsize, self.data1_maxlen), dtype=np.int32)
+            X1_len = np.zeros((bsize,), dtype=np.int32)
+            X2 = np.zeros((bsize, self.data2_maxlen), dtype=np.int32)
+            X2_len = np.zeros((bsize,), dtype=np.int32)
+            Y = np.zeros((bsize,), dtype= np.int32)
             X1[:] = self.fill_word
             X2[:] = self.fill_word
-            d1_len = min(self.data1_maxlen, len(self.data1[d1]))
-            for j, (l, d2) in enumerate(d2_list):
-                d2_len = min(self.data2_maxlen, len(self.data2[d2]))
-                X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
-                X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
-                ID_pairs.append((d1, d2))
-                Y[j] = l
-            yield X1, X1_len, X2, X2_len, Y, ID_pairs
+            j = 0
+            for pt in currbatch:
+                d1, d2_list = pt[0], pt[1]
+                list_count.append(list_count[-1] + len(d2_list))
+                d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+                for l, d2 in d2_list:
+                    d2_len = min(self.data2_maxlen, len(self.data2[d2]))
+                    X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
+                    X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
+                    ID_pairs.append((d1, d2))
+                    Y[j] = l
+                    j += 1
+            yield X1, X1_len, X2, X2_len, Y, list_count, ID_pairs
 
     def get_batch_generator(self):
-        for X1, X1_len, X2, X2_len, Y, ID_pairs in self.get_batch():
+        for X1, X1_len, X2, X2_len, Y, list_counts, ID_pairs in self.get_batch():
             if self.config['use_dpool']:
-                yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'dpool_index': DynamicMaxPooling.dynamic_pooling_index(X1_len, X2_len, self.config['text1_maxlen'], self.config['text2_maxlen']), 'ID': ID_pairs}, Y)
+                yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'dpool_index': DynamicMaxPooling.dynamic_pooling_index(X1_len, X2_len, self.config['text1_maxlen'], self.config['text2_maxlen']), 'ID': ID_pairs, 'list_counts': list_counts}, Y)
             else:
-                yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'ID': ID_pairs}, Y)
+                yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len, 'ID': ID_pairs, 'list_counts': list_counts}, Y)
 
     def get_all_data(self):
-        x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls = [], [], [], [], []
+        x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls, list_count_ls = [], [], [], [], [], []
         while self.point < self.num_list:
-            d1, d2_list = self.list_list[self.point]
-            X1 = np.zeros((len(d2_list), self.data1_maxlen), dtype=np.int32)
-            X1_len = np.zeros((len(d2_list),), dtype=np.int32)
-            X2 = np.zeros((len(d2_list), self.data2_maxlen), dtype=np.int32)
-            X2_len = np.zeros((len(d2_list),), dtype=np.int32)
-            Y = np.zeros((len(d2_list),), dtype= np.int32)
+            currbatch = []
+            if self.point + self.batch_list <= self.num_list:
+                currbatch = self.list_list[self.point: self.point+self.batch_list]
+                self.point += self.batch_list
+            else:
+                currbatch = self.list_list[self.point:]
+                self.point = self.num_list
+
+            bsize = 0
+            for pt in currbatch:
+                bsize += len(pt[1])
+            list_count = [0]
+            X1 = np.zeros((bsize, self.data1_maxlen), dtype=np.int32)
+            X1_len = np.zeros((bsize,), dtype=np.int32)
+            X2 = np.zeros((bsize, self.data2_maxlen), dtype=np.int32)
+            X2_len = np.zeros((bsize,), dtype=np.int32)
+            Y = np.zeros((bsize,), dtype= np.int32)
             X1[:] = self.fill_word
             X2[:] = self.fill_word
-            d1_len = min(self.data1_maxlen, len(self.data1[d1]))
-            for j, (l, d2) in enumerate(d2_list):
-                d2_len = min(self.data2_maxlen, len(self.data2[d2]))
-                X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
-                X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
-                Y[j] = l
-            self.point += 1
+            j = 0
+            for pt in currbatch:
+                d1, d2_list = pt[0], pt[1]
+                d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+                list_count.append(list_count[-1] + len(d2_list))
+                for l, d2 in d2_list:
+                    d2_len = min(self.data2_maxlen, len(self.data2[d2]))
+                    X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
+                    X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
+                    Y[j] = l
+                    j += 1
             x1_ls.append(X1)
             x1_len_ls.append(X1_len)
             x2_ls.append(X2)
             x2_len_ls.append(X2_len)
             y_ls.append(Y)
-        return x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls
+            list_count_ls.append(list_count)
+        return x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls, list_count_ls
 
 class DSSM_ListGenerator(ListBasicGenerator):
     def __init__(self, config={}):
