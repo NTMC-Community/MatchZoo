@@ -11,6 +11,7 @@ matchzoo/models/*.config
 matchzoo/models/querydecision*
 data/mq2008/*
 data/mq2007
+data/toutiao
 data/robust/*
 data/tmp
 build/
