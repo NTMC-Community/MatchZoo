@@ -141,10 +141,14 @@ def train(config):
             res = dict([[k,0.] for k in eval_metrics.keys()])
             num_valid = 0
             for input_data, y_true in genfun:
+                list_counts = input_data['list_counts']
                 y_pred = model.predict(input_data, batch_size=len(y_true))
                 for k, eval_func in eval_metrics.items():
-                    res[k] += eval_func(y_true = y_true, y_pred = y_pred)
-                num_valid += 1
+                    for lc_idx in range(len(list_counts)-1):
+                        pre = list_counts[lc_idx]
+                        suf = list_counts[lc_idx+1]
+                        res[k] += eval_func(y_true = y_true[pre:suf], y_pred = y_pred[pre:suf])
+                num_valid += len(list_counts) - 1
             generator.reset()
             print 'epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()])
             sys.stdout.flush()
@@ -234,18 +238,25 @@ def predict(config):
         num_valid = 0
         res_scores = {} 
         for input_data, y_true in genfun:
+            list_counts = input_data['list_counts']
             y_pred = model.predict(input_data, batch_size=len(y_true) )
 
             for k, eval_func in eval_metrics.items():
-                res[k] += eval_func(y_true = y_true, y_pred = y_pred)
+                for lc_idx in range(len(list_counts)-1):
+                    pre = list_counts[lc_idx]
+                    suf = list_counts[lc_idx+1]
+                    res[k] += eval_func(y_true = y_true[pre:suf], y_pred = y_pred[pre:suf])
 
             y_pred = np.squeeze(y_pred)
-            for p, y, t in zip(input_data['ID'], y_pred, y_true):
-                if p[0] not in res_scores:
-                    res_scores[p[0]] = {}
-                res_scores[p[0]][p[1]] = (y, t)
+            for lc_idx in range(len(list_counts)-1):
+                pre = list_counts[lc_idx]
+                suf = list_counts[lc_idx+1]
+                for p, y, t in zip(input_data['ID'][pre:suf], y_pred[pre:suf], y_true[pre:suf]):
+                    if p[0] not in res_scores:
+                        res_scores[p[0]] = {}
+                    res_scores[p[0]][p[1]] = (y, t)
 
-            num_valid += 1
+            num_valid += len(list_counts) - 1
         generator.reset()
 
         if tag in output_conf:
