@@ -372,7 +372,7 @@ class ListGenerator_Feats(ListBasicGenerator):
         self.pair_feat_size = config['pair_feat_size']
         pair_feats = read_features(config['pair_feat_file'])
         idf_feats =  read_embedding(config['idf_file'])
-        self.idf_feats = convert_embed_2_numpy(idf_feats, len(idf_feats))
+        self.idf_feats = convert_embed_2_numpy(idf_feats, len(idf_feats)+1)
         self.pair_feats = {}
         for idx, (label, d1, d2) in enumerate(self.rel):
             self.pair_feats[(d1, d2)] = pair_feats[idx]
