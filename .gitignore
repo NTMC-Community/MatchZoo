@@ -14,6 +14,7 @@ data/mq2007
 data/toutiao
 data/robust/*
 data/tmp
+data/*
 build/
 log/*
 matchzoo/log/*
