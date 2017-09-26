@@ -18,6 +18,8 @@ class PointGenerator(object):
         self.data1_maxlen = config['text1_maxlen']
         self.data2_maxlen = config['text2_maxlen']
         self.fill_word = config['fill_word']
+        self.target_mode = config['target_mode']
+        self.class_num = config['class_num']
         self.is_train = config['phase'] == 'TRAIN'
         self.point = 0
         self.total_rel_num = len(self.rel)
@@ -36,7 +38,10 @@ class PointGenerator(object):
         X1_len = np.zeros((self.batch_size,), dtype=np.int32)
         X2 = np.zeros((self.batch_size, self.data2_maxlen), dtype=np.int32)
         X2_len = np.zeros((self.batch_size,), dtype=np.int32)
-        Y = np.zeros((self.batch_size,), dtype=np.int32)
+        if self.target_mode == 'regression':
+            Y = np.zeros((self.batch_size,), dtype=np.int32)
+        elif self.target_mode == 'classification':
+            Y = np.zeros((self.batch_size, self.class_num), dtype=np.int32)
 
         X1[:] = self.fill_word
         X2[:] = self.fill_word
@@ -50,6 +55,10 @@ class PointGenerator(object):
             d2_len = min(self.data2_maxlen, len(self.data2[d2]))
             X1[i, :d1_len], X1_len[i]   = self.data1[d1][:d1_len], d1_len
             X2[i, :d2_len], X2_len[i]   = self.data2[d2][:d2_len], d2_len
+            if self.target_mode == 'regression':
+                Y[i] = label
+            elif self.target_mode == 'classification':
+                Y[i, label] = 1.
             ID_pairs.append((d1, d2))
         return X1, X1_len, X2, X2_len, Y, ID_pairs
 
