@@ -141,14 +141,19 @@ def train(config):
             res = dict([[k,0.] for k in eval_metrics.keys()])
             num_valid = 0
             for input_data, y_true in genfun:
-                list_counts = input_data['list_counts']
                 y_pred = model.predict(input_data, batch_size=len(y_true))
-                for k, eval_func in eval_metrics.items():
-                    for lc_idx in range(len(list_counts)-1):
-                        pre = list_counts[lc_idx]
-                        suf = list_counts[lc_idx+1]
-                        res[k] += eval_func(y_true = y_true[pre:suf], y_pred = y_pred[pre:suf])
-                num_valid += len(list_counts) - 1
+                if type(generator) is inputs.list_generator.ListBasicGenerator:
+                    list_counts = input_data['list_counts']
+                    for k, eval_func in eval_metrics.items():
+                        for lc_idx in range(len(list_counts)-1):
+                            pre = list_counts[lc_idx]
+                            suf = list_counts[lc_idx+1]
+                            res[k] += eval_func(y_true = y_true[pre:suf], y_pred = y_pred[pre:suf])
+                    num_valid += len(list_counts) - 1
+                else:
+                    for k, eval_func in eval_metrics.items():
+                        res[k] += eval_func(y_true = y_true, y_pred = y_pred)
+                    num_valid += 1
             generator.reset()
             print 'epoch: %d,' %( i_e ), '  '.join(['%s:%f'%(k,v/num_valid) for k, v in res.items()])
             sys.stdout.flush()
