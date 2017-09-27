@@ -104,9 +104,9 @@ class QueryDecision(BasicModel):
         pair_feats_d = Dense(1)(pair_feats)
         print('[Dense] Dense of pair_feats:\t%s' % str(pair_feats_d.get_shape().as_list())) 
 
-        feat = Lambda(query_atten)([pool1_flat_d, pair_feats_d, attr])
+        #feat = Lambda(query_atten)([pool1_flat_d, pair_feats_d, attr])
+        feat = Lambda(query_noatten)([pool1_flat, pair_feats])
         print('[Attention] Attention Matching:\t%s' % str(feat.get_shape().as_list())) 
-        #feat = Lambda(query_noatten)([pool1_flat, pair_feats])
 
         #out_ = Lambda(lambda x: tf.reduce_sum(x, axis=1, keep_dims=True), output_shape=(1, ))(feat)
         #out_ = Dense(1)(feat)
