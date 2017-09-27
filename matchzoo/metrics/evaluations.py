@@ -84,3 +84,12 @@ def mse(y_true, y_pred, rel_threshold=0.):
     y_true = np.squeeze(y_true)
     y_pred = np.squeeze(y_pred)
     return np.mean(np.square(y_pred - y_true), axis=-1)
+
+def accuracy(y_true, y_pred):
+    y_true = np.squeeze(y_true)
+    y_pred = np.squeeze(y_pred)
+    y_true_idx = np.argmax(y_true, axis = 1)
+    y_pred_idx = np.argmax(y_pred, axis = 1)
+    assert y_true_idx.shape == y_pred_idx.shape
+    return 1.0 * np.sum(y_true_idx == y_pred_idx) / y_true.shape[0]
+
