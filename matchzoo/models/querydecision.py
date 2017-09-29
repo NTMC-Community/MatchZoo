@@ -87,10 +87,12 @@ class QueryDecision(BasicModel):
         pool1_flat = Reshape((-1,))(pool1)
 
         average = Lambda(lambda x: tf.reduce_mean(x, axis=1), output_shape=(1, self.config['embed_size'], ))(q_embed)
-        print('[Lambda-Average] query_average:\t%s' % str(average.get_shape().as_list())) 
         #average = Lambda(lambda x: tf.reduce_min(x, axis=1), output_shape=(1, self.config['embed_size'], ))(q_embed)
         #average = Lambda(lambda x: tf.reduce_sum(x[0], axis=1)/x[1], output_shape=(1, self.config['embed_size'], ))([q_embed, query_len])
         average = Reshape((-1,))(average)
+
+        #average = Reshape((-1,))(q_embed)
+        print('[Lambda-Average] query_average:\t%s' % str(average.get_shape().as_list())) 
 
         #attr_feats = Concatenate(axis=1)([average, query_feats])
         #attr_feats = query_feats
@@ -104,8 +106,8 @@ class QueryDecision(BasicModel):
         pair_feats_d = Dense(1)(pair_feats)
         print('[Dense] Dense of pair_feats:\t%s' % str(pair_feats_d.get_shape().as_list())) 
 
-        #feat = Lambda(query_atten)([pool1_flat_d, pair_feats_d, attr])
-        feat = Lambda(query_noatten)([pool1_flat, pair_feats])
+        feat = Lambda(query_atten)([pool1_flat_d, pair_feats_d, attr])
+        #feat = Lambda(query_noatten)([pool1_flat, pair_feats])
         print('[Attention] Attention Matching:\t%s' % str(feat.get_shape().as_list())) 
 
         #out_ = Lambda(lambda x: tf.reduce_sum(x, axis=1, keep_dims=True), output_shape=(1, ))(feat)
