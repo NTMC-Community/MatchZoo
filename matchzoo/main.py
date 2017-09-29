@@ -142,7 +142,7 @@ def train(config):
             num_valid = 0
             for input_data, y_true in genfun:
                 y_pred = model.predict(input_data, batch_size=len(y_true))
-                if type(generator) is inputs.list_generator.ListBasicGenerator:
+                if issubclass(type(generator), inputs.list_generator.ListBasicGenerator):
                     list_counts = input_data['list_counts']
                     for k, eval_func in eval_metrics.items():
                         for lc_idx in range(len(list_counts)-1):
