@@ -51,7 +51,7 @@ class QueryDecision(BasicModel):
         print('[Input] query_len:\t%s' % str(query_len.get_shape().as_list())) 
         pair_feats = Input(name='pair_feats', shape=(self.config['pair_feat_size'],))
         print('[Input] pair_feats:\t%s' % str(pair_feats.get_shape().as_list())) 
-        query_feats = Input(name='query_feats', shape=(self.config['text1_maxlen'],))
+        query_feats = Input(name='query_feats', shape=(self.config['query_feat_size'],))
         print('[Input] query_feats:\t%s' % str(query_feats.get_shape().as_list())) 
 
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = self.embed_trainable)
@@ -98,7 +98,7 @@ class QueryDecision(BasicModel):
         #attr_feats = query_feats
         #print(attr_feats.get_shape().as_list())
 
-        attr = Dense(1, activation='sigmoid', use_bias=False)(average)
+        attr = Dense(1, activation='sigmoid', use_bias=False)(query_feats)
         print('[Attention] query_attention:\t%s' % str(attr.get_shape().as_list())) 
 
         pool1_flat_d = Dense(1)(pool1_flat)
@@ -111,8 +111,8 @@ class QueryDecision(BasicModel):
         print('[Attention] Attention Matching:\t%s' % str(feat.get_shape().as_list())) 
 
         #out_ = Lambda(lambda x: tf.reduce_sum(x, axis=1, keep_dims=True), output_shape=(1, ))(feat)
-        #out_ = Dense(1)(feat)
-        out_ = Dense(1)(pool1_flat)
+        out_ = Dense(1)(feat)
+        #out_ = Dense(1)(pool1_flat)
         #out_ = Dense(1)(pair_feats)
         print('[Dense] Matching Score:\t%s' % str(out_.get_shape().as_list())) 
 
