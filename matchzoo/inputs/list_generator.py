@@ -297,7 +297,7 @@ class DRMM_ListGenerator(ListBasicGenerator):
             ID_pairs = []
             X1 = np.zeros((bsize, self.data1_maxlen), dtype=np.int32)
             X1_len = np.zeros((bsize,), dtype=np.int32)
-            X2 = np.zeros((bsize, self.data1_maxlen, self.hist_size), dtype=np.int32)
+            X2 = np.zeros((bsize, self.data1_maxlen, self.hist_size), dtype=np.float32)
             X2_len = np.zeros((bsize,), dtype=np.int32)
             Y = np.zeros((bsize,), dtype= np.int32)
             X1[:] = self.fill_word
@@ -332,7 +332,7 @@ class DRMM_ListGenerator(ListBasicGenerator):
             list_count = [0]
             X1 = np.zeros((bsize, self.data1_maxlen), dtype=np.int32)
             X1_len = np.zeros((bsize,), dtype=np.int32)
-            X2 = np.zeros((bsize, self.data1_maxlen, self.hist_size), dtype=np.int32)
+            X2 = np.zeros((bsize, self.data1_maxlen, self.hist_size), dtype=np.float32)
             X2_len = np.zeros((bsize,), dtype=np.int32)
             Y = np.zeros((bsize,), dtype= np.int32)
             X1[:] = self.fill_word
