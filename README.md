@@ -1,6 +1,6 @@
 # MatchZoo
 ----
-MatchingZoo is a toolkit for text matching. It was developed with a focus on facilitate the designing, comparing and sharing of deep text matching models. 
+MatchZoo is a toolkit for text matching. It was developed with a focus on facilitate the designing, comparing and sharing of deep text matching models. 
 
 ## Overview
 The architecture of the MatchZoo toolit is depicited in Figure 
