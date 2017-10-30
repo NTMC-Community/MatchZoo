@@ -1,10 +1,14 @@
-# The Input Data Format of MatchZoo
+# The Input Data Format of MatchZoo Toolkit
 
 ## Ranking
 +**corpus.txt**: Each line is corresponding to a document. The first column is document ID. Then the following words are from this document after tokenization.
+
 +**corpus_preprocessed.txt**: Each line is corresponding to a document. The first column is document id, followed by the ids of words.+**relation_train.txt/relation_valid.txt/relation_test.txt**: Each line is "label query_id doc_id", which could be used for experiments including document retrieval, passage retrieval, answer sentence selection, etc. For each query, the documents are sorted by the labels. These labels can be binary or multi-graded.
+
 +**sample.txt**: Each line is the raw query and raw document text of a document. The format is "label \t query \t document_txt".
+
 +**word_dict.txt**: The word dictionary. Each line is the word and word_id.
+
 +**corpus_preprocessed_dssm.txt/word_dict_dssm.txt**: These files have the same format with "corpus_preprocessed.txt/word_dict.txt". Since DSSM use tri-letter based dictionary, we created seperate files on the dictionary for DSSM model.
 
 ## Classification
