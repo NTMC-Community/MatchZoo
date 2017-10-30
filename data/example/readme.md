@@ -16,5 +16,5 @@
 ## Classification
 For classification, the format of most files are the same with the case in ranking. The only difference is the format of "relation_train.txt/relation_valid.txt/relation_test.txt". Each line is "label document_id1 document_id2". Take paraphrase identification as an example, we want to predict whether two sentences have the same meaning using deep text matching models.
 
-## Sample Input Data
+## Sample Input Data and Useful Scripts
 The sample input data can be found under MatchZoo/data/example. You can transfer the raw sample.txt to these files by MatchZoo/examples/test_preparation_for_classify.py for classification or MatchZoo/examples/test_preparation_for_ranking.py for ranking.
