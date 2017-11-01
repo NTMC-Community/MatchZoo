@@ -251,7 +251,7 @@ class DRMM_ListGenerator(ListBasicGenerator):
         self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'fill_word', 'embed', 'hist_size'])
         self.use_hist_feats = False
         if 'hist_feats_file' in config:
-            hist_feats = read_features(config['hist_feats_file'])
+            hist_feats = read_features_without_id(config['hist_feats_file'])
             self.hist_feats = {}
             for idx, (label, d1, d2) in enumerate(self.rel):
                 self.hist_feats[(d1, d2)] = hist_feats[idx]
@@ -297,7 +297,7 @@ class DRMM_ListGenerator(ListBasicGenerator):
             ID_pairs = []
             X1 = np.zeros((bsize, self.data1_maxlen), dtype=np.int32)
             X1_len = np.zeros((bsize,), dtype=np.int32)
-            X2 = np.zeros((bsize, self.data1_maxlen, self.hist_size), dtype=np.int32)
+            X2 = np.zeros((bsize, self.data1_maxlen, self.hist_size), dtype=np.float32)
             X2_len = np.zeros((bsize,), dtype=np.int32)
             Y = np.zeros((bsize,), dtype= np.int32)
             X1[:] = self.fill_word
@@ -332,7 +332,7 @@ class DRMM_ListGenerator(ListBasicGenerator):
             list_count = [0]
             X1 = np.zeros((bsize, self.data1_maxlen), dtype=np.int32)
             X1_len = np.zeros((bsize,), dtype=np.int32)
-            X2 = np.zeros((bsize, self.data1_maxlen, self.hist_size), dtype=np.int32)
+            X2 = np.zeros((bsize, self.data1_maxlen, self.hist_size), dtype=np.float32)
             X2_len = np.zeros((bsize,), dtype=np.int32)
             Y = np.zeros((bsize,), dtype= np.int32)
             X1[:] = self.fill_word
@@ -360,7 +360,7 @@ class ListGenerator_Feats(ListBasicGenerator):
     def __init__(self, config={}):
         super(ListGenerator_Feats, self).__init__(config=config)
         self.__name = 'ListGenerator'
-        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'pair_feat_size', 'pair_feat_file', 'idf_file'])
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'pair_feat_size', 'pair_feat_file', 'query_feat_size', 'query_feat_file'])
         if not self.check():
             raise TypeError('[ListGenerator] parameter check wrong.')
 
@@ -370,9 +370,9 @@ class ListGenerator_Feats(ListBasicGenerator):
         self.data2_maxlen = config['text2_maxlen']
         self.fill_word = config['fill_word']
         self.pair_feat_size = config['pair_feat_size']
-        pair_feats = read_features(config['pair_feat_file'])
-        idf_feats =  read_embedding(config['idf_file'])
-        self.idf_feats = convert_embed_2_numpy(idf_feats, len(idf_feats))
+        self.query_feat_size = config['query_feat_size']
+        pair_feats = read_features_without_id(config['pair_feat_file'])
+        self.query_feats =  read_features_with_id(config['query_feat_file'])
         self.pair_feats = {}
         for idx, (label, d1, d2) in enumerate(self.rel):
             self.pair_feats[(d1, d2)] = pair_feats[idx]
@@ -397,7 +397,7 @@ class ListGenerator_Feats(ListBasicGenerator):
             X2 = np.zeros((bsize, self.data2_maxlen), dtype=np.int32)
             X2_len = np.zeros((bsize,), dtype=np.int32)
             X3 = np.zeros((bsize, self.pair_feat_size), dtype=np.float32)
-            X4 = np.zeros((bsize, self.data1_maxlen), dtype=np.float32)
+            X4 = np.zeros((bsize, self.query_feat_size), dtype=np.float32)
             Y = np.zeros((bsize,), dtype= np.int32)
             X1[:] = self.fill_word
             X2[:] = self.fill_word
@@ -411,7 +411,7 @@ class ListGenerator_Feats(ListBasicGenerator):
                     X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
                     X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
                     X3[j, :self.pair_feat_size] = self.pair_feats[(d1, d2)]
-                    X4[j, :d1_len] = self.idf_feats[self.data1[d1][:d1_len]].reshape((-1,))
+                    X4[j, :d1_len] = self.query_feats[d1][:self.query_feat_size]
                     ID_pairs.append((d1, d2))
                     Y[j] = l
                     j += 1
@@ -437,7 +437,7 @@ class ListGenerator_Feats(ListBasicGenerator):
             X2 = np.zeros((bsize, self.data2_maxlen), dtype=np.int32)
             X2_len = np.zeros((bsize,), dtype=np.int32)
             X3 = np.zeros((bsize, self.pair_feat_size), dtype=np.float32)
-            X4 = np.zeros((bsize, self.data1_maxlen), dtype=np.float32)
+            X4 = np.zeros((bsize, self.query_feat_size), dtype=np.float32)
             Y = np.zeros((bsize,), dtype= np.int32)
             X1[:] = self.fill_word
             X2[:] = self.fill_word
@@ -451,7 +451,7 @@ class ListGenerator_Feats(ListBasicGenerator):
                     X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
                     X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
                     X3[j, :self.pair_feat_size] = self.pair_feats[(d1, d2)]
-                    X4[j, :d1_len] = self.idf_feats[self.data1[d1][:d1_len]],reshape((-1,))
+                    X4[j, :d1_len] = self.query_feats[d1][:self.query_feat_size]
                     Y[j] = l
                     j += 1
             x1_ls.append(X1)

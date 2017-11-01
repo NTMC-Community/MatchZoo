@@ -51,7 +51,7 @@ class QueryDecision(BasicModel):
         print('[Input] query_len:\t%s' % str(query_len.get_shape().as_list())) 
         pair_feats = Input(name='pair_feats', shape=(self.config['pair_feat_size'],))
         print('[Input] pair_feats:\t%s' % str(pair_feats.get_shape().as_list())) 
-        query_feats = Input(name='query_feats', shape=(self.config['text1_maxlen'],))
+        query_feats = Input(name='query_feats', shape=(self.config['query_feat_size'],))
         print('[Input] query_feats:\t%s' % str(query_feats.get_shape().as_list())) 
 
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = self.embed_trainable)
@@ -86,33 +86,49 @@ class QueryDecision(BasicModel):
 
         pool1_flat = Reshape((-1,))(pool1)
 
-        average = Lambda(lambda x: tf.reduce_mean(x, axis=1), output_shape=(1, self.config['embed_size'], ))(q_embed)
-        print('[Lambda-Average] query_average:\t%s' % str(average.get_shape().as_list())) 
+        q_average = Lambda(lambda x: tf.reduce_mean(x, axis=1), output_shape=(1, self.config['embed_size'], ))(q_embed)
+        print('[Lambda: reduce_mean] q_average:\t%s' % str(q_average.get_shape().as_list())) 
         #average = Lambda(lambda x: tf.reduce_min(x, axis=1), output_shape=(1, self.config['embed_size'], ))(q_embed)
         #average = Lambda(lambda x: tf.reduce_sum(x[0], axis=1)/x[1], output_shape=(1, self.config['embed_size'], ))([q_embed, query_len])
-        average = Reshape((-1,))(average)
+        q_average = Reshape((-1,))(q_average)
+        print('[Reshape] q_average:\t%s' % str(q_average.get_shape().as_list())) 
+
+        q_pool1_flat = Reshape((-1,))(q_pool1)
+        print('[Reshape] q_pool1_flat:\t%s' % str(q_pool1_flat.get_shape().as_list())) 
+        q_rep = Dense(self.config['embed_size'])(q_pool1_flat)
+        print('[Dense: %d] q_rep:\t%s' % (self.config['embed_size'], str(q_rep.get_shape().as_list()))) 
+        neg_q_rep = Lambda( lambda x: -x)(q_rep)
+        print('[Lambda: -x] neg_q_rep:\t%s' % str(neg_q_rep.get_shape().as_list())) 
+        #average = Add()([q_average, neg_q_rep])
+        average = Concatenate(axis=1)([q_average, neg_q_rep])
+        print('[Concatenate] average:\t%s' % str(average.get_shape().as_list())) 
+
+        #average = Reshape((-1,))(q_embed)
+        #print('[Lambda-Average] query_average:\t%s' % str(average.get_shape().as_list())) 
 
         #attr_feats = Concatenate(axis=1)([average, query_feats])
         #attr_feats = query_feats
         #print(attr_feats.get_shape().as_list())
 
         attr = Dense(1, activation='sigmoid', use_bias=False)(average)
-        print('[Attention] query_attention:\t%s' % str(attr.get_shape().as_list())) 
+        print('[Dense: 1] attr:\t%s' % str(attr.get_shape().as_list())) 
+        drop_attr = Dropout(0.5)(attr)
+        print('[Dropout: 0.5] drop_attr:\t%s' % str(drop_attr.get_shape().as_list())) 
 
         pool1_flat_d = Dense(1)(pool1_flat)
-        print('[Dense] Dense of Concatenate:\t%s' % str(pool1_flat_d.get_shape().as_list())) 
+        print('[Dense: 1] Dense of Concatenate:\t%s' % str(pool1_flat_d.get_shape().as_list())) 
         pair_feats_d = Dense(1)(pair_feats)
-        print('[Dense] Dense of pair_feats:\t%s' % str(pair_feats_d.get_shape().as_list())) 
+        print('[Dense: 1] Dense of pair_feats:\t%s' % str(pair_feats_d.get_shape().as_list())) 
 
-        feat = Lambda(query_atten)([pool1_flat_d, pair_feats_d, attr])
-        print('[Attention] Attention Matching:\t%s' % str(feat.get_shape().as_list())) 
+        feat = Lambda(query_atten)([pool1_flat_d, pair_feats_d, drop_attr])
         #feat = Lambda(query_noatten)([pool1_flat, pair_feats])
+        print('[Lambda: query_atten] Attention Matching:\t%s' % str(feat.get_shape().as_list())) 
 
         #out_ = Lambda(lambda x: tf.reduce_sum(x, axis=1, keep_dims=True), output_shape=(1, ))(feat)
-        #out_ = Dense(1)(feat)
-        out_ = Dense(1)(pool1_flat)
+        out_ = Dense(1)(feat)
+        #out_ = Dense(1)(pool1_flat)
         #out_ = Dense(1)(pair_feats)
-        print('[Dense] Matching Score:\t%s' % str(out_.get_shape().as_list())) 
+        print('[Dense: 1] Matching Score:\t%s' % str(out_.get_shape().as_list())) 
 
         model = Model(inputs=[query, doc, query_len, pair_feats, query_feats], outputs=out_)
         return model

@@ -257,7 +257,7 @@ class DRMM_PairGenerator(PairBasicGenerator):
         self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'embed', 'hist_size', 'fill_word'])
         self.use_hist_feats = False
         if 'hist_feats_file' in config:
-            hist_feats = read_features(config['hist_feats_file'])
+            hist_feats = read_features_without_id(config['hist_feats_file'])
             self.hist_feats = {}
             for idx, (label, d1, d2) in enumerate(self.rel):
                 self.hist_feats[(d1, d2)] = hist_feats[idx]
@@ -348,7 +348,7 @@ class PairGenerator_Feats(PairBasicGenerator):
         super(PairGenerator_Feats, self).__init__(config=config)
         self.__name = 'PairGenerator'
         self.config = config
-        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'fill_word', 'pair_feat_size', 'pair_feat_file', 'idf_file'])
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'fill_word', 'pair_feat_size', 'pair_feat_file', 'query_feat_size', 'query_feat_file'])
         if not self.check():
             raise TypeError('[PairGenerator] parameter check wrong.')
 
@@ -358,9 +358,9 @@ class PairGenerator_Feats(PairBasicGenerator):
         self.data2_maxlen = config['text2_maxlen']
         self.fill_word = config['fill_word']
         self.pair_feat_size = config['pair_feat_size']
-        pair_feats = read_features(config['pair_feat_file'])
-        idf_feats =  read_embedding(config['idf_file'])
-        self.idf_feats = convert_embed_2_numpy(idf_feats, len(idf_feats))
+        self.query_feat_size = config['query_feat_size']
+        pair_feats = read_features_without_id(config['pair_feat_file'])
+        self.query_feats = read_features_with_id(config['query_feat_file'])
         self.pair_feats = {}
         for idx, (label, d1, d2) in enumerate(self.rel):
             self.pair_feats[(d1, d2)] = pair_feats[idx]
@@ -374,7 +374,7 @@ class PairGenerator_Feats(PairBasicGenerator):
         X2 = np.zeros((self.batch_size*2, self.data2_maxlen), dtype=np.int32)
         X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
         X3 = np.zeros((self.batch_size * 2, self.pair_feat_size), dtype=np.float32)
-        X4 = np.zeros((self.batch_size * 2, self.data1_maxlen), dtype=np.float32)
+        X4 = np.zeros((self.batch_size * 2, self.query_feat_size), dtype=np.float32)
         Y = np.zeros((self.batch_size*2,), dtype=np.int32)
 
         Y[::2] = 1
@@ -388,11 +388,11 @@ class PairGenerator_Feats(PairBasicGenerator):
             X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
             X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
             X3[i*2,   :self.pair_feat_size]    = self.pair_feats[(d1, d2p)][:self.pair_feat_size]
-            X4[i*2,   :d1_len] = self.idf_feats[self.data1[d1][:d1_len]].reshape((-1,))
+            X4[i*2,   :self.query_feat_size] = self.query_feats[d1][:self.query_feat_size]
             X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
             X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
             X3[i*2+1, :self.pair_feat_size]    = self.pair_feats[(d1, d2n)][:self.pair_feat_size]
-            X4[i*2+1, :d1_len] = self.idf_feats[self.data1[d1][:d1_len]].reshape((-1,))
+            X4[i*2+1, :self.query_feat_size] = self.query_feats[d1][:self.query_feat_size]
             
         return X1, X1_len, X2, X2_len, X3, X4, Y    
 
@@ -405,7 +405,7 @@ class PairGenerator_Feats(PairBasicGenerator):
                 X2 = np.zeros((self.batch_size*2, self.data2_maxlen), dtype=np.int32)
                 X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
                 X3 = np.zeros((self.batch_size*2, self.pair_feat_size), dtype=np.float32)
-                X4 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
+                X4 = np.zeros((self.batch_size*2, self.query_feat_size), dtype=np.int32)
                 Y = np.zeros((self.batch_size*2,), dtype=np.int32)
 
                 Y[::2] = 1
@@ -419,11 +419,11 @@ class PairGenerator_Feats(PairBasicGenerator):
                     X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
                     X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
                     X3[i*2,   :self.pair_feat_size]    = self.pair_feats[(d1, d2p)][:self.pair_feat_size]
-                    X4[i*2,   :d1_len] = self.idf_feats[self.data1[d1][:d1_len]].reshape((-1,))
+                    X4[i*2,   :d1_len] = self.query_feats[d1][:self.query_feat_size]
                     X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
                     X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
                     X3[i*2+1, :self.pair_feat_size]    = self.pair_feats[(d1, d2n)][:self.pair_feat_size]
-                    X4[i*2+1, :d1_len] = self.idf_feats[self.data1[d1][:d1_len]],reshape((-1,))
+                    X4[i*2+1, :d1_len] = self.query_feats[d1][:self.query_feat_size]
                     
                 yield X1, X1_len, X2, X2_len, X3, X4, Y
 
