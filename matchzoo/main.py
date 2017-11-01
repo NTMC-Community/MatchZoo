@@ -270,7 +270,7 @@ def predict(config):
                     for qid, dinfo in res_scores.items():
                         dinfo = sorted(dinfo.items(), key=lambda d:d[1][0], reverse=True)
                         for inum,(did, (score, gt)) in enumerate(dinfo):
-                            print >> f, '%s\tQ0\t%s\t%d\t%f\t%s'%(qid, did, inum, score, config['net_name'])
+                            print >> f, '%s\tQ0\t%s\t%d\t%f\t%s\t%s'%(qid, did, inum, score, config['net_name'], gt)
             elif output_conf[tag]['save_format'] == 'TEXTNET':
                 with open(output_conf[tag]['save_path'], 'w') as f:
                     for qid, dinfo in res_scores.items():
