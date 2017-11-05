@@ -3,6 +3,7 @@
 
 from __future__ import print_function
 import sys
+import os
 import numpy as np
 import hashlib
 import random
@@ -33,6 +34,7 @@ class Preparation(object):
 
     def parse_line(self, line, delimiter='\t'):
         subs = line.split(delimiter)
+        #print('subs: ', len(subs))
         if 3 != len(subs):
             raise ValueError('format of data file wrong, should be \'label,text1,text2\'.')
         else:
@@ -80,6 +82,12 @@ class Preparation(object):
         for qid, text in corpus.items():
             f.write('%s %s\n' % (qid, text.encode('utf8')))
         f.close()
+
+    @staticmethod
+    def merge_corpus(train_corpus, valid_corpus, test_corpus):
+        # cat train valid test > corpus.txt
+        # cat corpus_train.txt corpus_valid.txt corpus_test.txt > corpus.txt
+        os.system('cat ' + train_corpus + ' ' + valid_corpus + ' ' + test_corpus + '  > corpus.txt')
 
     @staticmethod
     def save_relation(file_path, relations):
@@ -133,8 +141,8 @@ class Preparation(object):
 
 if __name__ == '__main__':
     prepare = Preparation()
-    basedir = '../../data/example/'
-    corpus, rels = prepare.run_with_one_corpus(basedir + 'sample_train.txt')
+    basedir = '../../data/example/ranking/'
+    corpus, rels = prepare.run_with_one_corpus(basedir + 'sample.txt')
     print('total corpus : %d ...' % (len(corpus)))
     print('total relations : %d ...' % (len(rels)))
     prepare.save_corpus(basedir + 'corpus.txt', corpus)
