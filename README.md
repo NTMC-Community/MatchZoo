@@ -48,6 +48,7 @@ python main.py --phase predict --model_file ./models/arci.config
 * python2.7+ 
 * tensorflow 1.2
 * keras 2.05
+* tqdm 4.19.4
 
 ## Model Detail:
 
