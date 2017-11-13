@@ -11,6 +11,13 @@ numpy.random.seed(49999)
 import tensorflow
 tensorflow.set_random_seed(49999)
 
+import random
+random.seed(49999)
+import numpy as np
+np.random.seed(49999)
+import tensorflow as tf
+tf.set_random_seed(49999)
+
 from collections import OrderedDict
 
 import keras
@@ -21,6 +28,7 @@ from utils import *
 import inputs
 import metrics
 from losses import *
+
 
 def load_model(config):
     global_conf = config["global"]
@@ -98,7 +106,6 @@ def train(config):
     train_gen = OrderedDict()
     eval_gen = OrderedDict()
 
-
     for tag, conf in input_train_conf.items():
         print conf
         conf['data1'] = dataset[conf['text1_corpus']]
@@ -131,7 +138,6 @@ def train(config):
     print '[Model] Model Compile Done.'
 
     for i_e in range(global_conf['num_epochs']):
-        #print '[Train] @ %s epoch.' % i_e
         for tag, generator in train_gen.items():
             genfun = generator.get_batch_generator()
             print '[%s]\t[Train:%s]' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag),
@@ -139,10 +145,11 @@ def train(config):
                     genfun,
                     steps_per_epoch = num_batch,
                     epochs = 1,
+                    shuffle=False,
                     verbose = 0
                 ) #callbacks=[eval_map])
             print 'Iter:%d\tloss=%.6f' % (i_e, history.history['loss'][0])
-        
+
         for tag, generator in eval_gen.items():
             genfun = generator.get_batch_generator()
             print '[%s]\t[Eval:%s]' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag),

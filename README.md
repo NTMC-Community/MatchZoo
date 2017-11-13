@@ -40,8 +40,8 @@ git clone https://github.com/faneshion/MatchZoo.git
 cd MatchZoo
 python setup.py install
 
-python main.py --phase train --model_file ./models/drmm.config
-python main.py --phase predict --model_file ./models/drmm.config
+python main.py --phase train --model_file ./models/arci.config
+python main.py --phase predict --model_file ./models/arci.config
 ```
 ## Environment
 * python2.7+ 
