@@ -133,7 +133,7 @@ class PairGenerator(PairBasicGenerator):
         while True:
             self.pair_list = self.pair_list_iter.next()
             for _ in range(self.config['batch_per_iter']):
-                X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
+                X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32) # size of X1: batch_size * 2
                 X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
                 X2 = np.zeros((self.batch_size*2, self.data2_maxlen), dtype=np.int32)
                 X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
