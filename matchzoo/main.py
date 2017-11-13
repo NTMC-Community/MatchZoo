@@ -251,25 +251,34 @@ def predict(config):
         num_valid = 0
         res_scores = {} 
         for input_data, y_true in genfun:
-            list_counts = input_data['list_counts']
             y_pred = model.predict(input_data, batch_size=len(y_true) )
 
-            for k, eval_func in eval_metrics.items():
+            if issubclass(type(generator), inputs.list_generator.ListBasicGenerator):
+                list_counts = input_data['list_counts']
+                for k, eval_func in eval_metrics.items():
+                    for lc_idx in range(len(list_counts)-1):
+                        pre = list_counts[lc_idx]
+                        suf = list_counts[lc_idx+1]
+                        res[k] += eval_func(y_true = y_true[pre:suf], y_pred = y_pred[pre:suf])
+
+                y_pred = np.squeeze(y_pred)
                 for lc_idx in range(len(list_counts)-1):
                     pre = list_counts[lc_idx]
                     suf = list_counts[lc_idx+1]
-                    res[k] += eval_func(y_true = y_true[pre:suf], y_pred = y_pred[pre:suf])
+                    for p, y, t in zip(input_data['ID'][pre:suf], y_pred[pre:suf], y_true[pre:suf]):
+                        if p[0] not in res_scores:
+                            res_scores[p[0]] = {}
+                        res_scores[p[0]][p[1]] = (y, t)
 
-            y_pred = np.squeeze(y_pred)
-            for lc_idx in range(len(list_counts)-1):
-                pre = list_counts[lc_idx]
-                suf = list_counts[lc_idx+1]
-                for p, y, t in zip(input_data['ID'][pre:suf], y_pred[pre:suf], y_true[pre:suf]):
+                num_valid += len(list_counts) - 1
+            else:
+                for k, eval_func in eval_metrics.items():
+                    res[k] += eval_func(y_true = y_true, y_pred = y_pred)
+                for p, y, t in zip(input_data['ID'], y_pred, y_true):
                     if p[0] not in res_scores:
                         res_scores[p[0]] = {}
-                    res_scores[p[0]][p[1]] = (y, t)
-
-            num_valid += len(list_counts) - 1
+                    res_scores[p[0]][p[1]] = (y[1], t[1])
+                num_valid += 1
         generator.reset()
 
         if tag in output_conf:
@@ -278,7 +287,7 @@ def predict(config):
                     for qid, dinfo in res_scores.items():
                         dinfo = sorted(dinfo.items(), key=lambda d:d[1][0], reverse=True)
                         for inum,(did, (score, gt)) in enumerate(dinfo):
-                            print >> f, '%s\tQ0\t%s\t%d\t%f\t%s'%(qid, did, inum, score, config['net_name'])
+                            print >> f, '%s\tQ0\t%s\t%d\t%f\t%s\t%s'%(qid, did, inum, score, config['net_name'], gt)
             elif output_conf[tag]['save_format'] == 'TEXTNET':
                 with open(output_conf[tag]['save_path'], 'w') as f:
                     for qid, dinfo in res_scores.items():
@@ -292,7 +301,7 @@ def predict(config):
 def main(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument('--phase', default='train', help='Phase: Can be train or predict, the default value is train.')
-    parser.add_argument('--model_file', default='./models/matchzoo.model', help='Model_file: MatchZoo model file for the chosen model.')
+    parser.add_argument('--model_file', default='./models/arci.config', help='Model_file: MatchZoo model file for the chosen model.')
     args = parser.parse_args()
     model_file =  args.model_file
     with open(model_file, 'r') as f:

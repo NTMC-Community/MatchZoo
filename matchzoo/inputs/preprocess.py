@@ -7,8 +7,11 @@ import jieba
 import sys
 import numpy as np
 from nltk.stem import SnowballStemmer
+from tqdm import tqdm
 
-sys.path.append('../utils/')
+sys.path.append('../inputs')
+sys.path.append('../utils')
+from preparation import *
 from rank_io import *
 
 class Preprocess(object):
@@ -37,15 +40,21 @@ class Preprocess(object):
         self._words_df = dict()
 
     def run(self, file_path):
+        print('load...')
         dids, docs = Preprocess.load(file_path)
+        print('word_seg...')
         docs = Preprocess.word_seg(docs, self._lang)
+        print('doc_filter...')
         dids, docs = Preprocess.doc_filter(dids, docs, self._min_len, self._max_len)
+        print('word_stem...')
         docs = Preprocess.word_stem(docs)
+        print('word_filter...')
         docs, self._words_useless = Preprocess.word_filter(docs,
                                                            words_useless=self._words_useless,
                                                            stop_words=self._stop_words,
                                                            min_freq=self._min_freq,
                                                            max_freq=self._max_freq)
+        print('word_index...')
         docs, self._word_dict = Preprocess.word_index(docs, word_dict=self._word_dict)
         return dids, docs
 
@@ -62,7 +71,7 @@ class Preprocess(object):
         dids = list()
         docs = list()
         f = open(file_path, 'r')
-        for line in f:
+        for line in tqdm(f):
             line = line.decode('utf8')
             line = line.strip()
             if '' != line:
@@ -74,7 +83,12 @@ class Preprocess(object):
 
     @staticmethod
     def word_seg_en(docs):
-        docs = [word_tokenize(sent) for sent in docs]
+        docs = [word_tokenize(sent) for sent in tqdm(docs)]
+        # show the progress of word segmentation with tqdm
+        '''docs_seg = []
+        print('docs size', len(docs))
+        for i in tqdm(range(len(docs))):
+            docs_seg.append(word_tokenize(docs[i]))'''
         return docs
 
     @staticmethod
@@ -110,10 +124,11 @@ class Preprocess(object):
             # filter with min_freq and max_freq
             wdf = Preprocess.cal_doc_freq(docs)
             for w in wdf:
+                # filter too frequent words or rare words
                 if min_freq > wdf[w] or max_freq < wdf[w]:
                     words_useless.add(w)
         # filter with useless words
-        docs = [[w for w in ws if w not in words_useless] for ws in docs]
+        docs = [[w for w in ws if w not in words_useless] for ws in tqdm(docs)]
         return docs, words_useless
 
     @staticmethod
@@ -128,7 +143,7 @@ class Preprocess(object):
 
     @staticmethod
     def word_stem(docs):
-        docs = [[Preprocess._stemmer.stem(w) for w in ws] for ws in docs]
+        docs = [[Preprocess._stemmer.stem(w) for w in ws] for ws in tqdm(docs)]
         return docs
 
     @staticmethod
@@ -143,7 +158,7 @@ class Preprocess(object):
     def word_index(docs, word_dict=None):
         if word_dict is None:
             word_dict = Preprocess.build_word_dict(docs)
-        docs = [[word_dict[w] for w in ws if w in word_dict] for ws in docs]
+        docs = [[word_dict[w] for w in ws if w in word_dict] for ws in tqdm(docs)]
         return docs, word_dict
 
     @staticmethod
@@ -428,7 +443,7 @@ def _test_hist():
 if __name__ == '__main__':
     #_test_ngram()
     #_test_hist()
-    path = '/home/fanyixing/dataset/marco/'
+    '''path = '/home/fanyixing/dataset/marco/'
     infile_path = path + 'did.test.txt'
     outfile_path = path + 'did.test.processed.txt'
     #infile_path = './did.train.txt'
@@ -444,4 +459,30 @@ if __name__ == '__main__':
     for inum,did in enumerate(dids):
         fout.write('%s\t%s\n'%(did, ' '.join(map(str,docs[inum]))))
     fout.close()
-    print('Done ...')
+    print('Done ...')'''
+
+    # test with sample data
+    basedir = '../../data/example/ranking/'
+    prepare = Preparation()
+    sample_file = basedir + 'sample.txt'
+    corpus, rels = prepare.run_with_one_corpus(sample_file)
+    print ('total corpus size', len(corpus))
+    print ('total relations size', len(rels))
+    prepare.save_corpus(basedir + 'corpus.txt', corpus)
+    prepare.save_relation(basedir + 'relation.txt', rels)
+    print ('preparation finished ...')
+
+    print ('begin preprocess...')
+    # Prerpocess corpus file
+    preprocessor = Preprocess(min_freq=5)
+    dids, docs = preprocessor.run(basedir + 'corpus.txt')
+    preprocessor.save_word_dict(basedir + 'word_dict.txt')
+    # preprocessor.save_words_df(basedir + 'word_df.txt')
+
+    fout = open(basedir + 'corpus_preprocessed.txt', 'w')
+    for inum, did in enumerate(dids):
+        fout.write('%s\t%s\n' % (did, ' '.join(map(str, docs[inum]))))
+    fout.close()
+    print('preprocess finished ...')
+
+
