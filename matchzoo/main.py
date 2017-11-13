@@ -4,6 +4,12 @@ import sys
 import time
 import json
 import argparse
+import random
+random.seed(49999)
+import numpy
+numpy.random.seed(49999)
+import tensorflow
+tensorflow.set_random_seed(49999)
 
 from collections import OrderedDict
 
