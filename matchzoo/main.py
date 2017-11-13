@@ -11,13 +11,6 @@ numpy.random.seed(49999)
 import tensorflow
 tensorflow.set_random_seed(49999)
 
-import random
-random.seed(49999)
-import numpy as np
-np.random.seed(49999)
-import tensorflow as tf
-tf.set_random_seed(49999)
-
 from collections import OrderedDict
 
 import keras
