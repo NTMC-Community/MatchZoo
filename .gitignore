@@ -9,6 +9,8 @@
 *.DS_Store
 matchzoo/models/*.config
 matchzoo/models/querydecision*
+matchzoo/models/querydecision.py
+matchzoo/*.txt
 data/mq2008/*
 data/mq2007
 data/toutiao
