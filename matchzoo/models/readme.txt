@@ -1,7 +1,7 @@
 {
   "net_name": "ARCI”,   // model name
   "global":{
-      "model_type": "PY”, // model_type, which could be PY or JSON. Set PY if want to use Python to define model or JSON if want to use Keras/json to define model.
+      "model_type": "PY”, // model_type, which could be PY or JSON. Set PY if you want to use Python to define model or JSON if you want to use Keras/json to define model.
       "weights_file": "./models/arci.weights”, // the output path of learnt model weights
       "num_epochs": 10, // number of epochs, which is also number of iterations
       "num_batch": 10, // number of batches in each epoch
@@ -16,7 +16,7 @@
         "fill_word": 193367, // the number of words in vocabulary, which is vocab_size
         "embed_size": 50, // size of embedding
         "vocab_size": 193368, // size of vocabulary + 1, since we added a PADDING word
-        "train_embed": false, // whether fine tune embeddings
+        "train_embed": false, // whether fine tune word embeddings
         "text1_maxlen": 20, // max length of text1 (query/question)
         "text2_maxlen": 500 // max length of text2 (document/answer)
     },
@@ -38,11 +38,11 @@
     "test": {
         "input_type": "ListGenerator”, // type of batch generator. for validation and testing, we feed a list of documents under a query. Thus we use ListGenerator.
         "phase": "EVAL”, // phase label
-        "batch_list": 10, // feed how many documents (q,d) for prediction per batch
+        "batch_list": 10, // feed how many documents for prediction per batch
         "relation_file": "../data/example/ranking/relation_test.txt” // relation file for test data
     },
     "predict": {
-        "input_type": "ListGenerator",  // "Predict" phase is model prediction by loading saved weight file
+        "input_type": "ListGenerator",  // "PREDICT" phase is model prediction by loading saved weights file
         "phase": "PREDICT”, // phase label
         "batch_list": 10, // feed how many documents for prediction per batch
         "relation_file": "../data/example/ranking/relation_test.txt” // relation file for test data
