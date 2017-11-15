@@ -52,7 +52,7 @@ def train(config):
     share_input_conf = input_conf['share']
 
 
-    # collect embedding 
+    # collect embedding
     if 'embed_path' in share_input_conf:
         embed_dict = read_embedding(filename=share_input_conf['embed_path'])
         _PAD_ = share_input_conf['fill_word']
@@ -111,14 +111,14 @@ def train(config):
         conf['data1'] = dataset[conf['text1_corpus']]
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
-        eval_gen[tag] = generator( config = conf )  
+        eval_gen[tag] = generator( config = conf )
 
     ######### Load Model #########
     model = load_model(config)
 
     loss = []
     for lobj in config['losses']:
-      loss.append(rank_losses.get(lobj))
+      loss.append(rank_losses.get(lobj)())
     eval_metrics = OrderedDict()
     for mobj in config['metrics']:
         mobj = mobj.lower()
@@ -175,7 +175,7 @@ def predict(config):
     input_conf = config['inputs']
     share_input_conf = input_conf['share']
 
-    # collect embedding 
+    # collect embedding
     if 'embed_path' in share_input_conf:
         embed_dict = read_embedding(filename=share_input_conf['embed_path'])
         _PAD_ = share_input_conf['fill_word']
@@ -220,10 +220,10 @@ def predict(config):
         conf['data1'] = dataset[conf['text1_corpus']]
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
-        predict_gen[tag] = generator( 
+        predict_gen[tag] = generator(
                                     #data1 = dataset[conf['text1_corpus']],
                                     #data2 = dataset[conf['text2_corpus']],
-                                     config = conf )  
+                                     config = conf )
 
     ######## Read output config ########
     output_conf = config['outputs']
@@ -249,7 +249,7 @@ def predict(config):
         genfun = generator.get_batch_generator()
         print '[%s]\t[Predict] @ %s ' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag),
         num_valid = 0
-        res_scores = {} 
+        res_scores = {}
         for input_data, y_true in genfun:
             y_pred = model.predict(input_data, batch_size=len(y_true) )
 
