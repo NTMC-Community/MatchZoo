@@ -15,6 +15,7 @@ The data preparation module aims to convert dataset of different text matching t
 +	**Word Dictionary**: recordsthemappingfromeachwordto a unique identi er called wid. Words that are too frequent (e.g. stopwords), too rare or noisy (e.g. fax numbers) can be  ltered out by prede ned rules.
 +	**Corpus File**: records the mapping from each text to a unique identi er called tid, along with a sequence of word identi ers contained in that text. Note here each text is truncated or padded to a  xed length customized by users.
 +	**Relation File**: is used to store the relationship between two texts, each line containing a pair of tids and the cor- responding label.
++ **Input Data Format**: a detailed explaination of input data format can be found in MatchZoo/data/example/readme.md.
 
 ### Model Construction
 In the model construction module, we employ Keras libarary to help users build the deep matching model layer by layer conveniently.  e Keras libarary provides a set of common layers widely used in neural models, such as convolutional layer, pooling layer, dense layer and so on. To further facilitate the construction of deep text matching models, we extend the Keras libarary to provide some layer interfaces speci cally designed for text matching. 
@@ -40,13 +41,14 @@ git clone https://github.com/faneshion/MatchZoo.git
 cd MatchZoo
 python setup.py install
 
-python main.py --phase train --model_file ./models/drmm.config
-python main.py --phase predict --model_file ./models/drmm.config
+python main.py --phase train --model_file ./models/arci.config
+python main.py --phase predict --model_file ./models/arci.config
 ```
 ## Environment
 * python2.7+ 
 * tensorflow 1.2
 * keras 2.05
+* tqdm 4.19.4
 
 ## Model Detail:
 

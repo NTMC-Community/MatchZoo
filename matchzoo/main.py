@@ -4,6 +4,12 @@ import sys
 import time
 import json
 import argparse
+import random
+random.seed(49999)
+import numpy
+numpy.random.seed(49999)
+import tensorflow
+tensorflow.set_random_seed(49999)
 
 from collections import OrderedDict
 
@@ -15,6 +21,7 @@ from utils import *
 import inputs
 import metrics
 from losses import *
+
 
 def load_model(config):
     global_conf = config["global"]
@@ -45,7 +52,7 @@ def train(config):
     share_input_conf = input_conf['share']
 
 
-    # collect embedding 
+    # collect embedding
     if 'embed_path' in share_input_conf:
         embed_dict = read_embedding(filename=share_input_conf['embed_path'])
         _PAD_ = share_input_conf['fill_word']
@@ -92,7 +99,6 @@ def train(config):
     train_gen = OrderedDict()
     eval_gen = OrderedDict()
 
-
     for tag, conf in input_train_conf.items():
         print conf
         conf['data1'] = dataset[conf['text1_corpus']]
@@ -105,14 +111,14 @@ def train(config):
         conf['data1'] = dataset[conf['text1_corpus']]
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
-        eval_gen[tag] = generator( config = conf )  
+        eval_gen[tag] = generator( config = conf )
 
     ######### Load Model #########
     model = load_model(config)
 
     loss = []
     for lobj in config['losses']:
-      loss.append(rank_losses.get(lobj))
+      loss.append(rank_losses.get(lobj)())
     eval_metrics = OrderedDict()
     for mobj in config['metrics']:
         mobj = mobj.lower()
@@ -125,7 +131,6 @@ def train(config):
     print '[Model] Model Compile Done.'
 
     for i_e in range(global_conf['num_epochs']):
-        #print '[Train] @ %s epoch.' % i_e
         for tag, generator in train_gen.items():
             genfun = generator.get_batch_generator()
             print '[%s]\t[Train:%s]' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag),
@@ -133,10 +138,11 @@ def train(config):
                     genfun,
                     steps_per_epoch = num_batch,
                     epochs = 1,
+                    shuffle=False,
                     verbose = 0
                 ) #callbacks=[eval_map])
             print 'Iter:%d\tloss=%.6f' % (i_e, history.history['loss'][0])
-        
+
         for tag, generator in eval_gen.items():
             genfun = generator.get_batch_generator()
             print '[%s]\t[Eval:%s]' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag),
@@ -169,7 +175,7 @@ def predict(config):
     input_conf = config['inputs']
     share_input_conf = input_conf['share']
 
-    # collect embedding 
+    # collect embedding
     if 'embed_path' in share_input_conf:
         embed_dict = read_embedding(filename=share_input_conf['embed_path'])
         _PAD_ = share_input_conf['fill_word']
@@ -214,10 +220,10 @@ def predict(config):
         conf['data1'] = dataset[conf['text1_corpus']]
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
-        predict_gen[tag] = generator( 
+        predict_gen[tag] = generator(
                                     #data1 = dataset[conf['text1_corpus']],
                                     #data2 = dataset[conf['text2_corpus']],
-                                     config = conf )  
+                                     config = conf )
 
     ######## Read output config ########
     output_conf = config['outputs']
@@ -243,27 +249,36 @@ def predict(config):
         genfun = generator.get_batch_generator()
         print '[%s]\t[Predict] @ %s ' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag),
         num_valid = 0
-        res_scores = {} 
+        res_scores = {}
         for input_data, y_true in genfun:
-            list_counts = input_data['list_counts']
             y_pred = model.predict(input_data, batch_size=len(y_true) )
 
-            for k, eval_func in eval_metrics.items():
+            if issubclass(type(generator), inputs.list_generator.ListBasicGenerator):
+                list_counts = input_data['list_counts']
+                for k, eval_func in eval_metrics.items():
+                    for lc_idx in range(len(list_counts)-1):
+                        pre = list_counts[lc_idx]
+                        suf = list_counts[lc_idx+1]
+                        res[k] += eval_func(y_true = y_true[pre:suf], y_pred = y_pred[pre:suf])
+
+                y_pred = np.squeeze(y_pred)
                 for lc_idx in range(len(list_counts)-1):
                     pre = list_counts[lc_idx]
                     suf = list_counts[lc_idx+1]
-                    res[k] += eval_func(y_true = y_true[pre:suf], y_pred = y_pred[pre:suf])
+                    for p, y, t in zip(input_data['ID'][pre:suf], y_pred[pre:suf], y_true[pre:suf]):
+                        if p[0] not in res_scores:
+                            res_scores[p[0]] = {}
+                        res_scores[p[0]][p[1]] = (y, t)
 
-            y_pred = np.squeeze(y_pred)
-            for lc_idx in range(len(list_counts)-1):
-                pre = list_counts[lc_idx]
-                suf = list_counts[lc_idx+1]
-                for p, y, t in zip(input_data['ID'][pre:suf], y_pred[pre:suf], y_true[pre:suf]):
+                num_valid += len(list_counts) - 1
+            else:
+                for k, eval_func in eval_metrics.items():
+                    res[k] += eval_func(y_true = y_true, y_pred = y_pred)
+                for p, y, t in zip(input_data['ID'], y_pred, y_true):
                     if p[0] not in res_scores:
                         res_scores[p[0]] = {}
-                    res_scores[p[0]][p[1]] = (y, t)
-
-            num_valid += len(list_counts) - 1
+                    res_scores[p[0]][p[1]] = (y[1], t[1])
+                num_valid += 1
         generator.reset()
 
         if tag in output_conf:
@@ -272,7 +287,7 @@ def predict(config):
                     for qid, dinfo in res_scores.items():
                         dinfo = sorted(dinfo.items(), key=lambda d:d[1][0], reverse=True)
                         for inum,(did, (score, gt)) in enumerate(dinfo):
-                            print >> f, '%s\tQ0\t%s\t%d\t%f\t%s'%(qid, did, inum, score, config['net_name'])
+                            print >> f, '%s\tQ0\t%s\t%d\t%f\t%s\t%s'%(qid, did, inum, score, config['net_name'], gt)
             elif output_conf[tag]['save_format'] == 'TEXTNET':
                 with open(output_conf[tag]['save_path'], 'w') as f:
                     for qid, dinfo in res_scores.items():
@@ -286,7 +301,7 @@ def predict(config):
 def main(argv):
     parser = argparse.ArgumentParser()
     parser.add_argument('--phase', default='train', help='Phase: Can be train or predict, the default value is train.')
-    parser.add_argument('--model_file', default='./models/matchzoo.model', help='Model_file: MatchZoo model file for the chosen model.')
+    parser.add_argument('--model_file', default='./models/arci.config', help='Model_file: MatchZoo model file for the chosen model.')
     args = parser.parse_args()
     model_file =  args.model_file
     with open(model_file, 'r') as f:

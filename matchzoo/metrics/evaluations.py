@@ -6,10 +6,15 @@ import random
 import numpy as np
 import math
 
+def _to_list(x):
+    if isinstance(x, list):
+        return x
+    return [x]
+
 def map(y_true, y_pred, rel_threshold=0):
     s = 0.
-    y_true = np.squeeze(y_true)
-    y_pred = np.squeeze(y_pred)
+    y_true = _to_list(np.squeeze(y_true).tolist())
+    y_pred = _to_list(np.squeeze(y_pred).tolist())
     c = zip(y_true, y_pred)
     random.shuffle(c)
     c = sorted(c, key=lambda x:x[1], reverse=True)
@@ -34,8 +39,8 @@ def ndcg(k=10):
         if k <= 0.:
             return 0.
         s = 0.
-        y_true = np.squeeze(y_true)
-        y_pred = np.squeeze(y_pred)
+        y_true = _to_list(np.squeeze(y_true).tolist())
+        y_pred = _to_list(np.squeeze(y_pred).tolist())
         c = zip(y_true, y_pred)
         random.shuffle(c)
         c_g = sorted(c, key=lambda x:x[0], reverse=True)
@@ -63,8 +68,8 @@ def precision(k=10):
         if k <= 0:
             return 0.
         s = 0.
-        y_true = np.squeeze(y_true)
-        y_pred = np.squeeze(y_pred)
+        y_true = _to_list(np.squeeze(y_true).tolist())
+        y_pred = _to_list(np.squeeze(y_pred).tolist())
         c = zip(y_true, y_pred)
         random.shuffle(c)
         c = sorted(c, key=lambda x:x[1], reverse=True)
@@ -81,13 +86,13 @@ def precision(k=10):
 
 def mse(y_true, y_pred, rel_threshold=0.):
     s = 0.
-    y_true = np.squeeze(y_true)
-    y_pred = np.squeeze(y_pred)
+    y_true = _to_list(np.squeeze(y_true).tolist())
+    y_pred = _to_list(np.squeeze(y_pred).tolist())
     return np.mean(np.square(y_pred - y_true), axis=-1)
 
 def accuracy(y_true, y_pred):
-    y_true = np.squeeze(y_true)
-    y_pred = np.squeeze(y_pred)
+    y_true = _to_list(np.squeeze(y_true).tolist())
+    y_pred = _to_list(np.squeeze(y_pred).tolist())
     y_true_idx = np.argmax(y_true, axis = 1)
     y_pred_idx = np.argmax(y_pred, axis = 1)
     assert y_true_idx.shape == y_pred_idx.shape
