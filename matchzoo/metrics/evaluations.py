@@ -84,6 +84,30 @@ def precision(k=10):
         return prec
     return top_k
 
+# compute recall@k
+# the input is all documents under a single query
+def recall(k=10):
+    def top_k(y_true, y_pred, rel_threshold=0.):
+        if k <= 0:
+            return 0.
+        s = 0.
+        y_true = _to_list(np.squeeze(y_true).tolist()) # y_true: the ground truth scores for documents under a query
+        y_pred = _to_list(np.squeeze(y_pred).tolist()) # y_pred: the predicted scores for documents under a query
+        pos_count = sum(i > rel_threshold for i in y_true) # total number of positive documents under this query
+        c = zip(y_true, y_pred)
+        random.shuffle(c)
+        c = sorted(c, key=lambda x: x[1], reverse=True)
+        ipos = 0
+        recall = 0.
+        for i, (g, p) in enumerate(c):
+            if i >= k:
+                break
+            if g > rel_threshold:
+                recall += 1
+        recall /= pos_count
+        return recall
+    return top_k
+
 def mse(y_true, y_pred, rel_threshold=0.):
     s = 0.
     y_true = _to_list(np.squeeze(y_true).tolist())
