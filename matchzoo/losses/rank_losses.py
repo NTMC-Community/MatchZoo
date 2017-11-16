@@ -10,8 +10,12 @@ from keras.losses import *
 from keras.layers import Lambda
 from keras.utils.generic_utils import deserialize_keras_object
 
+mz_specialized_losses = {'rank_hinge_loss'}
 
-def rank_hinge_loss(margin=1.):
+def rank_hinge_loss(kwargs=None):
+    margin = 1.
+    if isinstance(kwargs, dict) and 'margin' in kwargs:
+        margin = kwargs['margin']
     def _margin_loss(y_true, y_pred):
         #output_shape = K.int_shape(y_pred)
         y_pos = Lambda(lambda a: a[::2, :], output_shape= (1,))(y_pred)

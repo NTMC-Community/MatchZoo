@@ -18,4 +18,4 @@ python prepare_mz_data.py
 
 # generate word embedding
 python gen_w2v.py  glove.6B.50d.txt word_dict.txt embed_glove_d50
-python norm_embed.py embed_glove_d50 embed_glove_d300_norm
+python norm_embed.py embed_glove_d50 embed_glove_d50_norm
