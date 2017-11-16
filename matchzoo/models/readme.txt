@@ -57,6 +57,13 @@
   "model": {
     "model_path": "./models/“, // path of models
     "model_py": “arci.ARCI” // python_file_name.class_name
+    "setting": { // model specific settings
+        "kernel_count": 32,
+        "kernel_size": 3,
+        "q_pool_size": 2,
+        "d_pool_size": 2,
+        "dropout_rate": 0.5
+    }
   },
   "losses": [ "rank_hinge_loss" ], // loss function
   "metrics": [ "ndcg@3", "ndcg@5", "map” ] // metrics
