@@ -7,6 +7,10 @@ from keras.layers import Reshape, Dot
 from keras.activations import softmax
 from model import BasicModel
 
+import sys
+sys.path.append('../matchzoo/utils/')
+from utility import *
+
 class DRMM(BasicModel):
     def __init__(self, config):
         super(DRMM, self).__init__(config)
@@ -24,7 +28,7 @@ class DRMM(BasicModel):
     def setup(self, config):
         if not isinstance(config, dict):
             raise TypeError('parameter config should be dict:', config)
-            
+
         self.set_default('text1_maxlen', 5)
         self.set_default('hist_size', 60)
         self.config.update(config)
@@ -37,31 +41,32 @@ class DRMM(BasicModel):
             y = K.einsum('ijk, ikl->ijl', a, b)
             return y
         query = Input(name='query', shape=(self.config['text1_maxlen'],))
-        print('[Input] query:\t%s' % str(query.get_shape().as_list())) 
+        print('[layer]: Input\t[shape]: %s] \n%s' % (str(query.get_shape().as_list()), show_memory_use()))
         doc = Input(name='doc', shape=(self.config['text1_maxlen'], self.config['hist_size']))
-        print('[Input] doc:\t%s' % str(doc.get_shape().as_list())) 
+        print('[layer]: Input\t[shape]: %s] \n%s' % (str(doc.get_shape().as_list()), show_memory_use()))
 
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = False)
 
         q_embed = embedding(query)
-        print('[Embedding] q_embed:\t%s' % str(q_embed.get_shape().as_list())) 
+        print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(q_embed.get_shape().as_list()), show_memory_use()))
         q_w = Dense(1, kernel_initializer=self.initializer_gate, use_bias=False)(q_embed)
-        print('[Dense] q_gate:\t%s' % str(q_w.get_shape().as_list())) 
+        print('[layer]: Dense\t[shape]: %s] \n%s' % (str(q_w.get_shape().as_list()), show_memory_use()))
         q_w = Lambda(lambda x: softmax(x, axis=1), output_shape=(self.config['text1_maxlen'], ))(q_w)
-        print('[Softmax] q_gate:\t%s' % str(q_w.get_shape().as_list())) 
+        print('[layer]: Lambda-softmax\t[shape]: %s] \n%s' % (str(q_w.get_shape().as_list()), show_memory_use()))
         z = doc
         for i in range(self.config['num_layers']):
             z = Dense(self.config['hidden_sizes'][i], kernel_initializer=self.initializer_fc)(z)
             z = Activation('tanh')(z)
-            print('[Dense] z (full connection):\t%s' % str(z.get_shape().as_list())) 
+            print('[layer]: Dense\t[shape]: %s] \n%s' % (str(z.get_shape().as_list()), show_memory_use()))
         z = Permute((2, 1))(z)
+        print('[layer]: Permute\t[shape]: %s] \n%s' % (str(z.get_shape().as_list()), show_memory_use()))
         z = Reshape((self.config['text1_maxlen'],))(z)
-        print('[Reshape] z (matching) :\t%s' % str(z.get_shape().as_list())) 
+        print('[layer]: Reshape\t[shape]: %s] \n%s' % (str(z.get_shape().as_list()), show_memory_use()))
         q_w = Reshape((self.config['text1_maxlen'],))(q_w)
-        print('[Reshape] q_w (gating) :\t%s' % str(q_w.get_shape().as_list())) 
+        print('[layer]: Reshape\t[shape]: %s] \n%s' % (str(q_w.get_shape().as_list()), show_memory_use()))
 
         out_ = Dot( axes= [1, 1])([z, q_w])
-        print('[Dot] out_ :\t%s' % str(out_.get_shape().as_list())) 
+        print('[layer]: Dot\t[shape]: %s] \n%s' % (str(out_.get_shape().as_list()), show_memory_use()))
 
         model = Model(inputs=[query, doc], outputs=[out_])
         return model

@@ -19,7 +19,7 @@ class MatchPyramid(BasicModel):
         self.check_list = [ 'text1_maxlen', 'text2_maxlen',
                    'embed', 'embed_size', 'vocab_size',
                    'kernel_size', 'kernel_count',
-                   'dpool_size']
+                   'dpool_size', 'dropout_rate']
         self.embed_trainable = config['train_embed']
         self.setup(config)
         if not self.check():
@@ -33,6 +33,7 @@ class MatchPyramid(BasicModel):
         self.set_default('kernel_count', 32)
         self.set_default('kernel_size', [3, 3])
         self.set_default('dpool_size', [3, 10])
+        self.set_default('dropout_rate', 0)
         self.config.update(config)
 
     def build(self):
@@ -58,12 +59,14 @@ class MatchPyramid(BasicModel):
         dpool = DynamicMaxPooling(self.config['dpool_size'][0], self.config['dpool_size'][1])
 
         conv1 = conv2d(cross_reshape)
-        print('[Conv2D: (%d, %d)] conv1:\t%s' % (self.config['kernel_count'], self.config['kernel_size'], str(conv1.get_shape().as_list())))
+        print('[Conv2D: (%d, %s)] conv1:\t%s' % (self.config['kernel_count'], str(self.config['kernel_size']), str(conv1.get_shape().as_list())))
         pool1 = dpool([conv1, dpool_index])
         print('[DynamicMaxPooling: (%d, %d)] pool1:\t%s' % (self.config['dpool_size'][0], self.config['dpool_size'][1], str(pool1.get_shape().as_list())))
         pool1_flat = Flatten()(pool1)
         print('[Flatten] pool1_flat:\t%s' % str(pool1_flat.get_shape().as_list()))
-        out_ = Dense(1)(pool1_flat)
+        pool1_flat_drop = Dropout(rate=self.config['dropout_rate'])(pool1_flat)
+        print('[Dropout: %.2f] pool1_flat_drop:\t%s' % (self.config['dropout_rate'], str(pool1_flat_drop.get_shape().as_list())))
+        out_ = Dense(1)(pool1_flat_drop)
         print('[Dense] out_:\t%s' % str(out_.get_shape().as_list()))
 
         model = Model(inputs=[query, doc, dpool_index], outputs=out_)
