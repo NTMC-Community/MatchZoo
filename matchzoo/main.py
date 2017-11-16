@@ -118,7 +118,10 @@ def train(config):
 
     loss = []
     for lobj in config['losses']:
-      loss.append(rank_losses.get(lobj)())
+        if lobj['object_name'] in mz_specialized_losses:
+            loss.append(rank_losses.get(lobj['object_name'])(lobj['object_params']))
+        else:
+            loss.append(rank_losses.get(lobj['object_name']))
     eval_metrics = OrderedDict()
     for mobj in config['metrics']:
         mobj = mobj.lower()
