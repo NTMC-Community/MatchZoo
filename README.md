@@ -33,6 +33,7 @@ For learning the deep matching models, the toolkit provides a variety of objecti
 4. DSSM
 5. CDSSM
 6. ARC-II
+7. MV-LSTM
 
 
 ## Usage
@@ -94,7 +95,14 @@ this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Co
 - model file: models/arcii.py
 - model config: models/arcii.config
 
-7. Match-SRNN
+7. MV-LSTM
+-------
+this model is an implementation of <a href="https://arxiv.org/abs/1511.08277">A Deep Architecture for Semantic Matching with Multiple Positional Sentence Representations</a>
+
+- model file: models/mvlstm.py
+- model config: models/mvlstm.config
+
+8. Match-SRNN
 -------
 under development ....
 
@@ -109,10 +117,8 @@ under development ....
 }
 ```
 
-Acknowledgements
-=====
-The following people contributed to the development of the MatchZoo project：
-
+Orignal authors
+====
 - **Yixing Fan**
     - Institute of Computing Technolgy, Chinese Academy of Sciences
     - [Google Scholar](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en)
@@ -130,3 +136,9 @@ The following people contributed to the development of the MatchZoo project：
 - **Xueqi Cheng**
     - Institute of Computing Technolgy, Chinese Academy of Sciences 
     - [HomePage](http://www.bigdatalab.ac.cn/~cxq/)
+
+
+Acknowledgements
+=====
+We would like to express our appreciate to the following people for contributing source codes to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Jianpeng Hou](), [Zhou Yang](), etc..
+
