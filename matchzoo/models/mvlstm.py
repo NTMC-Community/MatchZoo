@@ -8,31 +8,30 @@ from keras.optimizers import Adam
 from model import BasicModel
 
 import sys
+sys.path.append('../matchzoo/layers/')
 sys.path.append('../matchzoo/utils/')
+from Match import *
 from utility import *
 
-class ARCI(BasicModel):
+class MVLSTM(BasicModel):
     def __init__(self, config):
-        super(ARCI, self).__init__(config)
-        self.__name = 'ARCI'
+        super(MVLSTM, self).__init__(config)
+        self.__name = 'MVLSTM'
         self.check_list = [ 'text1_maxlen', 'text2_maxlen',
                    'embed', 'embed_size', 'train_embed',  'vocab_size',
-                   'kernel_size', 'kernel_count', 'dropout_rate',
-                   'q_pool_size', 'd_pool_size']
+                   'hidden_size', 'topk', 'dropout_rate']
         self.embed_trainable = config['train_embed']
         self.setup(config)
         if not self.check():
-            raise TypeError('[ARCI] parameter check wrong')
-        print '[ARCI] init done'
+            raise TypeError('[MVLSTM] parameter check wrong')
+        print '[MVLSTM] init done'
 
     def setup(self, config):
         if not isinstance(config, dict):
             raise TypeError('parameter config should be dict:', config)
 
-        self.set_default('kernel_count', 32)
-        self.set_default('kernel_size', 3)
-        self.set_default('q_pool_size', 2)
-        self.set_default('d_pool_size', 2)
+        self.set_default('hidden_size', 32)
+        self.set_default('topk', 100)
         self.set_default('dropout_rate', 0)
         self.config.update(config)
 
@@ -49,23 +48,26 @@ class ARCI(BasicModel):
         d_embed = embedding(doc)
         print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(d_embed.get_shape().as_list()), show_memory_use()))
 
-        q_conv1 = Conv1D(self.config['kernel_count'], self.config['kernel_size'], padding='same') (q_embed)
-        print('[layer]: Conv1D\t[shape]: %s] \n%s' % (str(q_conv1.get_shape().as_list()), show_memory_use()))
-        d_conv1 = Conv1D(self.config['kernel_count'], self.config['kernel_size'], padding='same') (d_embed)
-        print('[layer]: Conv1D\t[shape]: %s] \n%s' % (str(d_conv1.get_shape().as_list()), show_memory_use()))
+        q_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True))(q_embed)
+        print('[layer]: Bi-LSTM\t[shape]: %s] \n%s' % (str(q_rep.get_shape().as_list()), show_memory_use()))
 
-        q_pool1 = MaxPooling1D(pool_size=self.config['q_pool_size']) (q_conv1)
-        print('[layer]: MaxPooling1D\t[shape]: %s] \n%s' % (str(q_pool1.get_shape().as_list()), show_memory_use()))
-        d_pool1 = MaxPooling1D(pool_size=self.config['d_pool_size']) (d_conv1)
-        print('[layer]: MaxPooling1D\t[shape]: %s] \n%s' % (str(d_pool1.get_shape().as_list()), show_memory_use()))
+        d_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True))(d_embed)
+        print('[layer]: Bi-LSTM\t[shape]: %s] \n%s' % (str(d_rep.get_shape().as_list()), show_memory_use()))
 
-        pool1 = Concatenate(axis=1) ([q_pool1, d_pool1])
-        print('[layer]: Concatenate\t[shape]: %s] \n%s' % (str(pool1.get_shape().as_list()), show_memory_use()))
+        cross = Match(match_type='dot')([q_rep, d_rep])
+        #cross = Dot(axes=[2, 2])([q_embed, d_embed])
+        print('[layer]: Match\t[shape]: %s] \n%s' % (str(cross.get_shape().as_list()), show_memory_use()))
 
-        pool1_flat = Flatten()(pool1)
-        print('[layer]: Flatten\t[shape]: %s] \n%s' % (str(pool1_flat.get_shape().as_list()), show_memory_use()))
+        cross_reshape = Reshape((-1, ))(cross)
+        print('[layer]: Reshape\t[shape]: %s] \n%s' % (str(cross_reshape.get_shape().as_list()), show_memory_use()))
 
-        pool1_flat_drop = Dropout(rate=self.config['dropout_rate'])(pool1_flat)
+        mm_k = Lambda(lambda x: K.tf.nn.top_k(x, k=self.config['topk'], sorted=False)[0])(cross_reshape)
+        print('[layer]: Lambda-Topk\t[shape]: %s] \n%s' % (str(mm_k.get_shape().as_list()), show_memory_use()))
+
+        #pool1_flat = Flatten()(mm_k)
+        #print('[Flatten] pool1_flat:\t%s' % str(pool1_flat.get_shape().as_list()))
+
+        pool1_flat_drop = Dropout(rate=self.config['dropout_rate'])(mm_k)
         print('[layer]: Dropout\t[shape]: %s] \n%s' % (str(pool1_flat_drop.get_shape().as_list()), show_memory_use()))
 
         out_ = Dense(1)(pool1_flat_drop)
