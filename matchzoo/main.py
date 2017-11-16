@@ -29,11 +29,11 @@ def load_model(config):
     if model_type == 'JSON':
         mo = Model.from_config(config['model'])
     elif model_type == 'PY':
-        model_config = config['model']
+        model_config = config['model']['setting']
         model_config.update(config['inputs']['share'])
-        sys.path.insert(0, model_config['model_path'])
+        sys.path.insert(0, config['model']['model_path'])
 
-        model = import_object(model_config['model_py'], model_config)
+        model = import_object(config['model']['model_py'], model_config)
         mo = model.build()
     return mo
 
