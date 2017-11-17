@@ -117,7 +117,7 @@ under development ....
 }
 ```
 
-Orignal authors
+Orignal Authors
 ====
 - **Yixing Fan**
     - Institute of Computing Technolgy, Chinese Academy of Sciences
@@ -140,5 +140,5 @@ Orignal authors
 
 Acknowledgements
 =====
-We would like to express our appreciate to the following people for contributing source codes to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Jianpeng Hou](), [Zhou Yang](), etc..
+We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Jianpeng Hou](), [Zhou Yang](), etc..
 
