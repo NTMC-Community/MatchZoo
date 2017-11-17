@@ -21,3 +21,4 @@ log/*
 matchzoo/log/*
 qrels.*
 trec_eval
+matchzoo/conqa/*
