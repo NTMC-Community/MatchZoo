@@ -23,3 +23,5 @@ qrels.*
 trec_eval
 matchzoo/conqa/*
 matchzoo/models/*.config
+matchzoo/run_submit_gypsum_jobs.py
+log/*
