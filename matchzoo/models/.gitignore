@@ -1,4 +1,2 @@
-*.weights
-*.config
-*.pyc
-querydecision*
+querydecision/*
+weights/*

@@ -37,41 +37,39 @@ class MVLSTM(BasicModel):
 
     def build(self):
         query = Input(name='query', shape=(self.config['text1_maxlen'],))
-        print('[layer]: Input\t[shape]: %s] \n%s' % (str(query.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Input', query)
         doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
-        print('[layer]: Input\t[shape]: %s] \n%s' % (str(doc.get_shape().as_list()), show_memory_use()))
-        #dpool_index = Input(name='dpool_index', shape=[self.config['text1_maxlen'], self.config['text2_maxlen'], 3], dtype='int32')
+        show_layer_info('Input', doc)
 
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = self.embed_trainable)
         q_embed = embedding(query)
-        print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(q_embed.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Embedding', q_embed)
         d_embed = embedding(doc)
-        print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(d_embed.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Embedding', d_embed)
 
         q_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True))(q_embed)
-        print('[layer]: Bi-LSTM\t[shape]: %s] \n%s' % (str(q_rep.get_shape().as_list()), show_memory_use()))
-
+        show_layer_info('Bidirectional-LSTM', q_rep)
         d_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True))(d_embed)
-        print('[layer]: Bi-LSTM\t[shape]: %s] \n%s' % (str(d_rep.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Bidirectional-LSTM', d_rep)
 
         cross = Match(match_type='dot')([q_rep, d_rep])
         #cross = Dot(axes=[2, 2])([q_embed, d_embed])
-        print('[layer]: Match\t[shape]: %s] \n%s' % (str(cross.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Match-dot', cross)
 
         cross_reshape = Reshape((-1, ))(cross)
-        print('[layer]: Reshape\t[shape]: %s] \n%s' % (str(cross_reshape.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Reshape', cross_reshape)
 
         mm_k = Lambda(lambda x: K.tf.nn.top_k(x, k=self.config['topk'], sorted=False)[0])(cross_reshape)
-        print('[layer]: Lambda-Topk\t[shape]: %s] \n%s' % (str(mm_k.get_shape().as_list()), show_memory_use()))
-
-        #pool1_flat = Flatten()(mm_k)
-        #print('[Flatten] pool1_flat:\t%s' % str(pool1_flat.get_shape().as_list()))
+        show_layer_info('Lambda-topk', mm_k)
 
         pool1_flat_drop = Dropout(rate=self.config['dropout_rate'])(mm_k)
-        print('[layer]: Dropout\t[shape]: %s] \n%s' % (str(pool1_flat_drop.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Dropout', pool1_flat_drop)
 
-        out_ = Dense(1)(pool1_flat_drop)
-        print('[layer]: Dense\t[shape]: %s] \n%s' % (str(out_.get_shape().as_list()), show_memory_use()))
+        if self.config['target_mode'] == 'classification':
+            out_ = Dense(2, activation='softmax')(pool1_flat_drop)
+        elif self.config['target_mode'] in ['regression', 'ranking']:
+            out_ = Dense(1)(pool1_flat_drop)
+        show_layer_info('Dense', out_)
 
         #model = Model(inputs=[query, doc, dpool_index], outputs=out_)
         model = Model(inputs=[query, doc], outputs=out_)

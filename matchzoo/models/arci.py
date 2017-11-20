@@ -38,39 +38,40 @@ class ARCI(BasicModel):
 
     def build(self):
         query = Input(name='query', shape=(self.config['text1_maxlen'],))
-        print('[layer]: Input\t[shape]: %s] \n%s' % (str(query.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Input', query)
         doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
-        print('[layer]: Input\t[shape]: %s] \n%s' % (str(doc.get_shape().as_list()), show_memory_use()))
-        #dpool_index = Input(name='dpool_index', shape=[self.config['text1_maxlen'], self.config['text2_maxlen'], 3], dtype='int32')
+        show_layer_info('Input', doc)
 
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = self.embed_trainable)
         q_embed = embedding(query)
-        print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(q_embed.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Embedding', q_embed)
         d_embed = embedding(doc)
-        print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(d_embed.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Embedding', d_embed)
 
         q_conv1 = Conv1D(self.config['kernel_count'], self.config['kernel_size'], padding='same') (q_embed)
-        print('[layer]: Conv1D\t[shape]: %s] \n%s' % (str(q_conv1.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Conv1D', q_conv1)
         d_conv1 = Conv1D(self.config['kernel_count'], self.config['kernel_size'], padding='same') (d_embed)
-        print('[layer]: Conv1D\t[shape]: %s] \n%s' % (str(d_conv1.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Conv1D', d_conv1)
 
         q_pool1 = MaxPooling1D(pool_size=self.config['q_pool_size']) (q_conv1)
-        print('[layer]: MaxPooling1D\t[shape]: %s] \n%s' % (str(q_pool1.get_shape().as_list()), show_memory_use()))
+        show_layer_info('MaxPooling1D', q_pool1)
         d_pool1 = MaxPooling1D(pool_size=self.config['d_pool_size']) (d_conv1)
-        print('[layer]: MaxPooling1D\t[shape]: %s] \n%s' % (str(d_pool1.get_shape().as_list()), show_memory_use()))
+        show_layer_info('MaxPooling1D', d_pool1)
 
         pool1 = Concatenate(axis=1) ([q_pool1, d_pool1])
-        print('[layer]: Concatenate\t[shape]: %s] \n%s' % (str(pool1.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Concatenate', pool1)
 
         pool1_flat = Flatten()(pool1)
-        print('[layer]: Flatten\t[shape]: %s] \n%s' % (str(pool1_flat.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Flatten', pool1_flat)
 
         pool1_flat_drop = Dropout(rate=self.config['dropout_rate'])(pool1_flat)
-        print('[layer]: Dropout\t[shape]: %s] \n%s' % (str(pool1_flat_drop.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Dropout', pool1_flat_drop)
 
-        out_ = Dense(1)(pool1_flat_drop)
-        print('[layer]: Dense\t[shape]: %s] \n%s' % (str(out_.get_shape().as_list()), show_memory_use()))
+        if self.config['target_mode'] == 'classification':
+            out_ = Dense(2, activation='softmax')(pool1_flat_drop)
+        elif self.config['target_mode'] in ['regression', 'ranking']:
+            out_ = Dense(1)(pool1_flat_drop)
+        show_layer_info('Dense', out_)
 
-        #model = Model(inputs=[query, doc, dpool_index], outputs=out_)
         model = Model(inputs=[query, doc], outputs=out_)
         return model

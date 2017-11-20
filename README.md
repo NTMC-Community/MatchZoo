@@ -42,8 +42,8 @@ git clone https://github.com/faneshion/MatchZoo.git
 cd MatchZoo
 python setup.py install
 
-python main.py --phase train --model_file ./models/arci.config
-python main.py --phase predict --model_file ./models/arci.config
+python main.py --phase train --model_file ./models/arci_ranking.config
+python main.py --phase predict --model_file ./models/arci_ranking.config
 ```
 ## Environment
 * python2.7+ 
@@ -117,16 +117,8 @@ under development ....
 }
 ```
 
-Orignal Authors
+Project Organizers
 ====
-- **Yixing Fan**
-    - Institute of Computing Technolgy, Chinese Academy of Sciences
-    - [Google Scholar](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en)
-- **Liang Pang** 
-    - Institute of Computing Technolgy, Chinese Academy of Sciences
-    - [Google Scholar](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN)
-- **Jianpeng Hou** 
-    - Institute of Computing Technolgy, Chinese Academy of Sciences
 - **Jiafeng Guo**
     - Institute of Computing Technolgy, Chinese Academy of Sciences
     - [HomePage](http://www.bigdatalab.ac.cn/~gjf/)
@@ -138,7 +130,19 @@ Orignal Authors
     - [HomePage](http://www.bigdatalab.ac.cn/~cxq/)
 
 
+Development Teams
+====
+- **Yixing Fan**
+    - Institute of Computing Technolgy, Chinese Academy of Sciences
+    - [Google Scholar](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en)
+- **Liang Pang** 
+    - Institute of Computing Technolgy, Chinese Academy of Sciences
+    - [Google Scholar](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN)
+- **Jianpeng Hou** 
+    - Software engineer from Google Inc.
+    - [Homepage] (http://houjp.com/)
+
 Acknowledgements
 =====
-We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Jianpeng Hou](), [Zhou Yang](), etc..
+We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](), [Niuguo cheng](https://github.com/niuox) etc..
 

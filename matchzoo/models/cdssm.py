@@ -29,8 +29,10 @@ class CDSSM(BasicModel):
     def setup(self, config):
         if not isinstance(config, dict):
             raise TypeError('parameter config should be dict:', config)
-
+        self.set_default('filters', 32)
+        self.set_default('kernel_size', 3)
         self.set_default('hidden_sizes', [300, 128])
+        self.set_default('dropout_rate', 0.)
         self.config.update(config)
 
     def build(self):
@@ -44,42 +46,44 @@ class CDSSM(BasicModel):
                 seq.add(Dense(self.config['hidden_sizes'][0], activation='relu', input_shape=(input_dim,)))
                 for i in range(num_hidden_layers - 2):
                     seq.add(Dense(self.config['hidden_sizes'][i+1], activation='relu'))
+                    seq.add(Dropout(self.config['dropout_rate']))
                 seq.add(Dense(self.config['hidden_sizes'][num_hidden_layers-1]))
+                seq.add(Dropout(self.config['dropout_rate']))
             return seq
         query = Input(name='query', shape=(self.config['text1_maxlen'],))
-        print('[layer]: Input\t[shape]: %s] \n%s' % (str(query.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Input', query)
         doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
-        print('[layer]: Input\t[shape]: %s] \n%s' % (str(doc.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Input', doc)
 
         wordhashing = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable=self.embed_trainable)
         q_embed = wordhashing(query)
-        print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(q_embed.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Embedding', q_embed)
         d_embed = wordhashing(doc)
-        print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(d_embed.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Embedding', d_embed)
         conv1d = Convolution1D(self.config['filters'], self.config['kernel_size'], padding='same', activation='relu')
         q_conv = conv1d(q_embed)
-        print('[layer]: Conv1D\t[shape]: %s] \n%s' % (str(q_conv.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Convolution1D', q_conv)
         d_conv = conv1d(d_embed)
-        print('[layer]: Conv1D\t[shape]: %s] \n%s' % (str(d_conv.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Convolution1D', d_conv)
         q_pool = MaxPooling1D(self.config['text1_maxlen'])(q_conv)
-        print('[layer]: MaxPooling1D\t[shape]: %s] \n%s' % (str(q_pool.get_shape().as_list()), show_memory_use()))
+        show_layer_info('MaxPooling1D', q_pool)
         q_pool_re = Reshape((-1,))(q_pool)
-        print('[layer]: Reshape\t[shape]: %s] \n%s' % (str(q_pool_re.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Reshape', q_pool_re)
         d_pool = MaxPooling1D(self.config['text2_maxlen'])(d_conv)
-        print('[layer]: MaxPooling1D\t[shape]: %s] \n%s' % (str(d_pool.get_shape().as_list()), show_memory_use()))
+        show_layer_info('MaxPooling1D', d_pool)
         d_pool_re = Reshape((-1,))(d_pool)
-        print('[layer]: Reshape\t[shape]: %s] \n%s' % (str(d_pool_re.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Reshape', d_pool_re)
 
-
-        mlp = mlp_work(self.config['embed_size'])
+        mlp = mlp_work(self.config['filters'])
 
         rq = mlp(q_pool_re)
-        print('[layer]: MLP\t[shape]: %s] \n%s' % (str(rq.get_shape().as_list()), show_memory_use()))
+        show_layer_info('MLP', rq)
         rd = mlp(d_pool_re)
-        print('[layer]: MLP\t[shape]: %s] \n%s' % (str(rd.get_shape().as_list()), show_memory_use()))
-        #out_ = Merge([rq, rd], mode='cos', dot_axis=1)
+        show_layer_info('MLP', rd)
         out_ = Dot( axes= [1, 1], normalize=True)([rq, rd])
-        print('[layer]: Dot\t[shape]: %s] \n%s' % (str(out_.get_shape().as_list()), show_memory_use()))
+        if self.config['target_mode'] == 'classification':
+            out_ = Dense(2, activation='softmax')(out_)
+        show_layer_info('Dense', out_)
 
         model = Model(inputs=[query, doc], outputs=[out_])
         return model

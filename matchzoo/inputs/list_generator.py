@@ -56,7 +56,7 @@ class ListGenerator(ListBasicGenerator):
         self.data2 = config['data2']
         self.data1_maxlen = config['text1_maxlen']
         self.data2_maxlen = config['text2_maxlen']
-        self.fill_word = config['fill_word']
+        self.fill_word = config['vocab_size'] - 1
         self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen'])
         if not self.check():
             raise TypeError('[ListGenerator] parameter check wrong.')
@@ -142,19 +142,39 @@ class ListGenerator(ListBasicGenerator):
             list_count_ls.append(list_count)
         return x1_ls, x1_len_ls, x2_ls, x2_len_ls, y_ls, list_count_ls
 
-class DSSM_ListGenerator(ListBasicGenerator):
+class Triletter_ListGenerator(ListBasicGenerator):
     def __init__(self, config={}):
-        super(DSSM_ListGenerator, self).__init__(config=config)
-        self.__name = 'DSSM_ListGenerator'
+        super(Triletter_ListGenerator, self).__init__(config=config)
+        self.__name = 'Triletter_ListGenerator'
         self.data1 = config['data1']
         self.data2 = config['data2']
-        self.feat_size = config['feat_size']
-        self.check_list.extend(['data1', 'data2', 'feat_size'])
+        self.dtype = config['dtype'].lower()
+        if self.dtype == 'cdssm':
+            self.data1_maxlen = config['text1_maxlen']
+            self.data2_maxlen = config['text2_maxlen']
+        self.vocab_size = config['vocab_size']
+        self.fill_word = self.vocab_size - 1
+        self.check_list.extend(['data1', 'data2', 'dtype', 'vocab_size', 'word_triletter_map_file'])
         if not self.check():
-            raise TypeError('[DSSM_ListGenerator] parameter check wrong.')
-        print '[DSSM_ListGenerator] init done'
+            raise TypeError('[Triletter_ListGenerator] parameter check wrong.')
+        self.word_triletter_map = self.read_word_triletter_map(self.config['word_triletter_map_file'])
+        print '[Triletter_ListGenerator] init done'
 
-    def transfer_feat_dense2sparse(self, dense_feat):
+    def read_word_triletter_map(self, wt_map_file):
+        word_triletter_map = {}
+        for line in open(wt_map_file):
+            r = line.strip().split()
+            word_triletter_map[r[0]] = r[1:]
+        return word_triletter_map
+
+    def map_word_to_triletter(self, words):
+        triletters = []
+        for wid in words:
+            if wid in self.word_triletter_map:
+                triletters.extend(self.word_triletter_map[wid])
+        return triletters
+
+    def transfer_feat2sparse(self, dense_feat):
         data = []
         indices = []
         indptr = [0]
@@ -163,7 +183,16 @@ class DSSM_ListGenerator(ListBasicGenerator):
                 indices.append(val)
                 data.append(1)
             indptr.append(indptr[-1] + len(feat))
-        return sp.csr_matrix((data, indices, indptr), shape=(len(dense_feat), self.feat_size), dtype="float32")
+        return sp.csr_matrix((data, indices, indptr), shape=(len(dense_feat), self.vocab_size), dtype="float32")
+
+    def transfer_feat2fixed(self, feats, max_len, fill_val):
+        num_feat = len(feats)
+        nfeat = np.zeros((num_feat, max_len), dtype=np.int32)
+        nfeat[:] = fill_val
+        for i in range(num_feat):
+            rlen = min(max_len, len(feats[i]))
+            nfeat[i,:rlen] = feats[i][:rlen]
+        return nfeat
 
     def get_batch(self):
         while self.point < self.num_list:
@@ -188,14 +217,19 @@ class DSSM_ListGenerator(ListBasicGenerator):
                 d1_len = len(self.data1[d1])
                 for l, d2 in d2_list:
                     X1_len[j] = d1_len
-                    X1.append(self.data1[d1])
+                    X1.append(self.map_word_to_triletter(self.data1[d1]))
                     d2_len = len(self.data2[d2])
                     X2_len[j] = d2_len
-                    X2.append(self.data2[d2])
+                    X2.append(self.map_word_to_triletter(self.data2[d2]))
                     ID_pairs.append((d1, d2))
                     Y[j] = l
                     j += 1
-            yield self.transfer_feat_dense2sparse(X1).toarray(), X1_len, self.transfer_feat_dense2sparse(X2).toarray(), X2_len, Y, ID_pairs, list_count
+            if self.dtype == 'dssm':
+                yield self.transfer_feat2sparse(X1).toarray(), X1_len, self.transfer_feat2sparse(X2).toarray(), X2_len, Y, ID_pairs, list_count
+            elif self.dtype == 'cdssm':
+                yield self.transfer_feat2fixed(X1, self.data1_maxlen, self.fill_word), X1_len,  \
+                    self.transfer_feat2fixed(X2, self.data2_maxlen, self.fill_word), X2_len, Y, \
+                    ID_pairs, list_count
 
     def get_batch_generator(self):
         for X1, X1_len, X2, X2_len, Y, ID_pairs, list_counts in self.get_batch():
@@ -225,14 +259,18 @@ class DSSM_ListGenerator(ListBasicGenerator):
                 for l, d2 in d2_list:
                     d2_len = len(self.data2[d2])
                     X1_len[j] = d1_len
-                    X1.append(self.data1[d1])
+                    X1.append(self.map_word_to_triletter(self.data1[d1]))
                     X2_len[j] = d2_len
-                    X2.append(self.data2[d2])
+                    X2.append(self.map_word_to_triletter(self.data2[d2]))
                     Y[j] = l
                     j += 1
-            x1_ls.append(self.transfer_feat_dense2sparse(X1).toarray())
+            if self.type == 'dssm':
+                x1_ls.append(self.transfer_feat2sparse(X1).toarray())
+                x2_ls.append(self.transfer_feat2sparse(X2).toarray())
+            elif self.type == 'cdssm':
+                x1_ls.append(self.transfer_feat2fixed(X1, self.data1_maxlen, self.fill_word))
+                x2_ls.append(self.transfer_feat2fixed(X2, self.data2_maxlen, self.fill_word))
             x1_len_ls.append(X1_len)
-            x2_ls.append(self.transfer_feat_dense2sparse(X2).toarray())
             x2_len_ls.append(X2_len)
             y_ls.append(Y)
             list_count_ls.append(list_count)
@@ -245,10 +283,10 @@ class DRMM_ListGenerator(ListBasicGenerator):
         self.data2 = config['data2']
         self.data1_maxlen = config['text1_maxlen']
         self.data2_maxlen = config['text2_maxlen']
-        self.fill_word = config['fill_word']
+        self.fill_word = config['vocab_size'] - 1
         self.embed = config['embed']
         self.hist_size = config['hist_size']
-        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'fill_word', 'embed', 'hist_size'])
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'embed', 'hist_size'])
         self.use_hist_feats = False
         if 'hist_feats_file' in config:
             hist_feats = read_features_without_id(config['hist_feats_file'])
@@ -262,7 +300,7 @@ class DRMM_ListGenerator(ListBasicGenerator):
 
     def cal_hist(self, t1, t2, data1_maxlen, hist_size):
         mhist = np.zeros((data1_maxlen, hist_size), dtype=np.float32)
-        d1len = len(self.data1[t1]) 
+        d1len = len(self.data1[t1])
         if self.use_hist_feats:
             assert (t1, t2) in self.hist_feats
             caled_hist = np.reshape(self.hist_feats[(t1, t2)], (d1len, hist_size))
@@ -368,7 +406,7 @@ class ListGenerator_Feats(ListBasicGenerator):
         self.data2 = config['data2']
         self.data1_maxlen = config['text1_maxlen']
         self.data2_maxlen = config['text2_maxlen']
-        self.fill_word = config['fill_word']
+        self.fill_word = config['vocab_size'] - 1
         self.pair_feat_size = config['pair_feat_size']
         self.query_feat_size = config['query_feat_size']
         pair_feats = read_features_without_id(config['pair_feat_file'])
