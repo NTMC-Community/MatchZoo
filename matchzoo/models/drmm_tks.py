@@ -40,45 +40,52 @@ class DRMM_TKS(BasicModel):
         if not isinstance(config, dict):
             raise TypeError('parameter config should be dict:', config)
         self.set_default('topk', 20)
+        self.set_default('dropout_rate', 0.)
         self.config.update(config)
 
     def build(self):
         query = Input(name='query', shape=(self.config['text1_maxlen'],))
-        print('[layer]: Input\t[shape]: %s] \n%s' % (str(query.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Input', query)
         doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
-        print('[layer]: Input\t[shape]: %s] \n%s' % (str(doc.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Input', doc)
 
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable=self.embed_trainable)
         q_embed = embedding(query)
-        print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(q_embed.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Embedding', q_embed)
         d_embed = embedding(doc)
-        print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(d_embed.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Embedding', d_embed)
         mm = Dot(axes=[2, 2], normalize=True)([q_embed, d_embed])
-        print('[layer]: Dot\t[shape]: %s] \n%s' % (str(mm.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Dot', mm)
 
         # compute term gating
         w_g = Dense(1)(q_embed)
-        print('[layer]: Dense\t[shape]: %s] \n%s' % (str(w_g.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Dense', w_g)
         g = Lambda(lambda x: softmax(x, axis=1), output_shape=(self.config['text1_maxlen'], ))(w_g)
-        print('[layer]: Lambda-softmax\t[shape]: %s] \n%s' % (str(g.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Lambda-softmax', g)
         g = Reshape((self.config['text1_maxlen'],))(g)
-        print('[layer]: Reshape\t[shape]: %s] \n%s' % (str(g.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Reshape', g)
 
         mm_k = Lambda(lambda x: K.tf.nn.top_k(x, k=self.config['topk'], sorted=True)[0])(mm)
-        print('[layer]: Lambda-Topk\t[shape]: %s] \n%s' % (str(mm_k.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Lambda-topk', mm_k)
 
         for i in range(self.config['num_layers']):
             mm_k = Dense(self.config['hidden_sizes'][i], activation='softplus', kernel_initializer='he_uniform', bias_initializer='zeros')(mm_k)
-            print('[layer]: Dense\t[shape]: %s] \n%s' % (str(mm_k.get_shape().as_list()), show_memory_use()))
+            show_layer_info('Dense', mm_k)
 
-        mm_reshape = Reshape((self.config['text1_maxlen'],))(mm_k)
-        print('[layer]: Reshape\t[shape]: %s] \n%s' % (str(mm_reshape.get_shape().as_list()), show_memory_use()))
+        mm_k_dropout = Dropout(rate=self.config['dropout_rate'])(mm_k)
+        show_layer_info('Dropout', mm_k_dropout)
+
+        mm_reshape = Reshape((self.config['text1_maxlen'],))(mm_k_dropout)
+        show_layer_info('Reshape', mm_reshape)
 
         mean = Dot(axes=[1, 1])([mm_reshape, g])
-        print('[layer]: Dot\t[shape]: %s] \n%s' % (str(mean.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Dot', mean)
 
-        out_ = Reshape((1,))(mean)
-        print('[layer]: Dense\t[shape]: %s] \n%s' % (str(out_.get_shape().as_list()), show_memory_use()))
+        if self.config['target_mode'] == 'classification':
+            out_ = Dense(2, activation='softmax')(mean)
+        elif self.config['target_mode'] in ['regression', 'ranking']:
+            out_ = Reshape((1,))(mean)
+        show_layer_info('Dense', out_)
 
         model = Model(inputs=[query, doc], outputs=out_)
         return model

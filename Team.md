@@ -16,4 +16,6 @@ The following people contributed to the development of the MatchZoo project：
     - [HomePage]()
 - **Jianpeng Hou (Core Developer)** 
     - Software engineer from Google Inc. 
-    - [HomePage]()
+    - [HomePage](http://houjp.com/)
+- **Guocheng Niu (Core Developer)** 
+    - Software engineer from Baidu Inc. 
