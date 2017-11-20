@@ -2,8 +2,7 @@
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
-from keras.layers import Input, Embedding, Dense, Activation, Merge, Lambda, Permute
-from keras.layers import Reshape, Dot
+from keras.layers import *
 from keras.activations import softmax
 from model import BasicModel
 
@@ -31,6 +30,7 @@ class DRMM(BasicModel):
 
         self.set_default('text1_maxlen', 5)
         self.set_default('hist_size', 60)
+        self.set_default('dropout_rate', 0.)
         self.config.update(config)
 
     def build(self):
@@ -41,32 +41,38 @@ class DRMM(BasicModel):
             y = K.einsum('ijk, ikl->ijl', a, b)
             return y
         query = Input(name='query', shape=(self.config['text1_maxlen'],))
-        print('[layer]: Input\t[shape]: %s] \n%s' % (str(query.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Input', query)
         doc = Input(name='doc', shape=(self.config['text1_maxlen'], self.config['hist_size']))
-        print('[layer]: Input\t[shape]: %s] \n%s' % (str(doc.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Input', doc)
 
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = False)
 
         q_embed = embedding(query)
-        print('[layer]: Embedding\t[shape]: %s] \n%s' % (str(q_embed.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Embedding', q_embed)
         q_w = Dense(1, kernel_initializer=self.initializer_gate, use_bias=False)(q_embed)
-        print('[layer]: Dense\t[shape]: %s] \n%s' % (str(q_w.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Dense', q_w)
         q_w = Lambda(lambda x: softmax(x, axis=1), output_shape=(self.config['text1_maxlen'], ))(q_w)
-        print('[layer]: Lambda-softmax\t[shape]: %s] \n%s' % (str(q_w.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Lambda-softmax', q_w)
         z = doc
-        for i in range(self.config['num_layers']):
+        z = Dropout(rate=self.config['dropout_rate'])(z)
+        show_layer_info('Dropout', z)
+        for i in range(self.config['num_layers']-1):
             z = Dense(self.config['hidden_sizes'][i], kernel_initializer=self.initializer_fc)(z)
             z = Activation('tanh')(z)
-            print('[layer]: Dense\t[shape]: %s] \n%s' % (str(z.get_shape().as_list()), show_memory_use()))
+            show_layer_info('Dense', z)
+        z = Dense(self.config['hidden_sizes'][self.config['num_layers']-1], kernel_initializer=self.initializer_fc)(z)
+        show_layer_info('Dense', z)
         z = Permute((2, 1))(z)
-        print('[layer]: Permute\t[shape]: %s] \n%s' % (str(z.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Permute', z)
         z = Reshape((self.config['text1_maxlen'],))(z)
-        print('[layer]: Reshape\t[shape]: %s] \n%s' % (str(z.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Reshape', z)
         q_w = Reshape((self.config['text1_maxlen'],))(q_w)
-        print('[layer]: Reshape\t[shape]: %s] \n%s' % (str(q_w.get_shape().as_list()), show_memory_use()))
+        show_layer_info('Reshape', q_w)
 
         out_ = Dot( axes= [1, 1])([z, q_w])
-        print('[layer]: Dot\t[shape]: %s] \n%s' % (str(out_.get_shape().as_list()), show_memory_use()))
+        if self.config['target_mode'] == 'classification':
+            out_ = Dense(2, activation='softmax')(out_)
+        show_layer_info('Dense', out_)
 
         model = Model(inputs=[query, doc], outputs=[out_])
         return model

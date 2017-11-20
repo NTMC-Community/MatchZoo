@@ -57,7 +57,7 @@ class PairBasicGenerator(object):
             if label not in rel_set[d1]:
                 rel_set[d1][label] = []
             rel_set[d1][label].append(d2)
-        
+
         while True:
             rel_set_sample = random.sample(rel_set.keys(), self.config['query_per_iter'])
 
@@ -70,7 +70,7 @@ class PairBasicGenerator(object):
                                 pair_list.append( (d1, high_d2, low_d2) )
             #print 'Pair Instance Count:', len(pair_list)
             yield pair_list
-        
+
     def get_batch_static(self):
         pass
 
@@ -102,8 +102,8 @@ class PairGenerator(PairBasicGenerator):
         self.data2 = config['data2']
         self.data1_maxlen = config['text1_maxlen']
         self.data2_maxlen = config['text2_maxlen']
-        self.fill_word = config['fill_word']
-        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'fill_word'])
+        self.fill_word = config['vocab_size'] - 1
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen'])
         if config['use_iter']:
             self.batch_iter = self.get_batch_iter()
         if not self.check():
@@ -129,8 +129,8 @@ class PairGenerator(PairBasicGenerator):
             X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
             X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
             X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
-            
-        return X1, X1_len, X2, X2_len, Y    
+
+        return X1, X1_len, X2, X2_len, Y
 
     def get_batch_iter(self):
         while True:
@@ -154,7 +154,7 @@ class PairGenerator(PairBasicGenerator):
                     X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
                     X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
                     X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
-                    
+
                 yield X1, X1_len, X2, X2_len, Y
 
     def get_batch_generator(self):
@@ -165,21 +165,41 @@ class PairGenerator(PairBasicGenerator):
             else:
                 yield ({'query': X1, 'query_len': X1_len, 'doc': X2, 'doc_len': X2_len}, Y)
 
-class DSSM_PairGenerator(PairBasicGenerator):
+class Triletter_PairGenerator(PairBasicGenerator):
     def __init__(self, config):
-        super(DSSM_PairGenerator, self).__init__(config=config)
-        self.__name = 'DSSM_PairGenerator'
+        super(Triletter_PairGenerator, self).__init__(config=config)
+        self.__name = 'Triletter_PairGenerator'
         self.data1 = config['data1']
         self.data2 = config['data2']
-        self.feat_size = config['feat_size']
-        self.check_list.extend(['data1', 'data2', 'feat_size'])
+        self.dtype = config['dtype'].lower()
+        if self.dtype == 'cdssm':
+            self.data1_maxlen = config['text1_maxlen']
+            self.data2_maxlen = config['text2_maxlen']
+        self.vocab_size = config['vocab_size']
+        self.fill_word = self.vocab_size - 1
+        self.check_list.extend(['data1', 'data2', 'dtype', 'vocab_size', 'word_triletter_map_file'])
         if config['use_iter']:
             self.batch_iter = self.get_batch_iter()
         if not self.check():
-            raise TypeError('[DSSM_PairGenerator] parameter check wrong.')
-        print '[DSSM_PairGenerator] init done'
+            raise TypeError('[Triletter_PairGenerator] parameter check wrong.')
+        self.word_triletter_map = self.read_word_triletter_map(self.config['word_triletter_map_file'])
+        print '[Triletter_PairGenerator] init done'
 
-    def transfer_feat_dense2sparse(self, dense_feat):
+    def read_word_triletter_map(self, wt_map_file):
+        word_triletter_map = {}
+        for line in open(wt_map_file):
+            r = line.strip().split()
+            word_triletter_map[int(r[0])] = map(int, r[1:])
+        return word_triletter_map
+
+    def map_word_to_triletter(self, words):
+        triletters = []
+        for wid in words:
+            if wid in self.word_triletter_map:
+                triletters.extend(self.word_triletter_map[wid])
+        return triletters
+
+    def transfer_feat2sparse(self, dense_feat):
         data = []
         indices = []
         indptr = [0]
@@ -188,11 +208,19 @@ class DSSM_PairGenerator(PairBasicGenerator):
                 indices.append(val)
                 data.append(1)
             indptr.append(indptr[-1] + len(feat))
-        return sp.csr_matrix((data, indices, indptr), shape=(len(dense_feat), self.feat_size), dtype="float32")
+        return sp.csr_matrix((data, indices, indptr), shape=(len(dense_feat), self.vocab_size), dtype="float32")
+
+    def transfer_feat2fixed(self, feats, max_len, fill_val):
+        num_feat = len(feats)
+        nfeat = np.zeros((num_feat, max_len), dtype=np.int32)
+        nfeat[:] = fill_val
+        for i in range(num_feat):
+            rlen = min(max_len, len(feats[i]))
+            nfeat[i,:rlen] = feats[i][:rlen]
+        return nfeat
+
     def get_batch_static(self):
-        #X1 = np.zeros((self.batch_size*2, self.feat_size), dtype=np.float32)
         X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
-        #X2 = np.zeros((self.batch_size*2, self.feat_size), dtype=np.float32)
         X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
         Y = np.zeros((self.batch_size*2,), dtype=np.int32)
 
@@ -205,20 +233,22 @@ class DSSM_PairGenerator(PairBasicGenerator):
             d2n_len = len(self.data2[d2n])
             X1_len[i*2], X1_len[i*2+1]  = d1_len,  d1_len
             X2_len[i*2], X2_len[i*2+1]  = d2p_len, d2n_len
-            X1.append(self.data1[d1])
-            X1.append(self.data1[d1])
-            X2.append(self.data2[d2p])
-            X2.append(self.data2[d2n])
-            
-        return self.transfer_feat_dense2sparse(X1).toarray(), X1_len, self.transfer_feat_dense2sparse(X2).toarray(), X2_len, Y    
+            X1.append(self.map_word_to_triletter(self.data1[d1]))
+            X1.append(self.map_word_to_triletter(self.data1[d1]))
+            X2.append(self.map_word_to_triletter(self.data2[d2p]))
+            X2.append(self.map_word_to_triletter(self.data2[d2n]))
+        if self.dtype == 'dssm':
+            return self.transfer_feat2sparse(X1).toarray(), X1_len, self.transfer_feat2sparse(X2).toarray(), X2_len, Y
+        elif self.dtype == 'cdssm':
+            return self.transfer_feat2fixed(X1, self.data1_maxlen, self.fill_word), X1_len,  \
+                    self.transfer_feat2fixed(X2, self.data2_maxlen, self.fill_word), X2_len, Y
+
 
     def get_batch_iter(self):
         while True:
             self.pair_list = self.pair_list_iter.next()
             for _ in range(self.config['batch_per_iter']):
-                #X1 = np.zeros((self.batch_size*2, self.feat_num), dtype=np.float32)
                 X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
-                #X2 = np.zeros((self.batch_size*2, self.feat_size), dtype=np.float32)
                 X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
                 Y = np.zeros((self.batch_size*2,), dtype=np.int32)
 
@@ -231,12 +261,16 @@ class DSSM_PairGenerator(PairBasicGenerator):
                     d2n_len = len(self.data2[d2n])
                     X1_len[i*2],  X1_len[i*2+1]   = d1_len, d1_len
                     X2_len[i*2],  X2_len[i*2+1]   = d2p_len, d2n_len
-                    X1.append(self.data1[d1])
-                    X1.append(self.data1[d1])
-                    X2.append(self.data2[d2p])
-                    X2.append(self.data2[d2n])
-                    
-                yield self.transfer_feat_dense2sparse(X1).toarray(), X1_len, self.transfer_feat_dense2sparse(X2).toarray(), X2_len, Y
+                    X1.append(self.map_word_to_triletter(self.data1[d1]))
+                    X1.append(self.map_word_to_triletter(self.data1[d1]))
+                    X2.append(self.map_word_to_triletter(self.data2[d2p]))
+                    X2.append(self.map_word_to_triletter(self.data2[d2n]))
+
+                if self.dtype == 'dssm':
+                    yield self.transfer_feat2sparse(X1).toarray(), X1_len, self.transfer_feat2sparse(X2).toarray(), X2_len, Y
+                elif self.dtype == 'cdssm':
+                    yield self.transfer_feat2fixed(X1, self.data1_maxlen, self.fill_word), X1_len, \
+                            self.transfer_feat2fixed(X2, self.data2_maxlen, self.fill_word), X2_len, Y
 
     def get_batch_generator(self):
         while True:
@@ -253,8 +287,8 @@ class DRMM_PairGenerator(PairBasicGenerator):
         self.data2_maxlen = config['text2_maxlen']
         self.embed = config['embed']
         self.hist_size = config['hist_size']
-        self.fill_word = config['fill_word']
-        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'embed', 'hist_size', 'fill_word'])
+        self.fill_word = config['vocab_size'] - 1
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'embed', 'hist_size'])
         self.use_hist_feats = False
         if 'hist_feats_file' in config:
             hist_feats = read_features_without_id(config['hist_feats_file'])
@@ -270,7 +304,7 @@ class DRMM_PairGenerator(PairBasicGenerator):
 
     def cal_hist(self, t1, t2, data1_maxlen, hist_size):
         mhist = np.zeros((data1_maxlen, hist_size), dtype=np.float32)
-        d1len = len(self.data1[t1]) 
+        d1len = len(self.data1[t1])
         if self.use_hist_feats:
             assert (t1, t2) in self.hist_feats
             caled_hist = np.reshape(self.hist_feats[(t1, t2)], (d1len, hist_size))
@@ -300,7 +334,6 @@ class DRMM_PairGenerator(PairBasicGenerator):
 
         Y[::2] = 1
         X1[:] = self.fill_word
-        #X2[:] = self.fill_word
         for i in range(self.batch_size):
             d1, d2p, d2n = random.choice(self.pair_list)
             d1_len = min(self.data1_maxlen, len(self.data1[d1]))
@@ -310,8 +343,8 @@ class DRMM_PairGenerator(PairBasicGenerator):
             X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
             X2[i*2], X2_len[i*2]   = self.cal_hist(d1, d2p, self.data1_maxlen, self.hist_size), d2p_len
             X2[i*2+1], X2_len[i*2+1] = self.cal_hist(d1, d2n, self.data1_maxlen, self.hist_size), d2n_len
-            
-        return X1, X1_len, X2, X2_len, Y    
+
+        return X1, X1_len, X2, X2_len, Y
 
     def get_batch_iter(self):
         while True:
@@ -335,7 +368,7 @@ class DRMM_PairGenerator(PairBasicGenerator):
                     X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
                     X2[i*2], X2_len[i*2]   = self.cal_hist(d1, d2p, self.data1_maxlen, self.hist_size), d2p_len
                     X2[i*2+1], X2_len[i*2+1] = self.cal_hist(d1, d2n, self.data1_maxlen, self.hist_size), d2n_len
-                    
+
                 yield X1, X1_len, X2, X2_len, Y
 
     def get_batch_generator(self):
@@ -348,7 +381,7 @@ class PairGenerator_Feats(PairBasicGenerator):
         super(PairGenerator_Feats, self).__init__(config=config)
         self.__name = 'PairGenerator'
         self.config = config
-        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'fill_word', 'pair_feat_size', 'pair_feat_file', 'query_feat_size', 'query_feat_file'])
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'pair_feat_size', 'pair_feat_file', 'query_feat_size', 'query_feat_file'])
         if not self.check():
             raise TypeError('[PairGenerator] parameter check wrong.')
 
@@ -356,7 +389,7 @@ class PairGenerator_Feats(PairBasicGenerator):
         self.data2 = config['data2']
         self.data1_maxlen = config['text1_maxlen']
         self.data2_maxlen = config['text2_maxlen']
-        self.fill_word = config['fill_word']
+        self.fill_word = config['vocab_size'] - 1
         self.pair_feat_size = config['pair_feat_size']
         self.query_feat_size = config['query_feat_size']
         pair_feats = read_features_without_id(config['pair_feat_file'])
@@ -393,8 +426,8 @@ class PairGenerator_Feats(PairBasicGenerator):
             X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
             X3[i*2+1, :self.pair_feat_size]    = self.pair_feats[(d1, d2n)][:self.pair_feat_size]
             X4[i*2+1, :self.query_feat_size] = self.query_feats[d1][:self.query_feat_size]
-            
-        return X1, X1_len, X2, X2_len, X3, X4, Y    
+
+        return X1, X1_len, X2, X2_len, X3, X4, Y
 
     def get_batch_iter(self):
         while True:
@@ -424,7 +457,7 @@ class PairGenerator_Feats(PairBasicGenerator):
                     X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
                     X3[i*2+1, :self.pair_feat_size]    = self.pair_feats[(d1, d2n)][:self.pair_feat_size]
                     X4[i*2+1, :d1_len] = self.query_feats[d1][:self.query_feat_size]
-                    
+
                 yield X1, X1_len, X2, X2_len, X3, X4, Y
 
     def get_batch_generator(self):
