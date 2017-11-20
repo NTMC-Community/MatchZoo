@@ -1,7 +1,7 @@
 
 # generate match histogram
 python test_preparation_for_ranking.py
-python test_triletter_preprocess.py
+python test_triletter_preprocess.py ranking
 
 cd ../matchzoo
 
