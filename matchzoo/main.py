@@ -55,7 +55,7 @@ def train(config):
     # collect embedding
     if 'embed_path' in share_input_conf:
         embed_dict = read_embedding(filename=share_input_conf['embed_path'])
-        _PAD_ = share_input_conf['fill_word']
+        _PAD_ = share_input_conf['vocab_size'] - 1
         embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
         embed = np.float32(np.random.uniform(-0.2, 0.2, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
         share_input_conf['embed'] = convert_embed_2_numpy(embed_dict, embed = embed)
@@ -181,12 +181,12 @@ def predict(config):
     # collect embedding
     if 'embed_path' in share_input_conf:
         embed_dict = read_embedding(filename=share_input_conf['embed_path'])
-        _PAD_ = share_input_conf['fill_word']
+        _PAD_ = share_input_conf['vocab_size']
         embed_dict[_PAD_] = np.zeros((share_input_conf['embed_size'], ), dtype=np.float32)
-        embed = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
+        embed = np.float32(np.random.uniform(-0.02, 0.02, [share_input_conf['vocab_size']+1, share_input_conf['embed_size']]))
         share_input_conf['embed'] = convert_embed_2_numpy(embed_dict, embed = embed)
     else:
-        embed = np.float32(np.random.uniform(-0.2, 0.2, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
+        embed = np.float32(np.random.uniform(-0.2, 0.2, [share_input_conf['vocab_size']+1, share_input_conf['embed_size']]))
         share_input_conf['embed'] = embed
     print '[Embedding] Embedding Load Done.'
 

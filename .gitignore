@@ -5,7 +5,6 @@
 *.weights
 *.trec
 *.ranklist
-*.config
 *.DS_Store
 *.mq2007
 matchzoo/*.txt
@@ -15,7 +14,6 @@ data/toutiao
 data/example/*
 data/toutiao_jieba_new
 data/robust/*
-data/tmp
 build/
 log/*
 matchzoo/log/*

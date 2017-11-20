@@ -1,15 +1,17 @@
-# note 
+# note
 import six
 from keras.utils.generic_utils import deserialize_keras_object
 
 from point_generator import PointGenerator
+from point_generator import Triletter_PointGenerator
+from point_generator import DRMM_PointGenerator
 
 from pair_generator import PairGenerator
-from pair_generator import DSSM_PairGenerator
+from pair_generator import Triletter_PairGenerator
 from pair_generator import DRMM_PairGenerator
 from pair_generator import PairGenerator_Feats
 from list_generator import ListGenerator
-from list_generator import DSSM_ListGenerator
+from list_generator import Triletter_ListGenerator
 from list_generator import DRMM_ListGenerator
 from list_generator import ListGenerator_Feats
 
