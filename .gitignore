@@ -5,7 +5,6 @@
 *.weights
 *.trec
 *.ranklist
-*.config
 *.DS_Store
 *.mq2007
 matchzoo/*.txt
