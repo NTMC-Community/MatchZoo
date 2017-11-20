@@ -25,3 +25,4 @@ matchzoo/run_submit_gypsum_jobs_wikiqa.py
 matchzoo/run_model.py
 log/*
 matchzoo/models/wikiqa_tune_params/*
+.idea/
