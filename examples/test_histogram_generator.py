@@ -10,10 +10,11 @@ from rank_io import *
 
 if __name__ == '__main__':
     run_mode = 'ranking'
-    if sys.argv[1] == 'classification':
+    if len(sys.argv) > 1 and sys.argv[1] == 'classification':
         run_mode = 'classification'
     hist_size = 30
     path = '../data/example/%s/'%(run_mode)
+    embed_size = 50
     embedfile = path + 'embed_wiki_d50_norm'
     corpfile = path + 'corpus_preprocessed.txt'
     relfiles = [path + 'relation_train.txt',path + 'relation_valid.txt',path + 'relation_test.txt']
@@ -22,9 +23,9 @@ if __name__ == '__main__':
     # note here word embeddings have been normalized to speed up calculation
     embed_dict = read_embedding(filename = embedfile)
     print('after read embedding ...')
-    _PAD_ = 90853 # for word without wordembeeding, assign an random embedding
-    embed_dict[_PAD_] = np.zeros((50, ), dtype=np.float32)
-    embed = np.float32(np.random.uniform(-0.2, 0.2, [90854, 50]))
+    _PAD_ = len(embed_dict) # for word without wordembeeding, assign an random embedding
+    embed_dict[_PAD_] = np.zeros((embed_size, ), dtype=np.float32)
+    embed = np.float32(np.random.uniform(-0.2, 0.2, [_PAD_+1, embed_size]))
     embed = convert_embed_2_numpy(embed_dict, embed = embed)
 
     corp, _ = read_data(corpfile)
