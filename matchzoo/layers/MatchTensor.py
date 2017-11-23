@@ -43,12 +43,12 @@ class MatchTensor(Layer):
             for i in range(self.channel):
                 for j in range(shape1[2]):
                     M_diag[i][j][j] = 1.0
-            self.M = K.add_weight( name='M', 
+            self.M = self.add_weight( name='M', 
                                    shape=(self.channel, shape1[2], shape2[2]),
                                    initializer=M_diag,
                                    trainable=True )
         else:
-            self.M = K.add_weight( name='M', 
+            self.M = self.add_weight( name='M', 
                                    shape=(self.channel, shape1[2], shape2[2]),
                                    initializer='uniform',
                                    trainable=True )
@@ -59,7 +59,7 @@ class MatchTensor(Layer):
         if self.normalize:
             x1 = K.l2_normalize(x1, axis=2)
             x2 = K.l2_normalize(x2, axis=2)
-        output = tf.einsum('abd,fde,ace->afbc', x1, self.M, x2)
+        output = K.tf.einsum('abd,fde,ace->afbc', x1, self.M, x2)
         return output
 
     def compute_output_shape(self, input_shape):
