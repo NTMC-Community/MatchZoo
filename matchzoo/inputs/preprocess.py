@@ -6,6 +6,7 @@ from nltk.tokenize import word_tokenize
 import jieba
 import sys
 import numpy as np
+from nltk.corpus import stopwords as nltk_stopwords
 from nltk.stem import SnowballStemmer
 from tqdm import tqdm
 
@@ -20,42 +21,60 @@ class Preprocess(object):
     _stemmer = SnowballStemmer('english')
 
     def __init__(self,
-                 lang='en',
-                 stop_words=list(),
-                 min_freq=1,
-                 max_freq=sys.maxint,
-                 min_len=0,
-                 max_len=sys.maxint,
-                 word_dict=None,
-                 words_useless=None):
-        assert lang.lower() in Preprocess._valid_lang, 'Wrong language type: %s' % lang
-        self._lang = lang
-        self._stop_words = stop_words
-        self._min_freq = min_freq
-        self._max_freq = max_freq
-        self._min_len = min_len
-        self._max_len = max_len
-        self._word_dict = word_dict
-        self._words_useless = words_useless
+                 word_seg_config = {},
+                 doc_filter_config = {},
+                 word_stem_config = {},
+                 word_lower_config = {},
+                 word_filter_config = {},
+                 word_index_config = {}
+                 ):
+        # set default configuration
+        self._word_seg_config = { 'enable': True, 'lang': 'en' }
+        self._doc_filter_config = { 'enable': True, 'min_len': 0, 'max_len': sys.maxint }
+        self._word_stem_config = { 'enable': True }
+        self._word_lower_config = { 'enable': True }
+        self._word_filter_config = { 'enable': True, 'stop_words': nltk_stopwords.words('english'), 
+                                     'min_freq': 1, 'max_freq': sys.maxint, 'words_useless': None }
+        self._word_index_config = { 'enable': True, 'word_dict': None }
+
+        self._word_seg_config.update(word_seg_config)
+        self._doc_filter_config.update(doc_filter_config)
+        self._word_stem_config.update(word_stem_config)
+        self._word_lower_config.update(word_lower_config)
+        self._word_filter_config.update(word_filter_config)
+        self._word_index_config.update(word_index_config)
+
+        self._word_dict = self._word_index_config['word_dict']
         self._words_df = dict()
 
     def run(self, file_path):
         print('load...')
         dids, docs = Preprocess.load(file_path)
-        print('word_seg...')
-        docs = Preprocess.word_seg(docs, self._lang)
-        print('doc_filter...')
-        dids, docs = Preprocess.doc_filter(dids, docs, self._min_len, self._max_len)
-        print('word_stem...')
-        docs = Preprocess.word_stem(docs)
-        print('word_filter...')
-        docs, self._words_useless = Preprocess.word_filter(docs,
-                                                           words_useless=self._words_useless,
-                                                           stop_words=self._stop_words,
-                                                           min_freq=self._min_freq,
-                                                           max_freq=self._max_freq)
-        print('word_index...')
-        docs, self._word_dict = Preprocess.word_index(docs, word_dict=self._word_dict)
+        
+        if self._word_seg_config['enable']:
+            print('word_seg...')
+            docs = Preprocess.word_seg(docs, self._word_seg_config)
+        
+        if self._doc_filter_config['enable']:
+            print('doc_filter...')
+            dids, docs = Preprocess.doc_filter(dids, docs, self._doc_filter_config)
+        
+        if self._word_stem_config['enable']:
+            print('word_stem...')
+            docs = Preprocess.word_stem(docs)
+            
+        if self._word_lower_config['enable']:
+            print('word_lower...')
+            docs = Preprocess.word_lower(docs)
+
+        if self._word_filter_config['enable']:
+            print('word_filter...')
+            docs, self._words_useless = Preprocess.word_filter(docs, self._word_filter_config)
+
+        if self._word_index_config['enable']:
+            print('word_index...')
+            docs, self._word_dict = Preprocess.word_index(docs, self._word_index_config)
+
         return dids, docs
 
     @staticmethod
@@ -97,9 +116,9 @@ class Preprocess(object):
         return docs
 
     @staticmethod
-    def word_seg(docs, lang):
-        assert lang.lower() in Preprocess._valid_lang, 'Wrong language type: %s' % lang
-        docs = getattr(Preprocess, '%s_%s' % (sys._getframe().f_code.co_name, lang))(docs)
+    def word_seg(docs, config):
+        assert config['lang'].lower() in Preprocess._valid_lang, 'Wrong language type: %s' % config['lang']
+        docs = getattr(Preprocess, '%s_%s' % (sys._getframe().f_code.co_name, config['lang']))(docs)
         return docs
 
     @staticmethod
@@ -112,31 +131,27 @@ class Preprocess(object):
         return wdf
 
     @staticmethod
-    def word_filter(docs,
-                    words_useless=None,
-                    stop_words=list(),
-                    min_freq=1,
-                    max_freq=sys.maxint):
-        if words_useless is None:
-            words_useless = set()
+    def word_filter(docs, config):
+        if config['words_useless'] is None:
+            config['words_useless'] = set()
             # filter with stop_words
-            words_useless.update(stop_words)
+            config['words_useless'].update(config['stop_words'])
             # filter with min_freq and max_freq
             wdf = Preprocess.cal_doc_freq(docs)
             for w in wdf:
                 # filter too frequent words or rare words
-                if min_freq > wdf[w] or max_freq < wdf[w]:
-                    words_useless.add(w)
+                if config['min_freq'] > wdf[w] or config['max_freq'] < wdf[w]:
+                    config['words_useless'].add(w)
         # filter with useless words
-        docs = [[w for w in ws if w not in words_useless] for ws in tqdm(docs)]
-        return docs, words_useless
+        docs = [[w for w in ws if w not in config['words_useless']] for ws in tqdm(docs)]
+        return docs, config['words_useless']
 
     @staticmethod
-    def doc_filter(dids, docs, min_len=1, max_len=sys.maxint):
+    def doc_filter(dids, docs, config):
         new_docs = list()
         new_dids = list()
-        for i in range(len(docs)):
-            if min_len <= len(docs[i]) <= max_len:
+        for i in tqdm(range(len(docs))):
+            if config['min_len'] <= len(docs[i]) <= config['max_len']:
                 new_docs.append(docs[i])
                 new_dids.append(dids[i])
         return new_dids, new_docs
@@ -144,6 +159,11 @@ class Preprocess(object):
     @staticmethod
     def word_stem(docs):
         docs = [[Preprocess._stemmer.stem(w) for w in ws] for ws in tqdm(docs)]
+        return docs
+
+    @staticmethod
+    def word_lower(docs):
+        docs = [[w.lower() for w in ws] for ws in tqdm(docs)]
         return docs
 
     @staticmethod
@@ -155,11 +175,11 @@ class Preprocess(object):
         return word_dict
 
     @staticmethod
-    def word_index(docs, word_dict=None):
-        if word_dict is None:
-            word_dict = Preprocess.build_word_dict(docs)
-        docs = [[word_dict[w] for w in ws if w in word_dict] for ws in tqdm(docs)]
-        return docs, word_dict
+    def word_index(docs, config):
+        if config['word_dict'] is None:
+            config['word_dict'] = Preprocess.build_word_dict(docs)
+        docs = [[config['word_dict'][w] for w in ws if w in config['word_dict']] for ws in tqdm(docs)]
+        return docs, config['word_dict']
 
     @staticmethod
     def save_lines(file_path, lines):

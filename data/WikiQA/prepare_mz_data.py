@@ -42,14 +42,14 @@ if __name__ == '__main__':
     prepare.save_relation(dstdir + 'relation_test.txt', rel_test)
     print('Preparation finished ...')
 
-    preprocessor = Preprocess(min_freq=1)
+    preprocessor = Preprocess(word_stem_config={'enable': False}, word_filter_config={'min_freq': 2})
     dids, docs = preprocessor.run(dstdir + 'corpus.txt')
     preprocessor.save_word_dict(dstdir + 'word_dict.txt')
     # preprocessor.save_words_df(dstdir + 'word_df.txt')
 
     fout = open(dstdir + 'corpus_preprocessed.txt', 'w')
     for inum, did in enumerate(dids):
-        fout.write('%s\t%s\n' % (did, ' '.join(map(str, docs[inum]))))
+        fout.write('%s %s %s\n' % (did, len(docs[inum]), ' '.join(map(str, docs[inum]))))
     fout.close()
     print('Preprocess finished ...')
 
