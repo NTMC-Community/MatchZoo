@@ -33,7 +33,7 @@ class Preprocess(object):
         self._doc_filter_config = { 'enable': True, 'min_len': 0, 'max_len': sys.maxint }
         self._word_stem_config = { 'enable': True }
         self._word_lower_config = { 'enable': True }
-        self._word_filter_config = { 'enable': True, 'stop_words': nltk_stopwords.words('english'), 
+        self._word_filter_config = { 'enable': True, 'stop_words': nltk_stopwords.words('english'),
                                      'min_freq': 1, 'max_freq': sys.maxint, 'words_useless': None }
         self._word_index_config = { 'enable': True, 'word_dict': None }
 
@@ -45,24 +45,26 @@ class Preprocess(object):
         self._word_index_config.update(word_index_config)
 
         self._word_dict = self._word_index_config['word_dict']
-        self._words_df = dict()
+        self._words_stats = dict()
+
+        self._docs_num = 0
 
     def run(self, file_path):
         print('load...')
         dids, docs = Preprocess.load(file_path)
-        
+
         if self._word_seg_config['enable']:
             print('word_seg...')
             docs = Preprocess.word_seg(docs, self._word_seg_config)
-        
+
         if self._doc_filter_config['enable']:
             print('doc_filter...')
             dids, docs = Preprocess.doc_filter(dids, docs, self._doc_filter_config)
-        
+
         if self._word_stem_config['enable']:
             print('word_stem...')
             docs = Preprocess.word_stem(docs)
-            
+
         if self._word_lower_config['enable']:
             print('word_lower...')
             docs = Preprocess.word_lower(docs)
@@ -122,13 +124,21 @@ class Preprocess(object):
         return docs
 
     @staticmethod
-    def cal_doc_freq(docs):
-        wdf = dict()
+    def cal_doc_stat(docs):
         for ws in docs:
+            for w in ws:
+                if w not in self._words_stats:
+                    self._words_stats[w] = {}
+                    self._words_stats[w]['cf'] = 0
+                    self._words_stats[w]['df'] = 0
+                    self._words_stats[w]['idf'] = 0
+                self._words_stats[w]['cf'] += 1
             ws = set(ws)
             for w in ws:
-                wdf[w] = wdf.get(w, 0) + 1
-        return wdf
+                self._words_stats[w]['df'] += 1
+        for w, winfo in self._words_stats.items():
+            self._words_stats[w]['idf'] = math.log( (1 + self._docs_num) / (winfo['df'] + 1))
+        return
 
     @staticmethod
     def word_filter(docs, config):
