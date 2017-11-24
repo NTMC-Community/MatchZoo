@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     dids, docs = preprocessor.run(basedir + 'corpus.txt')
     preprocessor.save_word_dict(basedir + 'word_dict.txt')
-    #preprocessor.save_words_df(basedir + 'word_df.txt')
+    preprocessor.save_words_stats(basedir + 'word_stats.txt')
 
     fout = open(basedir + 'corpus_preprocessed.txt','w')
     for inum,did in enumerate(dids):
