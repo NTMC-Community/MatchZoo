@@ -44,8 +44,8 @@ if __name__ == '__main__':
 
     preprocessor = Preprocess(word_stem_config={'enable': False}, word_filter_config={'min_freq': 2})
     dids, docs = preprocessor.run(dstdir + 'corpus.txt')
-    preprocessor.save_word_dict(dstdir + 'word_dict.txt')
-    # preprocessor.save_words_df(dstdir + 'word_df.txt')
+    preprocessor.save_word_dict(dstdir + 'word_dict.txt', True)
+    preprocessor.save_words_stats(dstdir + 'word_stats.txt', True)
 
     fout = open(dstdir + 'corpus_preprocessed.txt', 'w')
     for inum, did in enumerate(dids):

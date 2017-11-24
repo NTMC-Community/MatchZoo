@@ -35,7 +35,7 @@ class Preprocess(object):
         self._word_lower_config = { 'enable': True }
         self._word_filter_config = { 'enable': True, 'stop_words': nltk_stopwords.words('english'),
                                      'min_freq': 1, 'max_freq': sys.maxint, 'words_useless': None }
-        self._word_index_config = { 'enable': True, 'word_dict': None }
+        self._word_index_config = { 'word_dict': None }
 
         self._word_seg_config.update(word_seg_config)
         self._doc_filter_config.update(doc_filter_config)
@@ -46,8 +46,6 @@ class Preprocess(object):
 
         self._word_dict = self._word_index_config['word_dict']
         self._words_stats = dict()
-
-        self._docs_num = 0
 
     def run(self, file_path):
         print('load...')
@@ -69,13 +67,14 @@ class Preprocess(object):
             print('word_lower...')
             docs = Preprocess.word_lower(docs)
 
+        self._words_stats = Preprocess.cal_words_stat(docs)
+
         if self._word_filter_config['enable']:
             print('word_filter...')
-            docs, self._words_useless = Preprocess.word_filter(docs, self._word_filter_config)
+            docs, self._words_useless = Preprocess.word_filter(docs, self._word_filter_config, self._words_stats)
 
-        if self._word_index_config['enable']:
-            print('word_index...')
-            docs, self._word_dict = Preprocess.word_index(docs, self._word_index_config)
+        print('word_index...')
+        docs, self._word_dict = Preprocess.word_index(docs, self._word_index_config)
 
         return dids, docs
 
@@ -124,33 +123,33 @@ class Preprocess(object):
         return docs
 
     @staticmethod
-    def cal_doc_stat(docs):
+    def cal_words_stat(docs):
+        words_stats = {}
+        docs_num = len(docs)
         for ws in docs:
             for w in ws:
-                if w not in self._words_stats:
-                    self._words_stats[w] = {}
-                    self._words_stats[w]['cf'] = 0
-                    self._words_stats[w]['df'] = 0
-                    self._words_stats[w]['idf'] = 0
-                self._words_stats[w]['cf'] += 1
-            ws = set(ws)
-            for w in ws:
-                self._words_stats[w]['df'] += 1
-        for w, winfo in self._words_stats.items():
-            self._words_stats[w]['idf'] = math.log( (1 + self._docs_num) / (winfo['df'] + 1))
-        return
+                if w not in words_stats:
+                    words_stats[w] = {}
+                    words_stats[w]['cf'] = 0
+                    words_stats[w]['df'] = 0
+                    words_stats[w]['idf'] = 0
+                words_stats[w]['cf'] += 1
+            for w in set(ws):
+                words_stats[w]['df'] += 1
+        for w, winfo in words_stats.items():
+            words_stats[w]['idf'] = np.log( (1. + docs_num) / (1. + winfo['df']))
+        return words_stats
 
     @staticmethod
-    def word_filter(docs, config):
+    def word_filter(docs, config, words_stats):
         if config['words_useless'] is None:
             config['words_useless'] = set()
             # filter with stop_words
             config['words_useless'].update(config['stop_words'])
             # filter with min_freq and max_freq
-            wdf = Preprocess.cal_doc_freq(docs)
-            for w in wdf:
+            for w, winfo in words_stats.items():
                 # filter too frequent words or rare words
-                if config['min_freq'] > wdf[w] or config['max_freq'] < wdf[w]:
+                if config['min_freq'] > winfo['df'] or config['max_freq'] < winfo['df']:
                     config['words_useless'].add(w)
         # filter with useless words
         docs = [[w for w in ws if w not in config['words_useless']] for ws in tqdm(docs)]
@@ -207,8 +206,12 @@ class Preprocess(object):
         return lines
 
     @staticmethod
-    def save_dict(file_path, dic):
-        lines = ['%s %s' % (k, v) for k, v in dic.iteritems()]
+    def save_dict(file_path, dic, sort=False):
+        if sort:
+            dic = sorted(dic.items(), key=lambda d:d[1], reverse=False)
+            lines = ['%s %s' % (k, v) for k, v in dic]
+        else:
+            lines = ['%s %s' % (k, v) for k, v in dic.iteritems()]
         Preprocess.save_lines(file_path, lines)
 
     @staticmethod
@@ -226,17 +229,30 @@ class Preprocess(object):
     def load_words_useless(self, words_useless_fp):
         self._words_useless = set(Preprocess.load_lines(words_useless_fp))
 
-    def save_word_dict(self, word_dict_fp):
-        Preprocess.save_dict(word_dict_fp, self._word_dict)
+    def save_word_dict(self, word_dict_fp, sort=False):
+        Preprocess.save_dict(word_dict_fp, self._word_dict, sort)
 
     def load_word_dict(self, word_dict_fp):
         self._word_dict = Preprocess.load_dict(word_dict_fp)
 
-    def save_words_df(self, words_df_fp):
-        Preprocess.save_dict(words_df_fp, self._words_df)
+    def save_words_stats(self, words_stats_fp, sort=False):
+        if sort:
+            word_dic = sorted(self._word_dict.items(), key=lambda d:d[1], reverse=False)
+            lines = ['%s %d %d %f' % (wid, self._words_stats[w]['cf'], self._words_stats[w]['df'],
+                self._words_stats[w]['idf']) for w, wid in word_dic]
+        else:
+            lines = ['%s %d %d %f' % (wid, self._words_stats[w]['cf'], self._words_stats[w]['df'],
+                self._words_stats[w]['idf']) for w, wid in self._word_dict.items()]
+        Preprocess.save_lines(words_stats_fp, lines)
 
-    def load_words_df(self, words_df_fp):
-        self._words_df = Preprocess.load_dict(words_df_fp)
+    def load_words_stats(self, words_stats_fp):
+        lines = Preprocess.load_lines(words_stats_fp)
+        for line in lines:
+            wid, cf, df, idf  = line.split()
+            self._words_stats[wid] = {}
+            self._words_stats[wid]['cf'] = int(cf)
+            self._words_stats[wid]['df'] = int(df)
+            self._words_stats[wid]['idf'] = float(idf)
 
 
 class NgramUtil(object):
@@ -425,7 +441,7 @@ def _test_preprocess():
     print(dids)
     print(docs)
     preprocessor.save_word_dict(file_path + '.word_dict')
-    preprocessor.save_words_df(file_path + '.words_df')
+    preprocessor.save_words_stats(file_path + '.words_stats')
     preprocessor.save_words_useless(file_path + '.words_useless')
     preprocessor.load_words_useless(file_path + '.words_useless')
 
@@ -472,25 +488,6 @@ def _test_hist():
 
 if __name__ == '__main__':
     #_test_ngram()
-    #_test_hist()
-    '''path = '/home/fanyixing/dataset/marco/'
-    infile_path = path + 'did.test.txt'
-    outfile_path = path + 'did.test.processed.txt'
-    #infile_path = './did.train.txt'
-    #outfile_path = 'did.train.processed.txt'
-    dictfile_path = path + 'word_dict.txt'
-    dffile_path = path + 'word_df.txt'
-    preprocessor = Preprocess(min_freq = 5)
-    preprocessor.load_word_dict(dictfile_path)
-    preprocessor.load_words_df(dffile_path)
-    dids, docs = preprocessor.run(infile_path)
-
-    fout = open(outfile_path,'w')
-    for inum,did in enumerate(dids):
-        fout.write('%s\t%s\n'%(did, ' '.join(map(str,docs[inum]))))
-    fout.close()
-    print('Done ...')'''
-
     # test with sample data
     basedir = '../../data/example/ranking/'
     prepare = Preparation()
@@ -504,10 +501,10 @@ if __name__ == '__main__':
 
     print ('begin preprocess...')
     # Prerpocess corpus file
-    preprocessor = Preprocess(min_freq=5)
+    preprocessor = Preprocess(min_freq=1)
     dids, docs = preprocessor.run(basedir + 'corpus.txt')
     preprocessor.save_word_dict(basedir + 'word_dict.txt')
-    # preprocessor.save_words_df(basedir + 'word_df.txt')
+    preprocessor.save_words_stats(basedir + 'word_stats.txt')
 
     fout = open(basedir + 'corpus_preprocessed.txt', 'w')
     for inum, did in enumerate(dids):
