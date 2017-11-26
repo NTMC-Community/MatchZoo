@@ -1,6 +1,6 @@
 
 # generate match histogram
-python test_preparation_for_classification.py
+python test_preparation_for_classify.py
 python test_triletter_preprocess.py classification
 
 cd ../matchzoo
@@ -9,7 +9,9 @@ cd ../matchzoo
 #cd models
 
 # train the model
-python main.py --phase train --model_file models/dssm_classification.config
+python main.py --phase train --model_file models/dssm_classify.config
+
 
 # test the model
-python main.py --phase predict --model_file models/dssm_classification.config
+# notice here, int the dssm_classify.config, the weights file for test should be the correct file name, you can find the weights file in MatchZoo/matchzoo/models/weights/.
+python main.py --phase predict --model_file models/dssm_classify.config

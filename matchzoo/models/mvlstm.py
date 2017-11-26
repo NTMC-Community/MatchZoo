@@ -59,7 +59,7 @@ class MVLSTM(BasicModel):
         cross_reshape = Reshape((-1, ))(cross)
         show_layer_info('Reshape', cross_reshape)
 
-        mm_k = Lambda(lambda x: K.tf.nn.top_k(x, k=self.config['topk'], sorted=False)[0])(cross_reshape)
+        mm_k = Lambda(lambda x: K.tf.nn.top_k(x, k=self.config['topk'], sorted=True)[0])(cross_reshape)
         show_layer_info('Lambda-topk', mm_k)
 
         pool1_flat_drop = Dropout(rate=self.config['dropout_rate'])(mm_k)

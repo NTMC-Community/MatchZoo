@@ -1,35 +1,49 @@
-# DRMM model examples
+# run DRMM model examples
 
 This file provides the example on how to train the DRMM [A Deep Relevance Matching Model for Ad-hoc Retrieval](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf). 
 
 ## generate the match histogram of the dataset.
 ``` bash
-python generate_match_hist.py
 
-## configure the model of DRMM
-cd ../matchzoo/models/
+# generate matchzoo data for ranking
+python test_preparation_for_ranking.py
 
+# generate histogram data for drmm
+# 1. download embedding 
+wget http://nlp.stanford.edu/data/glove.6B.zip
+unzip glove.6B.zip
+mv glove.6B.50d.txt ../data/example/ranking/
+# 2. map word embedding
+python gen_w2v.py ../data/example/ranking/glove.6B.50d.txt ../data/example/ranking/word_dict.txt ../data/example/ranking/embed_glove_d50
+python norm_embed.py  ../data/example/ranking/embed_glove_d50 ../data/example/ranking/embed_glove_d50_norm
+# 3. run to generate histogram
+python test_histogram_generator.py 
+
+cd ../matchzoo
+
+# configure the model file
 ## example of the configuration
 {
   "net_name": "drmm",
   "global":{
       "model_type": "PY",
-      "weights_file": "./models/drmm.weights",
-      "num_epochs": 1000,
-      "num_batch": 10,
+      "weights_file": "./models/weights/drmm_ranking.weights",
+      "save_weights_iters": 10,
+      "num_iters": 10,
+      "display_interval": 10,
       "optimizer": "adam",
       "learning_rate": 0.0001
   },
   "inputs": {
     "share": {
-        "text1_corpus": "../data/mq2007/qid_query.txt",
-        "text2_corpus": "../data/mq2007/docid_doc.txt",
-        "use_dpool": true,
-        "fill_word": 193367,
-        "embed_size": 1,
-        "vocab_size": 193368,
-        "embed_path": "../data/mq2007/embed.idf",
-        "hist_size": 60,
+        "text1_corpus": "../data/example/ranking/corpus_preprocessed.txt",
+        "text2_corpus": "../data/example/ranking/corpus_preprocessed.txt",
+        "use_dpool": false,
+        "embed_size": 3,
+        "vocab_size": 3004,
+        "train_embed": true,
+        "target_mode": "ranking",
+        "hist_size": 30,
         "text1_maxlen": 5,
         "text2_maxlen": 100
     },
@@ -40,47 +54,61 @@ cd ../matchzoo/models/
         "query_per_iter": 50,
         "batch_per_iter": 5,
         "batch_size": 20,
-        "relation_train": "../data/mq2007/relation.train.fold1.txt",
-        "hist_feats_file": "../data/mq2007/relation.train.fold1.hist.60.txt"
+        "relation_file": "../data/example/ranking/relation_train.txt",
+        "hist_feats_file": "../data/example/ranking/relation.train.hist-30.txt"
     },
     "valid": {
         "input_type": "DRMM_ListGenerator", 
         "phase": "EVAL",
-        "relation_test": "../data/mq2007/relation.test.fold1.txt",
-        "hist_feats_file": "../data/mq2007/relation.test.fold1.hist.60.txt"
+        "batch_list": 10,
+        "relation_file": "../data/example/ranking/relation_valid.txt",
+        "hist_feats_file": "../data/example/ranking/relation.valid.hist-30.txt"
     },
     "test": {
         "input_type": "DRMM_ListGenerator", 
         "phase": "EVAL",
-        "relation_test": "../data/mq2007/relation.test.fold1.txt",
-        "hist_feats_file": "../data/mq2007/relation.test.fold1.hist.60.txt"
+        "batch_list": 10,
+        "relation_file": "../data/example/ranking/relation_test.txt",
+        "hist_feats_file": "../data/example/ranking/relation.test.hist-30.txt"
     },
     "predict": {
         "input_type": "DRMM_ListGenerator", 
         "phase": "PREDICT",
-        "relation_test": "../data/mq2007/relation.test.fold1.txt",
-        "hist_feats_file": "../data/mq2007/relation.test.fold1.hist.60.txt"
+        "batch_list": 10,
+        "relation_file": "../data/example/ranking/relation_test.txt",
+        "hist_feats_file": "../data/example/ranking/relation.test.hist-30.txt"
     }
   },
   "outputs": {
     "predict": {
       "save_format": "TREC",
-      "save_path": "predict.test.fold1.txt"
+      "save_path": "predict.test.drmm_ranking.txt"
     }
   },
   "model": {
     "model_path": "./models/",
     "model_py": "drmm.DRMM",
-    "num_layers": 2,
-    "hidden_sizes": [5, 1]
+    "setting": {
+        "num_layers": 1,
+        "hidden_sizes": [1],
+        "dropout_rate": 0.5
+    }
   },
-  "losses": [ "rank_hinge_loss" ],
-  "metrics": [ "ndcg@3", "ndcg@5", "map" ]
+  "losses": [ 
+    {
+       "object_name": "rank_hinge_loss" ,
+       "object_params": {
+            "margin": 1.0
+       }
+    }
+  ],
+  "metrics": [ "precision@20", "ndcg@20", "map" ]
 }
 
-## train the model of DRMM
-cd ..
-python main.py --phase train --model_file models/drmm.config
+# train the model
+python main.py --phase train --model_file models/drmm_ranking.config
 
-## predict the dataset of DRMM
-python main.py --phase predict --model_file models/drmm.config
+# test the model
+# notice here, int the drmm_ranking.config, the weights file for test should be the correct file name, you can find the weights file in MatchZoo/matchzoo/models/weights/.
+python main.py --phase predict --model_file models/drmm_ranking.config
+

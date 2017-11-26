@@ -434,17 +434,6 @@ def cal_hist(t1_rep, t2_rep, qnum, hist_size):
     mhist = np.log10(mhist)
     return mhist.flatten()
 
-def _test_preprocess():
-    file_path = '/Users/houjianpeng/tmp/txt'
-    preprocessor = Preprocess()
-    dids, docs = preprocessor.run(file_path)
-    print(dids)
-    print(docs)
-    preprocessor.save_word_dict(file_path + '.word_dict')
-    preprocessor.save_words_stats(file_path + '.words_stats')
-    preprocessor.save_words_useless(file_path + '.words_useless')
-    preprocessor.load_words_useless(file_path + '.words_useless')
-
 
 def _test_ngram():
     words = 'hello, world! hello, deep!'

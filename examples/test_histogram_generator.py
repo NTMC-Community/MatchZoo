@@ -15,7 +15,7 @@ if __name__ == '__main__':
     hist_size = 30
     path = '../data/example/%s/'%(run_mode)
     embed_size = 50
-    embedfile = path + 'embed_wiki_d50_norm'
+    embedfile = path + 'embed_glove_d50_norm'
     corpfile = path + 'corpus_preprocessed.txt'
     relfiles = [path + 'relation_train.txt',path + 'relation_valid.txt',path + 'relation_test.txt']
     histfiles = [path + 'relation.train.hist-%d.txt'%(hist_size),path + 'relation.valid.hist-%d.txt'%(hist_size), path + 'relation.test.hist-%d.txt'%(hist_size)]

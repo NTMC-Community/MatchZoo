@@ -59,9 +59,10 @@ class DSSM(BasicModel):
         rd = mlp(doc)
         show_layer_info('MLP', rd)
         out_ = Dot( axes= [1, 1], normalize=True)([rq, rd])
+        show_layer_info('Dot', out_)
         if self.config['target_mode'] == 'classification':
             out_ = Dense(2, activation='softmax')(out_)
-        show_layer_info('Dense', out_)
+            show_layer_info('Dense', out_)
 
         model = Model(inputs=[query, doc], outputs=[out_])
         return model

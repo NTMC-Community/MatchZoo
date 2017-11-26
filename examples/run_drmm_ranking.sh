@@ -8,8 +8,8 @@ wget http://nlp.stanford.edu/data/glove.6B.zip
 unzip glove.6B.zip
 mv glove.6B.50d.txt ../data/example/ranking/
 # 2. map word embedding
-python gen_w2v.py ../data/example/ranking/glove.6B.50d.txt ../data/example/ranking/word_dict.txt ../data/example/ranking/embed_wiki_d50
-python norm_embed.py  ../data/example/ranking/embed_wiki_d50 ../data/example/ranking/embed_wiki_d50_norm
+python gen_w2v.py ../data/example/ranking/glove.6B.50d.txt ../data/example/ranking/word_dict.txt ../data/example/ranking/embed_glove_d50
+python norm_embed.py  ../data/example/ranking/embed_glove_d50 ../data/example/ranking/embed_glove_d50_norm
 # 3. run to generate histogram
 python test_histogram_generator.py 
 
@@ -22,4 +22,5 @@ cd ../matchzoo
 python main.py --phase train --model_file models/drmm_ranking.config
 
 # test the model
+# notice here, int the drmm_ranking.config, the weights file for test should be the correct file name, you can find the weights file in MatchZoo/matchzoo/models/weights/.
 python main.py --phase predict --model_file models/drmm_ranking.config
