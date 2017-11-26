@@ -25,7 +25,7 @@ if __name__ == '__main__':
     print('preparation finished ...')
 
     # Prerpocess corpus file
-    preprocessor = Preprocess(min_freq = 1)
+    preprocessor = Preprocess()
 
     dids, docs = preprocessor.run(basedir + 'corpus.txt')
     preprocessor.save_word_dict(basedir + 'word_dict.txt')

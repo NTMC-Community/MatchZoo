@@ -19,7 +19,7 @@ class CDSSM(BasicModel):
         self.__name = 'CDSSM'
         self.check_list = [ 'text1_maxlen', 'text2_maxlen',
                    'vocab_size', 'embed_size',
-                   'filters', 'kernel_size', 'hidden_sizes']
+                   'kernel_count', 'kernel_size', 'hidden_sizes']
         self.embed_trainable = config['train_embed']
         self.setup(config)
         if not self.check():
@@ -29,7 +29,7 @@ class CDSSM(BasicModel):
     def setup(self, config):
         if not isinstance(config, dict):
             raise TypeError('parameter config should be dict:', config)
-        self.set_default('filters', 32)
+        self.set_default('kernel_count', 32)
         self.set_default('kernel_size', 3)
         self.set_default('hidden_sizes', [300, 128])
         self.set_default('dropout_rate', 0.)
@@ -60,7 +60,7 @@ class CDSSM(BasicModel):
         show_layer_info('Embedding', q_embed)
         d_embed = wordhashing(doc)
         show_layer_info('Embedding', d_embed)
-        conv1d = Convolution1D(self.config['filters'], self.config['kernel_size'], padding='same', activation='relu')
+        conv1d = Convolution1D(self.config['kernel_count'], self.config['kernel_size'], padding='same', activation='relu')
         q_conv = conv1d(q_embed)
         show_layer_info('Convolution1D', q_conv)
         d_conv = conv1d(d_embed)
@@ -74,16 +74,17 @@ class CDSSM(BasicModel):
         d_pool_re = Reshape((-1,))(d_pool)
         show_layer_info('Reshape', d_pool_re)
 
-        mlp = mlp_work(self.config['filters'])
+        mlp = mlp_work(self.config['kernel_count'])
 
         rq = mlp(q_pool_re)
         show_layer_info('MLP', rq)
         rd = mlp(d_pool_re)
         show_layer_info('MLP', rd)
         out_ = Dot( axes= [1, 1], normalize=True)([rq, rd])
+        show_layer_info('Dot', out_)
         if self.config['target_mode'] == 'classification':
             out_ = Dense(2, activation='softmax')(out_)
-        show_layer_info('Dense', out_)
+            show_layer_info('Dense', out_)
 
         model = Model(inputs=[query, doc], outputs=[out_])
         return model

@@ -171,7 +171,7 @@ def train(config):
             print 'Iter:%d\t%s' % (i_e, '\t'.join(['%s=%f'%(k,v/num_valid) for k, v in res.items()]))
             sys.stdout.flush()
         if (i_e+1) % save_weights_iters == 0:
-            model.save_weights(weights_file % i_e)
+            model.save_weights(weights_file % (i_e+1))
 
 def predict(config):
     ######## Read input config ########

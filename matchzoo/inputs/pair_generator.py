@@ -195,8 +195,7 @@ class Triletter_PairGenerator(PairBasicGenerator):
     def map_word_to_triletter(self, words):
         triletters = []
         for wid in words:
-            if wid in self.word_triletter_map:
-                triletters.extend(self.word_triletter_map[wid])
+            triletters.extend(self.word_triletter_map[wid])
         return triletters
 
     def transfer_feat2sparse(self, dense_feat):

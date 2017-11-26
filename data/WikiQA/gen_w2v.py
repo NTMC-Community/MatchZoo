@@ -49,4 +49,5 @@ for w in tqdm(word_diff):
   print >> mapped_w2v_file, word_dict[w], ' '.join(curr_embed)
 
 mapped_w2v_file.close()
+
 print 'Map word vectors finished ...'
