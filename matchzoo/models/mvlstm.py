@@ -47,9 +47,9 @@ class MVLSTM(BasicModel):
         d_embed = embedding(doc)
         show_layer_info('Embedding', d_embed)
 
-        q_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True))(q_embed)
+        q_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True, dropout=self.config['dropout_rate']))(q_embed)
         show_layer_info('Bidirectional-LSTM', q_rep)
-        d_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True))(d_embed)
+        d_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True, dropout=self.config['dropout_rate']))(d_embed)
         show_layer_info('Bidirectional-LSTM', d_rep)
 
         cross = Match(match_type='dot')([q_rep, d_rep])
