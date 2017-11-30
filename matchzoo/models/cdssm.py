@@ -3,8 +3,7 @@
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
-from keras.layers import Input, Embedding, Dense, Activation, Merge, Lambda, Permute
-from keras.layers import Convolution1D, MaxPooling1D, Reshape, Dot
+from keras.layers import *
 from keras.activations import softmax
 
 from model import BasicModel
@@ -63,8 +62,12 @@ class CDSSM(BasicModel):
         conv1d = Convolution1D(self.config['kernel_count'], self.config['kernel_size'], padding='same', activation='relu')
         q_conv = conv1d(q_embed)
         show_layer_info('Convolution1D', q_conv)
+        q_conv = Dropout(self.config['dropout_rate'])(q_conv)
+        show_layer_info('Dropout', q_conv)
         d_conv = conv1d(d_embed)
         show_layer_info('Convolution1D', d_conv)
+        d_conv = Dropout(self.config['dropout_rate'])(d_conv)
+        show_layer_info('Dropout', d_conv)
         q_pool = MaxPooling1D(self.config['text1_maxlen'])(q_conv)
         show_layer_info('MaxPooling1D', q_pool)
         q_pool_re = Reshape((-1,))(q_pool)

@@ -2,6 +2,7 @@
 
 import keras
 import keras.backend as K
+from keras import regularizers
 from keras.models import Sequential, Model
 from keras.layers import *
 from keras.activations import softmax
@@ -30,6 +31,7 @@ class DSSM(BasicModel):
 
         self.set_default('hidden_sizes', [300, 128])
         self.set_default('dropout_rate', 0.5)
+        self.set_default('reg_rate', 0.0)
         self.config.update(config)
 
     def build(self):
@@ -43,13 +45,13 @@ class DSSM(BasicModel):
             #seq.add(SparseFullyConnectedLayer(self.config['hidden_sizes'][0], input_dim=input_dim, activation='relu'))
             num_hidden_layers = len(self.config['hidden_sizes'])
             if num_hidden_layers == 1:
-                seq.add(Dense(self.config['hidden_sizes'][0], input_shape=(input_dim,)))
+                seq.add(Dense(self.config['hidden_sizes'][0], input_shape=(input_dim,), activity_regularizer=regularizers.l2(self.config['reg_rate'])))
             else:
-                seq.add(Dense(self.config['hidden_sizes'][0], activation='relu', input_shape=(input_dim,)))
+                seq.add(Dense(self.config['hidden_sizes'][0], activation='relu', input_shape=(input_dim,), activity_regularizer=regularizers.l2(self.config['reg_rate'])))
                 for i in range(num_hidden_layers-2):
-                    seq.add(Dense(self.config['hidden_sizes'][i+1], activation='relu'))
+                    seq.add(Dense(self.config['hidden_sizes'][i+1], activation='relu', activity_regularizer=regularizers.l2(self.config['reg_rate'])))
                     seq.add(Dropout(rate=self.config['dropout_rate']))
-                seq.add(Dense(self.config['hidden_sizes'][num_hidden_layers-1]))
+                seq.add(Dense(self.config['hidden_sizes'][num_hidden_layers-1], activity_regularizer=regularizers.l2(self.config['reg_rate'])))
                 seq.add(Dropout(rate=self.config['dropout_rate']))
             return seq
 
@@ -58,6 +60,18 @@ class DSSM(BasicModel):
         show_layer_info('MLP', rq)
         rd = mlp(doc)
         show_layer_info('MLP', rd)
+
+        '''
+        rep = Concatenate(axis=1) ([rq, rd])
+        show_layer_info('Concatenate', rep)
+        rep = Dropout(rate=self.config['dropout_rate'])(rep)
+        show_layer_info('Dropout', rep)
+        if self.config['target_mode'] == 'classification':
+            out_ = Dense(2, activation='softmax')(rep)
+        elif self.config['target_mode'] in ['regression', 'ranking']:
+            out_ = Dense(1)(rep)
+        show_layer_info('Dense', out_)
+        '''
         out_ = Dot( axes= [1, 1], normalize=True)([rq, rd])
         show_layer_info('Dot', out_)
         if self.config['target_mode'] == 'classification':
