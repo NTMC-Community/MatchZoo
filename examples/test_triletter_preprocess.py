@@ -21,6 +21,14 @@ def read_doc(infile):
         doc[r[0]] = r[1:]
         #assert len(doc[r[0]]) == int(r[1])
     return doc
+def filter_triletter(tri_stats, min_filter_num=5, max_filter_num=10000):
+    tri_dict = {}
+    tri_stats = sorted(tri_stats.items(), key=lambda d:d[1], reverse=True)
+    for triinfo in tri_stats:
+        if triinfo[1] >= min_filter_num and triinfo[1] <= max_filter_num:
+            if triinfo[0] not in tri_dict:
+                tri_dict[triinfo[0]] = len(tri_dict)
+    return tri_dict
 
 if __name__ == '__main__':
     run_mode = 'ranking'
@@ -28,23 +36,25 @@ if __name__ == '__main__':
         run_mode = 'classification'
     basedir = '../data/example/%s/'%(run_mode)
     in_dict_file = basedir + 'word_dict.txt'
-    out_dict_file = basedir + 'triletter_dict.txt'
-    word_triletter_map_file = basedir + 'word_triletter_map.txt'
+    out_dict_file = basedir + 'triletter_dict_1.txt'
+    word_triletter_map_file = basedir + 'word_triletter_map_1.txt'
 
     word_dict = read_dict(in_dict_file)
-    triletter_dict = {}
+    triletter_stats = {}
     word_triletter_map = {}
     for wid, word in word_dict.items():
         word_triletter_map[wid] = []
         ngrams = NgramUtil.ngrams(list('#' + word + '#'), 3, '')
         for tric in ngrams:
-            if tric not in triletter_dict:
-                triletter_dict[tric] = len(triletter_dict)
-            word_triletter_map[wid].append(triletter_dict[tric])
+            if tric not in triletter_stats:
+                triletter_stats[tric] = 0
+            triletter_stats[tric] += 1
+            word_triletter_map[wid].append(tric)
+    triletter_dict = filter_triletter(triletter_stats, 1, 1000)
     with open(out_dict_file, 'w') as f:
         for triid, tric in triletter_dict.items():
             print >> f, triid, tric
     with open(word_triletter_map_file, 'w') as f:
         for wid, trics in word_triletter_map.items():
-            print >> f, wid, ' '.join(map(str,trics))
+            print >> f, wid, ' '.join([str(triletter_dict[k]) for k in trics if k in triletter_dict])
     print 'Done ...'
