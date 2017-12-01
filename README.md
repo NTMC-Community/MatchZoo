@@ -47,7 +47,7 @@ In testing phase, you can run
 python main.py --phase predict --model_file models/wikiqa/drmm_wikiqa.config
 ```
 
-We have compared eights models, the results are as follows.
+We have compared eight models, the results are as follows.
 <table>
   <tr>
     <th width=10%, bgcolor=#999999 >Models</th> 
