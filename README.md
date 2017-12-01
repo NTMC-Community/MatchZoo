@@ -57,57 +57,57 @@ We have compared eight models, the results are as follows.
   </tr>
   <tr>
     <td align="center", bgcolor=#eeeeee> DSSM </td>
-    <td> 0.3412 </td>
-    <td> 0.4179 </td>
-    <td> 0.3840 </td>
+    <td align="center", bgcolor=#eeeeee> 0.3412 </td>
+    <td align="center", bgcolor=#eeeeee> 0.4179 </td>
+    <td align="center", bgcolor=#eeeeee> 0.3840 </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> CDSSM </td>
-  	 <td bgcolor=#eeeeee> 0.5489 </td>
-  	 <td bgcolor=#eeeeee> 0.6084</td>
-  	 <td bgcolor=#eeeeee> 0.5593 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5489 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6084</td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5593 </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> ARC-I </td>
-  	 <td bgcolor=#eeeeee> 0.5680 </td>
-  	 <td bgcolor=#eeeeee> 0.6317 </td>
-  	 <td bgcolor=#eeeeee> 0.5870 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5680 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6317 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5870 </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> ARC-II </td>
-  	 <td bgcolor=#eeeeee> 0.5647 </td>
-  	 <td bgcolor=#eeeeee> 0.6176 </td>
-  	 <td bgcolor=#eeeeee> 0.5845 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5647 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6176 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5845 </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> MV-LSTM </td>
-  	 <td bgcolor=#eeeeee> 0.5818 </td>
-  	 <td bgcolor=#eeeeee> 0.6452 </td>
-  	 <td bgcolor=#eeeeee> 0.5988 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5818 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6452 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5988 </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> DRMM </td>
-  	 <td bgcolor=#eeeeee> 0.6107 </td>
-  	 <td bgcolor=#eeeeee> 0.6621 </td>
-  	 <td bgcolor=#eeeeee> 0.6195 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6107 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6621 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6195 </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> DUET </td>
-  	 <td bgcolor=#eeeeee> 0.6065 </td>
-  	 <td bgcolor=#eeeeee> 0.6722 </td>
-  	 <td bgcolor=#eeeeee> 0.6301 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6065 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6722 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6301 </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> MatchPyramid </td>
-  	 <td bgcolor=#eeeeee> 0.6317 </td>
-  	 <td bgcolor=#eeeeee> 0.6913 </td>
-  	 <td bgcolor=#eeeeee> 0.6434 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6317 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6913 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6434 </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> DRMM_TKS </td>
-  	 <td bgcolor=#eeeeee> 0.6458 </td>
-  	 <td bgcolor=#eeeeee> 0.6956 </td>
-  	 <td bgcolor=#eeeeee> 0.6586 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6458 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6956 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6586 </td>
   </tr>
  
 </table>
