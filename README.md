@@ -1,6 +1,6 @@
 # MatchZoo
 ----
-MatchZoo is a toolkit for text matching. It was developed with a focus on facilitate the designing, comparing and sharing of deep text matching models. 
+MatchZoo is a toolkit for text matching. It was developed with a focus on facilitate the designing, comparing and sharing of deep text matching models. There are a number of deep matchinng methods, such as DRMM, MatchPyramid, MV-LSTM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. It was always exciting to receive any code constributions, suggestions, comments from all our MatchZoo users.
 
 ## Overview
 The architecture of the MatchZoo toolkit is depicited in the Figure  in what follows,
@@ -25,17 +25,6 @@ Moreover, the toolkit has implemented two schools of representative deep text ma
 ### Training and Evaluation
 For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up different objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text.
 
-## Models
-
-1. DRMM
-2. MatchPyramid
-3. ARC-I
-4. DSSM
-5. CDSSM
-6. ARC-II
-7. MV-LSTM
-
-
 ## Usage
 ```
 git clone https://github.com/faneshion/MatchZoo.git
@@ -45,12 +34,93 @@ python setup.py install
 python main.py --phase train --model_file ./models/arci_ranking.config
 python main.py --phase predict --model_file ./models/arci_ranking.config
 ```
-## Environment
-* python2.7+ 
-* tensorflow 1.2
-* keras 2.06
-* nltk 3.2.2
-* tqdm 4.19.4
+
+## Baseline Tests:
+Here, we adopt <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52419">WikiQA</a> dataset for an example to inllustrate the usage of MatchZoo. We have provide <a href="./data/WikiQA/run_data.sh">a script</a> to download the dataset, and prepare it as matchzoo data format. In the <a href="">models derectory</a>, there are a number of configurations about each model for WikiQA dataset. 
+
+Take the DRMM as an example. In training phase, you can run
+```
+python main.py --phase train --model_file models/wikiqa/drmm_wikiqa.config
+```
+In testing phase, you can run
+```
+python main.py --phase predict --model_file models/wikiqa/drmm_wikiqa.config
+```
+
+We have compared eights models, the results are as follows.
+<table>
+  <tr>
+    <th width=10%, bgcolor=#999999 >Models</th> 
+    <th width=20%, bgcolor=#999999>NDCG@3</th>
+    <th width="20%", bgcolor=#999999>NDCG@5</th>
+    <th width="20%", bgcolor=#999999>MAP</th>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> DSSM </td>
+    <td> 0.3412 </td>
+    <td> 0.4179 </td>
+    <td> 0.3840 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> CDSSM </td>
+  	 <td bgcolor=#eeeeee> 0.5489 </td>
+  	 <td bgcolor=#eeeeee> 0.6084</td>
+  	 <td bgcolor=#eeeeee> 0.5593 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> ARC-I </td>
+  	 <td bgcolor=#eeeeee> 0.5680 </td>
+  	 <td bgcolor=#eeeeee> 0.6317 </td>
+  	 <td bgcolor=#eeeeee> 0.5870 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> ARC-II </td>
+  	 <td bgcolor=#eeeeee> 0.5647 </td>
+  	 <td bgcolor=#eeeeee> 0.6176 </td>
+  	 <td bgcolor=#eeeeee> 0.5845 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> MV-LSTM </td>
+  	 <td bgcolor=#eeeeee> 0.5818 </td>
+  	 <td bgcolor=#eeeeee> 0.6452 </td>
+  	 <td bgcolor=#eeeeee> 0.5988 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> DRMM </td>
+  	 <td bgcolor=#eeeeee> 0.6107 </td>
+  	 <td bgcolor=#eeeeee> 0.6621 </td>
+  	 <td bgcolor=#eeeeee> 0.6195 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> DUET </td>
+  	 <td bgcolor=#eeeeee> 0.6065 </td>
+  	 <td bgcolor=#eeeeee> 0.6722 </td>
+  	 <td bgcolor=#eeeeee> 0.6301 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> MatchPyramid </td>
+  	 <td bgcolor=#eeeeee> 0.6317 </td>
+  	 <td bgcolor=#eeeeee> 0.6913 </td>
+  	 <td bgcolor=#eeeeee> 0.6434 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> DRMM_TKS </td>
+  	 <td bgcolor=#eeeeee> 0.6458 </td>
+  	 <td bgcolor=#eeeeee> 0.6956 </td>
+  	 <td bgcolor=#eeeeee> 0.6586 </td>
+  </tr>
+ 
+</table>
+The loss of each models are depicted in the following figure,
+ <div align='center'>
+<img src="./data/matchzoo.wikiqa.loss.png" width = "550" height = "300" alt="图片名称" align=center />
+</div>
+
+The MAP of each models are depicted in the following figure,
+<div align='center'>
+<img src="./data/matchzoo.wikiqa.map.png" width = "550" height = "300" alt="图片名称" align=center />
+</div>
+Here, the DRMM_TKS is a variant of DRMM for short text matching. Specifically, the matching histogram is replaced by a top-k maxpooling layer and the remaining part are fixed. 
 
 ## Model Detail:
 
@@ -59,56 +129,63 @@ python main.py --phase predict --model_file ./models/arci_ranking.config
 this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf">A Deep Relevance Matching Model for Ad-hoc Retrieval</a>.
 
 - model file: models/drmm.py
-- config file: models/drmm.config
+- config file: models/drmm_ranking.config
 
 2. MatchPyramid
 -------
 this model is an implementation of <a href="https://arxiv.org/abs/1602.06359"> Text Matching as Image Recognition</a>
 
 - model file: models/matchpyramid.py
-- config file: models/matchpyramid.config
+- config file: models/matchpyramid_ranking.config
 
 3. ARC-I
 -------
 this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Convolutional Neural Network Architectures for Matching Natural Language Sentences</a>
 
 - model file: models/arci.py
-- model config: models/arci.config
+- model config: models/arci_ranking.config
 
 4. DSSM
 -------
 this model is an implementation of <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/cikm2013_DSSM_fullversion.pdf">Learning Deep Structured Semantic Models for Web Search using Clickthrough Data</a>
 
 - model file: models/dssm.py
-- config file: models/dssm.config
+- config file: models/dssm_ranking.config
 
 5. CDSSM
 -------
 this model is an implementation of <a href="https://www.microsoft.com/en-us/research/publication/learning-semantic-representations-using-convolutional-neural-networks-for-web-search/">Learning Semantic Representations Using Convolutional Neural Networks for Web Search</a>
 
 - model file: models/cdssm.py
-- config file: models/cdssm.config
+- config file: models/cdssm_ranking.config
 
 6. ARC-II
 -------
 this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Convolutional Neural Network Architectures for Matching Natural Language Sentences</a>
 
 - model file: models/arcii.py
-- model config: models/arcii.config
+- model config: models/arcii_ranking.config
 
 7. MV-LSTM
 -------
 this model is an implementation of <a href="https://arxiv.org/abs/1511.08277">A Deep Architecture for Semantic Matching with Multiple Positional Sentence Representations</a>
 
 - model file: models/mvlstm.py
-- model config: models/mvlstm.config
+- model config: models/mvlstm_ranking.config
 
-8. Match-SRNN
+8. DUET
+-------
+this model is an implementation of <a href="https://dl.acm.org/citation.cfm?id=3052579">Learning to Match Using Local and Distributed Representations of Text for Web Search</a>
+
+- model file: models/duet.py
+- model config: models/duet_ranking.config
+
+9. Match-SRNN
 -------
 under development ....
 
-##Citation
 
+##Citation
 ```
 @article{fan2017matchzoo,
   title={MatchZoo: A Toolkit for Deep Text Matching},
@@ -130,6 +207,12 @@ Project Organizers
     - Institute of Computing Technolgy, Chinese Academy of Sciences 
     - [HomePage](http://www.bigdatalab.ac.cn/~cxq/)
 
+## Environment
+* python2.7+ 
+* tensorflow 1.2+
+* keras 2.06+
+* nltk 3.2.2+
+* tqdm 4.19.4+
 
 Development Teams
 ====
