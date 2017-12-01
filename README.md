@@ -125,67 +125,68 @@ Here, the DRMM_TKS is a variant of DRMM for short text matching. Specifically, t
 ## Model Detail:
 
 1. DRMM
--------
+---
 this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf">A Deep Relevance Matching Model for Ad-hoc Retrieval</a>.
 
 - model file: models/drmm.py
 - config file: models/drmm_ranking.config
 
 2. MatchPyramid
--------
+---
 this model is an implementation of <a href="https://arxiv.org/abs/1602.06359"> Text Matching as Image Recognition</a>
 
 - model file: models/matchpyramid.py
 - config file: models/matchpyramid_ranking.config
 
 3. ARC-I
--------
+---
 this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Convolutional Neural Network Architectures for Matching Natural Language Sentences</a>
 
 - model file: models/arci.py
 - model config: models/arci_ranking.config
 
 4. DSSM
--------
+---
 this model is an implementation of <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/cikm2013_DSSM_fullversion.pdf">Learning Deep Structured Semantic Models for Web Search using Clickthrough Data</a>
 
 - model file: models/dssm.py
 - config file: models/dssm_ranking.config
 
 5. CDSSM
--------
+---
 this model is an implementation of <a href="https://www.microsoft.com/en-us/research/publication/learning-semantic-representations-using-convolutional-neural-networks-for-web-search/">Learning Semantic Representations Using Convolutional Neural Networks for Web Search</a>
 
 - model file: models/cdssm.py
 - config file: models/cdssm_ranking.config
 
 6. ARC-II
--------
+---
 this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Convolutional Neural Network Architectures for Matching Natural Language Sentences</a>
 
 - model file: models/arcii.py
 - model config: models/arcii_ranking.config
 
 7. MV-LSTM
--------
+---
 this model is an implementation of <a href="https://arxiv.org/abs/1511.08277">A Deep Architecture for Semantic Matching with Multiple Positional Sentence Representations</a>
 
 - model file: models/mvlstm.py
 - model config: models/mvlstm_ranking.config
 
 8. DUET
--------
+---
 this model is an implementation of <a href="https://dl.acm.org/citation.cfm?id=3052579">Learning to Match Using Local and Distributed Representations of Text for Web Search</a>
 
 - model file: models/duet.py
 - model config: models/duet_ranking.config
 
 9. Match-SRNN
--------
+---
 under development ....
 
 
 ##Citation
+
 ```
 @article{fan2017matchzoo,
   title={MatchZoo: A Toolkit for Deep Text Matching},
