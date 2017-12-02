@@ -52,7 +52,7 @@ class MatchPyramid(BasicModel):
         d_embed = embedding(doc)
         show_layer_info('Embedding', d_embed)
 
-        cross = Dot(axes=[2, 2])([q_embed, d_embed])
+        cross = Dot(axes=[2, 2], normalize=False)([q_embed, d_embed])
         show_layer_info('Dot', cross)
         cross_reshape = Reshape((self.config['text1_maxlen'], self.config['text2_maxlen'], 1))(cross)
         show_layer_info('Reshape', cross_reshape)

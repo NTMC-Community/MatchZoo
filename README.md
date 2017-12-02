@@ -1,9 +1,9 @@
 # MatchZoo
 ----
-MatchZoo is a toolkit for text matching. It was developed with a focus on facilitate the designing, comparing and sharing of deep text matching models. 
+MatchZoo is a toolkit for text matching. It was developed with a focus on facilitate the designing, comparing and sharing of deep text matching models. There are a number of deep matchinng methods, such as DRMM, MatchPyramid, MV-LSTM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. It was always exciting to receive any code constributions, suggestions, comments from all our MatchZoo users.
 
 ## Overview
-The architecture of the MatchZoo toolit is depicited in Figure 
+The architecture of the MatchZoo toolkit is depicited in the Figure  in what follows,
 <div align='center'>
 <img src="./data/matchzoo.png" width = "400" height = "200" alt="图片名称" align=center />
 </div>
@@ -12,29 +12,18 @@ There are three major modules in the toolkit, namely data preparation, model con
 ### Data Preparation
 The data preparation module aims to convert dataset of different text matching tasks into a unified format as the input of deep matching models. Users provide datasets which contains pairs of texts along with their labels, and the module produces the following files.
 
-+	**Word Dictionary**: recordsthemappingfromeachwordto a unique identi er called wid. Words that are too frequent (e.g. stopwords), too rare or noisy (e.g. fax numbers) can be  ltered out by prede ned rules.
-+	**Corpus File**: records the mapping from each text to a unique identi er called tid, along with a sequence of word identi ers contained in that text. Note here each text is truncated or padded to a  xed length customized by users.
-+	**Relation File**: is used to store the relationship between two texts, each line containing a pair of tids and the cor- responding label.
++	**Word Dictionary**: records the mapping from each word to a unique identifier called *wid*. Words that are too frequent (e.g. stopwords), too rare or noisy (e.g. fax numbers) can be  filtered out by predefined rules.
++	**Corpus File**: records the mapping from each text to a unique identifier called *tid*, along with a sequence of word identifiers contained in that text. Note here each text is truncated or padded to a fixed length customized by users.
++	**Relation File**: is used to store the relationship between two texts, each line containing a pair of *tids* and the corresponding label.
 + **Input Data Format**: a detailed explaination of input data format can be found in MatchZoo/data/example/readme.md.
 
 ### Model Construction
-In the model construction module, we employ Keras libarary to help users build the deep matching model layer by layer conveniently.  e Keras libarary provides a set of common layers widely used in neural models, such as convolutional layer, pooling layer, dense layer and so on. To further facilitate the construction of deep text matching models, we extend the Keras libarary to provide some layer interfaces speci cally designed for text matching. 
+In the model construction module, we employ Keras libarary to help users build the deep matching model layer by layer conveniently. The Keras libarary provides a set of common layers widely used in neural models, such as convolutional layer, pooling layer, dense layer and so on. To further facilitate the construction of deep text matching models, we extend the Keras libarary to provide some layer interfaces specifically designed for text matching. 
 
 Moreover, the toolkit has implemented two schools of representative deep text matching models, namely representation-focused models and interactive-focused models[[1]](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf).
 
 ### Training and Evaluation
-For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up di erent objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text.
-
-## Models
-
-1. DRMM
-2. MatchPyramid
-3. ARC-I
-4. DSSM
-5. CDSSM
-6. ARC-II
-7. MV-LSTM
-
+For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up different objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text.
 
 ## Usage
 ```
@@ -45,66 +34,156 @@ python setup.py install
 python main.py --phase train --model_file ./models/arci_ranking.config
 python main.py --phase predict --model_file ./models/arci_ranking.config
 ```
-## Environment
-* python2.7+ 
-* tensorflow 1.2
-* keras 2.05
-* tqdm 4.19.4
+
+## Baseline Tests:
+Here, we adopt <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52419">WikiQA</a> dataset for an example to inllustrate the usage of MatchZoo. We have provide <a href="./data/WikiQA/run_data.sh">a script</a> to download the dataset, and prepare it as matchzoo data format. In the <a href="">models derectory</a>, there are a number of configurations about each model for WikiQA dataset. 
+
+Take the DRMM as an example. In training phase, you can run
+```
+python main.py --phase train --model_file models/wikiqa/drmm_wikiqa.config
+```
+In testing phase, you can run
+```
+python main.py --phase predict --model_file models/wikiqa/drmm_wikiqa.config
+```
+
+We have compared eight models, the results are as follows.
+<table>
+  <tr>
+    <th width=10%, bgcolor=#999999 >Models</th> 
+    <th width=20%, bgcolor=#999999>NDCG@3</th>
+    <th width="20%", bgcolor=#999999>NDCG@5</th>
+    <th width="20%", bgcolor=#999999>MAP</th>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> DSSM </td>
+    <td align="center", bgcolor=#eeeeee> 0.3412 </td>
+    <td align="center", bgcolor=#eeeeee> 0.4179 </td>
+    <td align="center", bgcolor=#eeeeee> 0.3840 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> CDSSM </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5489 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6084</td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5593 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> ARC-I </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5680 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6317 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5870 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> ARC-II </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5647 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6176 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5845 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> MV-LSTM </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5818 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6452 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.5988 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> DRMM </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6107 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6621 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6195 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> DUET </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6065 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6722 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6301 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> MatchPyramid </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6317 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6913 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6434 </td>
+  </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> DRMM_TKS </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6458 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6956 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6586 </td>
+  </tr>
+ 
+</table>
+The loss of each models are depicted in the following figure,
+ <div align='center'>
+<img src="./data/matchzoo.wikiqa.loss.png" width = "550" height = "300" alt="图片名称" align=center />
+</div>
+
+The MAP of each models are depicted in the following figure,
+<div align='center'>
+<img src="./data/matchzoo.wikiqa.map.png" width = "550" height = "300" alt="图片名称" align=center />
+</div>
+Here, the DRMM_TKS is a variant of DRMM for short text matching. Specifically, the matching histogram is replaced by a top-k maxpooling layer and the remaining part are fixed. 
 
 ## Model Detail:
 
 1. DRMM
--------
+---
 this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf">A Deep Relevance Matching Model for Ad-hoc Retrieval</a>.
 
 - model file: models/drmm.py
-- config file: models/drmm.config
+- config file: models/drmm_ranking.config
 
 2. MatchPyramid
--------
+---
 this model is an implementation of <a href="https://arxiv.org/abs/1602.06359"> Text Matching as Image Recognition</a>
 
 - model file: models/matchpyramid.py
-- config file: models/matchpyramid.config
+- config file: models/matchpyramid_ranking.config
 
 3. ARC-I
--------
+---
 this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Convolutional Neural Network Architectures for Matching Natural Language Sentences</a>
 
 - model file: models/arci.py
-- model config: models/arci.config
+- model config: models/arci_ranking.config
 
 4. DSSM
--------
+---
 this model is an implementation of <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/cikm2013_DSSM_fullversion.pdf">Learning Deep Structured Semantic Models for Web Search using Clickthrough Data</a>
 
 - model file: models/dssm.py
-- config file: models/dssm.config
+- config file: models/dssm_ranking.config
 
 5. CDSSM
--------
+---
 this model is an implementation of <a href="https://www.microsoft.com/en-us/research/publication/learning-semantic-representations-using-convolutional-neural-networks-for-web-search/">Learning Semantic Representations Using Convolutional Neural Networks for Web Search</a>
 
 - model file: models/cdssm.py
-- config file: models/cdssm.config
+- config file: models/cdssm_ranking.config
 
 6. ARC-II
--------
+---
 this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Convolutional Neural Network Architectures for Matching Natural Language Sentences</a>
 
 - model file: models/arcii.py
-- model config: models/arcii.config
+- model config: models/arcii_ranking.config
 
 7. MV-LSTM
--------
+---
 this model is an implementation of <a href="https://arxiv.org/abs/1511.08277">A Deep Architecture for Semantic Matching with Multiple Positional Sentence Representations</a>
 
 - model file: models/mvlstm.py
-- model config: models/mvlstm.config
+- model config: models/mvlstm_ranking.config
 
-8. Match-SRNN
--------
+8. DUET
+---
+this model is an implementation of <a href="https://dl.acm.org/citation.cfm?id=3052579">Learning to Match Using Local and Distributed Representations of Text for Web Search</a>
+
+- model file: models/duet.py
+- model config: models/duet_ranking.config
+
+9. Match-SRNN
+---
 under development ....
+
 
 ##Citation
 
@@ -129,6 +208,12 @@ Project Organizers
     - Institute of Computing Technolgy, Chinese Academy of Sciences 
     - [HomePage](http://www.bigdatalab.ac.cn/~cxq/)
 
+## Environment
+* python2.7+ 
+* tensorflow 1.2+
+* keras 2.06+
+* nltk 3.2.2+
+* tqdm 4.19.4+
 
 Development Teams
 ====
@@ -144,5 +229,5 @@ Development Teams
 
 Acknowledgements
 =====
-We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](), [Niuguo cheng](https://github.com/niuox) etc..
+We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Lijuan Chen](), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](), [Niuguo cheng](https://github.com/niuox) etc..
 
