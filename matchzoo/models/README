@@ -1,8 +1,8 @@
 This directory contains all the matching models and their corresponding configuration files. All the models should be based on the `BasicModel` from model.py. And anyone can write their own text matching model just as the arci.py.
 
 The configuration file is in json format. It will be depicted in details as follows,
- 1. "net_name" can be set to any names as you like.
- 2. "global" contains some global parameters for training and predicting.
+1. "net_name" can be set to any names as you like.
+2. "global" contains some global parameters for training and predicting.
     1). "model_type": is can be "PY" or "json", as the keras can load model from python file or json file. Here, we use "PY" most of the time as the model is defined in current directory.
     2). "weights_file": a file to save model weights. 
     3). "save_weights_iters": This parameter is connected with "weights_file". It will save the model weights every "save_weights_iters", and the weights file name is based on the concatenation of "weights_file" and "save_weights_iters".
@@ -15,8 +15,8 @@ The configuration file is in json format. It will be depicted in details as foll
     2). "train": contains parameters for training in the training phase.
     3). "valid": contains parameters for validation in the training phase.
     4). "test": contains parameters for test in the training phase.
-    5). "predict": contains parameters for predicion in online phase.
-4. "share" paramters:
+    5). "predict": contains parameters for prediction in online phase.
+4. "share" parameters:
     1). "text1_corpus": a file contains the content of queries.
     2). "text2_corpus": a file contains the content of documents. Note this parameter can be set the same to "text1_corpus".
     3). "use_dpool": a bool to indicate whether use dynamic pooling. It is used only in MatchPyramid in current models.

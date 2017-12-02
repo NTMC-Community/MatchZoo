@@ -434,6 +434,17 @@ def cal_hist(t1_rep, t2_rep, qnum, hist_size):
     mhist = np.log10(mhist)
     return mhist.flatten()
 
+def cal_binsum(t1_rep, t2_rep, qnum, bin_num):
+    mbinsum = np.zeros((qnum, bin_num), dtype=np.float32)
+    mm = t1_rep.dot(np.transpose(t2_rep))
+    for (i, j), v in np.ndenumerate(mm):
+        if i >= qnum:
+            break
+        vid = int((v + 1.) / 2. * (bin_num - 1.))
+        mbinsum[i][vid] += v
+    #mhist += 1. # smooth is not needed for computing bin sum
+    #mhist = np.log10(mhist) # not needed for computing  bin sum
+    return mbinsum.flatten()
 
 def _test_ngram():
     words = 'hello, world! hello, deep!'
