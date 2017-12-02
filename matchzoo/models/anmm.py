@@ -1,6 +1,6 @@
 # -*- coding=utf-8 -*-
 
-#implmentation of anmm model based on bin sum input
+#Implmentation of anmm model based on bin sum input of QA matrix
 
 import keras
 import keras.backend as K
