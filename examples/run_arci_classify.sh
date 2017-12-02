@@ -1,4 +1,3 @@
-
 # generate data for pairs of text
 
 python test_preparation_for_classify.py
