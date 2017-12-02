@@ -1,4 +1,7 @@
 # -*- coding=utf-8 -*-
+
+#implmentation of anmm model based on bin sum input
+
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
@@ -14,7 +17,7 @@ class ANMM(BasicModel):
     def __init__(self, config):
         super(ANMM, self).__init__(config)
         self._name = 'ANMM'
-        self.check_list = [ 'text1_maxlen', 'bin_sum_num',
+        self.check_list = [ 'text1_maxlen', 'bin_num',
                 'embed', 'embed_size', 'vocab_size',
                 'num_layers', 'hidden_sizes']
         self.setup(config)
@@ -28,9 +31,8 @@ class ANMM(BasicModel):
         if not isinstance(config, dict):
             raise TypeError('parameter config should be dict:', config)
 
-        self.set_default('text1_maxlen', 5)
-        self.set_default('text2_maxlen', 50)
-        self.set_default('bin_sum_num', 60)
+        self.set_default('text1_maxlen', 10)
+        self.set_default('hist_size', 60)
         self.set_default('dropout_rate', 0.)
         self.config.update(config)
 
@@ -43,7 +45,7 @@ class ANMM(BasicModel):
             return y
         query = Input(name='query', shape=(self.config['text1_maxlen'],))
         show_layer_info('Input', query)
-        doc = Input(name='doc', shape=(self.config['text2_maxlen'], self.config['bin_sum_num']))
+        doc = Input(name='doc', shape=(self.config['text1_maxlen'], self.config['bin_num']))
         show_layer_info('Input', doc)
 
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable = False)
@@ -65,7 +67,7 @@ class ANMM(BasicModel):
         show_layer_info('Dense', z)
         z = Permute((2, 1))(z)
         show_layer_info('Permute', z)
-        z = Reshape((self.config['text2_maxlen'],))(z)
+        z = Reshape((self.config['text1_maxlen'],))(z)
         show_layer_info('Reshape', z)
         q_w = Reshape((self.config['text1_maxlen'],))(q_w)
         show_layer_info('Reshape', q_w)
