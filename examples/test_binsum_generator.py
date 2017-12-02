@@ -17,7 +17,7 @@ if __name__ == '__main__':
     embedfile = path + 'embed_glove_d50_norm'
     corpfile = path + 'corpus_preprocessed.txt'
     relfiles = [path + 'relation_train.txt',path + 'relation_valid.txt',path + 'relation_test.txt']
-    histfiles = [path + 'relation.train.hist-%d.txt'%(bin_num),path + 'relation.valid.hist-%d.txt'%(bin_num), path + 'relation.test.hist-%d.txt'%(bin_num)]
+    histfiles = [path + 'relation.train.binsum-%d.txt'%(bin_num),path + 'relation.valid.binsum-%d.txt'%(bin_num), path + 'relation.test.binsum-%d.txt'%(bin_num)]
 
     # note here word embeddings have been normalized to speed up calculation
     embed_dict = read_embedding(filename = embedfile)

@@ -214,7 +214,10 @@ class DRMM_PointGenerator(object):
         self.data2_maxlen = config['text2_maxlen']
         rel_file = config['relation_file']
         self.embed = config['embed']
-        self.hist_size = config['hist_size']
+        if 'bin_num' in config:
+            self.hist_size = config['bin_num']
+        else:
+            self.hist_size = config['hist_size']
         self.rel = read_relation(filename=rel_file)
         self.batch_size = config['batch_size']
         self.fill_word = config['vocab_size'] - 1
