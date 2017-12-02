@@ -285,8 +285,11 @@ class DRMM_ListGenerator(ListBasicGenerator):
         self.data2_maxlen = config['text2_maxlen']
         self.fill_word = config['vocab_size'] - 1
         self.embed = config['embed']
-        self.hist_size = config['hist_size']
-        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'embed', 'hist_size'])
+        if 'bin_num' in config:
+            self.hist_size = config['bin_num']
+        else:
+            self.hist_size = config['hist_size']
+        self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen', 'embed'])
         self.use_hist_feats = False
         if 'hist_feats_file' in config:
             hist_feats = read_features_without_id(config['hist_feats_file'])
