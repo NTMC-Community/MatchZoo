@@ -195,8 +195,7 @@ class Triletter_PairGenerator(PairBasicGenerator):
     def map_word_to_triletter(self, words):
         triletters = []
         for wid in words:
-            if wid in self.word_triletter_map:
-                triletters.extend(self.word_triletter_map[wid])
+            triletters.extend(self.word_triletter_map[wid])
         return triletters
 
     def transfer_feat2sparse(self, dense_feat):
@@ -208,6 +207,7 @@ class Triletter_PairGenerator(PairBasicGenerator):
                 indices.append(val)
                 data.append(1)
             indptr.append(indptr[-1] + len(feat))
+        res = sp.csr_matrix((data, indices, indptr), shape=(len(dense_feat), self.vocab_size), dtype="float32")
         return sp.csr_matrix((data, indices, indptr), shape=(len(dense_feat), self.vocab_size), dtype="float32")
 
     def transfer_feat2fixed(self, feats, max_len, fill_val):

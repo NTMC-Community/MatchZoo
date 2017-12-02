@@ -47,9 +47,9 @@ class MVLSTM(BasicModel):
         d_embed = embedding(doc)
         show_layer_info('Embedding', d_embed)
 
-        q_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True))(q_embed)
+        q_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True, dropout=self.config['dropout_rate']))(q_embed)
         show_layer_info('Bidirectional-LSTM', q_rep)
-        d_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True))(d_embed)
+        d_rep = Bidirectional(LSTM(self.config['hidden_size'], return_sequences=True, dropout=self.config['dropout_rate']))(d_embed)
         show_layer_info('Bidirectional-LSTM', d_rep)
 
         cross = Match(match_type='dot')([q_rep, d_rep])
@@ -59,7 +59,7 @@ class MVLSTM(BasicModel):
         cross_reshape = Reshape((-1, ))(cross)
         show_layer_info('Reshape', cross_reshape)
 
-        mm_k = Lambda(lambda x: K.tf.nn.top_k(x, k=self.config['topk'], sorted=False)[0])(cross_reshape)
+        mm_k = Lambda(lambda x: K.tf.nn.top_k(x, k=self.config['topk'], sorted=True)[0])(cross_reshape)
         show_layer_info('Lambda-topk', mm_k)
 
         pool1_flat_drop = Dropout(rate=self.config['dropout_rate'])(mm_k)

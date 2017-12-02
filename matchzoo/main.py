@@ -44,8 +44,10 @@ def train(config):
     # read basic config
     global_conf = config["global"]
     optimizer = global_conf['optimizer']
-    weights_file = global_conf['weights_file']
-    num_batch = global_conf['num_batch']
+    weights_file = str(global_conf['weights_file']) + '.%d'
+    display_interval = int(global_conf['display_interval'])
+    num_iters = int(global_conf['num_iters'])
+    save_weights_iters = int(global_conf['save_weights_iters'])
 
     # read input config
     input_conf = config['inputs']
@@ -133,13 +135,13 @@ def train(config):
     model.compile(optimizer=optimizer, loss=loss)
     print '[Model] Model Compile Done.'
 
-    for i_e in range(global_conf['num_epochs']):
+    for i_e in range(num_iters):
         for tag, generator in train_gen.items():
             genfun = generator.get_batch_generator()
             print '[%s]\t[Train:%s]' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag),
             history = model.fit_generator(
                     genfun,
-                    steps_per_epoch = num_batch,
+                    steps_per_epoch = display_interval,
                     epochs = 1,
                     shuffle=False,
                     verbose = 0
@@ -168,8 +170,8 @@ def train(config):
             generator.reset()
             print 'Iter:%d\t%s' % (i_e, '\t'.join(['%s=%f'%(k,v/num_valid) for k, v in res.items()]))
             sys.stdout.flush()
-
-    model.save_weights(weights_file)
+        if (i_e+1) % save_weights_iters == 0:
+            model.save_weights(weights_file % (i_e+1))
 
 def predict(config):
     ######## Read input config ########
@@ -233,7 +235,7 @@ def predict(config):
 
     ######## Load Model ########
     global_conf = config["global"]
-    weights_file = global_conf['weights_file']
+    weights_file = str(global_conf['weights_file'])
 
     model = load_model(config)
     model.load_weights(weights_file)

@@ -6,7 +6,7 @@ import resource
 
 
 def show_layer_info(layer_name, layer_out):
-    print('[layer]: %s\t[shape]: %s] \n%s' % (layer_name,str(layer_out.get_shape().as_list()), show_memory_use()))
+    print('[layer]: %s\t[shape]: %s \n%s' % (layer_name,str(layer_out.get_shape().as_list()), show_memory_use()))
 
 def show_memory_use():
     rusage_denom = 1024.
