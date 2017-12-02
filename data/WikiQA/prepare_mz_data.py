@@ -35,7 +35,7 @@ def filter_triletter(tri_stats, min_filter_num=5, max_filter_num=10000):
 if __name__ == '__main__':
     prepare = Preparation()
     srcdir = './'
-    dstdir = './new/'
+    dstdir = './'
 
     infiles = [ srcdir + 'WikiQA-mz-train.txt', srcdir + 'WikiQA-mz-dev.txt', srcdir + 'WikiQA-mz-test.txt']
     corpus, rel_train, rel_valid, rel_test = prepare.run_with_train_valid_test_corpus(infiles[0], infiles[1], infiles[2])
