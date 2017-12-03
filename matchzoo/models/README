@@ -5,11 +5,12 @@ The configuration file is in json format. It will be depicted in details as foll
 2. "global" contains some global parameters for training and predicting.
     1). "model_type": is can be "PY" or "json", as the keras can load model from python file or json file. Here, we use "PY" most of the time as the model is defined in current directory.
     2). "weights_file": a file to save model weights. 
-    3). "save_weights_iters": This parameter is connected with "weights_file". It will save the model weights every "save_weights_iters", and the weights file name is based on the concatenation of "weights_file" and "save_weights_iters".
-    4). "num_iters": the number of batches in training.
-    5). "display_interval": display the train loss with test performance each "display_interval" iters.
-    6). "optimizer": the optimization method.
-    7). "learning_rate": the learning rate in optimizer.
+    3). "save_weights_iters": This parameter is only used in training. It worked together with "weights_file". It will save the model weights every "save_weights_iters", and the weights file name is based on the concatenation of "weights_file" and "save_weights_iters".
+    4). "test_weights_iters": This parameter is only used in predicting. It worked together with "weights_file". It will load the model weights file in predicting by concatenating the "weights_file" and "test_weights_iters".
+    5). "num_iters": the number of batches in training.
+    6). "display_interval": display the train loss with test performance each "display_interval" iters.
+    7). "optimizer": the optimization method.
+    8). "learning_rate": the learning rate in optimizer.
 3. "inputs": it contains "share", "train", "valid", "test", and "predict" sections.
     1). "share": contains parameters shared across "train", "valid", "test", and "prediction".
     2). "train": contains parameters for training in the training phase.
