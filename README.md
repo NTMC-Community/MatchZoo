@@ -36,7 +36,7 @@ python main.py --phase predict --model_file ./models/arci_ranking.config
 ```
 
 ## Baseline Tests:
-Here, we adopt <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52419">WikiQA</a> dataset for an example to inllustrate the usage of MatchZoo. WikiQA is a popular benchmark dataset for answer sentence selection in question answering. We have provide <a href="./data/WikiQA/run_data.sh">a script</a> to download the dataset, and prepare it as MatchZoo data format. In the <a href="">models derectory</a>, there are a number of configurations about each model for WikiQA dataset. 
+Here, we adopt <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52419">WikiQA</a> dataset for an example to inllustrate the usage of MatchZoo. WikiQA is a popular benchmark dataset for answer sentence selection in question answering. We have provided <a href="./data/WikiQA/run_data.sh">a script</a> to download the dataset, and prepared it into the MatchZoo data format. In the <a href="">models directory</a>, there are a number of configurations about each model for WikiQA dataset. 
 
 Take the DRMM as an example. In training phase, you can run
 ```
@@ -117,7 +117,7 @@ We have compared 10 models, the results are as follows.
   </tr>
  
 </table>
-The loss of each models are depicted in the following figure,
+The loss of each models are decribed in the following figure,
  <div align='center'>
 <img src="./data/matchzoo.wikiqa.loss.png" width = "550" height = "300" alt="图片名称" align=center />
 </div>
