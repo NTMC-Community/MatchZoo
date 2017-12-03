@@ -47,7 +47,7 @@ In testing phase, you can run
 python main.py --phase predict --model_file models/wikiqa/drmm_wikiqa.config
 ```
 
-We have compared nine models, the results are as follows.
+We have compared 10 models, the results are as follows.
 <table>
   <tr>
     <th width=10%, bgcolor=#999999 >Models</th> 
@@ -93,9 +93,9 @@ We have compared nine models, the results are as follows.
   </tr>
   <tr>
      <td align="center", bgcolor=#eeeeee> aNMM </td>
-     <td align="center", bgcolor=#eeeeee> 0.xxx </td>
-     <td align="center", bgcolor=#eeeeee> 0.xxx </td>
-     <td align="center", bgcolor=#eeeeee> 0.xxx </td>
+     <td align="center", bgcolor=#eeeeee> 0.6160 </td>
+     <td align="center", bgcolor=#eeeeee> 0.6696 </td>
+     <td align="center", bgcolor=#eeeeee> 0.6297 </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> DUET </td>
@@ -181,7 +181,7 @@ this model is an implementation of <a href="https://arxiv.org/abs/1511.08277">A 
 
 8. aNMM
 -------
-this model is an implementation of <a href="https://dl.acm.org/citation.cfm?id=2983818">aNMM: Ranking Short Answer Texts with Attention-Based Neural Matching Model</a>
+this model is an implementation of <a href="http://maroo.cs.umass.edu/pub/web/getpdf.php?id=1240">aNMM: Ranking Short Answer Texts with Attention-Based Neural Matching Model</a>
 - model file: models/anmm.py
 - model config: models/anmm_ranking.config
 
