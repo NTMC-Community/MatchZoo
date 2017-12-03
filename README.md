@@ -1,6 +1,6 @@
 # MatchZoo
 ----
-MatchZoo is a toolkit for text matching. It was developed with a focus on facilitate the designing, comparing and sharing of deep text matching models. There are a number of deep matchinng methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
+MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
 
 ## Overview
 The architecture of the MatchZoo toolkit is depicited in the Figure  in what follows,
@@ -35,7 +35,7 @@ python main.py --phase train --model_file ./models/arci_ranking.config
 python main.py --phase predict --model_file ./models/arci_ranking.config
 ```
 
-## Baseline Tests:
+## Benchmark Results:
 Here, we adopt <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52419">WikiQA</a> dataset for an example to inllustrate the usage of MatchZoo. WikiQA is a popular benchmark dataset for answer sentence selection in question answering. We have provided <a href="./data/WikiQA/run_data.sh">a script</a> to download the dataset, and prepared it into the MatchZoo data format. In the <a href="">models directory</a>, there are a number of configurations about each model for WikiQA dataset. 
 
 Take the DRMM as an example. In training phase, you can run
