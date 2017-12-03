@@ -23,5 +23,6 @@ matchzoo/lydev/*
 #matchzoo/models/*.config
 matchzoo/run_submit_gypsum_jobs_wikiqa.py
 matchzoo/run_model.py
+matchzoo/run_model_wraper.py
 log/*
 .idea/
