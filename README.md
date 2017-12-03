@@ -1,6 +1,6 @@
 # MatchZoo
 ----
-MatchZoo is a toolkit for text matching. It was developed with a focus on facilitate the designing, comparing and sharing of deep text matching models. There are a number of deep matchinng methods, such as DRMM, MatchPyramid, MV-LSTM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. It was always exciting to receive any code constributions, suggestions, comments from all our MatchZoo users.
+MatchZoo is a toolkit for text matching. It was developed with a focus on facilitate the designing, comparing and sharing of deep text matching models. There are a number of deep matchinng methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
 
 ## Overview
 The architecture of the MatchZoo toolkit is depicited in the Figure  in what follows,
@@ -15,7 +15,7 @@ The data preparation module aims to convert dataset of different text matching t
 +	**Word Dictionary**: records the mapping from each word to a unique identifier called *wid*. Words that are too frequent (e.g. stopwords), too rare or noisy (e.g. fax numbers) can be  filtered out by predefined rules.
 +	**Corpus File**: records the mapping from each text to a unique identifier called *tid*, along with a sequence of word identifiers contained in that text. Note here each text is truncated or padded to a fixed length customized by users.
 +	**Relation File**: is used to store the relationship between two texts, each line containing a pair of *tids* and the corresponding label.
-+ **Input Data Format**: a detailed explaination of input data format can be found in MatchZoo/data/example/readme.md.
++ **Detailed Input Data Format**: a detailed explaination of input data format can be found in MatchZoo/data/example/readme.md.
 
 ### Model Construction
 In the model construction module, we employ Keras libarary to help users build the deep matching model layer by layer conveniently. The Keras libarary provides a set of common layers widely used in neural models, such as convolutional layer, pooling layer, dense layer and so on. To further facilitate the construction of deep text matching models, we extend the Keras libarary to provide some layer interfaces specifically designed for text matching. 
@@ -23,7 +23,7 @@ In the model construction module, we employ Keras libarary to help users build t
 Moreover, the toolkit has implemented two schools of representative deep text matching models, namely representation-focused models and interactive-focused models[[1]](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf).
 
 ### Training and Evaluation
-For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up different objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text.
+For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up different objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text. Potential tasks related to MatchZoo include document retreival, question answering, conversational response retrieval, paraphse identification, etc.
 
 ## Usage
 ```
@@ -36,7 +36,7 @@ python main.py --phase predict --model_file ./models/arci_ranking.config
 ```
 
 ## Baseline Tests:
-Here, we adopt <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52419">WikiQA</a> dataset for an example to inllustrate the usage of MatchZoo. We have provide <a href="./data/WikiQA/run_data.sh">a script</a> to download the dataset, and prepare it as matchzoo data format. In the <a href="">models derectory</a>, there are a number of configurations about each model for WikiQA dataset. 
+Here, we adopt <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52419">WikiQA</a> dataset for an example to inllustrate the usage of MatchZoo. WikiQA is a popular benchmark dataset for answer sentence selection in question answering. We have provide <a href="./data/WikiQA/run_data.sh">a script</a> to download the dataset, and prepare it as MatchZoo data format. In the <a href="">models derectory</a>, there are a number of configurations about each model for WikiQA dataset. 
 
 Take the DRMM as an example. In training phase, you can run
 ```
@@ -47,7 +47,7 @@ In testing phase, you can run
 python main.py --phase predict --model_file models/wikiqa/drmm_wikiqa.config
 ```
 
-We have compared eight models, the results are as follows.
+We have compared nine models, the results are as follows.
 <table>
   <tr>
     <th width=10%, bgcolor=#999999 >Models</th> 
@@ -90,6 +90,12 @@ We have compared eight models, the results are as follows.
   	 <td align="center", bgcolor=#eeeeee> 0.6107 </td>
   	 <td align="center", bgcolor=#eeeeee> 0.6621 </td>
   	 <td align="center", bgcolor=#eeeeee> 0.6195 </td>
+  </tr>
+  <tr>
+     <td align="center", bgcolor=#eeeeee> aNMM </td>
+     <td align="center", bgcolor=#eeeeee> 0.xxx </td>
+     <td align="center", bgcolor=#eeeeee> 0.xxx </td>
+     <td align="center", bgcolor=#eeeeee> 0.xxx </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> DUET </td>
@@ -173,14 +179,20 @@ this model is an implementation of <a href="https://arxiv.org/abs/1511.08277">A 
 - model file: models/mvlstm.py
 - model config: models/mvlstm_ranking.config
 
-8. DUET
----
+8. aNMM
+-------
+this model is an implementation of <a href="https://dl.acm.org/citation.cfm?id=2983818">aNMM: Ranking Short Answer Texts with Attention-Based Neural Matching Model</a>
+- model file: models/anmm.py
+- model config: models/anmm_ranking.config
+
+9. DUET
+-------
 this model is an implementation of <a href="https://dl.acm.org/citation.cfm?id=3052579">Learning to Match Using Local and Distributed Representations of Text for Web Search</a>
 
 - model file: models/duet.py
 - model config: models/duet_ranking.config
 
-9. Match-SRNN
+10. Match-SRNN
 ---
 under development ....
 
