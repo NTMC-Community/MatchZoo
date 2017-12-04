@@ -9,7 +9,7 @@ The following people contributed to the development of the MatchZoo project：
     - PhD. student from Institute of Computing Technology, Chinese Academy of Sciences
     - [Google Scholar](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN)
 - **Liu Yang (Core Developer)** 
-    - PhD. student from  University of Massachusetts Amherst
+    - PhD. student from Center for Intelligent Information Retrieval, University of Massachusetts Amherst
     - [HomePage](https://sites.google.com/site/lyangwww/)
 - **Zhou Yang (Core Developer)** 
     - Master student from Chongqing University of Technology
