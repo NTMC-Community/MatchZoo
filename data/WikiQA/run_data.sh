@@ -14,7 +14,7 @@ python filter_query.py
 
 # transfer the dataset into matchzoo dataset format
 python transfer_to_mz_format.py
- generate the mz-datasets
+# generate the mz-datasets
 python prepare_mz_data.py
 
 # generate word embedding
