@@ -1,5 +1,5 @@
 <div align='center'>
-<img src="./data/matchzoo-logo-color.png" width = "400"  alt="图片名称" align=center />
+<img src="./data/matchzoo-logo.png" width = "400"  alt="图片名称" align=center />
 </div>
 
 ----
