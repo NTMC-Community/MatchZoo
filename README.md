@@ -246,3 +246,7 @@ Acknowledgements
 =====
 We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Lijuan Chen](), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](), [Niuguo cheng](https://github.com/niuox) etc..
 
+Feedback and Join Us
+=====
+Feel free to post any questions or suggestions on [GitHub Issues](https://github.com/faneshion/MatchZoo/issues) and we will reply to your questions there. You can also suggest adding new deep text maching models into MatchZoo and apply for joining us to develop MatchZoo together.
+
