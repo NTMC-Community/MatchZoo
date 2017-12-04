@@ -23,7 +23,7 @@ The data preparation module aims to convert dataset of different text matching t
 ### Model Construction
 In the model construction module, we employ Keras libarary to help users build the deep matching model layer by layer conveniently. The Keras libarary provides a set of common layers widely used in neural models, such as convolutional layer, pooling layer, dense layer and so on. To further facilitate the construction of deep text matching models, we extend the Keras libarary to provide some layer interfaces specifically designed for text matching. 
 
-Moreover, the toolkit has implemented two schools of representative deep text matching models, namely representation-focused models and interactive-focused models[[1]](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf).
+Moreover, the toolkit has implemented two schools of representative deep text matching models, namely representation-focused models and interaction-focused models[[1]](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf).
 
 ### Training and Evaluation
 For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up different objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text. Potential tasks related to MatchZoo include document retreival, question answering, conversational response retrieval, paraphse identification, etc.
@@ -43,11 +43,11 @@ Here, we adopt <a href="https://www.microsoft.com/en-us/download/details.aspx?id
 
 Take the DRMM as an example. In training phase, you can run
 ```
-python main.py --phase train --model_file models/wikiqa/drmm_wikiqa.config
+python main.py --phase train --model_file models/wikiqa_config/drmm_wikiqa.config
 ```
 In testing phase, you can run
 ```
-python main.py --phase predict --model_file models/wikiqa/drmm_wikiqa.config
+python main.py --phase predict --model_file models/wikiqa_config/drmm_wikiqa.config
 ```
 
 We have compared 10 models, the results are as follows.
