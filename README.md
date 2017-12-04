@@ -3,7 +3,7 @@
 </div>
 
 ---
-MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retreival, question answering, conversational response retrieval, paraphse identification, etc. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
+MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
 
 ## Overview
 The architecture of the MatchZoo toolkit is described in the Figure  in what follows,
