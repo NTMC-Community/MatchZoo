@@ -3,7 +3,7 @@
 </div>
 
 ---
-MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
+MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retreival, question answering, conversational response retrieval, paraphse identification, etc. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
 
 ## Overview
 The architecture of the MatchZoo toolkit is depicited in the Figure  in what follows,
@@ -26,7 +26,7 @@ In the model construction module, we employ Keras libarary to help users build t
 Moreover, the toolkit has implemented two schools of representative deep text matching models, namely representation-focused models and interaction-focused models[[1]](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf).
 
 ### Training and Evaluation
-For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up different objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text. Potential tasks related to MatchZoo include document retreival, question answering, conversational response retrieval, paraphse identification, etc.
+For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up different objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text.
 
 ## Usage
 ```
