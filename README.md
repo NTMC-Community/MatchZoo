@@ -239,7 +239,7 @@ Development Teams
     - Institute of Computing Technolgy, Chinese Academy of Sciences
     - [Google Scholar](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN)
 - **Liu Yang** 
-    - PhD. student from  University of Massachusetts Amherst
+    - Center for Intelligent Information Retrieval, University of Massachusetts Amherst
     - [HomePage](https://sites.google.com/site/lyangwww/)
 
 Acknowledgements
