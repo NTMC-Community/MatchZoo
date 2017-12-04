@@ -23,7 +23,7 @@ The data preparation module aims to convert dataset of different text matching t
 ### Model Construction
 In the model construction module, we employ Keras library to help users build the deep matching model layer by layer conveniently. The Keras libarary provides a set of common layers widely used in neural models, such as convolutional layer, pooling layer, dense layer and so on. To further facilitate the construction of deep text matching models, we extend the Keras library to provide some layer interfaces specifically designed for text matching.
 
-Moreover, the toolkit has implemented two schools of representative deep text matching models, namely representation-focused models and interaction-focused models[Guo et al.](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf).
+Moreover, the toolkit has implemented two schools of representative deep text matching models, namely representation-focused models and interaction-focused models [[Guo et al.]](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf).
 
 ### Training and Evaluation
 For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up different objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text.
