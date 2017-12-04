@@ -1,4 +1,8 @@
-# MatchZoo
+<div align='center'>
+<img src="./data/matchzoo-logo-color.png" width = "400"  alt="图片名称" align=center />
+</div>
+
+----
 ----
 MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
 
