@@ -6,7 +6,7 @@
 MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retreival, question answering, conversational response retrieval, paraphse identification, etc. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
 
 ## Overview
-The architecture of the MatchZoo toolkit is depicited in the Figure  in what follows,
+The architecture of the MatchZoo toolkit is described in the Figure  in what follows,
 <div align='center'>
 <img src="./data/matchzoo.png" width = "400" height = "200" alt="图片名称" align=center />
 </div>
@@ -18,12 +18,12 @@ The data preparation module aims to convert dataset of different text matching t
 +	**Word Dictionary**: records the mapping from each word to a unique identifier called *wid*. Words that are too frequent (e.g. stopwords), too rare or noisy (e.g. fax numbers) can be  filtered out by predefined rules.
 +	**Corpus File**: records the mapping from each text to a unique identifier called *tid*, along with a sequence of word identifiers contained in that text. Note here each text is truncated or padded to a fixed length customized by users.
 +	**Relation File**: is used to store the relationship between two texts, each line containing a pair of *tids* and the corresponding label.
-+ **Detailed Input Data Format**: a detailed explaination of input data format can be found in MatchZoo/data/example/readme.md.
++   **Detailed Input Data Format**: a detailed explaination of input data format can be found in MatchZoo/data/example/readme.md.
 
 ### Model Construction
-In the model construction module, we employ Keras libarary to help users build the deep matching model layer by layer conveniently. The Keras libarary provides a set of common layers widely used in neural models, such as convolutional layer, pooling layer, dense layer and so on. To further facilitate the construction of deep text matching models, we extend the Keras libarary to provide some layer interfaces specifically designed for text matching. 
+In the model construction module, we employ Keras library to help users build the deep matching model layer by layer conveniently. The Keras libarary provides a set of common layers widely used in neural models, such as convolutional layer, pooling layer, dense layer and so on. To further facilitate the construction of deep text matching models, we extend the Keras library to provide some layer interfaces specifically designed for text matching.
 
-Moreover, the toolkit has implemented two schools of representative deep text matching models, namely representation-focused models and interaction-focused models[[1]](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf).
+Moreover, the toolkit has implemented two schools of representative deep text matching models, namely representation-focused models and interaction-focused models[Guo et al.](http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf).
 
 ### Training and Evaluation
 For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up different objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text.
@@ -120,7 +120,7 @@ We have compared 10 models, the results are as follows.
   </tr>
  
 </table>
-The loss of each models are decribed in the following figure,
+The loss of each models are described in the following figure,
  <div align='center'>
 <img src="./data/matchzoo.wikiqa.loss.png" width = "550" height = "300" alt="图片名称" align=center />
 </div>
