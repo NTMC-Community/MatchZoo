@@ -258,4 +258,6 @@ We would like to express our appreciation to the following people for contributi
 Feedback and Join Us
 =====
 Feel free to post any questions or suggestions on [GitHub Issues](https://github.com/faneshion/MatchZoo/issues) and we will reply to your questions there. You can also suggest adding new deep text maching models into MatchZoo and apply for joining us to develop MatchZoo together.
-
+<div align='center'>
+<img src="./data/matchzoo-group.jpeg" width = "200"  alt="图片名称" align=center />
+</div>
