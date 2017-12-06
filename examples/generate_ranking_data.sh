@@ -20,5 +20,3 @@ python test_triletter_preprocess.py 'ranking'
 # 5. run to generate binsum for aNMM
 python test_binsum_generator.py 'ranking'
 
-cd ../matchzoo
-

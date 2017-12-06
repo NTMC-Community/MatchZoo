@@ -6,18 +6,7 @@ This file provides the example on how to train the DRMM [A Deep Relevance Matchi
 ``` bash
 
 # generate matchzoo data for ranking
-python test_preparation_for_ranking.py
-
-# generate histogram data for drmm
-# 1. download embedding 
-wget http://nlp.stanford.edu/data/glove.6B.zip
-unzip glove.6B.zip
-mv glove.6B.50d.txt ../data/example/ranking/
-# 2. map word embedding
-python gen_w2v.py ../data/example/ranking/glove.6B.50d.txt ../data/example/ranking/word_dict.txt ../data/example/ranking/embed_glove_d50
-python norm_embed.py  ../data/example/ranking/embed_glove_d50 ../data/example/ranking/embed_glove_d50_norm
-# 3. run to generate histogram
-python test_histogram_generator.py  'ranking'
+sh generate_ranking_data.sh
 
 cd ../matchzoo
 
