@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     fout = open(basedir + 'corpus_preprocessed.txt','w')
     for inum,did in enumerate(dids):
-        fout.write('%s\t%s\n'%(did, ' '.join(map(str,docs[inum]))))
+        fout.write('%s %s %s\n' % (did, len(docs[inum]), ' '.join(map(str, docs[inum]))))
     fout.close()
     print('preprocess finished ...')
 

@@ -1,8 +1,3 @@
-
-# generate match histogram
-python test_preparation_for_classify.py
-python test_triletter_preprocess.py classification
-
 cd ../matchzoo
 
 # configure the model file

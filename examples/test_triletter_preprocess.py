@@ -36,8 +36,8 @@ if __name__ == '__main__':
         run_mode = 'classification'
     basedir = '../data/example/%s/'%(run_mode)
     in_dict_file = basedir + 'word_dict.txt'
-    out_dict_file = basedir + 'triletter_dict_1.txt'
-    word_triletter_map_file = basedir + 'word_triletter_map_1.txt'
+    out_dict_file = basedir + 'triletter_dict.txt'
+    word_triletter_map_file = basedir + 'word_triletter_map.txt'
 
     word_dict = read_dict(in_dict_file)
     triletter_stats = {}
