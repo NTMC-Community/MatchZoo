@@ -2,6 +2,8 @@
 
 #Implmentation of anmm model based on bin sum input of QA matrix
 
+from __future__ import print_function
+from __future__ import absolute_import
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
@@ -25,7 +27,7 @@ class ANMM(BasicModel):
         self.initializer_gate = keras.initializers.RandomUniform(minval=-0.01, maxval=0.01, seed=11)
         if not self.check():
             raise TypeError('[ANMM] parameter check wrong')
-        print '[ANMM] init done'
+        print('[ANMM] init done', end='\n')
 
     def setup(self, config):
         if not isinstance(config, dict):

@@ -237,10 +237,9 @@ this model is an implementation of <a href="https://dl.acm.org/citation.cfm?id=3
 - model config: models/duet_ranking.config
 
 ---
-10. Match-SRNN
+10. models under development:
 
-under development ....
-
+<a href="https://arxiv.org/abs/1604.04378">Match-SRNN</a>, <a href="https://arxiv.org/abs/1710.05649">DeepRank</a>, <a href="https://arxiv.org/abs/1706.06613">K-NRM</a> ....
 
 ## Citation
 

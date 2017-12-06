@@ -1,4 +1,6 @@
 # -*- coding=utf-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
@@ -26,7 +28,7 @@ class MatchPyramid(BasicModel):
         self.setup(config)
         if not self.check():
             raise TypeError('[MatchPyramid] parameter check wrong')
-        print '[MatchPyramid] init done'
+        print('[MatchPyramid] init done', end='\n')
 
     def setup(self, config):
         if not isinstance(config, dict):

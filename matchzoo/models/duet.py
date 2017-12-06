@@ -1,4 +1,6 @@
 # -*- coding=utf-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
 import keras
 import keras.backend as K
 from keras import regularizers
@@ -29,7 +31,7 @@ class DUET(BasicModel):
         self.setup(config)
         if not self.check():
             raise TypeError('[DUET] parameter check wrong')
-        print '[DUET] init done'
+        print('[DUET] init done', end='\n')
 
     def setup(self, config):
         if not isinstance(config, dict):

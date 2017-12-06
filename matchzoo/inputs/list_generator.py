@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+from __future__ import absolute_import
 import sys
 import random
 import numpy as np
@@ -22,7 +24,7 @@ class ListBasicGenerator(object):
     def check(self):
         for e in self.check_list:
             if e not in self.config:
-                print '[%s] Error %s not in config' % (self.__name, e)
+                print('[%s] Error %s not in config' % (self.__name, e), end='\n')
                 return False
         return True
 
@@ -34,8 +36,8 @@ class ListBasicGenerator(object):
             list_list[d1].append( (label, d2) )
         for d1 in list_list:
             list_list[d1] = sorted(list_list[d1], reverse = True)
-        print 'List Instance Count:', len(list_list)
-        return list_list.items()
+        print('List Instance Count:', len(list_list), end='\n')
+        return list(list_list.items())
 
     def get_batch(self):
         pass
@@ -60,7 +62,7 @@ class ListGenerator(ListBasicGenerator):
         self.check_list.extend(['data1', 'data2', 'text1_maxlen', 'text2_maxlen'])
         if not self.check():
             raise TypeError('[ListGenerator] parameter check wrong.')
-        print '[ListGenerator] init done'
+        print('[ListGenerator] init done', end='\n')
 
     def get_batch(self):
         while self.point < self.num_list:
@@ -85,12 +87,14 @@ class ListGenerator(ListBasicGenerator):
             j = 0
             for pt in currbatch:
                 d1, d2_list = pt[0], pt[1]
+                d1_cont = list(self.data1[d1])
                 list_count.append(list_count[-1] + len(d2_list))
-                d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+                d1_len = min(self.data1_maxlen, len(d1_cont))
                 for l, d2 in d2_list:
-                    d2_len = min(self.data2_maxlen, len(self.data2[d2]))
-                    X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
-                    X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
+                    d2_cont = list(self.data2[d2])
+                    d2_len = min(self.data2_maxlen, len(d2_cont))
+                    X1[j, :d1_len], X1_len[j] = d1_cont[:d1_len], d1_len
+                    X2[j, :d2_len], X2_len[j] = d2_cont[:d2_len], d2_len
                     ID_pairs.append((d1, d2))
                     Y[j] = l
                     j += 1
@@ -126,12 +130,14 @@ class ListGenerator(ListBasicGenerator):
             j = 0
             for pt in currbatch:
                 d1, d2_list = pt[0], pt[1]
+                d1_cont = list(self.data1[d1])
                 list_count.append(list_count[-1] + len(d2_list))
-                d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+                d1_len = min(self.data1_maxlen, len(d1_cont))
                 for l, d2 in d2_list:
-                    d2_len = min(self.data2_maxlen, len(self.data2[d2]))
-                    X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
-                    X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
+                    d2_cont = list(self.data2[d2])
+                    d2_len = min(self.data2_maxlen, len(d2_cont))
+                    X1[j, :d1_len], X1_len[j] = d1_cont[:d1_len], d1_len
+                    X2[j, :d2_len], X2_len[j] = d2_cont[:d2_len], d2_len
                     Y[j] = l
                     j += 1
             x1_ls.append(X1)
@@ -158,7 +164,7 @@ class Triletter_ListGenerator(ListBasicGenerator):
         if not self.check():
             raise TypeError('[Triletter_ListGenerator] parameter check wrong.')
         self.word_triletter_map = self.read_word_triletter_map(self.config['word_triletter_map_file'])
-        print '[Triletter_ListGenerator] init done'
+        print('[Triletter_ListGenerator] init done', end='\n')
 
     def read_word_triletter_map(self, wt_map_file):
         word_triletter_map = {}
@@ -213,14 +219,16 @@ class Triletter_ListGenerator(ListBasicGenerator):
             j = 0
             for pt in currbatch:
                 d1, d2_list = pt[0], pt[1]
+                d1_cont = list(self.data1[d1])
                 list_count.append(list_count[-1] + len(d2_list))
-                d1_len = len(self.data1[d1])
+                d1_len = len(d1_cont)
                 for l, d2 in d2_list:
                     X1_len[j] = d1_len
-                    X1.append(self.map_word_to_triletter(self.data1[d1]))
-                    d2_len = len(self.data2[d2])
+                    X1.append(self.map_word_to_triletter(d1_cont))
+                    d2_cont = list(self.data2[d2])
+                    d2_len = len(d2_cont)
                     X2_len[j] = d2_len
-                    X2.append(self.map_word_to_triletter(self.data2[d2]))
+                    X2.append(self.map_word_to_triletter(d2_cont))
                     ID_pairs.append((d1, d2))
                     Y[j] = l
                     j += 1
@@ -254,14 +262,16 @@ class Triletter_ListGenerator(ListBasicGenerator):
             j = 0
             for pt in currbatch:
                 d1, d2_list = pt[0], pt[1]
+                d1_cont = list(self.data1[d1])
                 list_count.append(list_count[-1] + len(d2_list))
-                d1_len = len(self.data1[d1])
+                d1_len = len(d1_cont)
                 for l, d2 in d2_list:
-                    d2_len = len(self.data2[d2])
+                    d2_cont = list(self.data2[d2])
+                    d2_len = len(d2_cont)
                     X1_len[j] = d1_len
-                    X1.append(self.map_word_to_triletter(self.data1[d1]))
+                    X1.append(self.map_word_to_triletter(d1_cont))
                     X2_len[j] = d2_len
-                    X2.append(self.map_word_to_triletter(self.data2[d2]))
+                    X2.append(self.map_word_to_triletter(d2_cont))
                     Y[j] = l
                     j += 1
             if self.type == 'dssm':
@@ -299,11 +309,13 @@ class DRMM_ListGenerator(ListBasicGenerator):
             self.use_hist_feats = True
         if not self.check():
             raise TypeError('[DRMM_ListGenerator] parameter check wrong.')
-        print '[DRMM_ListGenerator] init done, list number: %d. ' % (self.num_list)
+        print('[DRMM_ListGenerator] init done, list number: %d. ' % (self.num_list), end='\n')
 
     def cal_hist(self, t1, t2, data1_maxlen, hist_size):
         mhist = np.zeros((data1_maxlen, hist_size), dtype=np.float32)
-        d1len = len(self.data1[t1])
+        t1_cont = list(self.data1[t1])
+        t2_cont = list(self.data2[t2])
+        d1len = len(t1_cont)
         if self.use_hist_feats:
             assert (t1, t2) in self.hist_feats
             caled_hist = np.reshape(self.hist_feats[(t1, t2)], (d1len, hist_size))
@@ -312,8 +324,8 @@ class DRMM_ListGenerator(ListBasicGenerator):
             else:
                 mhist[:, :] = caled_hist[:data1_maxlen, :]
         else:
-            t1_rep = self.embed[self.data1[t1]]
-            t2_rep = self.embed[self.data2[t2]]
+            t1_rep = self.embed[t1_cont]
+            t2_rep = self.embed[t2_cont]
             mm = t1_rep.dot(np.transpose(t2_rep))
             for (i,j), v in np.ndenumerate(mm):
                 if i >= data1_maxlen:
@@ -345,11 +357,13 @@ class DRMM_ListGenerator(ListBasicGenerator):
             j = 0
             for pt in currbatch:
                 d1, d2_list = pt[0], pt[1]
-                d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+                d1_cont = list(self.data1[d1])
+                d1_len = min(self.data1_maxlen, len(d1_cont))
                 list_count.append(list_count[-1] + len(d2_list))
                 for l, d2 in d2_list:
-                    X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
-                    d2_len = len(self.data2[d2])
+                    X1[j, :d1_len], X1_len[j] = d1_cont[:d1_len], d1_len
+                    d2_cont = list(self.data2[d2])
+                    d2_len = len(d2_cont)
                     X2[j], X2_len[j] = self.cal_hist(d1, d2, self.data1_maxlen, self.hist_size), d2_len
                     ID_pairs.append((d1, d2))
                     Y[j] = l
@@ -381,11 +395,13 @@ class DRMM_ListGenerator(ListBasicGenerator):
             j = 0
             for pt in currbatch:
                 d1, d2_list = pt[0], pt[1]
+                d1_cont = list(self.data1[d1])
                 list_count.append(list_count[-1] + len(d2_list))
-                d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+                d1_len = min(self.data1_maxlen, len(d1_cont))
                 for l, d2 in d2_list:
-                    d2_len = len(self.data2[d2])
-                    X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
+                    d2_cont = list(self.data2[d2])
+                    d2_len = len(d2_cont)
+                    X1[j, :d1_len], X1_len[j] = d1_cont[:d1_len], d1_len
                     X2[j], X2_len[j] = self.cal_hist(d1, d2, self.data1_maxlen, self.hist_size), d2_len
                     Y[j] = l
                     j += 1
@@ -418,7 +434,7 @@ class ListGenerator_Feats(ListBasicGenerator):
         for idx, (label, d1, d2) in enumerate(self.rel):
             self.pair_feats[(d1, d2)] = pair_feats[idx]
 
-        print '[ListGenerator] init done'
+        print('[ListGenerator] init done', end='\n')
 
     def get_batch(self):
         while self.point < self.num_list:
@@ -445,12 +461,14 @@ class ListGenerator_Feats(ListBasicGenerator):
             j = 0
             for pt in currbatch:
                 d1, d2_list = pt[0], pt[1]
+                d1_cont = list(self.data1[d1])
                 list_count.append(list_count[-1] + len(d2_list))
-                d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+                d1_len = min(self.data1_maxlen, len(d1_cont))
                 for l, d2 in d2_list:
-                    d2_len = min(self.data2_maxlen, len(self.data2[d2]))
-                    X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
-                    X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
+                    d2_cont = list(self.data2[d2])
+                    d2_len = min(self.data2_maxlen, len(d2_cont))
+                    X1[j, :d1_len], X1_len[j] = d1_cont[:d1_len], d1_len
+                    X2[j, :d2_len], X2_len[j] = d2_cont[:d2_len], d2_len
                     X3[j, :self.pair_feat_size] = self.pair_feats[(d1, d2)]
                     X4[j, :d1_len] = self.query_feats[d1][:self.query_feat_size]
                     ID_pairs.append((d1, d2))
@@ -485,12 +503,14 @@ class ListGenerator_Feats(ListBasicGenerator):
             j = 0
             for pt in currbatch:
                 d1, d2_list = pt[0], pt[1]
+                d1 = list(self.data1[d1])
                 list_count.append(list_count[-1] + len(d2_list))
-                d1_len = min(self.data1_maxlen, len(self.data1[d1]))
+                d1_len = min(self.data1_maxlen, len(d1_cont))
                 for l, d2 in d2_list:
-                    d2_len = min(self.data2_maxlen, len(self.data2[d2]))
-                    X1[j, :d1_len], X1_len[j] = self.data1[d1][:d1_len], d1_len
-                    X2[j, :d2_len], X2_len[j] = self.data2[d2][:d2_len], d2_len
+                    d2_cont = list(self.data2[d2])
+                    d2_len = min(self.data2_maxlen, len(d2_cont))
+                    X1[j, :d1_len], X1_len[j] = d1_cont[:d1_len], d1_len
+                    X2[j, :d2_len], X2_len[j] = d2_cont[:d2_len], d2_len
                     X3[j, :self.pair_feat_size] = self.pair_feats[(d1, d2)]
                     X4[j, :d1_len] = self.query_feats[d1][:self.query_feat_size]
                     Y[j] = l

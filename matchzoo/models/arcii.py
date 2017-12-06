@@ -1,4 +1,6 @@
 # -*- coding=utf-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
@@ -27,7 +29,7 @@ class ARCII(BasicModel):
         self.setup(config)
         if not self.check():
             raise TypeError('[ARCII] parameter check wrong')
-        print '[ARCII] init done'
+        print('[ARCII] init done', end='\n')
 
     def setup(self, config):
         if not isinstance(config, dict):
@@ -79,8 +81,6 @@ class ARCII(BasicModel):
             show_layer_info('MaxPooling2D', z)
 
         #dpool = DynamicMaxPooling(self.config['dpool_size'][0], self.config['dpool_size'][1])([conv2d, dpool_index])
-        #print('[DynamicMaxPooling] dpool:\t%s' % str(dpool.get_shape().as_list()))
-
         pool1_flat = Flatten()(z)
         show_layer_info('Flatten', pool1_flat)
         pool1_flat_drop = Dropout(rate=self.config['dropout_rate'])(pool1_flat)
