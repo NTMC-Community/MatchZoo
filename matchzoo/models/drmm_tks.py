@@ -1,4 +1,6 @@
 # -*- coding=utf-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
@@ -34,7 +36,7 @@ class DRMM_TKS(BasicModel):
         self.setup(config)
         if not self.check():
             raise TypeError('[DRMM_TKS] parameter check wrong')
-        print '[DRMM_TKS] init done'
+        print('[DRMM_TKS] init done', end='\n')
 
     def setup(self, config):
         if not isinstance(config, dict):

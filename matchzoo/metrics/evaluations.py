@@ -15,7 +15,7 @@ def map(y_true, y_pred, rel_threshold=0):
     s = 0.
     y_true = _to_list(np.squeeze(y_true).tolist())
     y_pred = _to_list(np.squeeze(y_pred).tolist())
-    c = zip(y_true, y_pred)
+    c = list(zip(y_true, y_pred))
     random.shuffle(c)
     c = sorted(c, key=lambda x:x[1], reverse=True)
     ipos = 0
@@ -41,7 +41,7 @@ def ndcg(k=10):
         s = 0.
         y_true = _to_list(np.squeeze(y_true).tolist())
         y_pred = _to_list(np.squeeze(y_pred).tolist())
-        c = zip(y_true, y_pred)
+        c = list(zip(y_true, y_pred))
         random.shuffle(c)
         c_g = sorted(c, key=lambda x:x[0], reverse=True)
         c_p = sorted(c, key=lambda x:x[1], reverse=True)
@@ -70,7 +70,7 @@ def precision(k=10):
         s = 0.
         y_true = _to_list(np.squeeze(y_true).tolist())
         y_pred = _to_list(np.squeeze(y_pred).tolist())
-        c = zip(y_true, y_pred)
+        c = list(zip(y_true, y_pred))
         random.shuffle(c)
         c = sorted(c, key=lambda x:x[1], reverse=True)
         ipos = 0
@@ -94,7 +94,7 @@ def recall(k=10):
         y_true = _to_list(np.squeeze(y_true).tolist()) # y_true: the ground truth scores for documents under a query
         y_pred = _to_list(np.squeeze(y_pred).tolist()) # y_pred: the predicted scores for documents under a query
         pos_count = sum(i > rel_threshold for i in y_true) # total number of positive documents under this query
-        c = zip(y_true, y_pred)
+        c = list(zip(y_true, y_pred))
         random.shuffle(c)
         c = sorted(c, key=lambda x: x[1], reverse=True)
         ipos = 0

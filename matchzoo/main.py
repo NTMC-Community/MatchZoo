@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+from __future__ import print_function
 import os
 import sys
 import time
@@ -40,7 +41,7 @@ def load_model(config):
 
 def train(config):
 
-    print(json.dumps(config, indent=2))
+    print(json.dumps(config, indent=2), end='\n')
     # read basic config
     global_conf = config["global"]
     optimizer = global_conf['optimizer']
@@ -64,7 +65,7 @@ def train(config):
     else:
         embed = np.float32(np.random.uniform(-0.2, 0.2, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
         share_input_conf['embed'] = embed
-    print '[Embedding] Embedding Load Done.'
+    print('[Embedding] Embedding Load Done.', end='\n')
 
     # list all input tags and construct tags config
     input_train_conf = OrderedDict()
@@ -80,7 +81,7 @@ def train(config):
             input_eval_conf[tag] = {}
             input_eval_conf[tag].update(share_input_conf)
             input_eval_conf[tag].update(input_conf[tag])
-    print '[Input] Process Input Tags. %s in TRAIN, %s in EVAL.' % (input_train_conf.keys(), input_eval_conf.keys())
+    print('[Input] Process Input Tags. %s in TRAIN, %s in EVAL.' % (input_train_conf.keys(), input_eval_conf.keys()), end='\n')
 
     # collect dataset identification
     dataset = {}
@@ -95,21 +96,21 @@ def train(config):
             datapath = input_conf[tag]['text2_corpus']
             if datapath not in dataset:
                 dataset[datapath], _ = read_data(datapath)
-    print '[Dataset] %s Dataset Load Done.' % len(dataset)
+    print('[Dataset] %s Dataset Load Done.' % len(dataset), end='\n')
 
     # initial data generator
     train_gen = OrderedDict()
     eval_gen = OrderedDict()
 
     for tag, conf in input_train_conf.items():
-        print conf
+        print(conf, end='\n')
         conf['data1'] = dataset[conf['text1_corpus']]
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
         train_gen[tag] = generator( config = conf )
 
     for tag, conf in input_eval_conf.items():
-        print conf
+        print(conf, end='\n')
         conf['data1'] = dataset[conf['text1_corpus']]
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
@@ -133,12 +134,12 @@ def train(config):
         else:
             eval_metrics[mobj] = metrics.get(mobj)
     model.compile(optimizer=optimizer, loss=loss)
-    print '[Model] Model Compile Done.'
+    print('[Model] Model Compile Done.', end='\n')
 
     for i_e in range(num_iters):
         for tag, generator in train_gen.items():
             genfun = generator.get_batch_generator()
-            print '[%s]\t[Train:%s]' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag),
+            print('[%s]\t[Train:%s] ' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag), end='')
             history = model.fit_generator(
                     genfun,
                     steps_per_epoch = display_interval,
@@ -146,11 +147,11 @@ def train(config):
                     shuffle=False,
                     verbose = 0
                 ) #callbacks=[eval_map])
-            print 'Iter:%d\tloss=%.6f' % (i_e, history.history['loss'][0])
+            print('Iter:%d\tloss=%.6f' % (i_e, history.history['loss'][0]), end='\n')
 
         for tag, generator in eval_gen.items():
             genfun = generator.get_batch_generator()
-            print '[%s]\t[Eval:%s]' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag),
+            print('[%s]\t[Eval:%s] ' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag), end='')
             res = dict([[k,0.] for k in eval_metrics.keys()])
             num_valid = 0
             for input_data, y_true in genfun:
@@ -168,7 +169,7 @@ def train(config):
                         res[k] += eval_func(y_true = y_true, y_pred = y_pred)
                     num_valid += 1
             generator.reset()
-            print 'Iter:%d\t%s' % (i_e, '\t'.join(['%s=%f'%(k,v/num_valid) for k, v in res.items()]))
+            print('Iter:%d\t%s' % (i_e, '\t'.join(['%s=%f'%(k,v/num_valid) for k, v in res.items()])), end='\n')
             sys.stdout.flush()
         if (i_e+1) % save_weights_iters == 0:
             model.save_weights(weights_file % (i_e+1))
@@ -176,7 +177,7 @@ def train(config):
 def predict(config):
     ######## Read input config ########
 
-    print(json.dumps(config, indent=2))
+    print(json.dumps(config, indent=2), end='\n')
     input_conf = config['inputs']
     share_input_conf = input_conf['share']
 
@@ -190,7 +191,7 @@ def predict(config):
     else:
         embed = np.float32(np.random.uniform(-0.2, 0.2, [share_input_conf['vocab_size'], share_input_conf['embed_size']]))
         share_input_conf['embed'] = embed
-    print '[Embedding] Embedding Load Done.'
+    print('[Embedding] Embedding Load Done.', end='\n')
 
     # list all input tags and construct tags config
     input_predict_conf = OrderedDict()
@@ -201,7 +202,7 @@ def predict(config):
             input_predict_conf[tag] = {}
             input_predict_conf[tag].update(share_input_conf)
             input_predict_conf[tag].update(input_conf[tag])
-    print '[Input] Process Input Tags. %s in PREDICT.' % (input_predict_conf.keys())
+    print('[Input] Process Input Tags. %s in PREDICT.' % (input_predict_conf.keys()), end='\n')
 
     # collect dataset identification
     dataset = {}
@@ -215,13 +216,13 @@ def predict(config):
                 datapath = input_conf[tag]['text2_corpus']
                 if datapath not in dataset:
                     dataset[datapath], _ = read_data(datapath)
-    print '[Dataset] %s Dataset Load Done.' % len(dataset)
+    print('[Dataset] %s Dataset Load Done.' % len(dataset), end='\n')
 
     # initial data generator
     predict_gen = OrderedDict()
 
     for tag, conf in input_predict_conf.items():
-        print conf
+        print(conf, end='\n')
         conf['data1'] = dataset[conf['text1_corpus']]
         conf['data2'] = dataset[conf['text2_corpus']]
         generator = inputs.get(conf['input_type'])
@@ -252,7 +253,7 @@ def predict(config):
 
     for tag, generator in predict_gen.items():
         genfun = generator.get_batch_generator()
-        print '[%s]\t[Predict] @ %s ' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag),
+        print('[%s]\t[Predict] @ %s ' % (time.strftime('%m-%d-%Y %H:%M:%S', time.localtime(time.time())), tag), end='')
         num_valid = 0
         res_scores = {}
         for input_data, y_true in genfun:
@@ -292,15 +293,15 @@ def predict(config):
                     for qid, dinfo in res_scores.items():
                         dinfo = sorted(dinfo.items(), key=lambda d:d[1][0], reverse=True)
                         for inum,(did, (score, gt)) in enumerate(dinfo):
-                            print >> f, '%s\tQ0\t%s\t%d\t%f\t%s\t%s'%(qid, did, inum, score, config['net_name'], gt)
+                            f.write('%s\tQ0\t%s\t%d\t%f\t%s\t%s\n'%(qid, did, inum, score, config['net_name'], gt))
             elif output_conf[tag]['save_format'] == 'TEXTNET':
                 with open(output_conf[tag]['save_path'], 'w') as f:
                     for qid, dinfo in res_scores.items():
                         dinfo = sorted(dinfo.items(), key=lambda d:d[1][0], reverse=True)
                         for inum,(did, (score, gt)) in enumerate(dinfo):
-                            print >> f, '%s %s %s %s'%(gt, qid, did, score)
+                            f.write('%s %s %s %s\n'%(gt, qid, did, score))
 
-        print '[Predict] results: ', '\t'.join(['%s=%f'%(k,v/num_valid) for k, v in res.items()])
+        print('[Predict] results: ', '\t'.join(['%s=%f'%(k,v/num_valid) for k, v in res.items()]), end='\n')
         sys.stdout.flush()
 
 def main(argv):
@@ -317,7 +318,7 @@ def main(argv):
     elif args.phase == 'predict':
         predict(config)
     else:
-        print 'Phase Error.'
+        print('Phase Error.', end='\n')
     return
 
 if __name__=='__main__':

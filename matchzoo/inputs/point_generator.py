@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+from __future__ import absolute_import
 import sys
 import random
 import numpy as np
@@ -31,7 +33,7 @@ class PointGenerator(object):
     def check(self):
         for e in self.check_list:
             if e not in self.config:
-                print '[%s] Error %s not in config' % (self.__name, e)
+                print('[%s] Error %s not in config' % (self.__name, e), end='\n')
                 return False
         return True
 
@@ -114,7 +116,7 @@ class Triletter_PointGenerator(object):
     def check(self):
         for e in self.check_list:
             if e not in self.config:
-                print '[%s] Error %s not in config' % (self.__name, e)
+                print('[%s] Error %s not in config' % (self.__name, e), end='\n')
                 return False
         return True
 
@@ -232,7 +234,7 @@ class DRMM_PointGenerator(object):
             hist_feats = read_features_without_id(config['hist_feats_file'])
             self.hist_feats = {}
             for idx, (label, d1, d2) in enumerate(self.rel):
-                self.hist_feats[(d1, d2)] = hist_feats[idx]
+                self.hist_feats[(d1, d2)] = list(hist_feats[idx])
             self.use_hist_feats = True
         if not self.check():
             raise TypeError('[DRMM_PointGenerator] parameter check wrong.')
@@ -263,7 +265,7 @@ class DRMM_PointGenerator(object):
     def check(self):
         for e in self.check_list:
             if e not in self.config:
-                print '[%s] Error %s not in config' % (self.__name, e)
+                print('[%s] Error %s not in config' % (self.__name, e), end='\n')
                 return False
         return True
 

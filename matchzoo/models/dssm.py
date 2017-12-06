@@ -1,5 +1,7 @@
 # -*- coding=utf-8 -*-
 
+from __future__ import print_function
+from __future__ import absolute_import
 import keras
 import keras.backend as K
 from keras import regularizers
@@ -23,7 +25,7 @@ class DSSM(BasicModel):
         self.setup(config)
         if not self.check():
             raise TypeError('[DSSM] parameter check wrong')
-        print '[DSSM] init done'
+        print('[DSSM] init done', end='\n')
 
     def setup(self, config):
         if not isinstance(config, dict):

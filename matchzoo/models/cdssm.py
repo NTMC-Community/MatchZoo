@@ -1,5 +1,7 @@
 
 # -*- coding=utf-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
@@ -23,7 +25,7 @@ class CDSSM(BasicModel):
         self.setup(config)
         if not self.check():
             raise TypeError('[CDSSM] parameter check wrong')
-        print '[CDSSM] init done'
+        print('[CDSSM] init done', end='\n')
 
     def setup(self, config):
         if not isinstance(config, dict):

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+from __future__ import absolute_import
 import sys
 import random
 import numpy as np
@@ -26,7 +28,7 @@ class PairBasicGenerator(object):
     def check(self):
         for e in self.check_list:
             if e not in self.config:
-                print '[%s] Error %s not in config' % (self.__name, e)
+                print('[%s] Error %s not in config' % (self.__name, e), end='\n')
                 return False
         return True
     def make_pair_static(self, rel):
@@ -45,7 +47,7 @@ class PairBasicGenerator(object):
                     for high_d2 in rel_set[d1][high_label]:
                         for low_d2 in rel_set[d1][low_label]:
                             pair_list.append( (d1, high_d2, low_d2) )
-        print 'Pair Instance Count:', len(pair_list)
+        print('Pair Instance Count:', len(pair_list), end='\n')
         return pair_list
 
     def make_pair_iter(self, rel):
@@ -68,7 +70,6 @@ class PairBasicGenerator(object):
                         for high_d2 in rel_set[d1][high_label]:
                             for low_d2 in rel_set[d1][low_label]:
                                 pair_list.append( (d1, high_d2, low_d2) )
-            #print 'Pair Instance Count:', len(pair_list)
             yield pair_list
 
     def get_batch_static(self):
@@ -79,7 +80,7 @@ class PairBasicGenerator(object):
 
     def get_batch(self):
         if self.config['use_iter']:
-            return self.batch_iter.next()
+            return next(self.batch_iter)
         else:
             return self.get_batch_static()
 
@@ -108,7 +109,7 @@ class PairGenerator(PairBasicGenerator):
             self.batch_iter = self.get_batch_iter()
         if not self.check():
             raise TypeError('[PairGenerator] parameter check wrong.')
-        print '[PairGenerator] init done'
+        print('[PairGenerator] init done', end='\n')
 
     def get_batch_static(self):
         X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
@@ -122,19 +123,22 @@ class PairGenerator(PairBasicGenerator):
         X2[:] = self.fill_word
         for i in range(self.batch_size):
             d1, d2p, d2n = random.choice(self.pair_list)
-            d1_len = min(self.data1_maxlen, len(self.data1[d1]))
-            d2p_len = min(self.data2_maxlen, len(self.data2[d2p]))
-            d2n_len = min(self.data2_maxlen, len(self.data2[d2n]))
-            X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
-            X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
-            X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
-            X2[i*2+1, :d2n_len], X2_len[i*2+1] = self.data2[d2n][:d2n_len], d2n_len
+            d1_cont = list(self.data1[d1])
+            d2p_cont = list(self.data2[d2p])
+            d2n_cont = list(self.data2[d2n])
+            d1_len = min(self.data1_maxlen, len(d1_cont))
+            d2p_len = min(self.data2_maxlen, len(d2p_cont))
+            d2n_len = min(self.data2_maxlen, len(d2n_cont))
+            X1[i*2,   :d1_len],  X1_len[i*2]   = d1_cont[:d1_len],   d1_len
+            X2[i*2,   :d2p_len], X2_len[i*2]   = d2p_cont[:d2p_len], d2p_len
+            X1[i*2+1, :d1_len],  X1_len[i*2+1] = d1_cont[:d1_len],   d1_len
+            X2[i*2+1, :d2n_len], X2_len[i*2+1] = d2n_cont[:d2n_len], d2n_len
 
         return X1, X1_len, X2, X2_len, Y
 
     def get_batch_iter(self):
         while True:
-            self.pair_list = self.pair_list_iter.next()
+            self.pair_list = next(self.pair_list_iter)
             for _ in range(self.config['batch_per_iter']):
                 X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
                 X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
@@ -147,9 +151,9 @@ class PairGenerator(PairBasicGenerator):
                 X2[:] = self.fill_word
                 for i in range(self.batch_size):
                     d1, d2p, d2n = random.choice(self.pair_list)
-                    d1_len = min(self.data1_maxlen, len(self.data1[d1]))
-                    d2p_len = min(self.data2_maxlen, len(self.data2[d2p]))
-                    d2n_len = min(self.data2_maxlen, len(self.data2[d2n]))
+                    d1_len = min(self.data1_maxlen, len(list(self.data1[d1])))
+                    d2p_len = min(self.data2_maxlen, len(list(self.data2[d2p])))
+                    d2n_len = min(self.data2_maxlen, len(list(self.data2[d2n])))
                     X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
                     X2[i*2,   :d2p_len], X2_len[i*2]   = self.data2[d2p][:d2p_len], d2p_len
                     X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
@@ -183,7 +187,7 @@ class Triletter_PairGenerator(PairBasicGenerator):
         if not self.check():
             raise TypeError('[Triletter_PairGenerator] parameter check wrong.')
         self.word_triletter_map = self.read_word_triletter_map(self.config['word_triletter_map_file'])
-        print '[Triletter_PairGenerator] init done'
+        print('[Triletter_PairGenerator] init done', end='\n')
 
     def read_word_triletter_map(self, wt_map_file):
         word_triletter_map = {}
@@ -228,9 +232,9 @@ class Triletter_PairGenerator(PairBasicGenerator):
         X1, X2 = [], []
         for i in range(self.batch_size):
             d1, d2p, d2n = random.choice(self.pair_list)
-            d1_len = len(self.data1[d1])
-            d2p_len = len(self.data2[d2p])
-            d2n_len = len(self.data2[d2n])
+            d1_len = len(list(self.data1[d1]))
+            d2p_len = len(list(self.data2[d2p]))
+            d2n_len = len(list(self.data2[d2n]))
             X1_len[i*2], X1_len[i*2+1]  = d1_len,  d1_len
             X2_len[i*2], X2_len[i*2+1]  = d2p_len, d2n_len
             X1.append(self.map_word_to_triletter(self.data1[d1]))
@@ -246,7 +250,7 @@ class Triletter_PairGenerator(PairBasicGenerator):
 
     def get_batch_iter(self):
         while True:
-            self.pair_list = self.pair_list_iter.next()
+            self.pair_list = next(self.pair_list_iter)
             for _ in range(self.config['batch_per_iter']):
                 X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
                 X2_len = np.zeros((self.batch_size*2,), dtype=np.int32)
@@ -256,9 +260,9 @@ class Triletter_PairGenerator(PairBasicGenerator):
                 X1, X2 = [], []
                 for i in range(self.batch_size):
                     d1, d2p, d2n = random.choice(self.pair_list)
-                    d1_len = len(self.data1[d1])
-                    d2p_len = len(self.data2[d2p])
-                    d2n_len = len(self.data2[d2n])
+                    d1_len = len(list(self.data1[d1]))
+                    d2p_len = len(list(self.data2[d2p]))
+                    d2n_len = len(list(self.data2[d2n]))
                     X1_len[i*2],  X1_len[i*2+1]   = d1_len, d1_len
                     X2_len[i*2],  X2_len[i*2+1]   = d2p_len, d2n_len
                     X1.append(self.map_word_to_triletter(self.data1[d1]))
@@ -303,21 +307,24 @@ class DRMM_PairGenerator(PairBasicGenerator):
             self.batch_iter = self.get_batch_iter()
         if not self.check():
             raise TypeError('[DRMM_PairGenerator] parameter check wrong.')
-        print '[DRMM_PairGenerator] init done'
+        print('[DRMM_PairGenerator] init done', end='\n')
 
     def cal_hist(self, t1, t2, data1_maxlen, hist_size):
         mhist = np.zeros((data1_maxlen, hist_size), dtype=np.float32)
-        d1len = len(self.data1[t1])
+        t1_cont = list(self.data1[t1])
+        t2_cont = list(self.data2[t2])
+        d1len = len(t1_cont)
         if self.use_hist_feats:
             assert (t1, t2) in self.hist_feats
-            caled_hist = np.reshape(self.hist_feats[(t1, t2)], (d1len, hist_size))
+            curr_pair_feats = list(self.hist_feats[(t1, t2)])
+            caled_hist = np.reshape(curr_pair_feats, (d1len, hist_size))
             if d1len < data1_maxlen:
                 mhist[:d1len, :] = caled_hist[:, :]
             else:
                 mhist[:, :] = caled_hist[:data1_maxlen, :]
         else:
-            t1_rep = self.embed[self.data1[t1]]
-            t2_rep = self.embed[self.data2[t2]]
+            t1_rep = self.embed[t1_cont]
+            t2_rep = self.embed[t2_cont]
             mm = t1_rep.dot(np.transpose(t2_rep))
             for (i,j), v in np.ndenumerate(mm):
                 if i >= data1_maxlen:
@@ -339,11 +346,14 @@ class DRMM_PairGenerator(PairBasicGenerator):
         X1[:] = self.fill_word
         for i in range(self.batch_size):
             d1, d2p, d2n = random.choice(self.pair_list)
-            d1_len = min(self.data1_maxlen, len(self.data1[d1]))
-            d2p_len = len(self.data2[d2p])
-            d2n_len = len(self.data2[d2n])
-            X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
-            X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
+            d1_cont = list(self.data1[d1])
+            d2p_cont = list(self.data2[d2p])
+            d2n_cont = list(self.data2[d2n])
+            d1_len = min(self.data1_maxlen, len(d1_cont))
+            d2p_len = len(d2p_cont)
+            d2n_len = len(d2n_cont)
+            X1[i*2,   :d1_len],  X1_len[i*2]   = d1_cont[:d1_len],   d1_len
+            X1[i*2+1, :d1_len],  X1_len[i*2+1] = d1_cont[:d1_len],   d1_len
             X2[i*2], X2_len[i*2]   = self.cal_hist(d1, d2p, self.data1_maxlen, self.hist_size), d2p_len
             X2[i*2+1], X2_len[i*2+1] = self.cal_hist(d1, d2n, self.data1_maxlen, self.hist_size), d2n_len
 
@@ -351,7 +361,7 @@ class DRMM_PairGenerator(PairBasicGenerator):
 
     def get_batch_iter(self):
         while True:
-            self.pair_list = self.pair_list_iter.next()
+            self.pair_list = next(self.pair_list_iter)
             for _ in range(self.config['batch_per_iter']):
                 X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
                 X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)
@@ -364,11 +374,14 @@ class DRMM_PairGenerator(PairBasicGenerator):
                 #X2[:] = 0.
                 for i in range(self.batch_size):
                     d1, d2p, d2n = random.choice(self.pair_list)
-                    d1_len = min(self.data1_maxlen, len(self.data1[d1]))
-                    d2p_len = len(self.data2[d2p])
-                    d2n_len = len(self.data2[d2n])
-                    X1[i*2,   :d1_len],  X1_len[i*2]   = self.data1[d1][:d1_len],   d1_len
-                    X1[i*2+1, :d1_len],  X1_len[i*2+1] = self.data1[d1][:d1_len],   d1_len
+                    d1_cont = list(self.data1[d1])
+                    d2p_cont = list(self.data2[d2p])
+                    d2n_cont = list(self.data2[d2n])
+                    d1_len = min(self.data1_maxlen, len(d1_cont))
+                    d2p_len = len(d2p_cont)
+                    d2n_len = len(d2n_cont)
+                    X1[i*2,   :d1_len],  X1_len[i*2]   = d1_cont[:d1_len],   d1_len
+                    X1[i*2+1, :d1_len],  X1_len[i*2+1] = d1_cont[:d1_len],   d1_len
                     X2[i*2], X2_len[i*2]   = self.cal_hist(d1, d2p, self.data1_maxlen, self.hist_size), d2p_len
                     X2[i*2+1], X2_len[i*2+1] = self.cal_hist(d1, d2n, self.data1_maxlen, self.hist_size), d2n_len
 
@@ -402,7 +415,7 @@ class PairGenerator_Feats(PairBasicGenerator):
             self.pair_feats[(d1, d2)] = pair_feats[idx]
         if config['use_iter']:
             self.batch_iter = self.get_batch_iter()
-        print '[PairGenerator] init done'
+        print('[PairGenerator] init done', end='\n')
 
     def get_batch_static(self):
         X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
@@ -434,7 +447,7 @@ class PairGenerator_Feats(PairBasicGenerator):
 
     def get_batch_iter(self):
         while True:
-            self.pair_list = self.pair_list_iter.next()
+            self.pair_list = next(self.pair_list_iter)
             for _ in range(self.config['batch_per_iter']):
                 X1 = np.zeros((self.batch_size*2, self.data1_maxlen), dtype=np.int32)
                 X1_len = np.zeros((self.batch_size*2,), dtype=np.int32)

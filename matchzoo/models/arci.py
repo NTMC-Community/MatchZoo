@@ -1,4 +1,6 @@
 # -*- coding=utf-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
@@ -23,7 +25,7 @@ class ARCI(BasicModel):
         self.setup(config)
         if not self.check():
             raise TypeError('[ARCI] parameter check wrong')
-        print '[ARCI] init done'
+        print('[ARCI] init done', end='\n')
 
     def setup(self, config):
         if not isinstance(config, dict):

@@ -1,4 +1,6 @@
 # -*- coding=utf-8 -*-
+from __future__ import print_function
+from __future__ import absolute_import
 import keras
 import keras.backend as K
 from keras.models import Sequential, Model
@@ -22,7 +24,7 @@ class DRMM(BasicModel):
         self.initializer_gate = keras.initializers.RandomUniform(minval=-0.01, maxval=0.01, seed=11)
         if not self.check():
             raise TypeError('[DRMM] parameter check wrong')
-        print '[DRMM] init done'
+        print('[DRMM] init done', end='\n')
 
     def setup(self, config):
         if not isinstance(config, dict):
