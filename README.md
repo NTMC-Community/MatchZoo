@@ -5,6 +5,39 @@
 ---
 MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
 
+<table>
+  <tr>
+    <th width=30%, bgcolor=#999999 >Tasks</th> 
+    <th width=20%, bgcolor=#999999>Text 1</th>
+    <th width="20%", bgcolor=#999999>Text 2</th>
+    <th width="20%", bgcolor=#999999>Objective</th>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> Paraphrase Indentification </td>
+    <td align="center", bgcolor=#eeeeee> string 1 </td>
+    <td align="center", bgcolor=#eeeeee> string 2 </td>
+    <td align="center", bgcolor=#eeeeee> classification </td>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> Question Answer </td>
+    <td align="center", bgcolor=#eeeeee> question </td>
+    <td align="center", bgcolor=#eeeeee> answer </td>
+    <td align="center", bgcolor=#eeeeee> classification/ranking </td>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> Conversation </td>
+    <td align="center", bgcolor=#eeeeee> dialog </td>
+    <td align="center", bgcolor=#eeeeee> response </td>
+    <td align="center", bgcolor=#eeeeee> classification/ranking </td>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> Information Retrieval </td>
+    <td align="center", bgcolor=#eeeeee> query </td>
+    <td align="center", bgcolor=#eeeeee> document </td>
+    <td align="center", bgcolor=#eeeeee> classification/ranking </td>
+  </tr>
+</table>
+
 ## Overview
 The architecture of the MatchZoo toolkit is described in the Figure  in what follows,
 <div align='center'>
@@ -233,7 +266,7 @@ Project Organizers
     - [HomePage](http://www.bigdatalab.ac.cn/~cxq/)
 
 ## Environment
-* python2.7+ 
+* python2.7 (python3 support is under developing.)
 * tensorflow 1.2+
 * keras 2.06+
 * nltk 3.2.2+
