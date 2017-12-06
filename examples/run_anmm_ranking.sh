@@ -1,17 +1,3 @@
-# generate matchzoo data for ranking
-python test_preparation_for_ranking.py
-
-# generate bin sum data for anmm
-# 1. download embedding
-wget http://nlp.stanford.edu/data/glove.6B.zip
-unzip glove.6B.zip
-mv glove.6B.50d.txt ../data/example/ranking/
-# 2. map word embedding
-python gen_w2v.py ../data/example/ranking/glove.6B.50d.txt ../data/example/ranking/word_dict.txt ../data/example/ranking/embed_glove_d50
-python norm_embed.py  ../data/example/ranking/embed_glove_d50 ../data/example/ranking/embed_glove_d50_norm
-# 3. run to generate bin sum
-python test_binsum_generator.py
-
 cd ../matchzoo
 
 # configure the model file
