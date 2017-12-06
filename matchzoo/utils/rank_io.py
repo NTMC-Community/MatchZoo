@@ -86,7 +86,7 @@ def read_data(filename, word_dict = None):
 
 # Convert Embedding Dict 2 numpy array
 def convert_embed_2_numpy(embed_dict, max_size=0, embed=None):
-    feat_size = len(embed_dict[embed_dict.keys()[0]])
+    feat_size = len(embed_dict[list(embed_dict.keys())[0]])
     if embed is None:
         embed = np.zeros( (max_size, feat_size), dtype = np.float32 )
     for k in embed_dict:
