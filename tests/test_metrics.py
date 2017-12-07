@@ -7,8 +7,8 @@ import rank_evaluations
 
 
 if __name__=='__main__':
-    trec_file = '../../ir_test/ranklist.txt'
-    qrel_file = '../../ir_test/qrels.txt'
+    trec_file = './ranklist'
+    qrel_file = './qrels'
 
     rank_eval = rank_evaluations.rank_eval(rel_threshold = 0.)
 
@@ -28,7 +28,7 @@ if __name__=='__main__':
             qrels[r[0]] = {}
         qrels[r[0]][r[2]] = int(r[3])
 
-    
+
     metrics=['map', 'ndcg@5', 'ndcg@10', 'p@5', 'p@10']
     #print rank_eval.eval(y_pred = [9, 7, 6, 5, 1], y_true = [0, 1, 0, 0, 2], metrics=metrics)
     res = dict([[k, 0.] for k in metrics])
@@ -45,7 +45,7 @@ if __name__=='__main__':
         ndcg_10 += rank_evaluations.eval_ndcg(y_true = y_true, y_pred = y_pred, k = 10)
         p_5 += rank_evaluations.eval_precision(y_true = y_true, y_pred = y_pred, k = 5)
         p_10 += rank_evaluations.eval_precision(y_true = y_true, y_pred = y_pred, k = 10)
-        curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred, 
+        curr_res = rank_eval.eval(y_true = y_true, y_pred = y_pred,
                 metrics = metrics)
         for k,v in curr_res.items():
             res[k] += v
