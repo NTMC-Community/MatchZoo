@@ -8,12 +8,8 @@ from keras.layers import *
 from keras.layers import Reshape, Embedding,Merge, Dot
 from keras.optimizers import Adam
 from model import BasicModel
-
-import sys
-sys.path.append('../matchzoo/layers/')
-sys.path.append('../matchzoo/utils/')
-from Match import *
-from utility import *
+from utils.utility import *
+from layers.Match import *
 
 class MVLSTM(BasicModel):
     def __init__(self, config):

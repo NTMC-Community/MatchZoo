@@ -10,12 +10,7 @@ from keras.layers import *
 from keras.optimizers import Adam
 from model import BasicModel
 import tensorflow as tf
-
-import sys
-#sys.path.append('../matchzoo/layers/')
-sys.path.append('../matchzoo/utils/')
-#from Match import *
-from utility import *
+from utils.utility import *
 
 class DUET(BasicModel):
     def __init__(self, config):
