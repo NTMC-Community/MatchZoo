@@ -1,4 +1,5 @@
-# note: 
+# note:
+from __future__ import absolute_import
 from .rank_io import read_word_dict
 from .rank_io import read_embedding
 from .rank_io import read_data_old_version

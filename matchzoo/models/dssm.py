@@ -9,13 +9,9 @@ from keras.models import Sequential, Model
 from keras.layers import *
 from keras.activations import softmax
 import tensorflow as tf
-
 from model import BasicModel
-import sys
-sys.path.append('../matchzoo/layers/')
-sys.path.append('../matchzoo/utils/')
-from utility import *
-from SparseFullyConnectedLayer import *
+from utils.utility import *
+from layers.SparseFullyConnectedLayer import *
 
 class DSSM(BasicModel):
     def __init__(self, config):

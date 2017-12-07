@@ -9,9 +9,7 @@ from keras.layers import Reshape, Embedding,Merge, Dot
 from keras.optimizers import Adam
 from model import BasicModel
 
-import sys
-sys.path.append('../matchzoo/utils/')
-from utility import *
+from utils.utility import *
 
 class ARCI(BasicModel):
     def __init__(self, config):

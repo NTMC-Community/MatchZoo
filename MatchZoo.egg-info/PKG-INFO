@@ -1,7 +1,7 @@
 Metadata-Version: 1.1
 Name: MatchZoo
-Version: 1.0
-Summary: MatchingZoom is a toolkit for text matching.It was developed with a focus on enabling fast experimentation.
+Version: 0.2.0
+Summary: MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models.
 Home-page: https://github.com/faneshion/MatchZoo
 Author: Yixing Fan, Liang Pang, Jianpeng Hou, Jiafeng Guo, Yanyan Lan, Xueqi Cheng
 Author-email: fanyixing@software.ict.ac.cn
@@ -12,6 +12,10 @@ Platform: UNKNOWN
 Classifier: Development Status :: 3 - Alpha
 Classifier: Environment :: Console
 Classifier: Operating System :: POSIX :: Linux
-Classifier: Programming Language :: Python :: 2.7
 Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
-Classifier: License :: OSI Approved :: BSD License
+Classifier: License :: OSI Approved :: Apache License
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6

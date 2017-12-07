@@ -7,8 +7,10 @@ import numpy as np
 import math
 
 class rank_eval():
+
     def __init__(self, rel_threshold=0.):
         self.rel_threshold = rel_threshold
+
     def zipped(self, y_true, y_pred):
         y_true = np.squeeze(y_true)
         y_pred = np.squeeze(y_pred)
@@ -27,6 +29,7 @@ class rank_eval():
         res.update({'ndcg@%d'%(i+1):all_ndcg[i] for i in range(k)})
         ret = {k:v for k,v in res.items() if k in metrics}
         return ret
+
     def map(self, y_true, y_pred):
         c = self.zipped(y_true, y_pred)
         c = sorted(c, key=lambda x:x[1], reverse=True)
@@ -40,6 +43,7 @@ class rank_eval():
             return 0.
         else:
             return s / ipos
+
     def ndcg(self, y_true, y_pred, k = 20):
         s = 0.
         c = self.zipped(y_true, y_pred)
@@ -65,6 +69,7 @@ class rank_eval():
             else:
                 dcg[idx] /= v
         return dcg
+
     def precision(self, y_true, y_pred, k = 20):
         c = self.zipped(y_true, y_pred)
         c = sorted(c, key=lambda x:x[1], reverse=True)
@@ -78,6 +83,7 @@ class rank_eval():
                 break
         precision = [v / (idx + 1) for idx, v in enumerate(precision)]
         return precision
+
 
 def eval_map(y_true, y_pred, rel_threshold=0):
     s = 0.

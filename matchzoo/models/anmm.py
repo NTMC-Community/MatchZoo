@@ -10,10 +10,7 @@ from keras.models import Sequential, Model
 from keras.layers import *
 from keras.activations import softmax
 from model import BasicModel
-
-import sys
-sys.path.append('../matchzoo/utils/')
-from utility import *
+from utils.utility import *
 
 class ANMM(BasicModel):
     def __init__(self, config):

@@ -25,4 +25,5 @@ matchzoo/metrics/evaluations.py
 matchzoo/metrics/rank_evaluations.py
 matchzoo/utils/__init__.py
 matchzoo/utils/rank_io.py
+matchzoo/utils/roc_auc.py
 matchzoo/utils/utility.py

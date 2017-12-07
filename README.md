@@ -1,5 +1,5 @@
 <div align='center'>
-<img src="./data/matchzoo-logo.png" width = "400"  alt="图片名称" align=center />
+<img src="./docs/_static/images/matchzoo-logo.png" width = "400"  alt="图片名称" align=center />
 </div>
 
 ---
@@ -55,14 +55,14 @@ In the main directory, this will install the dependencies automatically.
 
 For usage examples, you can run
 ```
-python main.py --phase train --model_file ./models/arci_ranking.config
-python main.py --phase predict --model_file ./models/arci_ranking.config
+python matchzoo/main.py --phase train --model_file examples/toy_example/config/arci_ranking.config
+python matchzoo/main.py --phase predict --model_file examples/toy_example/config/arci_ranking.config
 ```
 
 ## Overview
 The architecture of the MatchZoo toolkit is described in the Figure  in what follows,
 <div align='center'>
-<img src="./data/matchzoo.png" width = "400" height = "200" alt="图片名称" align=center />
+<img src="./docs/_static/images/matchzoo.png" width = "400" height = "200" alt="图片名称" align=center />
 </div>
 There are three major modules in the toolkit, namely data preparation, model construction, training and evaluation, respectively. These three modules are actually organized as a pipeline of data flow.
 
@@ -87,11 +87,11 @@ Here, we adopt <a href="https://www.microsoft.com/en-us/download/details.aspx?id
 
 Take the DRMM as an example. In training phase, you can run
 ```
-python main.py --phase train --model_file models/wikiqa_config/drmm_wikiqa.config
+python matchzoo/main.py --phase train --model_file examples/wikiqa/config/drmm_wikiqa.config
 ```
 In testing phase, you can run
 ```
-python main.py --phase predict --model_file models/wikiqa_config/drmm_wikiqa.config
+python matchzoo/main.py --phase predict --model_file examples/wikiqa/config/drmm_wikiqa.config
 ```
 
 We have compared 10 models, the results are as follows.
@@ -166,12 +166,12 @@ We have compared 10 models, the results are as follows.
 </table>
 The loss of each models are described in the following figure,
  <div align='center'>
-<img src="./data/matchzoo.wikiqa.loss.png" width = "550" alt="图片名称" align=center />
+<img src="./docs/_static/images/matchzoo.wikiqa.loss.png" width = "550" alt="图片名称" align=center />
 </div>
 
 The MAP of each models are depicted in the following figure,
 <div align='center'>
-<img src="./data/matchzoo.wikiqa.map.png" width = "550" alt="图片名称" align=center />
+<img src="./docs/_static_images/matchzoo.wikiqa.map.png" width = "550" alt="图片名称" align=center />
 </div>
 Here, the DRMM_TKS is a variant of DRMM for short text matching. Specifically, the matching histogram is replaced by a top-k maxpooling layer and the remaining part are fixed. 
 
@@ -297,11 +297,11 @@ Development Teams
 
 Acknowledgements
 =====
-We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Lijuan Chen](), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](), [Niuguo cheng](https://github.com/niuox) etc..
+We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Yukun Zheng](), [Lijuan Chen](), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](), [Niuguo cheng](https://github.com/niuox) etc..
 
 Feedback and Join Us
 =====
 Feel free to post any questions or suggestions on [GitHub Issues](https://github.com/faneshion/MatchZoo/issues) and we will reply to your questions there. You can also suggest adding new deep text maching models into MatchZoo and apply for joining us to develop MatchZoo together.
 <div align='center'>
-<img src="./data/matchzoo-group.jpeg" width = "200"  alt="图片名称" align=center />
+<img src="./docs/_static/images/matchzoo-group.jpeg" width = "200"  alt="图片名称" align=center />
 </div>

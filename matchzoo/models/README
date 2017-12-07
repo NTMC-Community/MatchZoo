@@ -1,5 +1,7 @@
-This directory contains all the matching models and their corresponding configuration files. All the models should be based on the `BasicModel` from model.py. And anyone can write their own text matching model just as the arci.py.
+This directory contains all the text matching models. All the models should be based on the `BasicModel` from model.py. And anyone can write their own text matching model just as the arci.py.
 
+
+Each model is correspong with a configuration file, which aims to specify the parameters in the model. The example config file can be found in "examples/toy_example/config/".
 The configuration file is in json format. It will be depicted in details as follows,
 1. "net_name" can be set to any names as you like.
 2. "global" contains some global parameters for training and predicting.
