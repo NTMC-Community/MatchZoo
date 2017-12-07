@@ -19,6 +19,12 @@ MatchZoo is a toolkit for text matching. It was developed with a focus on facili
     <td align="center", bgcolor=#eeeeee> classification </td>
   </tr>
   <tr>
+    <td align="center", bgcolor=#eeeeee> Textual Entailment </td>
+    <td align="center", bgcolor=#eeeeee> text </td>
+    <td align="center", bgcolor=#eeeeee> hypothesis </td>
+    <td align="center", bgcolor=#eeeeee> classification </td>
+  </tr>
+  <tr>
     <td align="center", bgcolor=#eeeeee> Question Answer </td>
     <td align="center", bgcolor=#eeeeee> question </td>
     <td align="center", bgcolor=#eeeeee> answer </td>
@@ -34,7 +40,7 @@ MatchZoo is a toolkit for text matching. It was developed with a focus on facili
     <td align="center", bgcolor=#eeeeee> Information Retrieval </td>
     <td align="center", bgcolor=#eeeeee> query </td>
     <td align="center", bgcolor=#eeeeee> document </td>
-    <td align="center", bgcolor=#eeeeee> classification/ranking </td>
+    <td align="center", bgcolor=#eeeeee> ranking </td>
   </tr>
 </table>
 
@@ -265,11 +271,12 @@ Project Organizers
     - [HomePage](http://www.bigdatalab.ac.cn/~cxq/)
 
 ## Environment
-* python2.7 (python3 support is under developing.)
+* python2.7+
 * tensorflow 1.2+
 * keras 2.06+
 * nltk 3.2.2+
 * tqdm 4.19.4+
+* h5py 2.7.1+
 
 Development Teams
 ====
