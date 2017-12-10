@@ -9,7 +9,7 @@ from preprocess import *
 
 
 if __name__ == '__main__':
-    basedir = '../../data/example/classification/'
+    basedir = '../../data/toy_example/classification/'
 
     # transform query/document pairs into corpus file and relation file
     prepare = Preparation()
