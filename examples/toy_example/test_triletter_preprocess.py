@@ -34,7 +34,7 @@ if __name__ == '__main__':
     run_mode = 'ranking'
     if len(sys.argv) > 1 and sys.argv[1] == 'classification':
         run_mode = 'classification'
-    basedir = '../../data/example/%s/'%(run_mode)
+    basedir = '../../data/toy_example/%s/'%(run_mode)
     in_dict_file = basedir + 'word_dict.txt'
     out_dict_file = basedir + 'triletter_dict.txt'
     word_triletter_map_file = basedir + 'word_triletter_map.txt'

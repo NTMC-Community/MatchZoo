@@ -12,7 +12,7 @@ if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == 'classification':
         run_mode = 'classification'
     bin_num = 30
-    path = '../../data/example/%s/'%(run_mode)
+    path = '../../data/toy_example/%s/'%(run_mode)
     embed_size = 50
     embedfile = path + 'embed_glove_d50_norm'
     corpfile = path + 'corpus_preprocessed.txt'
