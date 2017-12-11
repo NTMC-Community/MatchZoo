@@ -297,6 +297,9 @@ We would like to express our appreciation to the following people for contributi
 Feedback and Join Us
 =====
 Feel free to post any questions or suggestions on [GitHub Issues](https://github.com/faneshion/MatchZoo/issues) and we will reply to your questions there. You can also suggest adding new deep text maching models into MatchZoo and apply for joining us to develop MatchZoo together.
+
+Update in 12/10/2017: We have applied another WeChat ID: CLJ_Keep. Any one who want to join the WeChat group can add this WeChat id as a friend. Please tell us your name, company or school, city when you send such requests. After you added "CLJ_Keep" as one of your WeChat friends, she will invite you to join the MatchZoo WeChat group. "CLJ_Keep" is one member of the MatchZoo team.
+
 <div align='center'>
 <img src="./data/matchzoo-group.jpeg" width = "200"  alt="图片名称" align=center />
 </div>
