@@ -11,6 +11,6 @@ build/
 dist/
 log/*
 matchzoo/log/*
-matchzoo/querydecision/*
+matchzoo/querydecision/
 log/*
 .idea/
