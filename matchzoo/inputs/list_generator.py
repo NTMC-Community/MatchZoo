@@ -170,7 +170,7 @@ class Triletter_ListGenerator(ListBasicGenerator):
         word_triletter_map = {}
         for line in open(wt_map_file):
             r = line.strip().split()
-            word_triletter_map[r[0]] = r[1:]
+            word_triletter_map[int(r[0])] = list(map(int, r[1:]))
         return word_triletter_map
 
     def map_word_to_triletter(self, words):
