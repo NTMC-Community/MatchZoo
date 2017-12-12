@@ -23,6 +23,9 @@ import inputs
 import metrics
 from losses import *
 
+config = tensorflow.ConfigProto()
+config.gpu_options.allow_growth = True
+sess = tensorflow.Session(config = config)
 
 def load_model(config):
     global_conf = config["global"]

@@ -104,9 +104,9 @@ We have compared 10 models, the results are as follows.
   </tr>
   <tr>
     <td align="center", bgcolor=#eeeeee> DSSM </td>
-    <td align="center", bgcolor=#eeeeee> 0.3412 </td>
-    <td align="center", bgcolor=#eeeeee> 0.4179 </td>
-    <td align="center", bgcolor=#eeeeee> 0.3840 </td>
+    <td align="center", bgcolor=#eeeeee> 0.5439 </td>
+    <td align="center", bgcolor=#eeeeee> 0.6134 </td>
+    <td align="center", bgcolor=#eeeeee> 0.5647 </td>
   </tr>
   <tr>
   	 <td align="center", bgcolor=#eeeeee> CDSSM </td>
