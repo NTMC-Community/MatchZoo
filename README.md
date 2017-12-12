@@ -171,7 +171,7 @@ The loss of each models are described in the following figure,
 
 The MAP of each models are depicted in the following figure,
 <div align='center'>
-<img src="./docs/_static_images/matchzoo.wikiqa.map.png" width = "550" alt="图片名称" align=center />
+<img src="./docs/_static/images/matchzoo.wikiqa.map.png" width = "550" alt="图片名称" align=center />
 </div>
 Here, the DRMM_TKS is a variant of DRMM for short text matching. Specifically, the matching histogram is replaced by a top-k maxpooling layer and the remaining part are fixed. 
 
