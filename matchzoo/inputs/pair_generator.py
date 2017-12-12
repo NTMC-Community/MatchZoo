@@ -193,7 +193,7 @@ class Triletter_PairGenerator(PairBasicGenerator):
         word_triletter_map = {}
         for line in open(wt_map_file):
             r = line.strip().split()
-            word_triletter_map[int(r[0])] = map(int, r[1:])
+            word_triletter_map[int(r[0])] = list(map(int, r[1:]))
         return word_triletter_map
 
     def map_word_to_triletter(self, words):
@@ -260,16 +260,18 @@ class Triletter_PairGenerator(PairBasicGenerator):
                 X1, X2 = [], []
                 for i in range(self.batch_size):
                     d1, d2p, d2n = random.choice(self.pair_list)
-                    d1_len = len(list(self.data1[d1]))
-                    d2p_len = len(list(self.data2[d2p]))
-                    d2n_len = len(list(self.data2[d2n]))
+                    d1_cont = list(self.data1[d1])
+                    d2p_cont = list(self.data2[d2p])
+                    d2n_cont = list(self.data2[d2n])
+                    d1_len = len(d1_cont)
+                    d2p_len = len(d2p_cont)
+                    d2n_len = len(d2n_cont)
                     X1_len[i*2],  X1_len[i*2+1]   = d1_len, d1_len
                     X2_len[i*2],  X2_len[i*2+1]   = d2p_len, d2n_len
-                    X1.append(self.map_word_to_triletter(self.data1[d1]))
-                    X1.append(self.map_word_to_triletter(self.data1[d1]))
-                    X2.append(self.map_word_to_triletter(self.data2[d2p]))
-                    X2.append(self.map_word_to_triletter(self.data2[d2n]))
-
+                    X1.append(self.map_word_to_triletter(d1_cont))
+                    X1.append(self.map_word_to_triletter(d1_cont))
+                    X2.append(self.map_word_to_triletter(d2p_cont))
+                    X2.append(self.map_word_to_triletter(d2n_cont))
                 if self.dtype == 'dssm':
                     yield self.transfer_feat2sparse(X1).toarray(), X1_len, self.transfer_feat2sparse(X2).toarray(), X2_len, Y
                 elif self.dtype == 'cdssm':
