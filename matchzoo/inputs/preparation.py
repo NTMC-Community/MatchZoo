@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-
-
 from __future__ import print_function
+
 import sys
 import os
+import codecs
 import numpy as np
 import hashlib
 import random
@@ -43,9 +43,9 @@ class Preparation(object):
         hashid = {}
         corpus = {}
         rels = []
-        f = open(file_path, 'r')
+        f = codecs.open(file_path, 'r', encoding='utf8')
         for line in f:
-            line = line.decode('utf8')
+            line = line
             line = line.strip()
             label, t1, t2 = self.parse_line(line)
             id1 = self.get_text_id(hashid, t1, 'T')
@@ -62,9 +62,9 @@ class Preparation(object):
         corpus_q = {}
         corpus_d = {}
         rels = []
-        f = open(file_path, 'r')
+        f = codecs.open(file_path, 'r', encoding='utf8')
         for line in f:
-            line = line.decode('utf8')
+            line = line
             line = line.strip()
             label, t1, t2 = self.parse_line(line)
             id1 = self.get_text_id(hashid_q, t1, 'Q')
@@ -104,9 +104,9 @@ class Preparation(object):
                 rels = rels_valid
             if file_path == test_file:
                 rels = rels_test
-            f = open(file_path, 'r')
+            f = codecs.open(file_path, 'r', encoding='utf8')
             for line in f:
-                line = line.decode('utf8')
+                line = line
                 line = line.strip()
                 label, t1, t2 = self.parse_line(line)
                 id2 = self.get_text_id(hashid, t2, 'D')
@@ -127,9 +127,9 @@ class Preparation(object):
 
     @staticmethod
     def save_corpus(file_path, corpus):
-        f = open(file_path, 'w')
+        f = codecs.open(file_path, 'w', encoding='utf8')
         for qid, text in corpus.items():
-            f.write('%s %s\n' % (qid, text.encode('utf8')))
+            f.write('%s %s\n' % (qid, text))
         f.close()
 
     @staticmethod
@@ -147,11 +147,11 @@ class Preparation(object):
 
     @staticmethod
     def check_filter_query_with_dup_doc(input_file):
-        ''' Filter queries with duplicated doc ids in the relation files
+        """ Filter queries with duplicated doc ids in the relation files
         :param input_file: input file, which could be the relation file for train/valid/test data
                            The format is "label qid did"
         :return:
-        '''
+        """
         with open(input_file) as f_in, open(input_file + '.fd', 'w') as f_out:
             cur_qid = 'init'
             cache_did_set = set()
@@ -171,10 +171,8 @@ class Preparation(object):
                     if not found_dup_doc:
                         f_out.write(''.join(cache_q_lines))
                     else:
-                        print
-                        'found qid with duplicated doc id/text: ', ''.join(cache_q_lines)
-                        print
-                        'filtered... continue'
+                        print('found qid with duplicated doc id/text: ', ''.join(cache_q_lines))
+                        print('filtered... continue')
                     cache_q_lines = []
                     cache_q_lines.append(l)
                     found_dup_doc = False
@@ -183,13 +181,12 @@ class Preparation(object):
                     cache_did_set.add(tokens[2])
             # the last query
             # print len(cache_q_lines), len(cache_did_set)
-            if (len(cache_q_lines) != 0 and len(cache_q_lines) == len(cache_did_set)):
+            if len(cache_q_lines) != 0 and len(cache_q_lines) == len(cache_did_set):
                 f_out.write(''.join(cache_q_lines))
-                print
-                'write the last query... done: ', ''.join(cache_q_lines)
+                print('write the last query... done: ', ''.join(cache_q_lines))
 
     @staticmethod
-    def split_train_valid_test(relations, ratio=[0.8, 0.1, 0.1]):
+    def split_train_valid_test(relations, ratio=(0.8, 0.1, 0.1)):
         random.shuffle(relations)
         total_rel = len(relations)
         num_train = int(total_rel * ratio[0])
@@ -201,7 +198,7 @@ class Preparation(object):
         return rel_train, rel_valid, rel_test
 
     @staticmethod
-    def split_train_valid_test_for_ranking(relations, ratio=[0.8, 0.1, 0.1]):
+    def split_train_valid_test_for_ranking(relations, ratio=(0.8, 0.1, 0.1)):
         qid_group = set()
         for r, q, d in relations:
             qid_group.add(q)
@@ -240,7 +237,7 @@ if __name__ == '__main__':
     print('total relations : %d ...' % (len(rels)))
     prepare.save_corpus(basedir + 'corpus.txt', corpus)
 
-    rel_train, rel_valid, rel_test = prepare.split_train_valid_test(rels, [0.8, 0.1, 0.1])
+    rel_train, rel_valid, rel_test = prepare.split_train_valid_test(rels, (0.8, 0.1, 0.1))
     prepare.save_relation(basedir + 'relation_train.txt', rel_train)
     prepare.save_relation(basedir + 'relation_valid.txt', rel_valid)
     prepare.save_relation(basedir + 'relation_test.txt', rel_test)
