@@ -83,6 +83,13 @@ def load_word_embedding(vocab, w2v_file):
             embeddings[vocab[word]] = [float(x) for x in entries]
             pre_trained[word] = 1
 
+    # init tht OOV word embeddings
+    for word in vocab:
+        if word not in pre_trained:
+            alpha = 0.5 * (2.0 * np.random.random() - 1.0)
+            curr_embed = (2.0 * np.random.random_sample([dim]) - 1.0) * alpha
+            embeddings[vocab[word]] = curr_embed
+
     pre_trained_len = len(pre_trained)
     print('Pre-trained: {}/{} {:.2f}'.format(pre_trained_len, n_words, pre_trained_len * 100.0 / n_words))
 
