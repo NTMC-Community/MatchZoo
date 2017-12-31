@@ -1,4 +1,5 @@
 #!/bin/bash
+# help, dos2unix file
 # download the wiki-qa dataset
 wget https://download.microsoft.com/download/E/5/F/E5FCFCEE-7005-4814-853D-DAA7C66507E0/WikiQACorpus.zip
 unzip WikiQACorpus.zip
@@ -18,9 +19,9 @@ python transfer_to_mz_format.py
 python prepare_mz_data.py
 
 # generate word embedding
-python gen_w2v.py  glove.840B.300d.txt word_dict.txt embed_glove_d300
+python gen_w2v.py glove.840B.300d.txt word_dict.txt embed_glove_d300
 python norm_embed.py embed_glove_d300 embed_glove_d300_norm
-python gen_w2v.py  glove.6B.50d.txt word_dict.txt embed_glove_d50
+python gen_w2v.py glove.6B.50d.txt word_dict.txt embed_glove_d50
 python norm_embed.py embed_glove_d50 embed_glove_d50_norm
 
 # generate data histograms for drmm model
