@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
-'''
+"""
 Generate bin sum used in the attention based neural matching model (aNMM)
-'''
+"""
+from __future__ import print_function
+
 import os
 import sys
 sys.path.append('../../matchzoo/utils/')
@@ -29,7 +31,7 @@ if __name__ == '__main__':
     embed_dict = read_embedding(filename = embedfile)
     print('read embedding finished ...')
     _PAD_ = len(embed_dict)
-    embed_size = len(embed_dict[embed_dict.keys()[0]])
+    embed_size = len(list(embed_dict.values())[0])
     embed_dict[_PAD_] = np.zeros((embed_size, ), dtype=np.float32)
     embed = np.float32(np.random.uniform(-0.2, 0.2, [_PAD_+1, embed_size]))
     embed = convert_embed_2_numpy(embed_dict, embed = embed)
@@ -51,4 +53,4 @@ if __name__ == '__main__':
             fout.write(' '.join(map(str, curr_bin_sum)))
             fout.write('\n')
         fout.close()
-    print 'generate bin sum finished ...'
+    print('generate bin sum finished ...')
