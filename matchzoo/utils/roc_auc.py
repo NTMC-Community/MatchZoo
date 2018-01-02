@@ -1,10 +1,14 @@
-# -*- coding: utf8 -*-
-#drow the ROC
+# coding: utf8
+""" drow the ROC
+"""
+from __future__ import print_function
+
 import sys
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as pl
 # Force matplotlib to not use any Xwindows backend.
+
 
 def calculate_roc_auc(file_path, roc_save_path, title):
     db = []
@@ -19,7 +23,7 @@ def calculate_roc_auc(file_path, roc_save_path, title):
                 neg_count += 1
             else:
                 pos_count += 1
-    db = sorted(db, key=lambda x:x[0], reverse=True) #é™åº
+    db = sorted(db, key=lambda x: x[0], reverse=True) # é™åº
     #è®¡ç®—ROCåæ ‡ç‚¹
     xy_arr = []
     tp, fp = 0., 0.
@@ -36,7 +40,7 @@ def calculate_roc_auc(file_path, roc_save_path, title):
         if x != prev_x:
             auc += (x - prev_x) * y
             prev_x = x
-    print "the auc is %s."%auc
+    print("the auc is %s." % auc)
     x = [_v[0] for _v in xy_arr]
     y = [_v[1] for _v in xy_arr]
     pl.title("%s ROC curve (AUC = %.4f)" % (title, auc))
@@ -44,7 +48,7 @@ def calculate_roc_auc(file_path, roc_save_path, title):
     pl.ylabel("True Positive Rate")
     pl.plot(x, y)
     pl.savefig(roc_save_path)
-    #pl.show()
+    # pl.show()
 
 
 if __name__ == '__main__':
