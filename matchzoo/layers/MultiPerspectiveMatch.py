@@ -179,8 +179,9 @@ def cal_maxpooling_matching(d_rep, q_rep, M):
     elems = (d_rep, q_rep)
     matching_matrix = K.tf.map_fn(singel_instance, elems, dtype=K.tf.float32)  # [batch, d_len, q_len, channel]
     # return K.tf.reduce_max(matching_matrix, axis=2)
-    return K.tf.concat(2, [K.tf.reduce_max(matching_matrix, axis=2),
-                           K.tf.reduce_mean(matching_matrix, axis=2)])  # [batch, d_len, 2*channel]
+    return K.tf.concat([K.tf.reduce_max(matching_matrix, axis=2),
+                        K.tf.reduce_mean(matching_matrix, axis=2)],
+                       axis=2)  # [batch, d_len, 2*channel]
 
 
 def cal_attentive_matching(d_rep, att_q_rep, M):
