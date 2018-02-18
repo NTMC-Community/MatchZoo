@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
-
+from __future__ import  print_function
 
 import os
 import sys
@@ -10,12 +10,15 @@ sys.path.append('../../matchzoo/utils/')
 from preparation import Preparation
 from preprocess import Preprocess, NgramUtil
 
+
 def read_dict(infile):
     word_dict = {}
     for line in open(infile):
         r = line.strip().split()
         word_dict[r[1]] = r[0]
     return word_dict
+
+
 def read_doc(infile):
     doc = {}
     for line in open(infile):
@@ -23,14 +26,17 @@ def read_doc(infile):
         doc[r[0]] = r[1:]
         #assert len(doc[r[0]]) == int(r[1])
     return doc
+
+
 def filter_triletter(tri_stats, min_filter_num=5, max_filter_num=10000):
     tri_dict = {}
     tri_stats = sorted(tri_stats.items(), key=lambda d:d[1], reverse=True)
     for triinfo in tri_stats:
-        if triinfo[1] >= min_filter_num and triinfo[1] <= max_filter_num:
+        if min_filter_num <= triinfo[1] <= max_filter_num:
             if triinfo[0] not in tri_dict:
                 tri_dict[triinfo[0]] = len(tri_dict)
     return tri_dict
+
 
 if __name__ == '__main__':
     prepare = Preparation()
@@ -61,8 +67,8 @@ if __name__ == '__main__':
     fout.close()
     print('Preprocess finished ...')
 
-    #dssm_corp_input = dstdir + 'corpus_preprocessed.txt'
-    #dssm_corp_output = dstdir + 'corpus_preprocessed_dssm.txt'
+    # dssm_corp_input = dstdir + 'corpus_preprocessed.txt'
+    # dssm_corp_output = dstdir + 'corpus_preprocessed_dssm.txt'
     word_dict_input = dstdir + 'word_dict.txt'
     triletter_dict_output = dstdir + 'triletter_dict.txt'
     word_triletter_output = dstdir + 'word_triletter_map.txt'
@@ -81,10 +87,10 @@ if __name__ == '__main__':
     triletter_dict = filter_triletter(triletter_stats, 5, 10000)
     with open(triletter_dict_output, 'w') as f:
         for tri_id, tric in triletter_dict.items():
-            print >> f, tri_id, tric
+            print(f, tri_id, tric, file=f)
     with open(word_triletter_output, 'w') as f:
         for wid, trics in word_triletter_map.items():
-            print >> f, wid, ' '.join([str(triletter_dict[k]) for k in trics if k in triletter_dict])
+            print(wid, ' '.join([str(triletter_dict[k]) for k in trics if k in triletter_dict]), file=f)
 
     print('Triletter Processing finished ...')
 

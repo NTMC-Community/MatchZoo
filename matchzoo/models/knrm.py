@@ -1,17 +1,13 @@
 # -*- coding=utf-8 -*-
 from __future__ import print_function
 from __future__ import absolute_import
-import keras
-import keras.backend as K
-from keras.models import Sequential, Model
-from keras.layers import *
-from keras.activations import softmax
 from keras.optimizers import Adam
 from keras.initializers import Constant, RandomNormal
 from keras.constraints import maxnorm, unitnorm, non_neg, min_max_norm, non_neg
 from keras.regularizers import l2, l1
+from keras.layers import Input, Embedding, Dense, Activation, Lambda, Dot
+from keras.activations import softmax
 from model import BasicModel
-
 from utils.utility import *
 
 class KNRM(BasicModel):
@@ -36,17 +32,20 @@ class KNRM(BasicModel):
     def build(self):
         def Kernel_layer(mu,sigma):
             def kernel(x):
-                return K.tf.exp(-0.5*(x-mu)*(x-mu)/sigma/sigma)
+                return K.tf.exp(-0.5 * (x - mu) * (x - mu) / sigma / sigma)
             return Activation(kernel)
 
         query = Input(name='query', shape=(self.config['text1_maxlen'],))
+        show_layer_info('Input', query)
         doc = Input(name='doc', shape=(self.config['text2_maxlen'],))
-
+        show_layer_info('Input', doc)
         embedding = Embedding(self.config['vocab_size'], self.config['embed_size'], weights=[self.config['embed']], trainable=self.config['train_embed'])
         q_embed = embedding(query)
+        show_layer_info('Embedding', q_embed)
         d_embed = embedding(doc)
+        show_layer_info('Embedding', d_embed)
         mm = Dot(axes=[2, 2], normalize=True)([q_embed, d_embed])
-        show_layer_info('mm', mm)
+        show_layer_info('Dot', mm)
 
         KM = []
         for i in range(self.config['kernel_num']):
@@ -55,22 +54,24 @@ class KNRM(BasicModel):
             if mu > 1.0:
                 sigma = self.config['exact_sigma']
                 mu = 1.0
+            mm_exp = Kernel_layer(mu, sigma)(mm)
+            show_layer_info('Exponent of mm:', mm_exp)
+            mm_doc_sum = Lambda(lambda x: K.tf.reduce_sum(x,2))(mm_exp)
+            show_layer_info('Sum of document', mm_doc_sum)
+            mm_log = Activation(K.tf.log1p)(mm_doc_sum)
+            show_layer_info('Logarithm of sum', mm_log)
+            mm_sum = Lambda(lambda x: K.tf.reduce_sum(x, 1))(mm_log)
+            show_layer_info('Sum of all exponent', mm_sum)
+            KM.append(mm_sum)
 
-            mm_exp = Kernel_layer(mu,sigma)(mm)
-            show_layer_info('mm_exp '+str(i), mm_exp)
-            mm_1_sum = Lambda(lambda x:K.tf.reduce_sum(x,2))(mm_exp)
-            show_layer_info('mm_1_sum '+str(i), mm_1_sum)
-            mm_log = Activation(K.tf.log1p)(mm_1_sum)
-            show_layer_info('mm_log '+str(i), mm_log)
-            mm_2_sum = Lambda(lambda x:K.tf.reduce_sum(x,1))(mm_log)
-            show_layer_info('mm_2_sum '+str(i), mm_2_sum)
-            KM.append(mm_2_sum)
-
-
-        show_layer_info('KM 0 ', KM[0])
         Phi = Lambda(lambda x: K.tf.stack(x, 1))(KM)
-        show_layer_info('Phi ', Phi)
-        out_ = Dense(1, kernel_initializer=initializers.RandomUniform(minval=-0.014, maxval=0.014), bias_initializer='zeros')(Phi)
+        show_layer_info('Stack', Phi)
+        if self.config['target_mode'] == 'classification':
+            out_ = Dense(2, activation='softmax', kernel_initializer=initializers.RandomUniform(minval=-0.014, maxval=0.014), bias_initializer='zeros')(Phi)
+        elif self.config['target_mode'] in ['regression', 'ranking']:
+            out_ = Dense(1, kernel_initializer=initializers.RandomUniform(minval=-0.014, maxval=0.014), bias_initializer='zeros')(Phi)
+        show_layer_info('Dense', out_)
+
         model = Model(inputs=[query, doc], outputs=[out_])
         return model
 

@@ -3,7 +3,7 @@
 </div>
 
 ---
-MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
+MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users.
 
 <table>
   <tr>
@@ -162,6 +162,12 @@ We have compared 10 models, the results are as follows.
   	 <td align="center", bgcolor=#eeeeee> 0.6956 </td>
   	 <td align="center", bgcolor=#eeeeee> 0.6586 </td>
   </tr>
+  <tr>
+  	 <td align="center", bgcolor=#eeeeee> K-NRM </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6268 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6693 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6256 </td>
+  </tr>
  
 </table>
 The loss of each models are described in the following figure,
@@ -182,7 +188,7 @@ Here, the DRMM_TKS is a variant of DRMM for short text matching. Specifically, t
 this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf">A Deep Relevance Matching Model for Ad-hoc Retrieval</a>.
 
 - model file: models/drmm.py
-- config file: models/drmm_ranking.config
+- model config: models/drmm_ranking.config
 
 ---
 2. MatchPyramid
@@ -190,7 +196,7 @@ this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/pap
 this model is an implementation of <a href="https://arxiv.org/abs/1602.06359"> Text Matching as Image Recognition</a>
 
 - model file: models/matchpyramid.py
-- config file: models/matchpyramid_ranking.config
+- model config: models/matchpyramid_ranking.config
 
 ---
 3. ARC-I
@@ -206,7 +212,7 @@ this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Co
 this model is an implementation of <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/cikm2013_DSSM_fullversion.pdf">Learning Deep Structured Semantic Models for Web Search using Clickthrough Data</a>
 
 - model file: models/dssm.py
-- config file: models/dssm_ranking.config
+- model config: models/dssm_ranking.config
 
 ---
 5. CDSSM
@@ -214,7 +220,7 @@ this model is an implementation of <a href="https://www.microsoft.com/en-us/rese
 this model is an implementation of <a href="https://www.microsoft.com/en-us/research/publication/learning-semantic-representations-using-convolutional-neural-networks-for-web-search/">Learning Semantic Representations Using Convolutional Neural Networks for Web Search</a>
 
 - model file: models/cdssm.py
-- config file: models/cdssm_ranking.config
+- model config: models/cdssm_ranking.config
 
 ---
 6. ARC-II
@@ -248,9 +254,17 @@ this model is an implementation of <a href="https://dl.acm.org/citation.cfm?id=3
 - model config: models/duet_ranking.config
 
 ---
-10. models under development:
+10. K-NRM
 
-<a href="https://arxiv.org/abs/1604.04378">Match-SRNN</a>, <a href="https://arxiv.org/abs/1710.05649">DeepRank</a>, <a href="https://arxiv.org/abs/1706.06613">K-NRM</a> ....
+this model is an implementation of <a href="https://arxiv.org/abs/1706.06613">End-to-End Neural Ad-hoc Ranking with Kernel Pooling</a>
+
+- model file: models/knrm.py
+- model config: models/knrm_ranking.config
+
+---
+11. models under development:
+
+<a href="https://arxiv.org/abs/1604.04378">Match-SRNN</a>, <a href="https://arxiv.org/abs/1710.05649">DeepRank</a> ....
 
 ## Citation
 
@@ -297,7 +311,7 @@ Development Teams
 
 Acknowledgements
 =====
-We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Yukun Zheng](), [Lijuan Chen](), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](), [Niuguo cheng](https://github.com/niuox) etc..
+We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Yukun Zheng](), [Lijuan Chen](), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](https://github.com/zhouzhouyang520), [Niuguo cheng](https://github.com/niuox) etc..
 
 Feedback and Join Us
 =====
