@@ -1,12 +1,14 @@
 # -*- coding=utf-8 -*-
 from __future__ import print_function
 from __future__ import absolute_import
+from keras.models import Model
 from keras.optimizers import Adam
-from keras.initializers import Constant, RandomNormal
 from keras.constraints import maxnorm, unitnorm, non_neg, min_max_norm, non_neg
 from keras.regularizers import l2, l1
 from keras.layers import Input, Embedding, Dense, Activation, Lambda, Dot
 from keras.activations import softmax
+from keras import initializers
+from keras import backend as K
 from model import BasicModel
 from utils.utility import *
 
