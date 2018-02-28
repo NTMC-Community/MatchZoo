@@ -39,6 +39,37 @@ class Preparation(object):
         else:
             return subs[0], subs[1], subs[2]
 
+    def parse_line_for_quora(self, line, delimiter='","'):
+        subs = line.split(delimiter)
+        #print('subs: ', len(subs))
+        # if subs[1]=="qid1":
+        #     return
+        if 6 != len(subs):
+            # print( "line__not satisfied",line)
+            # raise ValueError('format of data file wrong, should be \'label,text1,text2\'.')
+            return 0, 0, 0, 0, 0
+        else:
+            return subs[1], subs[2], subs[3], subs[4], subs[5][0]
+
+    def run_with_one_corpus_for_quora(self, file_path):
+        # hashid = {}
+        corpus = {}
+        rels = []
+        f = open(file_path, 'r')
+        next(f)
+        for line in f:
+            # print("", i)
+            # print("", i)
+            line = line.decode('utf8')
+            line = line.strip()
+            qid1, qid2, q1, q2, label = self.parse_line_for_quora(line)
+            if q1 != 0:
+                corpus[qid1] = q1
+                corpus[qid2] = q2
+                rels.append((label, qid1, qid2))
+        f.close()
+        return corpus, rels
+
     def run_with_one_corpus(self, file_path):
         hashid = {}
         corpus = {}
