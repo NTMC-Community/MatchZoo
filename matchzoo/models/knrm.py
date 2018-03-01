@@ -1,10 +1,6 @@
 # -*- coding=utf-8 -*-
 from __future__ import print_function
 from __future__ import absolute_import
-import keras
-import keras.backend as K
-from keras.models import Sequential, Model
-from keras.layers import *
 from keras.activations import softmax
 from keras.optimizers import Adam
 from keras.initializers import Constant, RandomNormal
@@ -36,6 +32,7 @@ class KNRM(BasicModel):
     def build(self):
         def Kernel_layer(mu,sigma):
             def kernel(x):
+<<<<<<< HEAD
                 return K.tf.exp(-0.5*(x-mu)*(x-mu)/sigma/sigma)
             return Activation(kernel)
 
@@ -55,7 +52,6 @@ class KNRM(BasicModel):
             if mu > 1.0:
                 sigma = self.config['exact_sigma']
                 mu = 1.0
-
             mm_exp = Kernel_layer(mu,sigma)(mm)
             show_layer_info('mm_exp '+str(i), mm_exp)
             mm_1_sum = Lambda(lambda x:K.tf.reduce_sum(x,2))(mm_exp)
@@ -65,8 +61,6 @@ class KNRM(BasicModel):
             mm_2_sum = Lambda(lambda x:K.tf.reduce_sum(x,1))(mm_log)
             show_layer_info('mm_2_sum '+str(i), mm_2_sum)
             KM.append(mm_2_sum)
-
-
         show_layer_info('KM 0 ', KM[0])
         Phi = Lambda(lambda x: K.tf.stack(x, 1))(KM)
         show_layer_info('Phi ', Phi)

@@ -1,11 +1,16 @@
-#!/usr/bin/env python
 # coding: utf-8
+"""
+filter queries which have no right or wrong answers
+Given dev.txt, dev.ref, dev-filtered.ref
+Output dev-filtered.ref
+"""
+from __future__ import print_function
 
 import os
 import sys
 
-
 if __name__ == '__main__':
+
     basedir = './WikiQACorpus/'
     filter_reffile = [basedir + 'WikiQA-dev-filtered.ref', basedir + 'WikiQA-test-filtered.ref']
     in_reffile = [basedir + 'WikiQA-dev.ref', basedir + 'WikiQA-test.ref']
@@ -25,10 +30,9 @@ if __name__ == '__main__':
             r = line.strip().split()
             all_qids.append(r[0])
 
-
         for idx,line in enumerate(open(in_corpfile[i], 'r')):
             if all_qids[idx] not in filtered_qids:
                 continue
-            print >> fout, line.strip()
+            print(line.strip(), file=fout)
         fout.close()
 

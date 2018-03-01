@@ -3,7 +3,7 @@
 </div>
 
 ---
-MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code constributions, suggestions, comments from all our MatchZoo users.
+MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users.
 
 <table>
   <tr>
@@ -182,7 +182,7 @@ Here, the DRMM_TKS is a variant of DRMM for short text matching. Specifically, t
 this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf">A Deep Relevance Matching Model for Ad-hoc Retrieval</a>.
 
 - model file: models/drmm.py
-- config file: models/drmm_ranking.config
+- model config: models/drmm_ranking.config
 
 ---
 2. MatchPyramid
@@ -190,7 +190,7 @@ this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/pap
 this model is an implementation of <a href="https://arxiv.org/abs/1602.06359"> Text Matching as Image Recognition</a>
 
 - model file: models/matchpyramid.py
-- config file: models/matchpyramid_ranking.config
+- model config: models/matchpyramid_ranking.config
 
 ---
 3. ARC-I
@@ -206,7 +206,7 @@ this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Co
 this model is an implementation of <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/cikm2013_DSSM_fullversion.pdf">Learning Deep Structured Semantic Models for Web Search using Clickthrough Data</a>
 
 - model file: models/dssm.py
-- config file: models/dssm_ranking.config
+- model config: models/dssm_ranking.config
 
 ---
 5. CDSSM
@@ -214,7 +214,7 @@ this model is an implementation of <a href="https://www.microsoft.com/en-us/rese
 this model is an implementation of <a href="https://www.microsoft.com/en-us/research/publication/learning-semantic-representations-using-convolutional-neural-networks-for-web-search/">Learning Semantic Representations Using Convolutional Neural Networks for Web Search</a>
 
 - model file: models/cdssm.py
-- config file: models/cdssm_ranking.config
+- model config: models/cdssm_ranking.config
 
 ---
 6. ARC-II
