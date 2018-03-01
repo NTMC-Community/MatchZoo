@@ -1,0 +1,6 @@
+*.txt
+*.zip
+*.csv
+oov.p
+embed*
+WikiQACorpus/*

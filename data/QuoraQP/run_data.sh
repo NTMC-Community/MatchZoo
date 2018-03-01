@@ -2,12 +2,13 @@
 #Attention；You need to  register the Kaggle account to download the dataset
 
 # download the quora train dataset
-#wget --keep-session-cookies --save-cookies cookies.txt --post-data "username=username&password=password" "https://www.kaggle.com/account/login?isModal=true&returnUrl=/"
-#wget --load-cookies=cookies.txt  "https://www.kaggle.com/c/quora-question-pairs/download/train.csv.zip"
-#unzip train.csv.zip
+wget --keep-session-cookies --save-cookies cookies.txt --post-data "username=username&password=password" "https://www.kaggle.com/account/login?isModal=true&returnUrl=/"
+wget --keep-session-cookies --save-cookies cookies.txt --post-data "username=eshion&password=137387366" "https://www.kaggle.com/account/login?isModal=true&returnUrl=/"
+wget --load-cookies=cookies.txt  "https://www.kaggle.com/c/quora-question-pairs/download/train.csv.zip"
+unzip train.csv.zip
 #download the quora test dataset
-#wget --load-cookies=cookies.txt "https://www.kaggle.com/c/quora-question-pairs/download/test.csv.zip"
-#unzip test.csv.zip
+wget --load-cookies=cookies.txt "https://www.kaggle.com/c/quora-question-pairs/download/test.csv.zip"
+unzip test.csv.zip
 
 #You can also download and unzip it manually on the official web, and save it to the current directory
 
