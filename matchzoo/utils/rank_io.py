@@ -5,6 +5,7 @@ from __future__ import print_function
 import json
 import numpy as np
 
+
 # Read Word Dict and Inverse Word Dict
 def read_word_dict(filename):
     word_dict = {}
@@ -16,6 +17,7 @@ def read_word_dict(filename):
     print('[%s]\n\tWord dict size: %d' % (filename, len(word_dict)), end='\n')
     return word_dict, iword_dict
 
+
 # Read Embedding File
 def read_embedding(filename):
     embed = {}
@@ -24,6 +26,7 @@ def read_embedding(filename):
         embed[int(line[0])] = list(map(float, line[1:]))
     print('[%s]\n\tEmbedding size: %d' % (filename, len(embed)), end='\n')
     return embed
+
 
 # Read old version data
 def read_data_old_version(filename):
@@ -37,6 +40,7 @@ def read_data_old_version(filename):
     print('[%s]\n\tInstance size: %d' % (filename, len(data)), end='\n')
     return data
 
+
 # Read Relation Data
 def read_relation(filename, verbose=True):
     data = []
@@ -46,6 +50,7 @@ def read_relation(filename, verbose=True):
     if verbose:
         print('[%s]\n\tInstance size: %s' % (filename, len(data)), end='\n')
     return data
+
 
 # Read varied-length features without id
 def read_features_without_id(filename, verbose=True):
@@ -57,6 +62,7 @@ def read_features_without_id(filename, verbose=True):
         print('[%s]\n\tFeature size: %s' % (filename, len(features)), end='\n')
     return features
 
+
 # Read varied-length features with id
 def read_features_with_id(filename, verbose=True):
     features = {}
@@ -67,13 +73,14 @@ def read_features_with_id(filename, verbose=True):
         print('[%s]\n\tFeature size: %s' % (filename, len(features)), end='\n')
     return features
 
+
 # Read Data Dict
 def read_data(filename, word_dict = None):
     data = {}
     for line in open(filename):
         line = line.strip().split()
         tid = line[0]
-        if word_dict == None:
+        if word_dict is None:
             data[tid] = list(map(int, line[2:]))
         else:
             data[tid] = []
@@ -84,11 +91,17 @@ def read_data(filename, word_dict = None):
     print('[%s]\n\tData size: %s' % (filename, len(data)), end='\n')
     return data, word_dict
 
+
 # Convert Embedding Dict 2 numpy array
 def convert_embed_2_numpy(embed_dict, max_size=0, embed=None):
     feat_size = len(embed_dict[list(embed_dict.keys())[0]])
     if embed is None:
-        embed = np.zeros( (max_size, feat_size), dtype = np.float32 )
+        embed = np.zeros((max_size, feat_size), dtype=np.float32)
+
+    if len(embed_dict) != len(embed):
+        raise Exception("vocab_size %d is not equal to embed_size %d, change the vocab_size in the config!"
+                        % (len(embed_dict), len(embed)))
+
     for k in embed_dict:
         embed[k] = np.array(embed_dict[k])
     print('Generate numpy embed: %s', str(embed.shape), end='\n')
