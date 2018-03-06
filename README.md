@@ -139,6 +139,12 @@ We have compared 10 models, the results are as follows.
   	 <td align="center", bgcolor=#eeeeee> 0.6195 </td>
   </tr>
   <tr>
+  	 <td align="center", bgcolor=#eeeeee> K-NRM </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6268 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6693 </td>
+  	 <td align="center", bgcolor=#eeeeee> 0.6256 </td>
+  </tr>
+  <tr>
      <td align="center", bgcolor=#eeeeee> aNMM </td>
      <td align="center", bgcolor=#eeeeee> 0.6160 </td>
      <td align="center", bgcolor=#eeeeee> 0.6696 </td>
@@ -248,9 +254,25 @@ this model is an implementation of <a href="https://dl.acm.org/citation.cfm?id=3
 - model config: models/duet_ranking.config
 
 ---
-10. models under development:
+10. K-NRM
 
-<a href="https://arxiv.org/abs/1604.04378">Match-SRNN</a>, <a href="https://arxiv.org/abs/1710.05649">DeepRank</a>, <a href="https://arxiv.org/abs/1706.06613">K-NRM</a> ....
+this model is an implementation of <a href="https://arxiv.org/abs/1706.06613">End-to-End Neural Ad-hoc Ranking with Kernel Pooling</a>
+
+- model file: models/knrm.py
+- model config: models/knrm_ranking.config
+
+---
+11. CONV-KNRM:
+
+this model is an implementation of <a href="http://www.cs.cmu.edu/~zhuyund/papers/WSDM_2018_Dai.pdf">Convolutional neural networks for soft-matching n-grams in ad-hoc search</a>
+
+- model file: models/convknrm.py
+- model config: models/convknrm.config
+
+---
+12. models under development:
+
+<a href="https://arxiv.org/abs/1604.04378">Match-SRNN</a>, <a href="https://arxiv.org/abs/1710.05649">DeepRank</a> ....
 
 ## Citation
 
@@ -297,7 +319,7 @@ Development Teams
 
 Acknowledgements
 =====
-We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Yukun Zheng](), [Lijuan Chen](), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](), [Niuguo cheng](https://github.com/niuox) etc..
+We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Yukun Zheng](), [Lijuan Chen](), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](https://github.com/zhouzhouyang520), [Niuguo cheng](https://github.com/niuox) etc..
 
 Feedback and Join Us
 =====

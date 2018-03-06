@@ -1,0 +1,63 @@
+#data processing
+
+You should treat your data format as 'sample.txt', formatted as 'label \t query\t document_txt'.In detail, label donotes the relation between query and document, 1 means the query is related to the document, otherwise it does not matter.the words in query and documents are separated by white space.To understand that most models require 'corpus_preprocessed.txt', 'relation_train.txt', 'relation_valid.txt', 'relation_test.txt', 'embed_glove_d50' files,do the following:
+
+1.Generating the files named 'relation_train.txt', 'relation_valid.txt', 'relation_test.txt' and 'corpus.txt' by excuting the file named  'preparation.py' which can be found under MatchZoo/matchzoo/inputs. You can follow the process of production data below, which is the function 'main' of the 'preparation.py' script.
+
+## begining of this process
+1)create Preparation object.
+2)specify the base directory where you want to load the files.
+3)call the function 'run_with_one_corpus' of the Preparation object and specify a parameter, which is denotes the raw data.The function of 'run_with_one_corpus' is transfering the format of 'sample.txt' to the format like this 'id words', then outputing the relation files 'rel' between queries and doecuments.
+4)save 'corpus.txt' by calling the function 'save_corpus' of Preparation object.
+5)shuffle the relationship in the file 'rel', and then cut it into a specified percentage of the file. Detailedly, If you want to adjust output data radio, specify the seond parameter of function 'split_train_valid_test', and which represent the percentage of the training data, valid data, test data, orderly.
+6)save relationship file by calling the function 'save_relation' of Preparation object, with specify the path you want to save. 
+## ending of this process
+
+
+2.Generating the files named 'corpus_preprocessed.txt' , 'wodr_dict.txt'. And if you need CF,CF,IDF of documents,you can save 'word_stats.txt' by excuting function 'preprocessor.save_words_stats'. Amply, the models in MatchZoo requires that all words must be id instead of string, so you should map the string to id by excuting the function named 'preprocessor.run', then specify it's output name and save it.Generate the files , referencing to the function 'main' of the file 'preprocess.py' which can be found under MatchZoo/matchzoo/inputs.
+
+## begining of this process
+1)create Preprocess object, and you can specify the parameter making some constriant like spcify the frequence of words, which is filtered if the words do not in thei frequency band etc.
+2)excute the function 'run' of object Preprocess, then get the documents' id and words mapped as id, with your inititialization paramters.
+3)save word dict file by excuting function 'save_word_dict' of Preprocess object, and save 'word_stats.txt' by excuting function  'save_words_stats' of Preprocess object too, which contains information like DF,CF,IDF sequentially.
+4)then save corpus information whose words has been mapped as id, with specified path by yourself.
+## ending of this process
+
+
+3.Generating the file named 'embed_glove_d50' by excuting the file named 'gen_w2v.py' which at the patch of MatchZoo MatchZoo/data/WikiQA/, whith three parameters 'glove.840B.300d.txt', 'word_dict.txt', 'embed_glove_d300', And the first parameter denotes the embedding download from url'http://nlp.stanford.edu/data/glove.840B.300d.zip' or where you want, the second parameter denotes the file mapping string words to words id, the last paramter denotes the output embedding for your own dataset starting with word id and following with embeddings.
+
+## begining of this process
+1)load word dict file and word vectors sequentially.
+2)get the dimension of embedding you downloaded.
+3)get the third parameter where is the path you want to output.
+4)write the word embedding in your corpus.
+5)randomly generated it, if the words in your corpus not in the embedding file you downloaded. 
+## ending of this process
+
+
+4.What's more, here is how to generate special files for other models:
+
+	4.1 Generating the files that DRMM needs. Generating the IDF file by cutting off a part of 'word_stats.txt' whith this command 'cat word_stats.txt | cut -d ' ' -f 1,4 > embed.idf' in linux console. Then generating histograms of DRMM. You can run this script 'python gen_hist4drmm.py 60'  as  WiKiQA data which is under  MatchZoo/data/WikiQA, and the only parameter represents the size of histograms.following this step found in function 'main' at file 'gen_hist4drmm.py', you can generate this file.
+
+	## begining of this process
+	1) get the size of histograms fisrt.
+	2) specify the source file, and then define the path of the embedding file, relation file(including train, valid, and test), output file for histograms.
+	3) random generate embedding vectors, then cover download embedding into it.The purpose of its doing so is to make words that are not in the dict also own random embedding to be used.
+	4) read the corpus.
+	5) generage histograms by calling function 'cal_hist' in the file 'preprocess ', which can be found in MatchZoo/matchzoo/inputs, then write it.
+	## ending of this process
+
+
+	4.2 Generating the files that ANMM needs by excuting 'gen_binsum4anmm.py' with only parameter that represents the number of bin, And you can found it under   MatchZoo/data/WikiQA also.it is similar to generating histograms for DRMM, the only difference is that function 'cal_hist' above is replaced by function 'cal_binsum'.
+	
+	4.3 Generating the files that DSSM and CDSSM require.You can refer to the code after line 66 of the file called 'prepare_mz_data.py' which is under the folder 'MatchZoo/data/WikiQA/'.the following is generating triletter  of words in corpus.
+	
+	## begining of this process
+	1)define the input file 'word_dict.txt', output file 'triletter_dict.txt' and 'word_triletter_map.txt'. In detail, file 'triletter_dict.txt' contains information representing trilletter of words and its id, orderly. what's more, file 'word_triletter_map.txt' denotes words id and the id of the triletter it decomposed.
+	2)read word dict.
+	3)specify the begining and ending smybol of current word.
+	4)split it to trilletter. call the function 'NgramUtil.ngrams' whose first parameter denotes the word will be split, second is how big granularity the word will be split, and last is the smybol of the connection string.
+	5)fillter the too low and too high frequency words in the dict calling the function 'filter_triletter' by setting the minimum and maximum values.
+	## ending of this process
+
+
