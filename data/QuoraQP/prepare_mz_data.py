@@ -37,7 +37,8 @@ if __name__ == '__main__':
     srcdir = './'
     dstdir = './'
 
-    infile = srcdir + 'train.csv'
+    infile = srcdir + 'quora_duplicate_questions.tsv'
+    #infile = srcdir + 'train.csv'
     corpus, rels = prepare.run_with_one_corpus_for_quora(infile)
     print('total corpus : %d ...' % (len(corpus)))
     print('total relations : %d ...' % (len(rels)))
