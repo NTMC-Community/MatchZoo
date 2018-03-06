@@ -11,7 +11,7 @@ from model import BasicModel
 from layers.DynamicMaxPooling import *
 from layers.BiLSTM import BiLSTM
 from layers.MultiPerspectiveMatch import MultiPerspectiveMatch
-from layers.Attention import MultiPerspectiveAttention
+#from layers.Attention import MultiPerspectiveAttention
 from layers.SequenceMask import SequenceMask
 from utils.utility import *
 
