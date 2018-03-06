@@ -55,12 +55,12 @@ class Preparation(object):
         # hashid = {}
         corpus = {}
         rels = []
-        f = open(file_path, 'r')
+        f = codecs.open(file_path, 'r', encoding='utf8')
         next(f)
         for line in f:
             # print("", i)
             # print("", i)
-            line = line.decode('utf8')
+            # line = line.decode('utf8')
             line = line.strip()
             qid1, qid2, q1, q2, label = self.parse_line_for_quora(line, "\t")
             if q1 != 0:
