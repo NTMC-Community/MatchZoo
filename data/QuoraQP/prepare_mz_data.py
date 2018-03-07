@@ -3,6 +3,11 @@
 from __future__ import print_function
 
 import sys
+import random
+random.seed(49999)
+import numpy
+numpy.random.seed(49999)
+
 sys.path.append('../../matchzoo/inputs/')
 sys.path.append('../../matchzoo/utils/')
 
