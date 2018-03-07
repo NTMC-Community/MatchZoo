@@ -1,12 +1,11 @@
 #!/bin/bash
-:<<!EOF!
 # download the quora train dataset
 wget http://qim.ec.quoracdn.net/quora_duplicate_questions.tsv
 
+:<<!EOF!
 # you can also download the quora train dataset from kaggle
 #Attention；You need to  register the Kaggle account to download the dataset
 wget --keep-session-cookies --save-cookies cookies.txt --post-data "username=username&password=password" "https://www.kaggle.com/account/login?isModal=true&returnUrl=/"
-wget --keep-session-cookies --save-cookies cookies.txt --post-data "username=eshion&password=137387366" "https://www.kaggle.com/account/login?isModal=true&returnUrl=/"
 wget --load-cookies=cookies.txt  "https://www.kaggle.com/c/quora-question-pairs/download/train.csv.zip"
 unzip train.csv.zip
 #download the quora test dataset
@@ -14,6 +13,7 @@ wget --load-cookies=cookies.txt "https://www.kaggle.com/c/quora-question-pairs/d
 unzip test.csv.zip
 
 #You can also download and unzip it manually on the official web, and save it to the current directory
+!EOF!
 
 # download the glove vectors
 wget http://nlp.stanford.edu/data/glove.840B.300d.zip
@@ -32,7 +32,6 @@ python norm_embed.py embed_glove_d50 embed_glove_d50_norm
 
 # generate idf file
 cat word_stats.txt | cut -d ' ' -f 1,4 > embed.idf
-!EOF!
 
 # generate data histograms for drmm model
 python gen_hist4drmm.py 60
