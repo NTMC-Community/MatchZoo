@@ -11,9 +11,9 @@ unzip train.csv.zip
 #download the quora test dataset
 wget --load-cookies=cookies.txt "https://www.kaggle.com/c/quora-question-pairs/download/test.csv.zip"
 unzip test.csv.zip
+!EOF!
 
 #You can also download and unzip it manually on the official web, and save it to the current directory
-!EOF!
 
 # download the glove vectors
 wget http://nlp.stanford.edu/data/glove.840B.300d.zip
