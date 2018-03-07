@@ -1,15 +1,17 @@
+#!/bin/bash
 # download the quora train dataset
 wget http://qim.ec.quoracdn.net/quora_duplicate_questions.tsv
 
+:<<!EOF!
 # you can also download the quora train dataset from kaggle
-# Attention! You need to  register the Kaggle account to download the dataset
-# wget --keep-session-cookies --save-cookies cookies.txt --post-data "username=username&password=password" "https://www.kaggle.com/account/login?isModal=true&returnUrl=/"
-# wget --keep-session-cookies --save-cookies cookies.txt --post-data "username=eshion&password=137387366" "https://www.kaggle.com/account/login?isModal=true&returnUrl=/"
-# wget --load-cookies=cookies.txt  "https://www.kaggle.com/c/quora-question-pairs/download/train.csv.zip"
-# unzip train.csv.zip
-# download the quora test dataset
-# wget --load-cookies=cookies.txt "https://www.kaggle.com/c/quora-question-pairs/download/test.csv.zip"
-# unzip test.csv.zip
+#Attention；You need to  register the Kaggle account to download the dataset
+wget --keep-session-cookies --save-cookies cookies.txt --post-data "username=username&password=password" "https://www.kaggle.com/account/login?isModal=true&returnUrl=/"
+wget --load-cookies=cookies.txt  "https://www.kaggle.com/c/quora-question-pairs/download/train.csv.zip"
+unzip train.csv.zip
+#download the quora test dataset
+wget --load-cookies=cookies.txt "https://www.kaggle.com/c/quora-question-pairs/download/test.csv.zip"
+unzip test.csv.zip
+!EOF!
 
 # You can also download and unzip it manually on the official web, and save it to the current directory
 
