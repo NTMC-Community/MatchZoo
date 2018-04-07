@@ -351,6 +351,8 @@ Feel free to post any questions or suggestions on [GitHub Issues](https://github
 
 Update in 12/10/2017: We have applied another WeChat ID: CLJ_Keep. Anyone who want to join the WeChat group can add this WeChat id as a friend. Please tell us your name, company or school, city when you send such requests. After you added "CLJ_Keep" as one of your WeChat friends, she will invite you to join the MatchZoo WeChat group. "CLJ_Keep" is one member of the MatchZoo team.
 
+Update in 04/07/2018: We have created a Google discussion group [MatchZoo Discuss](https://groups.google.com/forum/#!forum/matchzoo-discuss) to better support Q&A disucssions of our users. You can post any questions/suggestions on the MatchZoo toolkit here. The developers and other experienced users from our community will reply to your questions. 
+
 <div align='center'>
 <img src="./docs/_static/images/matchzoo-group.jpeg" width = "200"  alt="图片名称" align=center />
 </div>
