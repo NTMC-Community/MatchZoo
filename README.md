@@ -185,7 +185,7 @@ The MAP of each models are depicted in the following figure,
 Here, the DRMM_TKS is a variant of DRMM for short text matching. Specifically, the matching histogram is replaced by a top-k maxpooling layer and the remaining part are fixed. 
 
 ### QuoraQP for Classification
-QuoraQP (Quora Question Pairs) is text matching competition from kaggle, which is to predict which of the provided pairs of question contain two questions with the same meaning. We have provided <a href="./data/QuoraQp/run_data.sh">a script</a> to download the dataset, and prepared it into the MatchZoo data format. In the <a href="./examples/QuoraQP/config">models directory</a>, there are a number of configurations about each model for QuoraQP dataset. 
+QuoraQP (Quora Question Pairs) is a text matching competition from kaggle, which is to predict whether the provided pairs of question contain have the same meaning. We have provided <a href="./data/QuoraQp/run_data.sh">a script</a> to download the dataset, and prepared it into the MatchZoo data format. In the <a href="./examples/QuoraQP/config">models directory</a>, there are a number of configurations about each model for QuoraQP dataset. 
 
 Take the MatchPyramid as an example. In training phase, you can run
 ```
@@ -202,7 +202,7 @@ The loss of each models are described in the following figure,
 
 The MAP of each models are depicted in the following figure,
 <div align='center'>
-<img src="./docs/_static/images/matchzoo.quoraqp.map.png" width = "550" alt="图片名称" align=center />
+<img src="./docs/_static/images/matchzoo.quoraqp.precision.png" width = "550" alt="图片名称" align=center />
 </div>
 
 ## Model Detail:
