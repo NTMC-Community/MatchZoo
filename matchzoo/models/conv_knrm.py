@@ -14,7 +14,7 @@ class CONVKNRM(BasicModel):
         super(CONVKNRM, self).__init__(config)
         self._name = 'CONVKNRM'
         self.check_list = [ 'text1_maxlen', 'kernel_num','sigma','exact_sigma',
-                            'embed', 'embed_size', 'vocab_size', 'max_ngram', 'if_crossmatch']
+                            'embed', 'embed_size', 'vocab_size', 'num_filters', 'max_ngram', 'if_crossmatch']
         self.setup(config)
         if not self.check():
             raise TypeError('[ConvKNRM] parameter check wrong')
@@ -24,6 +24,7 @@ class CONVKNRM(BasicModel):
         self.set_default('kernel_num', 11)
         self.set_default('sigma', 0.1)
         self.set_default('exact_sigma', 0.001)
+        self.set_default('num_filters', 128)
         self.set_default('max_ngram', 3)
         self.set_default('if_crossmatch', True)
         if not isinstance(config, dict):
@@ -51,12 +52,12 @@ class CONVKNRM(BasicModel):
         q_convs = []
         d_convs = []
         for i in range(self.config['max_ngram']):
-            c = keras.layers.Conv1D(128, i + 1, activation='relu', padding='same')
+            c = keras.layers.Conv1D(self.config['num_filters'], i + 1, activation='relu', padding='same')
             q_convs.append(c(q_embed) )
             show_layer_info('Q N-gram Embedding', q_convs[i])
             d_convs.append(c(d_embed) )
             show_layer_info('D N-gram Embedding', d_convs[i])
-        
+
         KM = []
         for qi in range(self.config['max_ngram']):
             for di in range(self.config['max_ngram']):
