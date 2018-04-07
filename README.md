@@ -173,12 +173,12 @@ We have compared 10 models, the results are as follows.
   </tr>
  
 </table>
-The loss of each models are described in the following figure,
+The loss of each models in train dataset are described in the following figure,
  <div align='center'>
 <img src="./docs/_static/images/matchzoo.wikiqa.loss.png" width = "550" alt="图片名称" align=center />
 </div>
 
-The MAP of each models are depicted in the following figure,
+The MAP of each models in test dataset are depicted in the following figure,
 <div align='center'>
 <img src="./docs/_static/images/matchzoo.wikiqa.map.png" width = "550" alt="图片名称" align=center />
 </div>
@@ -195,12 +195,12 @@ In testing phase, you can run
 ```
 python matchzoo/main.py --phase predict --model_file examples/QuoraQP/config/matchpyramid_quoraqp.config
 ```
-The loss of each models are described in the following figure,
+The loss of each models in train dataset are described in the following figure,
  <div align='center'>
 <img src="./docs/_static/images/matchzoo.quoraqp.loss.png" width = "550" alt="图片名称" align=center />
 </div>
 
-The MAP of each models are depicted in the following figure,
+The precisioin of each models in test dataset are depicted in the following figure,
 <div align='center'>
 <img src="./docs/_static/images/matchzoo.quoraqp.precision.png" width = "550" alt="图片名称" align=center />
 </div>
