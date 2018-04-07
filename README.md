@@ -83,7 +83,7 @@ Moreover, the toolkit has implemented two schools of representative deep text ma
 For learning the deep matching models, the toolkit provides a variety of objective functions for regression, classification and ranking. For example, the ranking-related objective functions include several well-known pointwise, pairwise and listwise losses. It is flexible for users to pick up different objective functions in the training phase for optimization. Once a model has been trained, the toolkit could be used to produce a matching score, predict a matching label, or rank target texts (e.g., a document) against an input text.
 
 ## Benchmark Results:
-Here, We adopt two representative dataset for examples to show the usage of MatchZoo for ranking and classification. For ranking task, we use <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52419">WikiQA</a> dataset. For classification task, we use <a href="https://www.kaggle.com/c/quora-question-pairs/">QuoraQP</a> dataset.
+Here, We adopt two representative datasets for examples to show the usage of MatchZoo for ranking and classification. For ranking task, we use <a href="https://www.microsoft.com/en-us/download/details.aspx?id=52419">WikiQA</a> dataset as an example. For classification task, we use <a href="https://www.kaggle.com/c/quora-question-pairs/">QuoraQP</a> dataset as an example.
 
 ### WikiQA for Ranking
 WikiQA is a popular benchmark dataset for answer sentence selection in question answering. We have provided <a href="./data/WikiQA/run_data.sh">a script</a> to download the dataset, and prepared it into the MatchZoo data format. In the <a href="./examples/wikiqa/config">models directory</a>, there are a number of configurations about each model for WikiQA dataset. 
