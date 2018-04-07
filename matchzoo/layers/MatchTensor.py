@@ -5,6 +5,7 @@ import numpy as np
 import keras
 from keras import backend as K
 from keras.engine import Layer
+from keras.initializers import *
 from keras.engine import InputSpec
 
 class MatchTensor(Layer):
@@ -17,7 +18,7 @@ class MatchTensor(Layer):
         **kwargs: Standard layer keyword arguments.
     """
 
-    def __init__(self, channel, normalize=False, init_diag=False, **kwargs):
+    def __init__(self, channel, normalize=False, init_diag=True, **kwargs):
         super(MatchTensor, self).__init__(**kwargs)
         self.channel = channel
         self.normalize = normalize
@@ -42,16 +43,16 @@ class MatchTensor(Layer):
             M_diag = np.float32(np.random.uniform(-0.05, 0.05, [self.channel, shape1[2], shape2[2]]))
             for i in range(self.channel):
                 for j in range(shape1[2]):
-                    M_diag[i][j][j] = 1.0
+                    M_diag[i][j][j] = 0.1
             self.M = self.add_weight( name='M', 
                                    shape=(self.channel, shape1[2], shape2[2]),
-                                   initializer=M_diag,
-                                   trainable=True )
+                                   initializer=constant(M_diag),
+                                   trainable=True)
         else:
             self.M = self.add_weight( name='M', 
                                    shape=(self.channel, shape1[2], shape2[2]),
                                    initializer='uniform',
-                                   trainable=True )
+                                   trainable=True)
 
     def call(self, inputs):
         x1 = inputs[0]
@@ -105,3 +106,4 @@ def match(inputs, axes, normalize=False, **kwargs):
         from the inputs.
     """
     return MatchTensor(normalize=normalize, **kwargs)(inputs)
+
