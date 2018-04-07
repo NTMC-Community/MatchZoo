@@ -1,23 +1,15 @@
 # -*- coding=utf-8 -*-
-import keras
-import keras.backend as K
 import sys
 
-sys.path.append('../matchzoo/layers/')
-# from DynamicMaxPooling import *
-
+import keras
+import keras.backend as K
 from keras.models import Sequential, Model
 from keras.layers import *
-from keras.layers import Reshape, Embedding, Merge, Dot
 from keras.optimizers import Adam
 from model import BasicModel
 
-import sys
-
 sys.path.append('../matchzoo/layers/')
 sys.path.append('../matchzoo/utils/')
-
-from layers.DynamicMaxPooling import *
 from layers.MatchTensor import *
 from layers.SpatialGRU import *
 from utils.utility import *

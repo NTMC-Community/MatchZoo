@@ -7,4 +7,4 @@ python matchzoo/main.py --phase train --model_file ${currpath}/examples/QuoraQP/
 
 # predict with the model
 
-#python matchzoo/main.py --phase predict --model_file ${currpath}/examples/QuoraQP/config/matchsrnn_quoraqp.config
+python matchzoo/main.py --phase predict --model_file ${currpath}/examples/QuoraQP/config/matchsrnn_quoraqp.config
