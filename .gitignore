@@ -49,3 +49,5 @@ coverage.xml
 
 # dotenv
 .env
+
+glove*
