@@ -3,6 +3,8 @@
 </div>
 
 ---
+[![Build Status](https://travis-ci.org/bwanglzu/MatchZoo.svg?branch=master)](https://travis-ci.org/bwanglzu/MatchZoo)
+
 MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users.
 
 <table>
@@ -70,8 +72,8 @@ There are three major modules in the toolkit, namely data preparation, model con
 The data preparation module aims to convert dataset of different text matching tasks into a unified format as the input of deep matching models. Users provide datasets which contains pairs of texts along with their labels, and the module produces the following files.
 
 +	**Word Dictionary**: records the mapping from each word to a unique identifier called *wid*. Words that are too frequent (e.g. stopwords), too rare or noisy (e.g. fax numbers) can be  filtered out by predefined rules.
-+	**Corpus File**: records the mapping from each text to a unique identifier called *tid*, along with a sequence of word identifiers contained in that text. Note here each text is truncated or padded to a fixed length customized by users.
-+	**Relation File**: is used to store the relationship between two texts, each line containing a pair of *tids* and the corresponding label.
+		**Corpus File**: records the mapping from each text to a unique identifier called *tid*, along with a sequence of word identifiers contained in that text. Note here each text is truncated or padded to a fixed length customized by users.
+		**Relation File**: is used to store the relationship between two texts, each line containing a pair of *tids* and the corresponding label.
 +   **Detailed Input Data Format**: a detailed explaination of input data format can be found in MatchZoo/data/example/readme.md.
 
 ### Model Construction
@@ -171,7 +173,7 @@ We have compared 10 models, the results are as follows.
   	 <td align="center", bgcolor=#eeeeee> 0.6956 </td>
   	 <td align="center", bgcolor=#eeeeee> 0.6586 </td>
   </tr>
- 
+
 </table>
 The loss of each models in train dataset are described in the following figure,
  <div align='center'>
