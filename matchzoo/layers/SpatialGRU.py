@@ -135,7 +135,7 @@ class SpatialGRU(Layer):
             body=self.calculate_recurrent_unit,
             loop_vars=(
                 inputs_ta, states_ta, tf.Variable(0, dtype=tf.int32), self.bounder_state_h0, self.bounder_state_h0),
-            parallel_iterations=32,
+            parallel_iterations=1,
             swap_memory=True
         )
         return hij
