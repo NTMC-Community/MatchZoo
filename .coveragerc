@@ -1,0 +1,7 @@
+# .coveragerc to control coverage.py
+[report]
+# regrexes for lines to exclude from consideration
+exclude_lines = 
+  if __name__ == .__main__.:
+omit = 
+  matchzoo/__init__.py
