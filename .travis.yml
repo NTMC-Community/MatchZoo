@@ -5,5 +5,3 @@ python:
 sudo: enabled
 script: make test
 env: PYTHONPATH=$PYTHONPATH:$TRAVIS_BUILD_DIR/tests:$TRAVIS_BUILD_DIR/matchzoo
-#after_success:
-#  - codecov
