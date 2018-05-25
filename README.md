@@ -73,7 +73,7 @@ The data preparation module aims to convert dataset of different text matching t
 +	**Word Dictionary**: records the mapping from each word to a unique identifier called *wid*. Words that are too frequent (e.g. stopwords), too rare or noisy (e.g. fax numbers) can be  filtered out by predefined rules.
 +	**Corpus File**: records the mapping from each text to a unique identifier called *tid*, along with a sequence of word identifiers contained in that text. Note here each text is truncated or padded to a fixed length customized by users.
 +	**Relation File**: is used to store the relationship between two texts, each line containing a pair of *tids* and the corresponding label.
-+   **Detailed Input Data Format**: a detailed explaination of input data format can be found in MatchZoo/data/example/readme.md.
++   **Detailed Input Data Format**: a detailed explaination of input data format can be found in [MatchZoo/data/toy_example/readme.md](https://github.com/faneshion/MatchZoo/blob/master/data/toy_example/readme.md).
 
 ### Model Construction
 In the model construction module, we employ Keras library to help users build the deep matching model layer by layer conveniently. The Keras libarary provides a set of common layers widely used in neural models, such as convolutional layer, pooling layer, dense layer and so on. To further facilitate the construction of deep text matching models, we extend the Keras library to provide some layer interfaces specifically designed for text matching.
@@ -186,7 +186,7 @@ The MAP of each models in test dataset are depicted in the following figure,
 Here, the DRMM_TKS is a variant of DRMM for short text matching. Specifically, the matching histogram is replaced by a top-k maxpooling layer and the remaining part are fixed. 
 
 ### QuoraQP for Classification
-QuoraQP (Quora Question Pairs) is a text matching competition from kaggle, which is to predict whether the provided pairs of question contain have the same meaning. We have provided <a href="./data/QuoraQp/run_data.sh">a script</a> to download the dataset, and prepared it into the MatchZoo data format. In the <a href="./examples/QuoraQP/config">models directory</a>, there are a number of configurations about each model for QuoraQP dataset. 
+QuoraQP (Quora Question Pairs) is a text matching competition from kaggle, which is to predict whether the provided pair of questions have the same meaning. We have provided <a href="./data/QuoraQp/run_data.sh">a script</a> to download the dataset, and prepared it into the MatchZoo data format. In the <a href="./examples/QuoraQP/config">models directory</a>, there are a number of configurations about each model for QuoraQP dataset. 
 
 Take the MatchPyramid as an example. In training phase, you can run
 ```
