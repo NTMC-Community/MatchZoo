@@ -1,14 +1,40 @@
 #!/bin/bash
 # help, dos2unix file
 # download the wiki-qa dataset
-wget https://download.microsoft.com/download/E/5/F/E5FCFCEE-7005-4814-853D-DAA7C66507E0/WikiQACorpus.zip
-unzip WikiQACorpus.zip
+
+
+if [ ! -f "./WikiQACorpus.zip" ]; then
+    wget https://download.microsoft.com/download/E/5/F/E5FCFCEE-7005-4814-853D-DAA7C66507E0/WikiQACorpus.zip
+fi
+
+unzip -o WikiQACorpus.zip
 
 # download the glove vectors
-wget http://nlp.stanford.edu/data/glove.840B.300d.zip
-unzip glove.840B.300d.zip
-wget http://nlp.stanford.edu/data/glove.6B.zip
-unzip glove.6B.zip
+
+if [ ! -f "./glove.840B.300d.txt" ]; then
+    if [ ! -f "./glove.840B.300d.zip" -]; then
+          wget http://nlp.stanford.edu/data/glove.840B.300d.zip
+    fi
+    fsize=`ls -l | grep glove.840B.300d.zip | awk '{ print $5 }'`
+    if [ "$fsize" != "2176768927" ]; then
+        rm ./glove.840B.300d.zip
+        wget http://nlp.stanford.edu/data/glove.840B.300d.zip
+     fi
+    unzip -o glove.840B.300d.zip
+fi
+
+
+if [ ! -f "./glove.6B.100d.txt" -o ! -f "./glove.6B.100d.txt" -o ! -f "./glove.6B.200d.txt" -o ! -f "./glove.6B.300d.txt" ]; then
+    if [ ! -f "./glove.6B.zip" ]; then
+        wget http://nlp.stanford.edu/data/glove.6B.zip
+    fi
+    fsize=`ls -l | grep glove.6B.zip | awk '{ print $5 }'`
+    if [ "$fsize" != "862182613" ]; then
+        rm ./glove.6B.zip
+        wget http://nlp.stanford.edu/data/glove.6B.zip
+    fi
+    unzip -o glove.6B.zip
+fi
 
 # filter queries which have no right or wrong answers
 python filter_query.py
