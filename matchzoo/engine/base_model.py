@@ -12,18 +12,20 @@ class BaseModel(object):
 
     # Properties:
         name: str, name of the model.
-        objective: str, model objective, ranking or classification
+        objective: str, model objective, ranking or classification.
         trainable: boolean, indicates whether the model is allowed to train. 
-        fixed_hyper_parameters: list, fixed hyper parameters.
-        default_hyper_parameters: dict, default hyper parameters described in paper.
-        to be discussed
-
+        fixed_hyper_parameters: dict, fixed hyper parameters with values.
+        default_hyper_parameters: dict, universal hyper parameters.
+        model_specific_hyper_parameters: dict, hyper parameters w.r.t models.
+        user_given_parameters: dict, hyper parameters given by users.
+        num_default_hidden_layers: int, default number hidden layer in paper.
+        num_custom_hidden_layers: int, custom number hidden layer decided by user.
 
     # Methods:
         train(text_1, text_2, labels)
 
     # Internal Methods:
-        _aggregate_parameters(default, model_specific, user_given)
+        _aggregate_hyper_parameters()
         _build()
         _compile(model)
     """
