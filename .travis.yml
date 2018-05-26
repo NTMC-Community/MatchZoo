@@ -2,7 +2,7 @@ language: python
 python:
       - "2.7"
       - "3.6"
-sudo: enabled
+sudo: false
 script:
   - make init 
   - make test
