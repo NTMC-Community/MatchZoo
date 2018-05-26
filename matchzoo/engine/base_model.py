@@ -33,35 +33,31 @@ class BaseModel(object):
         self._name = 'BaseModel'
         self._objective = None
         self._trainable = True
-        self._fixed_hyper_parameters = [
-            #  TODO ADD fixed hyper parameters.
-            #  THESE PARAMETERS SHOULD NOT BE TUNABLE.
-            #  IF USER PASS, RAISE EXCEPTION
-            #  THIS VARIABLE IS USED TO CHECK self._default_parameters
-            #  and self._custom_hyper_parameters
-            #  THIS LIST SERVE AS A "BLACK LIST",
-            #  THE REST CAN BE TREAT AS TUNABLE PARAMETERS
-        ]
-        # DEFINE UNIVERSAL MODEL DEFAULT PARAMETERS
+        #  This list serve as a "BLACK LIST", not allowed to changed.
+        self._list_fixed_hyper_parameters = []
+        self._fixed_hyper_parameters = {}
+        # Universal model parameters, can be overwrite if not fixed.
         self._default_hyper_parameters = {
             # TODO ADD DEFAULT PARAMETERS
         }
-        # MODEL SPECIFIC HYPER PARAMETERS
-        self._model_specific_hyper_parameters = {}  # ADD PARAMETER PER MODEL
-        # USER GIVEN HYPER PARAMETERS
+        # Model specific hyper parameters, can be overwritten by
+        # _user_given_parameters if not fixed.
+        self._model_specific_hyper_parameters = {}
+        # User given hyper parameters.
         # THE Intersection between default_hyper_parameters and
-        #  _model_specific_hyper_parameters
-        # should be overrite by _user_given_parameters if it's not fixed
+        # _model_specific_hyper_parameters will be overrite by
+        # _user_given_parameters if it's not fixed
         self._user_given_parameters = {}
         for key, value in kwargs.iteritems():
-            if key not in self._fixed_hyper_parameters:
+            if key not in self._list_fixed_hyper_parameters:
                 self._user_given_parameters[key] = value
-        # DEFINE NUMBER OF HIDDEN LAYERS, IF NONE,
-        # USE DEFAULT AS PAPER DESCRIBED, ELSE CREATE EXTRA HIDDEN LAYER
-        # USUALLY _num_default_hidden_layers > _num_extra_hidden_layers
-        # THESE TWO VARIABLES IS DESIGNED TO ALLOW USER TO ADD MODE LAYERS
+        # Number of default hidden layers and extra hidden layers.
+        # Extra hidden layers is used when user customize model.
+        # E.g. DSSM is a 3 layer network, user can custom a 5 layer
+        #   DSSM with _num_custom_hidden_layers.
+        # Num_default_hidden_layers should < num_custom_hidden_layers.
         self._num_default_hidden_layers = None
-        self._num_extra_hidden_layers = None
+        self._num_custom_hidden_layers = None
 
     @property
     def name(self):
@@ -87,10 +83,20 @@ class BaseModel(object):
         return self._trainable
 
     @property
+    def fixed_hyper_parameters(self):
+        """Get fixed hyper parameters."""
+        return self._fixed_hyper_parameters
+
+    @fixed_hyper_parameters.setter
+    def fixed_hyper_parameters(self, **kwargs):
+        """Set fixed hyper parameters"""
+        for key, value in kwargs.iteritems():
+            self._fixed_hyper_parameters[key] = value
+            self._list_fixed_hyper_parameters.append(key)
+
+    @property
     def default_hyper_parameters(self):
         """Universal parameters that can be use across varies models.
-
-        Default hyper parameters can be overwritten
         """
         return self._default_parameters
 
@@ -129,13 +135,62 @@ class BaseModel(object):
         return self._user_given_parameters
 
     def _aggregate_hyper_parameters(self):
-        """This method is used to merge all the parameters
+        """This method is used to merge all the parameters.
 
-        default -> model_specific -> user_given
-        low_level hyper parameters can be overwritten by high level
-        parameters if the parameter is not FIXED.
+        This function is used internaly.`
+
+        # Returns:
+            conf: final model  configuration.
         """
-        pass
+        conf = self._default_hyper_parameters.copy()
+        # Universal config will be overwrite by model_specific.
+        # Then merge.
+        conf.update(self._model_specific_hyper_parameters)
+        # Merged universal config and model config will be.
+        # overriten by user_given_parameters.
+        conf.update(self._user_given_parameters)
+        # Filter fixed-parameters from configuration.
+        [conf.pop(key, None) for key in self._list_fixed_hyper_parameters]
+        # Merge default fixed parameters.
+        conf.update(self._fixed_hyper_parameters)
+        return conf
+
+    @property
+    def num_default_hidden_layers(self):
+        """Get number of default hiddden layers."""
+        return self._num_default_hidden_layers
+
+    @num_default_hidden_layers.setter
+    def num_default_hidden_layers(self, value):
+        """Set number of default hidden layers."""
+        if self._num_custom_hidden_layers:
+            if self._num_default_hidden_layers > self._num_custom_hidden_layers:
+                raise ValueError(
+                    'Number of default hidden layers should smaller than extended \
+                     hidden layers, get ({},{})'.format(
+                        self._num_default_hidden_layers,
+                        self._num_custom_hidden_layers))
+
+        self._num_default_hidden_layers = value
+
+    @property
+    def num_custom_hidden_layers(self):
+        """Get the number of custom hidden layers."""
+        return self._num_custom_hidden_layers
+
+    @num_custom_hidden_layers.setter
+    def num_custom_hidden_layers(self, value):
+        """Set the number of custom hideen layers."""
+        if not self._num_default_hidden_layers:
+            raise TypeError(
+                'Number of default hidden layer expected, None found.')
+        if value < self._num_default_hidden_layers:
+            raise ValueError(
+                'Number of default hidden layer greater than \
+        		 custom hidden layers ({},{})'.format(
+                    self._num_default_hidden_layers,
+                    value))
+        self._num_custom_hidden_layers = value
 
     @abc.abstractmethod
     def _build(self):
@@ -166,11 +221,3 @@ class BaseModel(object):
             labels: ground truth.
         """
         return
-
-
-# AN EXAMPLE USAGE
-# base_model = BaseModel(train_test_split=1,
-#                         learning_rate=0.1)
-# we can provide list of allowed parameters in documentation.
-# train_test_split will be user_given_parameters
-# and overwrite default & model specific
