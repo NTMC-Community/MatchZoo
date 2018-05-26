@@ -42,12 +42,12 @@ class BaseModel(object):
             #  THIS LIST SERVE AS A "BLACK LIST",
             #  THE REST CAN BE TREAT AS TUNABLE PARAMETERS
         ]
-        # DEFINE MODEL DEFAULT PARAMETERS AS DESCRIBED IN PAPER
+        # DEFINE UNIVERSAL MODEL DEFAULT PARAMETERS
         self._default_hyper_parameters = {
             # TODO ADD DEFAULT PARAMETERS
         }
         # MODEL SPECIFIC HYPER PARAMETERS
-        self._model_specific_hyper_parameters = {} # ADD PARAMETER PER MODEL
+        self._model_specific_hyper_parameters = {}  # ADD PARAMETER PER MODEL
         # USER GIVEN HYPER PARAMETERS
         # THE Intersection between default_hyper_parameters and
         #  _model_specific_hyper_parameters
@@ -83,49 +83,50 @@ class BaseModel(object):
 
     @property
     def trainable(self):
-    	"""Indicate allow to train or not."""
-    	return self._trainable
+        """Indicate allow to train or not."""
+        return self._trainable
 
     @property
     def default_hyper_parameters(self):
-    	"""Default parameters that can be use across varies models.
+        """Universal parameters that can be use across varies models.
 
-    	Default hyper parameters can be overwritten
-    	"""
-    	return self._default_parameters
+        Default hyper parameters can be overwritten
+        """
+        return self._default_parameters
 
     @default_hyper_parameters.setter
     def default_hyper_parameters(self, **kwargs):
-    	"""Set default hyper parameters."""
-    	allowed_default_hyper_parameters = self._default_hyper_parameters.keys()
-    	for key, value in kwargs.iteritems():
-    		if key not in allowed_default_hyper_parameters:
-    			raise ValueError('{} not in allowed default parameters: {}.'.format(
-    				key,
-    				allowed_default_hyper_parameters))
-    		self._default_hyper_parameters[key] = value
+        """Set default hyper parameters."""
+        allowed_default_parameters = self._default_hyper_parameters.keys()
+        for key, value in kwargs.iteritems():
+            if key not in allowed_default_parameters:
+                raise ValueError(
+                    '{} not in allowed default parameters: {}.'.format(
+                        key,
+                        allowed_default_parameters))
+            self._default_hyper_parameters[key] = value
 
     @property
     def model_specific_hyper_parameters(self):
-    	"""Get model specific hyper parameters."""
-    	return self._model_specific_hyper_parameters
+        """Get model specific hyper parameters."""
+        return self._model_specific_hyper_parameters
 
     @model_specific_hyper_parameters.setter
     def model_specific_hyper_parameters(self, **kwargs):
-    	"""Set model specific hyper parameters."""
-    	allowed_model_specific_hyper_parameters = self._model_specific_hyper_parameters.keys()
-    	for key, value in kwargs.iteritems():
-    		if key not in allowed_model_specific_hyper_parameters:
-    			raise ValueError('{} not in allowed model specific parameters: {}'.format(
-    				key,
-    				allowed_model_specific_hyper_parameters))
-    		self._model_specific_hyper_parameters[key] = value
+        """Set model specific hyper parameters."""
+        allowed_model_parameters = self._model_specific_hyper_parameters.keys()
+        for key, value in kwargs.iteritems():
+            if key not in allowed_model_parameters:
+                raise ValueError(
+                    '{} not in allowed model specific parameters: {}'.format(
+                        key,
+                        allowed_model_parameters))
+            self._model_specific_hyper_parameters[key] = value
 
     @property
     def user_given_parameters(self):
-    	"""Get user given hyper parameters."""
-    	return self._user_given_parameters
-
+        """Get user given hyper parameters."""
+        return self._user_given_parameters
 
     def _aggregate_hyper_parameters(self):
         """This method is used to merge all the parameters
@@ -171,4 +172,5 @@ class BaseModel(object):
 # base_model = BaseModel(train_test_split=1,
 #                         learning_rate=0.1)
 # we can provide list of allowed parameters in documentation.
-# train_test_split will be user_given_parameters and overwrite default & model specific
+# train_test_split will be user_given_parameters
+# and overwrite default & model specific
