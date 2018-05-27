@@ -5,6 +5,7 @@ from __future__ import absolute_import
 from __future__ import division
 
 import abc
+from keras.models import load_model
 
 
 class BaseModel(object):
@@ -12,35 +13,42 @@ class BaseModel(object):
 
     # Properties:
         name: str, name of the model.
-        objective: str, model objective, ranking or classification.
+        task_type: str, model task type, ranking or classification.
         trainable: boolean, indicates whether the model is allowed to train. 
         fixed_hyper_parameters: dict, fixed hyper parameters with values.
         default_hyper_parameters: dict, universal hyper parameters.
         model_specific_hyper_parameters: dict, hyper parameters w.r.t models.
         user_given_parameters: dict, hyper parameters given by users.
-        num_default_hidden_layers: int, default number hidden layer in paper.
-        num_custom_hidden_layers: int, custom number hidden layer decided by user.
+        num_hidden_layers: int, default number hidden layer in paper.
+        load(model_dir, custom_loss=None)
 
     # Methods:
+        compile(**kwargs)
         train(text_1, text_2, labels)
+        load()
 
     # Internal Methods:
         _aggregate_hyper_parameters()
         _build()
-        _compile(model)
     """
 
     def __init__(self, **kwargs):
         """Initialization"""
         self._name = 'BaseModel'
-        self._objective = None
+        self._task_type = None
         self._trainable = True
         #  This list serve as a "BLACK LIST", not allowed to changed.
         self._list_fixed_hyper_parameters = []
         self._fixed_hyper_parameters = {}
         # Universal model parameters, can be overwrite if not fixed.
         self._default_hyper_parameters = {
-            # TODO ADD DEFAULT PARAMETERS
+            'learning_rate': 0.01,
+            'decay': 1e-6,
+            'batch_size': 256,
+            'num_epochs': 20,
+            'train_test_split': 0.2,
+            'verbose': 1,
+            'shuffle': True
         }
         # Model specific hyper parameters, can be overwritten by
         # _user_given_parameters if not fixed.
@@ -50,16 +58,13 @@ class BaseModel(object):
         # _model_specific_hyper_parameters will be overrite by
         # _user_given_parameters if it's not fixed
         self._user_given_parameters = {}
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             if key not in self._list_fixed_hyper_parameters:
                 self._user_given_parameters[key] = value
-        # Number of default hidden layers and extra hidden layers.
-        # Extra hidden layers is used when user customize model.
+        # Number of default hidden layers.
         # E.g. DSSM is a 3 layer network, user can custom a 5 layer
-        #   DSSM with _num_custom_hidden_layers.
-        # Num_default_hidden_layers should < num_custom_hidden_layers.
-        self._num_default_hidden_layers = None
-        self._num_custom_hidden_layers = None
+        #   DSSM with _num_hidden_layers.
+        self._num_hidden_layers = None
 
     @property
     def name(self):
@@ -67,17 +72,17 @@ class BaseModel(object):
         return self._name
 
     @property
-    def objective(self):
-        """Model objective, classification, ranking or both."""
-        return self._objective
+    def task_type(self):
+        """Model task_type, classification, ranking or both."""
+        return self._task_type
 
-    @objective.setter
-    def objective(self, value):
-        """Set model objective."""
+    @task_type.setter
+    def task_type(self, value):
+        """Set model task_type."""
         if value not in ['ranking', 'classification']:
-            raise ValueError('{} is not a valid model objective'.format(
+            raise ValueError('{} is not a valid model task_type'.format(
                 value))
-        self._objective = value
+        self._task_type = value
 
     @property
     def trainable(self):
@@ -90,9 +95,9 @@ class BaseModel(object):
         return self._fixed_hyper_parameters
 
     @fixed_hyper_parameters.setter
-    def fixed_hyper_parameters(self, **kwargs):
+    def fixed_hyper_parameters(self, config):
         """Set fixed hyper parameters"""
-        for key, value in kwargs.iteritems():
+        for key, value in config.items():
             self._fixed_hyper_parameters[key] = value
             self._list_fixed_hyper_parameters.append(key)
 
@@ -100,13 +105,13 @@ class BaseModel(object):
     def default_hyper_parameters(self):
         """Universal parameters that can be use across varies models.
         """
-        return self._default_parameters
+        return self._default_hyper_parameters
 
     @default_hyper_parameters.setter
-    def default_hyper_parameters(self, **kwargs):
+    def default_hyper_parameters(self, config):
         """Set default hyper parameters."""
         allowed_default_parameters = self._default_hyper_parameters.keys()
-        for key, value in kwargs.iteritems():
+        for key, value in config.items():
             if key not in allowed_default_parameters:
                 raise ValueError(
                     '{} not in allowed default parameters: {}.'.format(
@@ -120,16 +125,9 @@ class BaseModel(object):
         return self._model_specific_hyper_parameters
 
     @model_specific_hyper_parameters.setter
-    def model_specific_hyper_parameters(self, **kwargs):
+    def model_specific_hyper_parameters(self, config):
         """Set model specific hyper parameters."""
-        allowed_model_parameters = self._model_specific_hyper_parameters.keys()
-        for key, value in kwargs.iteritems():
-            if key not in allowed_model_parameters:
-                raise ValueError(
-                    '{} not in allowed model specific parameters: {}'.format(
-                        key,
-                        allowed_model_parameters))
-            self._model_specific_hyper_parameters[key] = value
+        self._model_specific_hyper_parameters[key] = value
 
     @property
     def user_given_parameters(self):
@@ -158,41 +156,14 @@ class BaseModel(object):
         return conf
 
     @property
-    def num_default_hidden_layers(self):
-        """Get number of default hiddden layers."""
-        return self._num_default_hidden_layers
+    def num_hidden_layers(self):
+        """Get number of hiddden layers."""
+        return self._num_hidden_layers
 
-    @num_default_hidden_layers.setter
-    def num_default_hidden_layers(self, value):
-        """Set number of default hidden layers."""
-        if self._num_custom_hidden_layers:
-            if self._num_default_hidden_layers > self._num_custom_hidden_layers:
-                raise ValueError(
-                    'Number of default hidden layers should smaller than extended \
-                     hidden layers, get ({},{})'.format(
-                        self._num_default_hidden_layers,
-                        self._num_custom_hidden_layers))
-
-        self._num_default_hidden_layers = value
-
-    @property
-    def num_custom_hidden_layers(self):
-        """Get the number of custom hidden layers."""
-        return self._num_custom_hidden_layers
-
-    @num_custom_hidden_layers.setter
-    def num_custom_hidden_layers(self, value):
-        """Set the number of custom hideen layers."""
-        if not self._num_default_hidden_layers:
-            raise TypeError(
-                'Number of default hidden layer expected, None found.')
-        if value < self._num_default_hidden_layers:
-            raise ValueError(
-                'Number of default hidden layer greater than \
-        		 custom hidden layers ({},{})'.format(
-                    self._num_default_hidden_layers,
-                    value))
-        self._num_custom_hidden_layers = value
+    @num_hidden_layers.setter
+    def num_hidden_layers(self, value):
+        """Set number of hidden layers."""
+        self._num_hidden_layers = value
 
     @abc.abstractmethod
     def _build(self):
@@ -203,13 +174,13 @@ class BaseModel(object):
         return
 
     @abc.abstractmethod
-    def _compile(self, model):
+    def compile(self, **kwargs):
         """Compile model, each  sub class need to implement this method.
 
         This function is used internally with `self._compile()`.
 
         # Arguments:
-            model: keras Model instance.
+            **kwargs: Trainable parameters.
         """
         return
 
@@ -223,3 +194,26 @@ class BaseModel(object):
             labels: ground truth.
         """
         return
+
+    def load(self, model_dir, custom_loss=None):
+        """Load keras model by dir.
+
+        If Keras model was trained with custom loss function use custom_loss.
+
+        # Arguments:
+            model_dir: Model directory.
+            custom_loss: custom loss function, if required, expect dict as input,
+                         where dict key is loss name, value is custom loss function.
+
+        # Returns:
+            model: Keras model instance.
+        """
+        if not custom_loss:
+            return load_model(model_dir)
+        else:
+            if not isinstance(custom_loss, dict):
+                raise TypeError(
+                    "Custom loss should be a dict, get {}".format(
+                        type(custom_loss)))
+            return load_model(model_dir,
+                              custom_objects=custom_loss)
