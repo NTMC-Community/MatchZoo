@@ -1,5 +1,5 @@
 init:
-		pip install -r requirements.txt --user
+		pip install -r requirements.txt
 
 test:
 		pytest tests/ --ignore=tests/inte_tests/ --cov matchzoo/ --cov-report term-missing --cov-config .coveragerc
