@@ -11,6 +11,9 @@ The following people contributed to the development of the MatchZoo project：
 - **Liu Yang (Core Developer)** 
     - PhD. student from Center for Intelligent Information Retrieval, University of Massachusetts Amherst
     - [HomePage](https://sites.google.com/site/lyangwww/)
+- **Wang Bo (Core Developer)** 
+    - Master student from Delft University of Technology
+    - [HomePage](www.wangbo.info)
 - **Yukun Zheng (Core Developer)** 
     - master student from Tsinghua University
     - [HomePage]()
