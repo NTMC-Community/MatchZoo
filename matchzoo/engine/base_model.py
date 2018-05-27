@@ -20,7 +20,6 @@ class BaseModel(object):
         model_specific_hyper_parameters: dict, hyper parameters w.r.t models.
         user_given_parameters: dict, hyper parameters given by users.
         num_hidden_layers: int, default number hidden layer in paper.
-        load(model_dir, custom_loss=None)
 
     # Methods:
         compile(**kwargs)
@@ -127,7 +126,7 @@ class BaseModel(object):
     @model_specific_hyper_parameters.setter
     def model_specific_hyper_parameters(self, config):
         """Set model specific hyper parameters."""
-        self._model_specific_hyper_parameters[key] = value
+        self._model_specific_hyper_parameters = config
 
     @property
     def user_given_parameters(self):
@@ -175,7 +174,7 @@ class BaseModel(object):
 
     @abc.abstractmethod
     def compile(self, **kwargs):
-        """Compile model, each  sub class need to implement this method.
+        """Compile model, each sub class need to implement this method.
 
         This function is used internally with `self._compile()`.
 
@@ -195,7 +194,8 @@ class BaseModel(object):
         """
         return
 
-    def load(self, model_dir, custom_loss=None):
+    @staticmethod
+    def load(model_dir, custom_loss=None):
         """Load keras model by dir.
 
         If Keras model was trained with custom loss function use custom_loss.
