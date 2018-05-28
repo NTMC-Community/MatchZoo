@@ -1,11 +1,11 @@
 # -*- coding=utf-8 -*-
 from __future__ import print_function
 from __future__ import absolute_import
-from keras.optimizers import Adam
-from keras.initializers import Constant, RandomNormal
-from keras.constraints import maxnorm, unitnorm, non_neg, min_max_norm, non_neg
-from keras.regularizers import l2, l1
-from keras.layers import Input, Embedding, Dense, Activation, Lambda, Dot
+import keras
+import keras.backend as K
+from keras.models import Sequential, Model
+from keras.layers import *
+from keras.initializers import Constant, RandomNormal, RandomUniform
 from keras.activations import softmax
 from model import BasicModel
 from utils.utility import *
@@ -67,9 +67,9 @@ class KNRM(BasicModel):
         Phi = Lambda(lambda x: K.tf.stack(x, 1))(KM)
         show_layer_info('Stack', Phi)
         if self.config['target_mode'] == 'classification':
-            out_ = Dense(2, activation='softmax', kernel_initializer=initializers.RandomUniform(minval=-0.014, maxval=0.014), bias_initializer='zeros')(Phi)
+            out_ = Dense(2, activation='softmax', kernel_initializer=RandomUniform(minval=-0.014, maxval=0.014), bias_initializer='zeros')(Phi)
         elif self.config['target_mode'] in ['regression', 'ranking']:
-            out_ = Dense(1, kernel_initializer=initializers.RandomUniform(minval=-0.014, maxval=0.014), bias_initializer='zeros')(Phi)
+            out_ = Dense(1, kernel_initializer=RandomUniform(minval=-0.014, maxval=0.014), bias_initializer='zeros')(Phi)
         show_layer_info('Dense', out_)
 
         model = Model(inputs=[query, doc], outputs=[out_])
