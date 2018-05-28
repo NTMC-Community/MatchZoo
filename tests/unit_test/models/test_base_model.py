@@ -56,11 +56,6 @@ def test_aggregate_hyper_parameters(base_model):
 	assert isinstance(config, dict)
 	assert config.get('dim_tri_letter') == 100
 
-def test_num_hidden_layers(base_model):
-	assert base_model.num_hidden_layers is None
-	base_model.num_hidden_layers = 3
-	assert base_model.num_hidden_layers == 3
-
 def test_build(base_model):
 	assert base_model._build() is None
 

@@ -1,5 +1,4 @@
-"""Contains the base Model class, from which all models inherit.
-"""
+"""Contains the base Model class, from which all models inherit."""
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
@@ -14,12 +13,11 @@ class BaseModel(object):
     # Properties:
         name: str, name of the model.
         task_type: str, model task type, ranking or classification.
-        trainable: boolean, indicates whether the model is allowed to train. 
+        trainable: boolean, indicates whether the model is allowed to train.
         fixed_hyper_parameters: dict, fixed hyper parameters with values.
         default_hyper_parameters: dict, universal hyper parameters.
         model_specific_hyper_parameters: dict, hyper parameters w.r.t models.
         user_given_parameters: dict, hyper parameters given by users.
-        num_hidden_layers: int, default number hidden layer in paper.
 
     # Methods:
         compile(**kwargs)
@@ -32,7 +30,7 @@ class BaseModel(object):
     """
 
     def __init__(self, **kwargs):
-        """Initialization"""
+        """Initialization."""
         self._name = 'BaseModel'
         self._task_type = None
         self._trainable = True
@@ -95,15 +93,14 @@ class BaseModel(object):
 
     @fixed_hyper_parameters.setter
     def fixed_hyper_parameters(self, config):
-        """Set fixed hyper parameters"""
+        """Set fixed hyper parameters."""
         for key, value in config.items():
             self._fixed_hyper_parameters[key] = value
             self._list_fixed_hyper_parameters.append(key)
 
     @property
     def default_hyper_parameters(self):
-        """Universal parameters that can be use across varies models.
-        """
+        """Universal parameters that can be use across varies models."""
         return self._default_hyper_parameters
 
     @default_hyper_parameters.setter
@@ -134,7 +131,7 @@ class BaseModel(object):
         return self._user_given_parameters
 
     def _aggregate_hyper_parameters(self):
-        """This method is used to merge all the parameters.
+        """Merge all of the hyper parameters.
 
         This function is used internaly.`
 
@@ -153,16 +150,6 @@ class BaseModel(object):
         # Merge default fixed parameters.
         conf.update(self._fixed_hyper_parameters)
         return conf
-
-    @property
-    def num_hidden_layers(self):
-        """Get number of hiddden layers."""
-        return self._num_hidden_layers
-
-    @num_hidden_layers.setter
-    def num_hidden_layers(self, value):
-        """Set number of hidden layers."""
-        self._num_hidden_layers = value
 
     @abc.abstractmethod
     def _build(self):
@@ -202,8 +189,9 @@ class BaseModel(object):
 
         # Arguments:
             model_dir: Model directory.
-            custom_loss: custom loss function, if required, expect dict as input,
-                         where dict key is loss name, value is custom loss function.
+            custom_loss: custom loss function, if required
+                         expect dict as input, where dict key is loss name,
+                         value is custom loss function.
 
         # Returns:
             model: Keras model instance.
