@@ -1,56 +1,51 @@
 import abc
-import attrdict
+import pickle
+from pathlib import Path
 
 import keras
 
+from engine.model_params import ModelParams
 
-class Task(object):
-    """"""
-
-
-class Ranking(Task):
-    """"""
+BACKEND_FILENAME = 'backend.h5'
+PARAMS_FILENAME = 'params.pkl'
+MODEL_CLASS_FILENAME = 'class.pkl'
 
 
-class Classification(Task):
-    """"""
+def load_model(dirpath):
+    backend_path = dirpath.joinpath(BACKEND_FILENAME)
+    backend = keras.models.load_model(backend_path)
 
+    params_path = dirpath.joinpath(PARAMS_FILENAME)
+    params = pickle.load(params_path)
 
-class ModelConfig(attrdict.AttrDict):
-    def __init__(self):
-        super().__init__(
-                name='default_model_name',
-                text_1_max_len=30,
-                text_2_max_len=30,
-                trainable=False,
-                task=Ranking,
-                optimizer='adam',
-                loss='binary_crossentropy',
-                metrics=['acc']
-        )
+    model_class_path = dirpath.joinpath(MODEL_CLASS_FILENAME)
+    model_class = pickle.load(model_class_path)
+    return model_class(params=params, backend=backend)
 
 
 class BaseModel(abc.ABC):
-    def __init__(self, config=None):
-        self._config = config or self.get_default_config
-        self._backend = None
-
-        self._build()
+    def __init__(self, params=None, backend=None):
+        self._params = params or self.get_default_params()
+        self._backend = backend
 
     @classmethod
-    def get_default_config(cls) -> ModelConfig:
-        return ModelConfig()
+    def get_default_params(cls) -> ModelParams:
+        return ModelParams()
 
-    @abc.abstractmethod
-    def _build(self) -> keras.models.Model:
-        """"""
+    @property
+    def params(self):
+        return self._params
 
     @property
     def backend(self):
         return self._backend
 
+    @abc.abstractmethod
+    def build(self):
+        """"""
+
     def compile(self):
-        self._backend.compile(optimizer=self._config.optimizer, loss=self._config.loss, metrics=['acc'])
+        self._backend.compile(optimizer=self._params.optimizer, loss=self._params.loss, metrics=['acc'])
 
     def fit(self, text_1, text_2, labels, batch_size=128, epochs=1, **kwargs) -> keras.callbacks.History:
         return self._backend.fit(x=[text_1, text_2], y=labels, batch_size=batch_size, epochs=epochs, **kwargs)
@@ -61,34 +56,16 @@ class BaseModel(abc.ABC):
     def predict(self, text_1, text_2, batch_size=128):
         return self._backend.predict(x=[text_1, text_2], batch_size=batch_size)
 
+    def save(self, dirpath):
+        dirpath = Path(dirpath)
+        if not dirpath.exists():
+            dirpath.mkdir()
 
-class DenseBaselineModel(BaseModel):
-    """
-    Examples:
+        backend_path = dirpath.joinpath(BACKEND_FILENAME)
+        self._backend.save(backend_path)
 
-        >>> from matchzoo.engine.base_model import DenseBaselineModel
-        >>> config = DenseBaselineModel.get_default_config()
-        >>> config.num_dense_units = 1024
-        >>> model = DenseBaselineModel(config)
-        >>> [layer.name for layer in model.backend.layers]
-        ['input_1', 'input_2', 'concatenate_1', 'dense_1', 'dense_2']
-    """
+        params_path = dirpath.joinpath(PARAMS_FILENAME)
+        pickle.dump(self._params, open(params_path, mode='wb'))
 
-    def __init__(self, config=None):
-        super().__init__(config)
-
-    @classmethod
-    def get_default_config(cls):
-        config = ModelConfig()
-        config.num_dense_units = 512
-        return config
-
-    def _build(self):
-        inputs = [keras.layers.Input((self._config.text_1_max_len,)),
-                  keras.layers.Input((self._config.text_2_max_len,))]
-
-        x = keras.layers.concatenate(inputs)
-        x = keras.layers.Dense(self._config.num_dense_units, activation='relu')(x)
-        x_out = keras.layers.Dense(1, activation='sigmoid')(x)
-
-        self._backend = keras.models.Model(inputs=inputs, outputs=x_out)
+        model_class_path = dirpath.joinpath(MODEL_CLASS_FILENAME)
+        pickle.dump(self.__class__, open(model_class_path, mode='wb'))
