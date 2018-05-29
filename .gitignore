@@ -6,6 +6,7 @@
 *.trec
 *.ranklist
 *.DS_Store
+*.coverage
 predict.*
 build/
 dist/
