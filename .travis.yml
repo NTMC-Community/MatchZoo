@@ -2,6 +2,10 @@ language: python
 python:
       - "2.7"
       - "3.6"
-sudo: enabled
-script: make test
+sudo: false
+script:
+  - make init 
+  - make test
 env: PYTHONPATH=$PYTHONPATH:$TRAVIS_BUILD_DIR/tests:$TRAVIS_BUILD_DIR/matchzoo
+install:
+  - python setup.py install
