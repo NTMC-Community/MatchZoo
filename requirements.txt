@@ -12,3 +12,4 @@ pytest-cov >= 2.4.0
 mock >= 2.0.0
 flake8 >= 3.2.1
 flake8_docstrings >= 1.0.2
+attrdict == 2.0.0

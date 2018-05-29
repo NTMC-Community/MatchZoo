@@ -1,0 +1,1 @@
+from matchzoo.models.dense_baseline_model import DenseBaselineModel
