@@ -23,11 +23,11 @@ class MATCHSRNN(BasicModel):
                            'embed', 'embed_size', 'vocab_size', 'channal', 'dropout_rate']
         self.embed_trainable = config['train_embed']
         self.channel = config['channel']
-        print self.channel
+        print(self.channel)
         self.setup(config)
         if not self.check():
             raise TypeError('[MatchSRNN] parameter check wrong')
-        print '[MatchSRNN] init done'
+        print('[MatchSRNN] init done')
 
     def setup(self, config):
         if not isinstance(config, dict):
