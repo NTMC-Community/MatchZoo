@@ -4,7 +4,7 @@ from pathlib import Path
 
 import keras
 
-from engine.model_params import ModelParams
+from matchzoo.engine.model_params import ModelParams
 
 BACKEND_FILENAME = 'backend.h5'
 PARAMS_FILENAME = 'params.pkl'
