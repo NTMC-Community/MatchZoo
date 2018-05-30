@@ -1,5 +1,7 @@
 """Task types definitions."""
 
+import typing
+
 
 class BaseTask(object):
     """Base Task, shouldn't be used directly."""
@@ -13,20 +15,20 @@ class Classification(BaseTask):
     """Classification Task."""
 
 
-def list_avaliable_task_types():
+def list_available_task_types() -> typing.List[typing.Type[BaseTask]]:
     return [BaseTask, Ranking, Classification]
 
 
-def get(target):
-    if issubclass(target, BaseTask):
-        return target()
-    elif isinstance(target, BaseTask):
-        return target
-    elif target == 'base':
+def get(id_: typing.Union[str, BaseTask, typing.Type[BaseTask]]) -> BaseTask:
+    if isinstance(id_, BaseTask):
+        return id_
+    elif isinstance(id_, type) and issubclass(id_, BaseTask):
+        return id_()
+    elif id_ == 'base' or id_ == 'base_task':
         return BaseTask()
-    elif target == 'ranking':
+    elif id_ == 'ranking':
         return Ranking()
-    elif target == 'classification':
+    elif id_ == 'classification':
         return Classification()
     else:
-        raise NotImplementedError
+        raise ValueError(f"Identifier {id_} Can not be intepreted.")
