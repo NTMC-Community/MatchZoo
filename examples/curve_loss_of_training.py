@@ -15,7 +15,8 @@ def draw_train_learning_curve(log_file, log_label):
     #command = 'curl ' + log_file 
     #r = os.popen(command)
     r = open(log_file, 'r')
-    info = r.readlines()  
+    info = r.readlines()
+    r.close() 
     start_line = '[Model] Model Compile Done.'
     start_flag = False
     train_loss = []
@@ -26,21 +27,21 @@ def draw_train_learning_curve(log_file, log_label):
     for line in info: 
         line = line.strip('\r\n')
         if start_flag:
-            # print line
+            # print (line)
             tokens = line.split('\t')
             if len(tokens)>1:
-                # print 'tokens: ', tokens
+                # print ('tokens: ', tokens)
                 if 'train' in line:
-                    #print tokens
+                    #print (tokens)
                     train_loss.append(float(tokens[2].split('=')[1]))
                 elif 'valid' in line:
-                    #print tokens
+                    #print (tokens)
                     if len(tokens) < 6:
                         continue
                     valid_map.append(float(tokens[2].split('=')[1]))
                     valid_p1.append(float(tokens[5].split('=')[1]))
                 else:
-                    #print tokens[2], tokens[5]
+                    #print (tokens[2], tokens[5])
                     test_map.append(float(tokens[2].split('=')[1]))
                     test_p1.append(float(tokens[5].split('=')[1]))
         if start_line in line.strip('\r\n'):
@@ -59,10 +60,10 @@ def draw_train_learning_curve(log_file, log_label):
     plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
     x = range(len(train_loss))
-    #print 'x', x
-    #print train_loss
+    #print ('x', x)
+    #print (train_loss)
     if (len(train_loss) != len(test_p1)) or (len(train_loss) != len(valid_p1)):
-        print 'wait a few seconds for the valid/test metrics in the next iteration...'
+        print ('wait a few seconds for the valid/test metrics in the next iteration...')
         min_len = min(len(test_p1), len(valid_p1))
         train_loss = train_loss[0:min_len]
         valid_map = valid_map[0:min_len]
@@ -81,11 +82,10 @@ def draw_train_learning_curve(log_file, log_label):
     plt.title(log_label)
     plt.ylabel('model training learning curves')
     #plt.show()
-    fig = plt.figure()
-    fig.savefig("_".join(log_label.split())+".png")
+    plt.savefig("_".join(log_label.split())+".png")
 
 exp_id = 1
-print 'Exp ', exp_id, ': model comparation'
+print ('Exp ', exp_id, ': model comparation')
 if not os.path.isfile(sys.argv[1]):
     for model in os.listdir(sys.argv[1]):
         log_file = os.path.join(sys.argv[1], model) #'path_of_log_file'

@@ -16,7 +16,6 @@ if __name__ == '__main__':
             r = line.split()
             w = r[0]
             try:
-                # BUG: it will happen `name@domain.com`
                 vec = [float(k) for k in r[1:]]
             except:
                 print(line)
