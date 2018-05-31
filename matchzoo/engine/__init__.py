@@ -1,1 +1,1 @@
-from . import tasks
+from .base_task import BaseTask
