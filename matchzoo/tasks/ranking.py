@@ -1,5 +1,7 @@
 """Ranking task."""
 
+import keras
+
 from matchzoo import engine
 
 
@@ -15,3 +17,6 @@ class Ranking(engine.BaseTask):
     def list_available_metrics(cls) -> list:
         """Return a list of available metrics."""
         return ['mae']
+
+    def make_output_layer(self):
+        return keras.layers.Dense(1, activation='sigmoid')

@@ -8,29 +8,24 @@ def test_list_available_task_types():
 
 
 @pytest.mark.parametrize("task_type", [
-    tasks.Ranking, tasks.BinaryClassification
+    tasks.Ranking, tasks.Classification
 ])
 def test_task_listings(task_type):
     assert task_type.list_available_losses()
     assert task_type.list_available_metrics()
 
 
-@pytest.mark.parametrize("id_, expected_task_type", [
-    (tasks.BinaryClassification, tasks.BinaryClassification),
-    ('classification', tasks.BinaryClassification),
-    ('binary_classification', tasks.BinaryClassification),
-
-    (tasks.Ranking, tasks.Ranking),
-    ('ranking', tasks.Ranking),
-])
-def test_get_task_instance(id_, expected_task_type):
-    assert tasks.get(id_) is expected_task_type
+@pytest.mark.parametrize("arg", [None, -1, 0, 1])
+def test_classification_instantiation_failure(arg):
+    with pytest.raises(Exception):
+        tasks.Classification(num_classes=arg)
 
 
-@pytest.mark.parametrize("id_", [
-    None,
-    'some_random_text'
-])
-def test_get_task_instance_failures(id_):
-    with pytest.raises(TypeError):
-        tasks.get(id_)
+@pytest.mark.parametrize("arg", [2, 10, 2048])
+def test_classification_num_classes(arg):
+    task = tasks.Classification(num_classes=arg)
+    assert task.num_classes == arg
+
+
+def test_list_available_tasks():
+    assert tasks.list_available_task_types()
