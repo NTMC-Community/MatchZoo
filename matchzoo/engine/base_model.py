@@ -7,12 +7,12 @@ import keras
 
 from . import BaseModelParams, list_available_tasks
 
-BACKEND_FILENAME = 'backend.h5'
-PARAMS_FILENAME = 'params.pkl'
-MODEL_CLASS_FILENAME = 'class.pkl'
-
 
 class BaseModel(abc.ABC):
+    BACKEND_FILENAME = 'backend.h5'
+    PARAMS_FILENAME = 'params.pkl'
+    MODEL_CLASS_FILENAME = 'class.pkl'
+
     def __init__(self,
                  params: typing.Optional[BaseModelParams] = None,
                  backend: keras.models.Model = None):
@@ -51,16 +51,17 @@ class BaseModel(abc.ABC):
 
     def save(self, dirpath: typing.Union[str, Path]):
         dirpath = Path(dirpath)
+
         if not dirpath.exists():
             dirpath.mkdir()
 
-        backend_path = dirpath.joinpath(BACKEND_FILENAME)
+        backend_path = dirpath.joinpath(BaseModel.BACKEND_FILENAME)
         self._backend.save(backend_path)
 
-        params_path = dirpath.joinpath(PARAMS_FILENAME)
+        params_path = dirpath.joinpath(BaseModel.PARAMS_FILENAME)
         pickle.dump(self._params, open(params_path, mode='wb'))
 
-        model_class_path = dirpath.joinpath(MODEL_CLASS_FILENAME)
+        model_class_path = dirpath.joinpath(BaseModel.MODEL_CLASS_FILENAME)
         pickle.dump(self.__class__, open(model_class_path, mode='wb'))
 
     def guess_and_fill_missing_params(self):
@@ -94,12 +95,13 @@ class BaseModel(abc.ABC):
 
 def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
     dirpath = Path(dirpath)
-    backend_path = dirpath.joinpath(BACKEND_FILENAME)
+
+    backend_path = dirpath.joinpath(BaseModel.BACKEND_FILENAME)
     backend = keras.models.load_model(backend_path)
 
-    params_path = dirpath.joinpath(PARAMS_FILENAME)
+    params_path = dirpath.joinpath(BaseModel.PARAMS_FILENAME)
     params = pickle.load(open(params_path, 'rb'))
 
-    model_class_path = dirpath.joinpath(MODEL_CLASS_FILENAME)
+    model_class_path = dirpath.joinpath(BaseModel.MODEL_CLASS_FILENAME)
     model_class = pickle.load(open(model_class_path, 'rb'))
     return model_class(params=params, backend=backend)
