@@ -11,9 +11,9 @@ class Classification(engine.BaseTask):
     def __init__(self, num_classes: int = 2):
         super().__init__()
         if not isinstance(num_classes, int):
-            raise TypeError
+            raise TypeError("Number of classes must be an integer.")
         if num_classes < 2:
-            raise ValueError
+            raise ValueError("Number of classes can't be smaller than 2")
         self._num_classes = num_classes
 
     @property
