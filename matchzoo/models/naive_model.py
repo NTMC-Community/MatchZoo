@@ -9,6 +9,7 @@ class NaiveModel(engine.BaseModel):
     """Naive model with a simplest structure for testing purposes."""
 
     def build(self):
+        """Build."""
         x_in = [keras.layers.Input(shape)
                 for shape in self._params['input_shapes']]
         x = keras.layers.concatenate(x_in)

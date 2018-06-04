@@ -10,13 +10,14 @@ class Ranking(engine.BaseTask):
 
     @classmethod
     def list_available_losses(cls) -> list:
-        """Return a list of available losses."""
+        """:return: a list of available losses."""
         return ['mse']
 
     @classmethod
     def list_available_metrics(cls) -> list:
-        """Return a list of available metrics."""
+        """:return: a list of available metrics."""
         return ['mae']
 
     def make_output_layer(self):
+        """:return: a correctly shaped keras dense layer for model output."""
         return keras.layers.Dense(1, activation='sigmoid')

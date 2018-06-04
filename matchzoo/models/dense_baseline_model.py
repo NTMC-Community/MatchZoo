@@ -10,7 +10,6 @@ class DenseBaselineModel(engine.BaseModel):
     A simple densely connected baseline model.
 
     Examples:
-
         >>> model = DenseBaselineModel()
         >>> model.params['input_shapes'] = [(30,), (30,)]
         >>> model.params['num_dense_units'] = 1024
@@ -22,9 +21,7 @@ class DenseBaselineModel(engine.BaseModel):
 
     @classmethod
     def get_default_params(cls) -> engine.ModelParams:
-        """
-        :return: model default parameters
-        """
+        """:return: model default parameters."""
         params = engine.ModelParams()
         params['num_dense_units'] = 512
         return params

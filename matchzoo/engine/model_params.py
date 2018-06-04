@@ -6,7 +6,6 @@ class ModelParams(dict):
 
     def __init__(self):
         """Model parametrs."""
-
         super().__init__(
                 name=None,
                 model_class=None,
