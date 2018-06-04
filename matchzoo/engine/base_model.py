@@ -84,7 +84,7 @@ class BaseModel(abc.ABC):
             ...     def build(self):
             ...         pass
             >>> MyModel
-            <class 'base_model.MyModel'>
+            <class 'matchzoo.engine.base_model.MyModel'>
         """
 
     def compile(self):
