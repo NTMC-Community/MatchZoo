@@ -31,10 +31,7 @@ def filter_triletter(tri_stats, min_filter_num=5, max_filter_num=10000):
     return tri_dict
 
 if __name__ == '__main__':
-    run_mode = 'ranking'
-    if len(sys.argv) > 1 and sys.argv[1] == 'classification':
-        run_mode = 'classification'
-    basedir = '../../data/toy_example/%s/'%(run_mode)
+    basedir = sys.argv[1]
     in_dict_file = basedir + 'word_dict.txt'
     out_dict_file = basedir + 'triletter_dict.txt'
     word_triletter_map_file = basedir + 'word_triletter_map.txt'
@@ -53,8 +50,8 @@ if __name__ == '__main__':
     triletter_dict = filter_triletter(triletter_stats, 1, 1000)
     with open(out_dict_file, 'w') as f:
         for triid, tric in triletter_dict.items():
-            print >> f, triid, tric
+            f.write("{triid} {tric}\n".format(triid=triid, tric=tric))
     with open(word_triletter_map_file, 'w') as f:
         for wid, trics in word_triletter_map.items():
-            print >> f, wid, ' '.join([str(triletter_dict[k]) for k in trics if k in triletter_dict])
-    print 'Done ...'
+            f.write('{wid} {tr}\n'.format(wid=wid, tr=' '.join([str(triletter_dict[k]) for k in trics if k in triletter_dict])))
+    print('Done ...')
