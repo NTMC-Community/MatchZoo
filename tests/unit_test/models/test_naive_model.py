@@ -38,5 +38,7 @@ def test_naive_model(model, x, y):
 def test_save_load_model(model):
     tmpdir = '.tmpdir'
     model.save(tmpdir)
-    engine.load_model(tmpdir)
+    assert engine.load_model(tmpdir)
+    with pytest.raises(FileExistsError):
+        model.save(tmpdir)
     shutil.rmtree(tmpdir)
