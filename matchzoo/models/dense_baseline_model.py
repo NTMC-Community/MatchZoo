@@ -17,6 +17,7 @@ class DenseBaselineModel(engine.BaseModel):
         >>> model.build()
         >>> [layer.name for layer in model.backend.layers]
         ['input_1', 'input_2', 'concatenate_1', 'dense_1', 'dense_2']
+
     """
 
     @classmethod

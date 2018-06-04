@@ -53,7 +53,9 @@ class BaseModel(abc.ABC):
             >>> my_model.build()
             512 eggs
             and Parma Ham
+
         :return: model parameters
+
         """
         return engine.ModelParams()
 
