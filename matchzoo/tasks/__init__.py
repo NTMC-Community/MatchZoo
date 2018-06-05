@@ -1,3 +1,3 @@
-from .binary_classification import BinaryClassification
+from .classification import Classification
 from .ranking import Ranking
-from .utils import get, list_available_task_types
+from .utils import list_available_task_types
