@@ -1,4 +1,4 @@
-# /bin/python2.7
+# /bin/python2.7 and /bin/python3.5
 import os
 import sys
 import numpy as np
@@ -8,24 +8,22 @@ from preprocess import *
 from rank_io import *
 
 if __name__ == '__main__':
-    #run_mode = 'ranking'
-    #if len(sys.argv) > 1 and sys.argv[1] == 'classification':
-        #run_mode = 'classification'
-    bin_num = int(sys.argv[1]) #30
-    path = argv[2]#'../../data/toy_example/%s/'%(run_mode)
-    embed_size = int(argv[3]) #50
-    embedfile = argv[4] #path + 'embed_glove_d50_norm'
+    bin_num = int(sys.argv[1])  # 30
+    path = sys.argv[2]
+    embed_size = int(sys.argv[3])  # 50
+    embedfile = sys.argv[4]  # 'embed_glove_d50_norm'
     corpfile = path + 'corpus_preprocessed.txt'
     relfiles = [path + 'relation_train.txt',path + 'relation_valid.txt',path + 'relation_test.txt']
-    histfiles = [path + 'relation.train.binsum-%d.txt'%(bin_num),path + 'relation.valid.binsum-%d.txt'%(bin_num), path + 'relation.test.binsum-%d.txt'%(bin_num)]
+    histfiles = [path + 'relation.train.binsum-%d.txt' % bin_num, path + 'relation.valid.binsum-%d.txt' % bin_num,
+                 path + 'relation.test.binsum-%d.txt' % bin_num]
 
     # note here word embeddings have been normalized to speed up calculation
-    embed_dict = read_embedding(filename = embedfile)
+    embed_dict = read_embedding(filename=embedfile)
     print('after read embedding ...')
     _PAD_ = len(embed_dict) # for word without wordembeeding, assign an random embedding
     embed_dict[_PAD_] = np.zeros((embed_size, ), dtype=np.float32)
     embed = np.float32(np.random.uniform(-0.2, 0.2, [_PAD_+1, embed_size]))
-    embed = convert_embed_2_numpy(embed_dict, embed = embed)
+    embed = convert_embed_2_numpy(embed_dict, embed=embed)
 
     corp, _ = read_data(corpfile)
     print('after read corpus ....')
@@ -46,9 +44,9 @@ if __name__ == '__main__':
             fout.write(' '.join(map(str, curr_binsum)))
             fout.write('\n')
             if inum % 1000 == 0:
-                print('inum: %d ....\r'%inum,)
+                # print('inum: %d ....\r' % inum,)
                 sys.stdout.flush()
-            #print(curr_hist)
+            # print(curr_hist)
         fout.close()
         print('file: %s processed... '%(relfiles[i]))
     print('\nfinished ...')

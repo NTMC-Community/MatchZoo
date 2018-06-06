@@ -12,7 +12,7 @@ import sys
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 
-def draw_train_learning_curve(log_file, log_label):
+def draw_train_learning_curve(log_file):
     r = open(log_file, 'r')
     info = r.readlines()
     r.close() 
@@ -86,8 +86,18 @@ def draw_train_learning_curve(log_file, log_label):
     plt.legend(handles=[line1, line2, line3, line4, line5], loc=1)
     rcParams['grid.linestyle'] = 'dotted'
     plt.grid()
+    min_loss = min(train_loss)
+    max_p10 = max(test_p10)
+    max_map = max(test_map)
+    plt.ylabel('Model training curves')
+    log_label = """Best performances map = {map} in iterations {it_map}, P@10 = {p10} in iterations {it_p10} and 
+    loss = {los} in iterations {it_los}""".format(map=max_map,
+                                                  it_map=str([idx+1 for idx, val in enumerate(test_map) if val == max_map]),
+                                                  p10=max_p10,
+                                                  it_p10=str([idx+1 for idx, val in enumerate(test_p10) if val == max_p10]),
+                                                  los=min_loss,
+                                                  it_los=str([idx+1 for idx, val in enumerate(train_loss) if val == min_loss]))
     plt.title(log_label)
-    plt.ylabel('model training learning curves')
     plt.xlabel('learning iterations')
     plt.show()
     # plt.savefig("_".join(log_label.split())+".png")
@@ -102,5 +112,4 @@ if not os.path.isfile(sys.argv[1]):
         draw_train_learning_curve(log_file, log_label)
 else:
     log_file = sys.argv[1]  # file.log containing training details
-    log_label = sys.argv[2]  # title to the curve
-    draw_train_learning_curve(log_file, log_label)
+    draw_train_learning_curve(log_file)
