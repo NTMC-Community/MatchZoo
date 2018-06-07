@@ -27,8 +27,6 @@ class DssmModel(engine.BaseModel):
     	params['activation_prediction'] = 'softmax'
     	params['lr'] = 0.01
     	params['decay'] = 1e-6
-    	params['momentum'] = 0.9
-    	params['nesterov'] = True
     	params['batch_size'] = 1024
     	params['num_epochs'] = 20
     	params['train_test_split'] = 0.2
@@ -36,9 +34,7 @@ class DssmModel(engine.BaseModel):
     	params['shuffle'] = True
     	params['optimizer'] = optimizers.SGD
     	params['metrics'] = ['accuracy']
-    	params['reg_rate'] = 0
-    	params['dropout_rate'] = 0
-    	params['sim'] = 'cosine'
+        params['num_hidden_layers'] = 2
     	return params
 
     def build(self):
@@ -56,26 +52,25 @@ class DssmModel(engine.BaseModel):
 
     def _shared(self):
         """
-        
         Common architecture share to adopt pair-wise input.
 
         Word-hashing layer, hidden layer * 2,  out layer.
         
         :returns:  128 dimension vector representation.
         """
-        x_in = keras.layers.Input(
-            self.params['input_shapes'][0])
-        x = Dense(self._params['dim_hidden'],
+        x_in = keras.layers.Input(self.params['input_shapes'][0])
+        # Initialize input layer.
+        x = Dense(units=self._params['dim_hidden'],
                   input_shape=self._params['input_shapes'][0],
                   kernel_initializer=self._params['w_initializer'],
                   bias_initializer=self._params['b_initializer'])(x_in)
-        x = Dense(self._params['dim_hidden'],
-                  input_shape=(self._params['dim_hidden'],),
-                  activation=self._params['activation_hidden'])
-        x = Dense(self._params['dim_hidden'],
-                  input_shape=(self._params['dim_hidden'],),
-                  activation=self._params['activation_hidden'])
+        # Add hidden layers.
+        for num in range(0, self._params['num_hidden_layers']):
+            x = Dense(units=self._params['dim_hidden'],
+                      input_shape=(self._params['dim_hidden'],),
+                      activation=self._params['activation_hidden'])(x)
+        # Out layer, map tri-letters into 128d representation.
         x_out = Dense(self._params['dim_fan_out'],
-                  input_shape=(self._params['dim_hidden'],),
-                  activation=self._params['activation_hidden'])
+                      input_shape=(self._params['dim_hidden'],),
+                      activation=self._params['activation_hidden'])(x)
         return x_out
