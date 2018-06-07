@@ -1,207 +1,243 @@
-"""Contains the base Model class, from which all models inherit."""
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import division
+"""Base Model."""
 
 import abc
-from keras.models import load_model
+import typing
+import pickle
+from pathlib import Path
+
+import numpy as np
+import keras
+
+from matchzoo import engine
 
 
-class BaseModel(object):
-    """Abstract base model class.
+class BaseModel(abc.ABC):
+    """Abstract base class of all matchzoo models."""
 
-    # Properties:
-        name: str, name of the model.
-        task_type: str, model task type, ranking or classification.
-        trainable: boolean, indicates whether the model is allowed to train.
-        fixed_hyper_parameters: dict, fixed hyper parameters with values.
-        default_hyper_parameters: dict, universal hyper parameters.
-        model_specific_hyper_parameters: dict, hyper parameters w.r.t models.
-        user_given_parameters: dict, hyper parameters given by users.
+    BACKEND_FILENAME = 'backend.h5'
+    PARAMS_FILENAME = 'params.pkl'
 
-    # Methods:
-        compile(**kwargs)
-        train(text_1, text_2, labels)
-        load()
-
-    # Internal Methods:
-        _aggregate_hyper_parameters()
-        _build()
-    """
-
-    def __init__(self, **kwargs):
-        """Initialization."""
-        self._name = 'BaseModel'
-        self._task_type = None
-        self._trainable = True
-        #  This list serve as a "BLACK LIST", not allowed to changed.
-        self._list_fixed_hyper_parameters = []
-        self._fixed_hyper_parameters = {}
-        # Universal model parameters, can be overwrite if not fixed.
-        self._default_hyper_parameters = {
-            'learning_rate': 0.01,
-            'decay': 1e-6,
-            'batch_size': 256,
-            'num_epochs': 20,
-            'train_test_split': 0.2,
-            'verbose': 1,
-            'shuffle': True
-        }
-        # Model specific hyper parameters, can be overwritten by
-        # _user_given_parameters if not fixed.
-        self._model_specific_hyper_parameters = {}
-        # User given hyper parameters.
-        # THE Intersection between default_hyper_parameters and
-        # _model_specific_hyper_parameters will be overrite by
-        # _user_given_parameters if it's not fixed
-        self._user_given_parameters = {}
-        for key, value in kwargs.items():
-            if key not in self._list_fixed_hyper_parameters:
-                self._user_given_parameters[key] = value
-        # Number of default hidden layers.
-        # E.g. DSSM is a 3 layer network, user can custom a 5 layer
-        #   DSSM with _num_hidden_layers.
-        self._num_hidden_layers = None
-
-    @property
-    def name(self):
-        """Get model name."""
-        return self._name
-
-    @property
-    def task_type(self):
-        """Model task_type, classification, ranking or both."""
-        return self._task_type
-
-    @task_type.setter
-    def task_type(self, value):
-        """Set model task_type."""
-        if value not in ['ranking', 'classification']:
-            raise ValueError('{} is not a valid model task_type'.format(
-                value))
-        self._task_type = value
-
-    @property
-    def trainable(self):
-        """Indicate allow to train or not."""
-        return self._trainable
-
-    @property
-    def fixed_hyper_parameters(self):
-        """Get fixed hyper parameters."""
-        return self._fixed_hyper_parameters
-
-    @fixed_hyper_parameters.setter
-    def fixed_hyper_parameters(self, config):
-        """Set fixed hyper parameters."""
-        for key, value in config.items():
-            self._fixed_hyper_parameters[key] = value
-            self._list_fixed_hyper_parameters.append(key)
-
-    @property
-    def default_hyper_parameters(self):
-        """Universal parameters that can be use across varies models."""
-        return self._default_hyper_parameters
-
-    @default_hyper_parameters.setter
-    def default_hyper_parameters(self, config):
-        """Set default hyper parameters."""
-        allowed_default_parameters = self._default_hyper_parameters.keys()
-        for key, value in config.items():
-            if key not in allowed_default_parameters:
-                raise ValueError(
-                    '{} not in allowed default parameters: {}.'.format(
-                        key,
-                        allowed_default_parameters))
-            self._default_hyper_parameters[key] = value
-
-    @property
-    def model_specific_hyper_parameters(self):
-        """Get model specific hyper parameters."""
-        return self._model_specific_hyper_parameters
-
-    @model_specific_hyper_parameters.setter
-    def model_specific_hyper_parameters(self, config):
-        """Set model specific hyper parameters."""
-        self._model_specific_hyper_parameters = config
-
-    @property
-    def user_given_parameters(self):
-        """Get user given hyper parameters."""
-        return self._user_given_parameters
-
-    def _aggregate_hyper_parameters(self):
-        """Merge all of the hyper parameters.
-
-        This function is used internaly.`
-
-        # Returns:
-            conf: final model  configuration.
+    def __init__(self, params: typing.Optional[engine.ModelParams] = None,
+                 backend: keras.models.Model = None):
         """
-        conf = self._default_hyper_parameters.copy()
-        # Universal config will be overwrite by model_specific.
-        # Then merge.
-        conf.update(self._model_specific_hyper_parameters)
-        # Merged universal config and model config will be.
-        # overriten by user_given_parameters.
-        conf.update(self._user_given_parameters)
-        # Filter fixed-parameters from configuration.
-        [conf.pop(key, None) for key in self._list_fixed_hyper_parameters]
-        # Merge default fixed parameters.
-        conf.update(self._fixed_hyper_parameters)
-        return conf
+        :class:`BaseModel` constructor.
+
+        :param params: model parameters, if not set, return value from
+            :meth:`get_default_params` will be used
+        :param backend: a keras model as the model backend
+        """
+        self._params = params or self.get_default_params()
+        self._backend = backend
+
+    @classmethod
+    def get_default_params(cls) -> engine.ModelParams:
+        """
+        Model default parameters.
+
+        The common usage is to instantiate :class:`matchzoo.engine.ModelParams`
+            first, then set the model specific parametrs.
+
+        Examples:
+            >>> class MyModel(BaseModel):
+            ...     def build(self):
+            ...         print(self._params['num_eggs'], 'eggs')
+            ...         print('and', self._params['ham_type'])
+            ...
+            ...     @classmethod
+            ...     def get_default_params(cls):
+            ...         params = engine.ModelParams()
+            ...         params['num_eggs'] = 512
+            ...         params['ham_type'] = 'Parma Ham'
+            ...         return params
+            >>> my_model = MyModel()
+            >>> my_model.build()
+            512 eggs
+            and Parma Ham
+
+        :return: model parameters
+
+        """
+        return engine.ModelParams()
+
+    @property
+    def params(self) -> engine.ModelParams:
+        """:return: model parameters."""
+        return self._params
+
+    @property
+    def backend(self) -> keras.models.Model:
+        """:return model backend, a keras model instance."""
+        return self._backend
 
     @abc.abstractmethod
-    def _build(self):
-        """Build model, each sub class need to impelemnt this method.
-
-        This function is used internally with `self._build()`.
+    def build(self):
         """
-        return
+        Build model, each sub class need to impelemnt this method.
 
-    @abc.abstractmethod
-    def compile(self, **kwargs):
-        """Compile model, each sub class need to implement this method.
+        Example:
 
-        This function is used internally with `self._compile()`.
-
-        # Arguments:
-            **kwargs: Trainable parameters.
+            >>> BaseModel()  # doctest: +ELLIPSIS
+            Traceback (most recent call last):
+            ...
+            TypeError: Can't instantiate abstract class BaseModel ...
+            >>> class MyModel(BaseModel):
+            ...     def build(self):
+            ...         pass
+            >>> MyModel
+            <class 'matchzoo.engine.base_model.MyModel'>
         """
-        return
 
-    @abc.abstractmethod
-    def train(self, text_1, text_2, labels):
-        """Train MatchZoo model, each sub class need to implement this method.
+    def compile(self):
+        """Compile model for training."""
+        self._backend.compile(optimizer=self._params['optimizer'],
+                              loss=self._params['loss'],
+                              metrics=self._params['metrics'])
 
-        # Arguments:
-            text_1: list of text to be trained, left node.
-            text_2: list of text to be trained, right node.
-            labels: ground truth.
+    def fit(
+            self,
+            x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+            y: np.ndarray,
+            batch_size: int = 128,
+            epochs: int = 1
+    ) -> keras.callbacks.History:
         """
-        return
+        Fit the model.
 
-    @staticmethod
-    def load(model_dir, custom_loss=None):
-        """Load keras model by dir.
+        See :meth:`keras.models.Model.fit` for more details.
 
-        If Keras model was trained with custom loss function use custom_loss.
-
-        # Arguments:
-            model_dir: Model directory.
-            custom_loss: custom loss function, if required
-                         expect dict as input, where dict key is loss name,
-                         value is custom loss function.
-
-        # Returns:
-            model: Keras model instance.
+        :param x: input data
+        :param y: labels
+        :param batch_size: number of samples per gradient update
+        :param epochs: number of epochs to train the model
+        :return: A `keras.callbacks.History` instance. Its history attribute
+        contains all information collected during training.
         """
-        if not custom_loss:
-            return load_model(model_dir)
+        return self._backend.fit(x=x, y=y,
+                                 batch_size=batch_size, epochs=epochs)
+
+    def evaluate(
+            self,
+            x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+            y: np.ndarray,
+            batch_size: int = 128,
+    ) -> typing.Union[float, typing.List[float]]:
+        """
+        Evaluate the model.
+
+        See :meth:`keras.models.Model.evaluate` for more details.
+
+        :param x: input data
+        :param y: labels
+        :param batch_size: number of samples per gradient update
+        :return: scalar test loss (if the model has a single output and no
+            metrics) or list of scalars (if the model has multiple outputs
+            and/or metrics). The attribute `model.backend.metrics_names` will
+            give you the display labels for the scalar outputs.
+        """
+        return self._backend.evaluate(x=x, y=y, batch_size=batch_size)
+
+    def predict(
+            self,
+            x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+            batch_size=128
+    ) -> np.ndarray:
+        """
+        Generate output predictions for the input samples.
+
+        See :meth:`keras.models.Model.predict` for more details.
+
+        :param x: input data
+        :param batch_size: number of samples per gradient update
+        :return: numpy array(s) of predictions
+        """
+        return self._backend.predict(x=x, batch_size=batch_size)
+
+    def save(self, dirpath: typing.Union[str, Path]):
+        """
+        Save the model.
+
+        A saved model is represented as a directory with two files. One is a
+        model parameters file saved by `pickle`, and the other one is a model
+        h5 file saved by `keras`.
+
+        :param dirpath: directory path of the saved model
+        """
+        dirpath = Path(dirpath)
+
+        if dirpath.exists():
+            raise FileExistsError
         else:
-            if not isinstance(custom_loss, dict):
-                raise TypeError(
-                    "Custom loss should be a dict, get {}".format(
-                        type(custom_loss)))
-            return load_model(model_dir,
-                              custom_objects=custom_loss)
+            dirpath.mkdir()
+
+        backend_file_path = dirpath.joinpath(self.BACKEND_FILENAME)
+        self._backend.save(backend_file_path)
+
+        params_file_path = dirpath.joinpath(self.PARAMS_FILENAME)
+        pickle.dump(self._params, open(params_file_path, mode='wb'))
+
+    def guess_and_fill_missing_params(self):
+        """
+        Guess and fill missing parameters in :attribute:`params`.
+
+        Note: likely to be moved to a higher level API in the future.
+        """
+        if self._params['name'] is None:
+            self._params['name'] = self.__class__.__name__
+
+        if self._params['model_class'] is None:
+            self._params['model_class'] = self.__class__
+
+        if self._params['task'] is None:
+            # index 0 points to an abstract task class
+            self._params['task'] = engine.list_available_tasks()[1]
+
+        if self._params['input_shapes'] is None:
+            self._params['input_shapes'] = [(30,), (30,)]
+
+        if self._params['metrics'] is None:
+            task = self._params['task']
+            available_metrics = task.list_available_metrics()
+            self._params['metrics'] = available_metrics
+
+        if self._params['loss'] is None:
+            available_losses = self._params['task'].list_available_losses()
+            self._params['loss'] = available_losses[0]
+
+        if self._params['optimizer'] is None:
+            self._params['optimizer'] = 'adam'
+
+    def all_params_filled(self) -> bool:
+        """
+        Note: likely to be moved to a higher level API in the future.
+
+        Example:
+
+            >>> import matchzoo
+            >>> model = matchzoo.models.NaiveModel()
+            >>> model.all_params_filled()
+            False
+            >>> model.guess_and_fill_missing_params()
+            >>> model.all_params_filled()
+            True
+
+        :return: `True` if all params are filled, `False` otherwise
+        """
+        return all(value is not None for value in self._params.values())
+
+
+def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
+    """
+    Load a model. The reverse function of :meth:`BaseModel.save`.
+
+    :param dirpath: directory path of the saved model
+    :return: a :class:`BaseModel` instance
+    """
+    dirpath = Path(dirpath)
+
+    backend_file_path = dirpath.joinpath(BaseModel.BACKEND_FILENAME)
+    backend = keras.models.load_model(backend_file_path)
+
+    params_file_path = dirpath.joinpath(BaseModel.PARAMS_FILENAME)
+    params = pickle.load(open(params_file_path, 'rb'))
+
+    return params['model_class'](params=params, backend=backend)

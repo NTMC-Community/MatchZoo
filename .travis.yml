@@ -1,7 +1,6 @@
 language: python
 python:
-      - 2.7
-      - 3.6
+      - 3.6.3
 sudo: enabled
 script: make test
 env: PYTHONPATH=$PYTHONPATH:$TRAVIS_BUILD_DIR/tests:$TRAVIS_BUILD_DIR/matchzoo
