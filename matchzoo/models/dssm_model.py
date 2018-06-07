@@ -5,48 +5,48 @@ from keras import optimizers
 
 
 class DssmModel(engine.BaseModel):
-	"""
-	Deep structured semantic model.
+    """
+    Deep structured semantic model.
 
-	Extends:
-		engine.BaseModel
-	"""
+    Extends:
+            engine.BaseModel
+    """
 
     @classmethod
     def get_default_params(cls) -> engine.ModelParams:
-    	""":return: model default parameters."""
-    	params = engine.ModelParams()
-    	params['name'] = 'DSSM'
-    	params['w_initializer'] = 'glorot_normal'
-    	params['b_initializer'] = 'zeros'
+        """:return: model default parameters."""
+        params = engine.ModelParams()
+        params['name'] = 'DSSM'
+        params['w_initializer'] = 'glorot_normal'
+        params['b_initializer'] = 'zeros'
         # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM
-    	params['input_shapes'] = [(1,), (1,)]
-    	params['dim_fan_out'] = 128
-    	params['dim_hidden'] = 300
-    	params['activation_hidden'] = 'tanh'
-    	params['activation_prediction'] = 'softmax'
-    	params['lr'] = 0.01
-    	params['decay'] = 1e-6
-    	params['batch_size'] = 1024
-    	params['num_epochs'] = 20
-    	params['train_test_split'] = 0.2
-    	params['verbose'] = 1
-    	params['shuffle'] = True
-    	params['optimizer'] = optimizers.SGD
-    	params['metrics'] = ['accuracy']
+        params['input_shapes'] = [(1,), (1,)]
+        params['dim_fan_out'] = 128
+        params['dim_hidden'] = 300
+        params['activation_hidden'] = 'tanh'
+        params['activation_prediction'] = 'softmax'
+        params['lr'] = 0.01
+        params['decay'] = 1e-6
+        params['batch_size'] = 1024
+        params['num_epochs'] = 20
+        params['train_test_split'] = 0.2
+        params['verbose'] = 1
+        params['shuffle'] = True
+        params['optimizer'] = optimizers.SGD
+        params['metrics'] = ['accuracy']
         params['num_hidden_layers'] = 2
-    	return params
+        return params
 
     def build(self):
-    	"""
-    	Build model structure.
-    	
-    	DSSM use pair-wise arthitecture.
-    	"""
-    	x_in = [self._shared(), self._shared()]
+        """
+        Build model structure.
+
+        DSSM use pair-wise arthitecture.
+        """
+        x_in = [self._shared(), self._shared()]
         # Dot product with cosine similarity.
         x = Dot(axis=1,
-        	    normalize=True)(x_in)
+                normalize=True)(x_in)
         x_out = Activation(activation=self._params['activation_prediction'])(x)
         self._backend = keras.models.Model(inputs=x_in, outputs=x_out)
 
@@ -55,7 +55,7 @@ class DssmModel(engine.BaseModel):
         Common architecture share to adopt pair-wise input.
 
         Word-hashing layer, hidden layer * 2,  out layer.
-        
+
         :returns:  128 dimension vector representation.
         """
         x_in = keras.layers.Input(self.params['input_shapes'][0])
