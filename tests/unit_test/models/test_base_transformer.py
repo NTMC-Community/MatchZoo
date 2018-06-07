@@ -1,8 +1,8 @@
 import pytest
-from matchzoo.engine.base_transformer import TransformerMiXin
+from matchzoo.engine.base_transformer import TransformerMixin
 
 def test_transformer():
-    class DummyTransformer(TransformerMiXin):
+    class DummyTransformer(TransformerMixin):
         """This is a dummy class for """
 
         def __init__(self):
