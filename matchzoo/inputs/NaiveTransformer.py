@@ -8,52 +8,46 @@ from collections import Mapping, defaultdict
 import numbers
 import six
 
-class BaseTransformer(abc.ABC):
-    """Basic data transformer for MatchZoo.
+from matchzoo import engine
 
-    # Attributes
-    ============
-    vocabulary_ : dict
-        A mapping of terms to feature indices.
+class NaiveTransformer(engine.BaseTransformer):
+    """The simple transformer for MatchZoo.
 
-    stop_words_ : set
-        Terms that were ignored because they either:
-
-            - occured in too many documents (`max_df`)
-            - occured in too few documents (`min_df`)
-            - were cut off by feature selection (`max_features`).
-
-        This is only available if no vocabulary was given.
-
-    # Methods:
-    ==========
-    fit_transform(X, y=None, **fit_params)
-
-    fit(X, y=None)
-
-    transform(X, copy=True)
-
+    Examples:
+        >>> transformer = NaiveTransormer()
+        >>> transformer.params['max_df'] = 0.999
+        >>> transformer.params['min_df'] = 0.001
+        >>> transformer.params['max_vocab_size'] = 30000
+        >>> transformer.params['analyzer'] = 'word'
+        >>> transformer.params['stop_words'] = set('is', 'are')
+        >>> transformer.params['vocabulary'] = {'a':0, 'b':1}
+        >>> transformer.params['fixed_vocab'] = False
+        >>> X = transformer.fit_transform(X)
     """
 
     def __init__(self, max_df=1.0, min_df=0, max_vocab_size=None,
-                 vocabulary=None, analyzer='word'):
-        self.name = 'BaseTransformer'
-        self.stop_words_ = set()
-        self.max_df = max_df
-        self.min_df = min_df
-        self.max_vocab_size = max_vocab_size
-        self.vocabulary = vocabulary
-        self.analyzer = analyzer
+                 vocabulary=None, analyzer='word', stop_words=set(),
+                 fixed_vocab=False):
+        self._params['name'] = self.__class__.__name__
+        self._params['transformer_class'] = self.__class__
+
+        self._params['max_df'] = max_df
+        self._params['min_df'] = min_df
+        self._params['max_vocab_size'] = max_vocab_size
+        self._params['analyzer'] = analyzer
+        self._params['stop_words'] = stop_words
+        self._params['vocabulary'] = vocabulary
+        self._params['fixed_vocab'] = fixed_vocab
 
     def _validate_vocabulary(self):
-        vocabulary = self.vocabulary
+        vocabulary = self._params['vocabulary']
         if vocabulary is not None:
             if isinstance(vocabulary, set):
                 vocabulary = sorted(vocabulary)
             if not isinstance(vocabulary, Mapping):
                 vocab = {}
-                for i,t in enumerate(vocabulary):
-                    if vocab.setdefault(t,i) != i:
+                for i, t in enumerate(vocabulary):
+                    if vocab.setdefault(t, i) != i:
                         msg = "Duplicate term in vocabulary: %r" % t
                         raise ValueError(msg)
                 vocabulary = vocab
@@ -68,37 +62,14 @@ class BaseTransformer(abc.ABC):
                         raise ValueError(msg)
             if not vocabulary:
                 raise ValueError("empty vocabulary passed to fit")
-            self.fixed_vocabulary_ = True
-            self.vocabulary_ = dict(vocabulary)
+            self._params['fixed_vocab'] = True
+            self._params['vocabulary'] = dict(vocabulary)
         else:
-            self.fixed_vocabulary_ = False
+            self._params['fixed_vocab'] = False
 
     def _validate_params(self):
         return
 
-    def build_analyzer(self):
-        """Return a callable that handles preprocessing and tokenization"""
-        if callable(self.analyzer):
-            return self.analyzer
-
-        #preprocess = self.build_preprocessor()
-
-        if self.analyzer == 'char':
-            return lambda doc: self._char_ngrams(preprocess(doc))
-
-        elif self.analyzer == 'char_wb':
-            return lambda doc:self._char_wb_ngrams(preprocess(doc))
-        elif self.analyzer == 'word':
-            stop_words = self.get_stop_words()
-            tokenizer = self.build_tokenizer()
-            return lambda doc: self._word_ngrams(tokenize(preprocess(doc)),
-                                                 stop_words)
-        else:
-            raise ValueError('%s is not a valid tokenization scheme/analyzer' %
-                             self.analyzer)
-
-
-    @classmethod
     def build_vocabulary(self, X, fixed_vocab=False):
         """Create wordID vector for each text in X, and vocabulary where
         fixed_vocab = False
@@ -137,7 +108,6 @@ class BaseTransformer(abc.ABC):
 
         return vocabulay, new_X
 
-
     def _limit_vocabulary(self, X, vocabulary, high=None, low=None,
                           limit=None):
         """Remove too rare or too common words.
@@ -151,10 +121,6 @@ class BaseTransformer(abc.ABC):
         if high is None and low is None and limit is None:
             return X, set()
 
-        # Calculate a mask based on document frequencies
-
-
-    @classmethod
     def fit_transform(self, X, y=None, **fit_params):
         """Fit to data, then transform it.
 
@@ -182,11 +148,11 @@ class BaseTransformer(abc.ABC):
 
         self._validate_vocabulary()
 
-        vocabulary, X= self.build_vocabulary(X, self.fixed_vocabulary_)
+        vocabulary, X= self.build_vocabulary(X, self._params['fixed_vocab'])
         if not self.fixed_vocabulary_:
-            max_df = self.max_df
-            min_df = self.min_df
-            max_vocab_size = self.max_vocab_size
+            max_df = self._params['max_df']
+            min_df = self._params['min_df']
+            max_vocab_size = self._params['max_vocab_size']
             max_doc_count = (max_df
                              if isinstance(max_df, numbers.Integral)
                              else max_df * self.num_docs)
@@ -196,26 +162,14 @@ class BaseTransformer(abc.ABC):
             if max_doc_count < min_doc_count:
                 raise ValueError(
                     " max_df corresponds to < documents than min_df.")
-            X, self.stop_words_ = self._limit_vocabulary(X, vocabulary,
+            X, self._params['stop_words'] = self._limit_vocabulary(X, vocabulary,
                                                          max_doc_count,
                                                          min_doc_count,
                                                          max_vocab_size)
-            self.vocabulary_ = vocabulary
+
+            self._params['vocabulary'] = vocabulary
         return X
 
-    @abc.abstractmethod
-    def fit(self, X, y=None):
-        """Learn the vocabulary information (global term statistical).
-
-        Parameters
-        =========
-        X : list, [{'t1':string, 't2':string}]
-            a list of text pairs
-        """
-        self.fit_transform(X)
-        return self
-
-    @abc.abstractmethod
     def transform(self, X, copy=True):
         """Transform dict of string vectors to a indice vectors.
 

@@ -1,17 +1,21 @@
 import pytest
-from matchzoo.engine.base_transformer import TransformerMixin
+from matchzoo.engine.base_transformer import BaseTransformer
 
 def test_transformer():
-    class DummyTransformer(TransformerMixin):
+    class DummyTransformer(BaseTransformer):
         """This is a dummy class for """
 
         def __init__(self):
-            self.name = 'DummyTransformer'
+            self.params['name'] = 'DummyTransformer'
+            print(self.params['transformer_class'])
 
-        def fit(self, X, y=None):
+        def build_vocabulary(self, X, fixed_vocab=False):
             return self
 
         def transform(self, X):
+            pass
+
+        def fit_transform(self, X):
             pass
 
     e = DummyTransformer()
@@ -19,7 +23,7 @@ def test_transformer():
     y = 0
 
     # the test
-    assert e.name == 'DummyTransformer'
+    assert e.params['name'] == 'DummyTransformer'
 
     assert e.fit_transform(x) == None
     assert e.fit_transform(x, y) == None
