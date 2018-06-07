@@ -1,7 +1,9 @@
-"""DSSM, Deep Structured Semantic Model."""
+"""An implementation of DSSM, Deep Structured Semantic Model."""
 
 from matchzoo import engine
 from keras import optimizers
+from keras.models import Model
+from keras.layers import Dense, Input, Dot, Activation
 
 
 class DssmModel(engine.BaseModel):
@@ -48,7 +50,7 @@ class DssmModel(engine.BaseModel):
         x = Dot(axis=1,
                 normalize=True)(x_in)
         x_out = Activation(activation=self._params['activation_prediction'])(x)
-        self._backend = keras.models.Model(inputs=x_in, outputs=x_out)
+        self._backend = Model(inputs=x_in, outputs=x_out)
 
     def _shared(self):
         """
@@ -58,7 +60,7 @@ class DssmModel(engine.BaseModel):
 
         :returns:  128 dimension vector representation.
         """
-        x_in = keras.layers.Input(self.params['input_shapes'][0])
+        x_in = Input(self.params['input_shapes'][0])
         # Initialize input layer.
         x = Dense(units=self._params['dim_hidden'],
                   input_shape=self._params['input_shapes'][0],
