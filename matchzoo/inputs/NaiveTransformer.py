@@ -3,31 +3,35 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
 
-import abc
-from collections import Mapping, defaultdict
+from collections import defaultdict
 import numbers
-import six
+import copy
 
 from matchzoo import engine
+
 
 class NaiveTransformer(engine.BaseTransformer):
     """The simple transformer for MatchZoo.
 
     Examples:
-        >>> transformer = NaiveTransormer()
+        >>> X = [("This is the matchzoo toolkit.", "Here is matchzoo.")]
+        >>> transformer = NaiveTransformer()
         >>> transformer.params['max_df'] = 0.999
         >>> transformer.params['min_df'] = 0.001
         >>> transformer.params['max_vocab_size'] = 30000
         >>> transformer.params['analyzer'] = 'word'
-        >>> transformer.params['stop_words'] = set('is', 'are')
+        >>> transformer.params['stop_words'] = set(['is', 'are'])
         >>> transformer.params['vocabulary'] = {'a':0, 'b':1}
         >>> transformer.params['fixed_vocab'] = False
         >>> X = transformer.fit_transform(X)
+
     """
 
     def __init__(self, max_df=1.0, min_df=0, max_vocab_size=None,
                  vocabulary=None, analyzer='word', stop_words=set(),
                  fixed_vocab=False):
+        """Initialization."""
+        super(NaiveTransformer, self).__init__()
         self._params['name'] = self.__class__.__name__
         self._params['transformer_class'] = self.__class__
 
@@ -39,56 +43,25 @@ class NaiveTransformer(engine.BaseTransformer):
         self._params['vocabulary'] = vocabulary
         self._params['fixed_vocab'] = fixed_vocab
 
-    def _validate_vocabulary(self):
-        vocabulary = self._params['vocabulary']
-        if vocabulary is not None:
-            if isinstance(vocabulary, set):
-                vocabulary = sorted(vocabulary)
-            if not isinstance(vocabulary, Mapping):
-                vocab = {}
-                for i, t in enumerate(vocabulary):
-                    if vocab.setdefault(t, i) != i:
-                        msg = "Duplicate term in vocabulary: %r" % t
-                        raise ValueError(msg)
-                vocabulary = vocab
-            else:
-                indices = set(six.itervalues(vocabulary))
-                if len(indices) != len(vocabulary):
-                    raise ValueError("Vocabulary contains repeated indices.")
-                for i in xrange(len(vocabulary)):
-                    if i not in indices:
-                        msg = ("Vocabulary of size %d doesn't cotain index "
-                                "%d." % (len(vocabulary), i))
-                        raise ValueError(msg)
-            if not vocabulary:
-                raise ValueError("empty vocabulary passed to fit")
-            self._params['fixed_vocab'] = True
-            self._params['vocabulary'] = dict(vocabulary)
-        else:
-            self._params['fixed_vocab'] = False
-
-    def _validate_params(self):
-        return
-
     def build_vocabulary(self, X, fixed_vocab=False):
-        """Create wordID vector for each text in X, and vocabulary where
-        fixed_vocab = False
+        """Create the vocabulary as well as mapped X.
+
+        If fixed_vocab is False, then generate the vocabulary.
         """
         if fixed_vocab:
-            vocabulary = self.vocabulary_
+            vocabulary = self._params['vocabulary']
         else:
             # Add a new value when a new vocabulary item is seen
             vocabulary = defaultdict()
             vocabulary.default_factory = vocabulary.__len__
 
         analyze = self.build_analyzer()
-        new_X = copy(X)
-        for idx, instance in enumerate(X):
+        new_X = copy.deepcopy(X)
+        for idx, pair in enumerate(X):
             # id1 = instance['id1']
             # id2 = instance['id2']
-            pair_text = (instance['text1'],instance['text2'])
             pair_feature = ([], [])
-            for tid, text in enumerate(pair_text):
+            for tid, text in enumerate(pair):
                 for feature in analyze(text):
                     try:
                         feature_idx = vocabulary[feature]
@@ -96,17 +69,15 @@ class NaiveTransformer(engine.BaseTransformer):
                     except KeyError:
                         # Ignore out-of-vocabulary items for fixed_vocab=True
                         continue
-            new_X[idx]['text1'] = pair_feature[0]
-            new_X[idx]['text2'] = pair_feature[1]
+            new_X[idx] = pair_feature
 
         if not fixed_vocab:
             # disable defaultdic behaviour
             vocabulary = dict(vocabulary)
             if not vocabulary:
-                raise ValueError("empty vocabulay; perhaps the documents only"
+                raise ValueError("empty vocabulary; perhaps the documents only"
                                  " contain stop words.")
-
-        return vocabulay, new_X
+        return vocabulary, new_X
 
     def _limit_vocabulary(self, X, vocabulary, high=None, low=None,
                           limit=None):
@@ -121,7 +92,7 @@ class NaiveTransformer(engine.BaseTransformer):
         if high is None and low is None and limit is None:
             return X, set()
 
-    def fit_transform(self, X, y=None, **fit_params):
+    def fit_transform(self, X, y=None):
         """Fit to data, then transform it.
 
         Fits transform to X and y with optional parameters fit_params.
@@ -141,15 +112,15 @@ class NaiveTransformer(engine.BaseTransformer):
             Transformed array.
 
         """
-        if not isinstance(X, dict):
+        if not isinstance(X, list):
             raise ValueError(
                 "Iterable over raw text documents expected, "
-                "dict object received.")
+                "list object received.")
 
         self._validate_vocabulary()
 
-        vocabulary, X= self.build_vocabulary(X, self._params['fixed_vocab'])
-        if not self.fixed_vocabulary_:
+        vocabulary, X = self.build_vocabulary(X, self._params['fixed_vocab'])
+        if not self._params['fixed_vocab']:
             max_df = self._params['max_df']
             min_df = self._params['min_df']
             max_vocab_size = self._params['max_vocab_size']
@@ -162,11 +133,13 @@ class NaiveTransformer(engine.BaseTransformer):
             if max_doc_count < min_doc_count:
                 raise ValueError(
                     " max_df corresponds to < documents than min_df.")
-            X, self._params['stop_words'] = self._limit_vocabulary(X, vocabulary,
-                                                         max_doc_count,
-                                                         min_doc_count,
-                                                         max_vocab_size)
+            X, stop_words = self._limit_vocabulary(X,
+                                                   vocabulary,
+                                                   max_doc_count,
+                                                   min_doc_count,
+                                                   max_vocab_size)
 
+            self._params['stop_words'] = stop_words
             self._params['vocabulary'] = vocabulary
         return X
 
@@ -183,10 +156,10 @@ class NaiveTransformer(engine.BaseTransformer):
             operations.
 
         """
-        if not isinstance(X, dict):
+        if not isinstance(X, list):
             raise ValueError(
                 "Iterable over raw text documents expected, "
-                "dict object received.")
+                "list object received.")
 
         if not hasattr(self, 'vocabulary_'):
             self._validate_vocabulary()
@@ -196,4 +169,3 @@ class NaiveTransformer(engine.BaseTransformer):
         _, X = self.build_vocabulary(X, fixed_vocab=True)
 
         return X
-
