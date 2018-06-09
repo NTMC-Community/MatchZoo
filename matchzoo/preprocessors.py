@@ -124,7 +124,7 @@ def chain(*funcs):
         ...                   to_lowercase,
         ...                   remove_punctuation,
         ...                   remove_digits)
-        >>> rv = processor("An Example sentence to BE cleaned!)
+        >>> rv = processor("An Example sentence to BE cleaned!")
 
     :param *funcs: list of functions to be executed.
 
