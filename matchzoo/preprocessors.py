@@ -67,7 +67,7 @@ def remove_punctuation(terms: list) -> list:
     """
     Remove punctuations from list of terms.
 
-    :param terms: list of 
+    :param terms: list of
 
     :return rv: terms  without punctuation.
     """
@@ -92,7 +92,7 @@ def remove_digits(terms: list) -> list:
 
 def stemming(terms: list) -> list:
     """
-    reducing inflected words to their word stem, base or root form.
+    Reducing inflected words to their word stem, base or root form.
 
     :param text: list of string to be stemmed.
     :param mode: stemming algorithm, porter stemer by default.
@@ -124,7 +124,8 @@ def chain(*funcs):
         ...                   to_lowercase,
         ...                   remove_punctuation,
         ...                   remove_digits)
-        >>> rv = processor("This is an Example sentence to BE ! cleaned with digits 31.")
+        >>> rv = processor("This is an Example sentence to /
+        ...                BE ! cleaned with digits 31.")
 
     :param *funcs: list of functions to be executed.
 
