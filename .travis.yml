@@ -2,6 +2,11 @@ language: python
 python:
       - 3.6.3
 sudo: enabled
+install:
+  - "pip install -r requirements.txt"
+  - "python -m nltk.downloader punkt"
+  - "python -m nltk.downloader stopwords"
+  - "python -m nltk.downloader wordnet"
 script: make test
 env: PYTHONPATH=$PYTHONPATH:$TRAVIS_BUILD_DIR/tests:$TRAVIS_BUILD_DIR/matchzoo
 after_success:
