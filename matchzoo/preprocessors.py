@@ -72,9 +72,10 @@ def remove_punctuation(tokens: list) -> list:
     :return rv: tokens  without punctuation.
     """
     rv = []
+    match = re.compile('[^\w\s]')
     for token in tokens:
-        token = re.sub(r'[^\w\s]', '', token)
-        if token != '':
+        token = match.sub(r'', token)
+        if token:
             rv.append(token)
     return rv
 
@@ -125,7 +126,7 @@ def chain(*funcs):
         ...                   remove_digits)
         >>> rv = processor("An Example sentence to BE cleaned!")
 
-    :param *funcs: list of functions to be executed.
+    :param *funcs: functions to be executed.
 
     :return rv: return value of the last function.
     """
