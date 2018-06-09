@@ -35,6 +35,8 @@ setup(
       'numpy >= 1.12.1',
       'six >= 1.10.0',
       'h5py >= 2.7.0',
-      'tqdm >= 4.19.4'
+      'tqdm >= 4.19.4',
+      'jieba >= 0.39',
+      'many_stop_words >= 0.2.2'
     ]
 )
