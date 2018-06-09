@@ -24,7 +24,7 @@ def tokenizer(raw: str) -> list:
 
     :param raw: raw input given by user.
 
-    :return terms: list of tokenized terms.
+    :return tokens: list of tokenized tokens.
     """
     return nltk.word_tokenize(raw)
 
@@ -35,84 +35,83 @@ def segmentation(raw: str) -> list:
 
     :param raw: raw input given by user.
 
-    :return terms: list of segmentated terms.
+    :return tokens: list of segmentated tokens.
     """
     return list(jieba.cut(raw))
 
 
-def to_lowercase(terms: list) -> list:
+def to_lowercase(tokens: list) -> list:
     """
-    Convert list of terms to lower case.
+    Convert list of tokens to lower case.
 
-    :param terms: list of terms.
+    :param tokens: list of tokens.
 
-    :return terms: lower-cased list of terms.
+    :return tokens: lower-cased list of tokens.
     """
-    return [term.lower() for term in terms]
+    return [token.lower() for token in tokens]
 
 
-def remove_stopwords(terms: list, lang: str='en') -> list:
+def remove_stopwords(tokens: list, lang: str='en') -> list:
     """
-    Remove stopwords from list of tokenized terms.
+    Remove stopwords from list of tokenized tokens.
 
-    :param terms: list of tokenized terms.
+    :param tokens: list of tokenized tokens.
     :param lang: language code for stopwords.
 
-    :return terms: list of tokenized terms without stopwords.
+    :return tokens: list of tokenized tokens without stopwords.
     """
-    return [term for term in terms if term not in get_stopwords(lang)]
+    return [token for token in tokens if token not in get_stopwords(lang)]
 
 
-def remove_punctuation(terms: list) -> list:
+def remove_punctuation(tokens: list) -> list:
     """
-    Remove punctuations from list of terms.
+    Remove punctuations from list of tokens.
 
-    :param terms: list of
+    :param tokens: list of
 
-    :return rv: terms  without punctuation.
+    :return rv: tokens  without punctuation.
     """
     rv = []
-    for term in terms:
-        term = re.sub(r'[^\w\s]', '', term)
-        if term != '':
-            rv.append(term)
+    for token in tokens:
+        token = re.sub(r'[^\w\s]', '', token)
+        if token != '':
+            rv.append(token)
     return rv
 
 
-def remove_digits(terms: list) -> list:
+def remove_digits(tokens: list) -> list:
     """
-    Remove digits from list of terms.
+    Remove digits from list of tokens.
 
-    :param terms: list of terms to be filtered.
+    :param tokens: list of tokens to be filtered.
 
-    :return terms: list of terms without digits.
+    :return tokens: tokens of tokens without digits.
     """
-    return [term for term in terms if not term.isdigit()]
+    return [token for token in tokens if not token.isdigit()]
 
 
-def stemming(terms: list) -> list:
+def stemming(tokens: list) -> list:
     """
     Reducing inflected words to their word stem, base or root form.
 
-    :param text: list of string to be stemmed.
-    :param mode: stemming algorithm, porter stemer by default.
+    :param tokens: list of string to be stemmed.
 
-    :return terms: stemmed term.
+    :return tokens: stemmed token.
     """
     porter_stemmer = nltk.stem.PorterStemmer()
-    return [porter_stemmer.stem(term) for term in terms]
+    return [porter_stemmer.stem(token) for token in tokens]
 
 
-def lemmatization(terms: list) -> list:
+def lemmatization(tokens: list) -> list:
     """
-    Lemmatization a sequence of terms.
+    Lemmatization a sequence of tokens.
 
-    :param terms: list of terms to be lemmatized.
+    :param tokens: list of tokens to be lemmatized.
 
-    :return terms: list of lemmatizd terms.
+    :return tokens: list of lemmatizd tokens.
     """
     lemmatizer = nltk.WordNetLemmatizer()
-    return [lemmatizer.lemmatize(term, pos='v') for term in terms]
+    return [lemmatizer.lemmatize(token, pos='v') for token in tokens]
 
 
 def chain(*funcs):
