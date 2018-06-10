@@ -3,11 +3,11 @@ from matchzoo.preprocessors import *
 
 def test_preprocessors():
     processor = chain(tokenizer,
-                  to_lowercase,
-                  remove_punctuation,
-                  remove_digits,
-                  stemming,
-                  lemmatization)
+                      to_lowercase,
+                      remove_punctuation,
+                      remove_digits,
+                      stemming,
+                      lemmatization)
     rv = processor("This is an Example sentence to BE ! cleaned with digits 31.")
     assert len(rv) == 10
     stoplist = get_stopwords('zh')

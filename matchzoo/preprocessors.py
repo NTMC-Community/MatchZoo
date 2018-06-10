@@ -3,6 +3,7 @@
 import re
 import nltk
 import jieba
+import typing
 import many_stop_words
 from functools import reduce
 
@@ -112,7 +113,7 @@ def lemmatization(tokens: list) -> list:
     return [lemmatizer.lemmatize(token, pos='v') for token in tokens]
 
 
-def chain(*funcs):
+def chain(*funcs: typing.Callable) -> typing.Callable:
     """
     Chain a list of functions execute as pipeline.
 
@@ -126,5 +127,6 @@ def chain(*funcs):
     :param *funcs: functions to be executed.
 
     :return rv: return value of the last function.
+
     """
     return lambda x: reduce(lambda f, g: g(f), list(funcs), x)
