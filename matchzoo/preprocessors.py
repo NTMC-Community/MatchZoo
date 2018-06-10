@@ -7,6 +7,9 @@ import many_stop_words
 from functools import reduce
 
 
+match_punc = re.compile('[^\w\s]')
+
+
 def get_stopwords(lang: str='en') -> list:
     """
     Get stopwords based on language.
@@ -71,13 +74,7 @@ def remove_punctuation(tokens: list) -> list:
 
     :return rv: tokens  without punctuation.
     """
-    rv = []
-    match = re.compile('[^\w\s]')
-    for token in tokens:
-        token = match.sub(r'', token)
-        if token:
-            rv.append(token)
-    return rv
+    return [token for token in tokens if not match_punc.search(token)]
 
 
 def remove_digits(tokens: list) -> list:
