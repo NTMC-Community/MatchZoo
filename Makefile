@@ -3,4 +3,4 @@ init:
 
 test:
 	pytest --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-config .coveragerc matchzoo/ tests/
-	flake8 ./matchzoo --exclude __init__.py --ignore=D413,E126
+	flake8 ./matchzoo --exclude __init__.py
