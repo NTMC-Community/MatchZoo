@@ -54,10 +54,37 @@ class BaseModel(abc.ABC):
             512 eggs
             and Parma Ham
 
+        Notice that all parameters must be serialisable for the entire model
+        to be serialisable. Therefore, it's strongly recommended to use python
+        primitive data types to store parameters.
+
+        Example:
+            >>> import pickle
+            >>> import matchzoo
+            >>>
+            >>> # Don't do
+            >>> my_model = matchzoo.models.NaiveModel()
+            >>> my_model.params['my_func'] = lambda x: x
+            >>> my_model.guess_and_fill_missing_params()
+            >>> my_model.build()
+            >>> pickle.dumps(my_model.params)  # doctest: +ELLIPSIS
+            Traceback (most recent call last):
+            ...
+            _pickle.PicklingError: Can't pickle <function <lambda> at ...
+            >>>
+            >>> # DO
+            >>> my_model = matchzoo.models.NaiveModel()
+            >>> my_model.params['my_param'] = 'param'
+            >>> my_model.guess_and_fill_missing_params()
+            >>> my_model.build()
+            >>> assert pickle.dumps(my_model.params)
+
         :return: model parameters
 
         """
-        return engine.ModelParams()
+        params = engine.ModelParams()
+        params['model_class'] = cls
+        return params
 
     @property
     def params(self) -> engine.ModelParams:
@@ -184,12 +211,9 @@ class BaseModel(abc.ABC):
         if self._params['name'] is None:
             self._params['name'] = self.__class__.__name__
 
-        if self._params['model_class'] is None:
-            self._params['model_class'] = self.__class__
-
         if self._params['task'] is None:
             # index 0 points to an abstract task class
-            self._params['task'] = engine.list_available_tasks()[1]
+            self._params['task'] = engine.list_available_tasks()[1]()
 
         if self._params['input_shapes'] is None:
             self._params['input_shapes'] = [(30,), (30,)]

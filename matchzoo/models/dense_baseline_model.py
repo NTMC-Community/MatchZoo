@@ -15,15 +15,13 @@ class DenseBaselineModel(engine.BaseModel):
         >>> model.params['num_dense_units'] = 1024
         >>> model.guess_and_fill_missing_params()
         >>> model.build()
-        >>> [layer.name for layer in model.backend.layers]
-        ['input_1', 'input_2', 'concatenate_1', 'dense_1', 'dense_2']
 
     """
 
     @classmethod
     def get_default_params(cls) -> engine.ModelParams:
         """:return: model default parameters."""
-        params = engine.ModelParams()
+        params = super().get_default_params()
         params['num_dense_units'] = 512
         return params
 
