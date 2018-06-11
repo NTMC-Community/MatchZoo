@@ -89,16 +89,25 @@ def remove_digits(tokens: list) -> list:
     return [token for token in tokens if not token.isdigit()]
 
 
-def stemming(tokens: list) -> list:
+def stemming(tokens: list, stemmer: str = 'porter') -> list:
     """
     Reducing inflected words to their word stem, base or root form.
 
     :param tokens: list of string to be stemmed.
 
+    :raise ValueError: stemmer type should be porter or lancaster.
+
     :return tokens: stemmed token.
     """
-    porter_stemmer = nltk.stem.PorterStemmer()
-    return [porter_stemmer.stem(token) for token in tokens]
+    if stemmer == 'porter':
+        porter_stemmer = nltk.stem.PorterStemmer()
+        return [porter_stemmer.stem(token) for token in tokens]
+    elif stemmer == 'lancaster' or stemmer == 'krovetz':
+        lancaster_stemmer = nltk.stem.lancaster.LancasterStemmer()
+        return [lancaster_stemmer.stem(token) for token in tokens]
+    else:
+        raise ValueError(
+            'Not supported supported stemmer type: {}'.format(stemmer))
 
 
 def lemmatization(tokens: list) -> list:
@@ -121,8 +130,13 @@ def chain(*funcs: typing.Callable) -> typing.Callable:
         >>> processor = chain(tokenizer,
         ...                   to_lowercase,
         ...                   remove_punctuation,
+        ...                   stemming,
         ...                   remove_digits)
         >>> rv = processor("An Example sentence to BE cleaned!")
+        >>> import functools
+        >>> processor = chain(tokenizer,
+        ...                   functools.partial(stemming, stemmer='lancaster'))
+        >>> rv = processor("An example sentence to BE cleaned!")
 
     :param *funcs: functions to be executed.
 
