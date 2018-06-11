@@ -4,14 +4,15 @@ from matchzoo.engine.base_transformer import BaseTransformer
 from collections import defaultdict
 import copy
 
-def test_transformer():
+
+def test_base_transformer_abstract_instantiation():
+    with pytest.raises(TypeError):
+        transformer = BaseTransformer()
+        assert transformer
+
+def test_base_transformer_concrete_instantiation():
     class DummyTransformer(BaseTransformer):
-        """This is a dummy class for """
-
-        def __init__(self):
-            super(DummyTransformer, self).__init__()
-            self.params['name'] = 'DummyTransformer'
-
+        """This is a dummy class for Transformer testing."""
         def build_vocabulary(self, X):
             fixed_vocab = self._params['fixed_vocab']
             if fixed_vocab:
@@ -50,14 +51,20 @@ def test_transformer():
             return X
 
     transformer = DummyTransformer()
-    x = [("Here is a test case .", "This case is to test BaseTransformer .")]
-    y = [0]
+    transformer.guess_and_fill_missing_params()
+
+    x1 = [("Here is a test case .", "This case is to test BaseTransformer .")]
+    y1 = [0]
 
     # the test
     assert transformer.params['name'] == 'DummyTransformer'
 
-    new_x = transformer.fit_transform(x, y)
+    new_x = transformer.fit_transform(x1, y1)
     assert new_x == [([0, 1, 2, 3, 4], [5, 4, 1, 6, 3, 7])]
 
-    new_x = transformer.fit(x, y).transform(x)
+    new_x = transformer.fit(x1, y1).transform(x1)
     assert new_x == [([0, 1, 2, 3, 4], [5, 4, 1, 6, 3, 7])]
+
+    x2 = [("BaseTransformer a case", "test case of BaseTransformer")]
+    new_x = transformer.transform(x2)
+    assert new_x == [([7, 2, 4], [3, 4, 7])]

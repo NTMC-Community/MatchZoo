@@ -27,21 +27,17 @@ class NaiveTransformer(engine.BaseTransformer):
 
     """
 
-    def __init__(self, max_df=1.0, min_df=0, max_vocab_size=None,
-                 vocabulary=None, analyzer='word', stop_words=set(),
-                 fixed_vocab=False):
-        """Initialization."""
-        super(NaiveTransformer, self).__init__()
-        self._params['name'] = self.__class__.__name__
-        self._params['transformer_class'] = self.__class__
+    @classmethod
+    def get_default_params(cls) -> engine.TransformerParams:
+        """:return: model default parameters."""
+        params = engine.TransformerParams()
 
-        self._params['max_df'] = max_df
-        self._params['min_df'] = min_df
-        self._params['max_vocab_size'] = max_vocab_size
-        self._params['analyzer'] = analyzer
-        self._params['stop_words'] = stop_words
-        self._params['vocabulary'] = vocabulary
-        self._params['fixed_vocab'] = fixed_vocab
+        params['max_df'] = 1.0
+        params['min_df'] = 0.0
+        params['max_vocab_size'] = 2147483648  # 2**31 - 1
+        params['num_of_docs'] = 1
+        params['fixed_vocab'] = False
+        return params
 
     def build_vocabulary(self, X, fixed_vocab=False):
         """Create the vocabulary as well as mapped X.
@@ -89,8 +85,10 @@ class NaiveTransformer(engine.BaseTransformer):
 
         This does not prune samples with zero words.
         """
+        stop_words = set()
         if high is None and low is None and limit is None:
-            return X, set()
+            return X, stop_words
+        return X, stop_words
 
     def fit_transform(self, X, y=None):
         """Fit to data, then transform it.
@@ -126,10 +124,10 @@ class NaiveTransformer(engine.BaseTransformer):
             max_vocab_size = self._params['max_vocab_size']
             max_doc_count = (max_df
                              if isinstance(max_df, numbers.Integral)
-                             else max_df * self.num_docs)
+                             else max_df * self._params['num_of_docs'])
             min_doc_count = (min_df
                              if isinstance(min_df, numbers.Integral)
-                             else min_df * self.num_docs)
+                             else min_df * self._params['num_of_docs'])
             if max_doc_count < min_doc_count:
                 raise ValueError(
                     " max_df corresponds to < documents than min_df.")

@@ -5,10 +5,13 @@ from __future__ import division
 
 import os
 import abc
+import typing
 import pickle
 import re
 import six
 from collections import Mapping
+
+from matchzoo import engine
 
 
 class BaseTransformer(abc.ABC):
@@ -26,22 +29,27 @@ class BaseTransformer(abc.ABC):
 
     _white_spaces = re.compile(r"\s\s+")
 
-    def __init__(self, params=None):
-        """:class:`BaseTransformer` constructor.
+    def __init__(self, params: typing.Optional[engine.TransformerParams]
+                 = None):
+        """:class:`BaseTransformer` constructor."""
+        self._params = params or self.get_default_params()
 
-        :param params: model parameters.
+    @classmethod
+    def get_default_params(cls) -> engine.TransformerParams:
+        """Return the default parameters for transformer."""
+        return engine.TransformerParams()
+
+    def guess_and_fill_missing_params(self):
         """
-        self._params = params
-        if self._params is None:
-            self._params = dict()
+        Guess and fill missing parameters in :attribute:`params`.
+
+        Note: likely to be moved to a higher level API in the future.
+        """
+        if self._params['name'] is None:
             self._params['name'] = self.__class__.__name__
+
+        if self._params['transformer_class'] is None:
             self._params['transformer_class'] = self.__class__
-            self._params['analyzer'] = 'word'
-            self._params['tokenizer'] = None
-            self._params['token_pattern'] = r"(?u)\b\w+\b"
-            self._params['stop_words'] = None
-            self._params['vocabulary'] = None
-            self._params['ngram_range'] = (1, 1)
 
     @property
     def params(self):
@@ -270,7 +278,13 @@ class BaseTransformer(abc.ABC):
         """
 
     def save(self, dirpath):
-        """Save the model."""
+        """Save the transformer.
+
+        Save the _params into the given `dirpath` by `pickle`.
+
+        :param dirpath: file path of the saved transformer
+        """
+        pickle.dump(self._params, open(dirpath, mode='wb'))
 
 
 def load_transformer(filepath):
