@@ -1,7 +1,6 @@
 """An implementation of DSSM, Deep Structured Semantic Model."""
 
 from matchzoo import engine
-from keras import optimizers
 from keras.models import Model
 from keras.layers import Dense, Input, Dot, Activation
 
@@ -10,15 +9,17 @@ class DssmModel(engine.BaseModel):
     """
     Deep structured semantic model.
 
-    Extends:
-            engine.BaseModel
+    Examples:
+        >>> model = DssmModel()
+        >>> model.params['lr'] = 0.2
+        >>> model.guess_and_fill_missing_params()
+
     """
 
     @classmethod
     def get_default_params(cls) -> engine.ModelParams:
         """:return: model default parameters."""
         params = engine.ModelParams()
-        params['name'] = 'DSSM'
         params['w_initializer'] = 'glorot_normal'
         params['b_initializer'] = 'zeros'
         # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM
@@ -34,8 +35,7 @@ class DssmModel(engine.BaseModel):
         params['train_test_split'] = 0.2
         params['verbose'] = 1
         params['shuffle'] = True
-        params['optimizer'] = optimizers.SGD
-        params['metrics'] = ['accuracy']
+        params['optimizer'] = 'sgd'
         params['num_hidden_layers'] = 2
         return params
 
@@ -45,16 +45,16 @@ class DssmModel(engine.BaseModel):
 
         DSSM use pair-wise arthitecture.
         """
-        x_in = [self._shared(), self._shared()]
+        x_in = [self._build_shared_model(), self._build_shared_model()]
         # Dot product with cosine similarity.
-        x = Dot(axis=1,
+        x = Dot(axes=1,
                 normalize=True)(x_in)
         x_out = Activation(activation=self._params['activation_prediction'])(x)
         self._backend = Model(inputs=x_in, outputs=x_out)
 
-    def _shared(self):
+    def _build_shared_model(self):
         """
-        Common architecture share to adopt pair-wise input.
+        Build common architecture share to adopt pair-wise input.
 
         Word-hashing layer, hidden layer * 2,  out layer.
 
@@ -72,7 +72,7 @@ class DssmModel(engine.BaseModel):
                       input_shape=(self._params['dim_hidden'],),
                       activation=self._params['activation_hidden'])(x)
         # Out layer, map tri-letters into 128d representation.
-        x_out = Dense(self._params['dim_fan_out'],
+        x_out = Dense(units=self._params['dim_fan_out'],
                       input_shape=(self._params['dim_hidden'],),
                       activation=self._params['activation_hidden'])(x)
         return x_out
