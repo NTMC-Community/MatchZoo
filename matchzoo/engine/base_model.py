@@ -2,9 +2,9 @@
 
 import abc
 import typing
-import pickle
 from pathlib import Path
 
+import dill
 import numpy as np
 import keras
 
@@ -17,8 +17,11 @@ class BaseModel(abc.ABC):
     BACKEND_FILENAME = 'backend.h5'
     PARAMS_FILENAME = 'params.pkl'
 
-    def __init__(self, params: typing.Optional[engine.ModelParams] = None,
-                 backend: keras.models.Model = None):
+    def __init__(
+            self,
+            params: engine.ParamTable = None,
+            backend: keras.models.Model = None
+    ):
         """
         :class:`BaseModel` constructor.
 
@@ -30,7 +33,7 @@ class BaseModel(abc.ABC):
         self._backend = backend
 
     @classmethod
-    def get_default_params(cls) -> engine.ModelParams:
+    def get_default_params(cls) -> engine.ParamTable:
         """
         Model default parameters.
 
@@ -45,9 +48,9 @@ class BaseModel(abc.ABC):
             ...
             ...     @classmethod
             ...     def get_default_params(cls):
-            ...         params = engine.ModelParams()
-            ...         params['num_eggs'] = 512
-            ...         params['ham_type'] = 'Parma Ham'
+            ...         params = engine.ParamTable()
+            ...         params.add(engine.Param('num_eggs', 512))
+            ...         params.add(engine.Param('ham_type', 'Parma Ham'))
             ...         return params
             >>> my_model = MyModel()
             >>> my_model.build()
@@ -56,38 +59,23 @@ class BaseModel(abc.ABC):
 
         Notice that all parameters must be serialisable for the entire model
         to be serialisable. Therefore, it's strongly recommended to use python
-        primitive data types to store parameters.
-
-        Example:
-            >>> import pickle
-            >>> import matchzoo
-            >>>
-            >>> # Don't do
-            >>> my_model = matchzoo.models.NaiveModel()
-            >>> my_model.params['my_func'] = lambda x: x
-            >>> my_model.guess_and_fill_missing_params()
-            >>> my_model.build()
-            >>> pickle.dumps(my_model.params)  # doctest: +ELLIPSIS
-            Traceback (most recent call last):
-            ...
-            _pickle.PicklingError: Can't pickle <function <lambda> at ...
-            >>>
-            >>> # DO
-            >>> my_model = matchzoo.models.NaiveModel()
-            >>> my_model.params['my_param'] = 'param'
-            >>> my_model.guess_and_fill_missing_params()
-            >>> my_model.build()
-            >>> assert pickle.dumps(my_model.params)
+        native data types to store parameters.
 
         :return: model parameters
 
         """
-        params = engine.ModelParams()
-        params['model_class'] = cls
+        params = engine.ParamTable()
+        params.add(engine.Param('name'))
+        params.add(engine.Param('model_class', cls))
+        params.add(engine.Param('input_shapes'))
+        params.add(engine.Param('task'))
+        params.add(engine.Param('metrics'))
+        params.add(engine.Param('loss'))
+        params.add(engine.Param('optimizer'))
         return params
 
     @property
-    def params(self) -> engine.ModelParams:
+    def params(self) -> engine.ParamTable:
         """:return: model parameters."""
         return self._params
 
@@ -125,7 +113,8 @@ class BaseModel(abc.ABC):
             x: typing.Union[np.ndarray, typing.List[np.ndarray]],
             y: np.ndarray,
             batch_size: int = 128,
-            epochs: int = 1
+            epochs: int = 1,
+            verbose: int = 1
     ) -> keras.callbacks.History:
         """
         Fit the model.
@@ -136,11 +125,15 @@ class BaseModel(abc.ABC):
         :param y: labels
         :param batch_size: number of samples per gradient update
         :param epochs: number of epochs to train the model
+        :param verbose: 0, 1, or 2. Verbosity mode. 0 = silent, 1 = verbose,
+            2 = one log line per epoch.
+
         :return: A `keras.callbacks.History` instance. Its history attribute
         contains all information collected during training.
         """
         return self._backend.fit(x=x, y=y,
-                                 batch_size=batch_size, epochs=epochs)
+                                 batch_size=batch_size, epochs=epochs,
+                                 verbose=verbose)
 
     def evaluate(
             self,
@@ -200,7 +193,7 @@ class BaseModel(abc.ABC):
         self._backend.save(backend_file_path)
 
         params_file_path = dirpath.joinpath(self.PARAMS_FILENAME)
-        pickle.dump(self._params, open(params_file_path, mode='wb'))
+        dill.dump(self._params, open(params_file_path, mode='wb'))
 
     def guess_and_fill_missing_params(self):
         """
@@ -246,7 +239,7 @@ class BaseModel(abc.ABC):
 
         :return: `True` if all params are filled, `False` otherwise
         """
-        return all(value is not None for value in self._params.values())
+        return all(param.value for param in self._params)
 
 
 def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
@@ -262,6 +255,6 @@ def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
     backend = keras.models.load_model(backend_file_path)
 
     params_file_path = dirpath.joinpath(BaseModel.PARAMS_FILENAME)
-    params = pickle.load(open(params_file_path, 'rb'))
+    params = dill.load(open(params_file_path, 'rb'))
 
     return params['model_class'](params=params, backend=backend)
