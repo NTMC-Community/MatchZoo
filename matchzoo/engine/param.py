@@ -1,13 +1,13 @@
 import inspect
+import typing
 import numbers
 
 
 class Param(object):
     """
+    Parameter class.
 
-    Examples::
-
-    Basic usages with a name and  value
+    Basic usages with a name and  value:
 
         >>> param = Param('my_param', 10)
         >>> param.name
@@ -15,7 +15,9 @@ class Param(object):
         >>> param.value
         10
 
-    Use with a validator:
+    Use with a validator to make sure the parameter always keeps a valid
+    value.
+
         >>> param = Param(
         ...     name='my_param',
         ...     value=5,
@@ -51,7 +53,7 @@ class Param(object):
         >>> set(samples) == {1, 2, 3, 4, 5}
         True
 
-    Notice that the boolean value of a :class:`Param` instance is only `True`
+    The boolean value of a :class:`Param` instance is only `True`
     when the value is not `None`. This is because some default falsy values
     like zero or an empty list are valid parameter values. In other words,
     the boolean value means to be "if the parameter value is filled".
@@ -64,11 +66,22 @@ class Param(object):
         ...     print('OK')
         OK
 
+    A `_pre_assignment_hook` is initialized as a data type transformer if the
+    value is set as a number to keep data type consistency of the parameter.
+    This conversion supports python built-in numbers and `numpy` numbers.
+
+        >>> param = Param('float_param', 0.5)
+        >>> param.value = 10
+        >>> param.value
+        10.0
+        >>> type(param.value)
+        <class 'float'>
+
     """
 
     def __init__(
             self,
-            name,
+            name: str,
             value=None,
             hyper_space=None,
             validator=None,
@@ -84,8 +97,6 @@ class Param(object):
         self.hyper_space = hyper_space
         self.value = value
 
-        self._infer_pre_assignment_hook()
-
     @property
     def name(self):
         return self._name
@@ -100,6 +111,8 @@ class Param(object):
             new_value = self._pre_assignment_hook(new_value)
         self._validate(new_value)
         self._value = new_value
+        if not self._pre_assignment_hook:
+            self._infer_pre_assignment_hook()
 
     @property
     def hyper_space(self):
