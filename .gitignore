@@ -6,6 +6,8 @@
 *.trec
 *.ranklist
 *.DS_Store
+.vscode
+.coverage
 predict.*
 build/
 dist/
