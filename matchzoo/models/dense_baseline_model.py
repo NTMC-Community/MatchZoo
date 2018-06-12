@@ -19,10 +19,15 @@ class DenseBaselineModel(engine.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls) -> engine.ModelParams:
+    def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params()
-        params['num_dense_units'] = 512
+        params.add(engine.param.Param(
+                name='num_dense_units',
+                value=512,
+                hyper_space=engine.hyper_spaces.quniform(low=32, high=1024),
+                validator=lambda x: 0 < x < 2048
+        ))
         return params
 
     def build(self):
