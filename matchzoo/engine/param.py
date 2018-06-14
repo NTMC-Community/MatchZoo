@@ -1,29 +1,20 @@
+"""Parameter class."""
+
 import inspect
 import typing
 import numbers
 
-from hyperopt.pyll.base import Apply
+import hyperopt.pyll
 from matchzoo import engine
 
-SpaceType = typing.Union[Apply, engine.hyper_spaces.HyperoptProxy]
+# Both hyperopt native spaces and matchzoo proxies are valid spaces.
+SpaceType = typing.Union[hyperopt.pyll.Apply,
+                         engine.hyper_spaces.HyperoptProxy]
 
 
 class Param(object):
     """
     Parameter class.
-
-    :param name: Name of the parameter.
-    :param value: Value of the parameter, `None` by default, which means "this
-        parameter is not filled yet."
-    :param hyper_space: Hyper space of the parameter, `None` by default.
-        If set, then a :class:`matchzoo.engine.ParamTable` that has this
-        parameter will include this `hyper_space` as a part of the parameter
-        table's search space.
-    :param validator: Validator of the parameter, `None` by default. If
-        validation is needed, pass a callable that, given a value, returns
-        a `bool`. The definition of the validator is retrieved when the
-        validation fails, so either use a function or a `lambda` that occupies
-        its own line for better readability.
 
     Basic usages with a name and  value:
 
@@ -106,6 +97,22 @@ class Param(object):
             validator: typing.Optional[
                 typing.Callable[[typing.Any], bool]] = None,
     ):
+        """
+        Parameter constructor.
+
+        :param name: Name of the parameter.
+        :param value: Value of the parameter, `None` by default, which means
+            "this parameter is not filled yet."
+        :param hyper_space: Hyper space of the parameter, `None` by default.
+            If set, then a :class:`matchzoo.engine.ParamTable` that has this
+            parameter will include this `hyper_space` as a part of the
+            parameter table's search space.
+        :param validator: Validator of the parameter, `None` by default. If
+            validation is needed, pass a callable that, given a value, returns
+            a `bool`. The definition of the validator is retrieved when the
+            validation fails, so either use a function or a `lambda` that
+            occupies its own line for better readability.
+        """
         self._name = name
 
         self._value = None
@@ -119,14 +126,25 @@ class Param(object):
 
     @property
     def name(self) -> str:
+        """:return: Name of the parameter."""
         return self._name
 
     @property
     def value(self) -> typing.Any:
+        """:return: Value of the parameter."""
         return self._value
 
     @value.setter
     def value(self, new_value: typing.Any):
+        """
+        Set the value of parameter to `new_value`.
+
+        Notice that this setter validates `new_value` before assignment. As
+        a result, if the validaiton fails, the value of the parameter is not
+        changed.
+
+        :param new_value: New value of the parameter to set.
+        """
         if self._pre_assignment_hook:
             new_value = self._pre_assignment_hook(new_value)
         self._validate(new_value)
@@ -135,21 +153,25 @@ class Param(object):
             self._infer_pre_assignment_hook()
 
     @property
-    def hyper_space(self):
+    def hyper_space(self) -> hyperopt.pyll.Apply:
+        """:return: Hyper space of the parameter."""
         return self._hyper_space
 
     @hyper_space.setter
-    def hyper_space(self, new_space):
+    def hyper_space(self, new_space: SpaceType):
+        """:param new_space: New space of the parameter to set."""
         if isinstance(new_space, engine.hyper_spaces.HyperoptProxy):
             new_space = new_space(self.name)
         self._hyper_space = new_space
 
     @property
-    def validator(self):
+    def validator(self) -> typing.Callable[[typing.Any], bool]:
+        """:return: Validator of the parameter."""
         return self._validator
 
     @validator.setter
-    def validator(self, new_validator):
+    def validator(self, new_validator: typing.Callable[[typing.Any], bool]):
+        """:param new_validator: New space of the parameter to set."""
         if new_validator and not callable(new_validator):
             raise TypeError("Validator must be a callable or None.")
         self._validator = new_validator
@@ -168,4 +190,5 @@ class Param(object):
                 raise ValueError(error_msg)
 
     def __bool__(self):
+        """:return: `False` when the value is `None`, `True` otherwise."""
         return self._value is not None
