@@ -1,6 +1,6 @@
+from . import hyper_spaces
 from .param import Param
 from .param_table import ParamTable
 from .base_task import BaseTask, list_available_tasks
 from .base_model import BaseModel, load_model
-from . import hyper_spaces
 from .tuner import Tuner
