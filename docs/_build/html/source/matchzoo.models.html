@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>matchzoo.models package &mdash; MatchZoo 2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MatchZoo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">matchzoo.models package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-matchzoo.models.dense_baseline_model">matchzoo.models.dense_baseline_model module</a></li>
+<li><a class="reference internal" href="#module-matchzoo.models.naive_model">matchzoo.models.naive_model module</a></li>
+<li><a class="reference internal" href="#module-matchzoo.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MatchZoo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>matchzoo.models package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/source/matchzoo.models.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="matchzoo-models-package">
+<h1>matchzoo.models package<a class="headerlink" href="#matchzoo-models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-matchzoo.models.dense_baseline_model">
+<span id="matchzoo-models-dense-baseline-model-module"></span><h2>matchzoo.models.dense_baseline_model module<a class="headerlink" href="#module-matchzoo.models.dense_baseline_model" title="Permalink to this headline">¶</a></h2>
+<p>A simple densely connected baseline model.</p>
+<dl class="class">
+<dt id="matchzoo.models.dense_baseline_model.DenseBaselineModel">
+<em class="property">class </em><code class="descclassname">matchzoo.models.dense_baseline_model.</code><code class="descname">DenseBaselineModel</code><span class="sig-paren">(</span><em>params: Union[matchzoo.engine.model_params.ModelParams</em>, <em>NoneType] = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>A simple densely connected baseline model.</p>
+<dl class="docutils">
+<dt>Examples:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DenseBaselineModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;input_shapes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">30</span><span class="p">,),</span> <span class="p">(</span><span class="mi">30</span><span class="p">,)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;num_dense_units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1024</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">layer</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">layers</span><span class="p">]</span>
+<span class="go">[&#39;input_1&#39;, &#39;input_2&#39;, &#39;concatenate_1&#39;, &#39;dense_1&#39;, &#39;dense_2&#39;]</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matchzoo.models.dense_baseline_model.DenseBaselineModel.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model structure.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; matchzoo.engine.model_params.ModelParams<a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.naive_model">
+<span id="matchzoo-models-naive-model-module"></span><h2>matchzoo.models.naive_model module<a class="headerlink" href="#module-matchzoo.models.naive_model" title="Permalink to this headline">¶</a></h2>
+<p>Naive model with a simplest structure for testing purposes.</p>
+<dl class="class">
+<dt id="matchzoo.models.naive_model.NaiveModel">
+<em class="property">class </em><code class="descclassname">matchzoo.models.naive_model.</code><code class="descname">NaiveModel</code><span class="sig-paren">(</span><em>params: Union[matchzoo.engine.model_params.ModelParams</em>, <em>NoneType] = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.naive_model.NaiveModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>Naive model with a simplest structure for testing purposes.</p>
+<dl class="method">
+<dt id="matchzoo.models.naive_model.NaiveModel.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.naive_model.NaiveModel.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matchzoo.models" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, MatchZoo.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'2.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
