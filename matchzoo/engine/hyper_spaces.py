@@ -78,7 +78,12 @@ class choice(HyperoptProxy):
 class quniform(HyperoptProxy):
     """:function:`hyperopt.hp.quniform` proxy."""
 
-    def __init__(self, low, high, q=1):
+    def __init__(
+            self,
+            low: numbers.Number,
+            high: numbers.Number,
+            q: numbers.Number = 1
+    ):
         """
         :function:`hyperopt.hp.quniform` proxy.
 
@@ -105,5 +110,4 @@ class uniform(HyperoptProxy):
         :param low: lower bound of the space
         :param high: upper bound of the space
         """
-        super().__init__(hyperopt_func=hyperopt.hp.uniform,
-                         low=low, high=high)
+        super().__init__(hyperopt_func=hyperopt.hp.uniform, low=low, high=high)
