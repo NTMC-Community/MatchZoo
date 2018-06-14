@@ -2,10 +2,28 @@ import inspect
 import typing
 import numbers
 
+from hyperopt.pyll.base import Apply
+from matchzoo import engine
+
+SpaceType = typing.Union[Apply, engine.hyper_spaces.HyperoptProxy]
+
 
 class Param(object):
     """
     Parameter class.
+
+    :param name: Name of the parameter.
+    :param value: Value of the parameter, `None` by default, which means "this
+        parameter is not filled yet."
+    :param hyper_space: Hyper space of the parameter, `None` by default.
+        If set, then a :class:`matchzoo.engine.ParamTable` that has this
+        parameter will include this `hyper_space` as a part of the parameter
+        table's search space.
+    :param validator: Validator of the parameter, `None` by default. If
+        validation is needed, pass a callable that, given a value, returns
+        a `bool`. The definition of the validator is retrieved when the
+        validation fails, so either use a function or a `lambda` that occupies
+        its own line for better readability.
 
     Basic usages with a name and  value:
 
@@ -66,9 +84,10 @@ class Param(object):
         ...     print('OK')
         OK
 
-    A `_pre_assignment_hook` is initialized as a data type transformer if the
+    A `_pre_assignment_hook` is initialized as a data type convertor if the
     value is set as a number to keep data type consistency of the parameter.
-    This conversion supports python built-in numbers and `numpy` numbers.
+    This conversion supports python built-in numbers, `numpy` numbers, and
+    any number that inherits :class:`numbers.Number`.
 
         >>> param = Param('float_param', 0.5)
         >>> param.value = 10
@@ -82,9 +101,10 @@ class Param(object):
     def __init__(
             self,
             name: str,
-            value=None,
-            hyper_space=None,
-            validator=None,
+            value: typing.Any = None,
+            hyper_space: typing.Optional[SpaceType] = None,
+            validator: typing.Optional[
+                typing.Callable[[typing.Any], bool]] = None,
     ):
         self._name = name
 
@@ -98,15 +118,15 @@ class Param(object):
         self.value = value
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @property
-    def value(self):
+    def value(self) -> typing.Any:
         return self._value
 
     @value.setter
-    def value(self, new_value):
+    def value(self, new_value: typing.Any):
         if self._pre_assignment_hook:
             new_value = self._pre_assignment_hook(new_value)
         self._validate(new_value)
@@ -120,7 +140,7 @@ class Param(object):
 
     @hyper_space.setter
     def hyper_space(self, new_space):
-        if hasattr(new_space, 'is_hyperopt_api'):
+        if isinstance(new_space, engine.hyper_spaces.HyperoptProxy):
             new_space = new_space(self.name)
         self._hyper_space = new_space
 
