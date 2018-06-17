@@ -10,21 +10,30 @@ import many_stop_words
 match_punc = re.compile('[^\w\s]')
 
 
-class StatelessProcessUnit(metaclass=abc.ABCMeta):
+class StatelessProcessorUnit(metaclass=abc.ABCMeta):
     """Process unit do not persive state (i.e. do not need fit)."""
 
     @abc.abstractmethod
-    def transform(self, input: typing.Any, **kwargs: dict):
+    def transform(self, input: typing.Any):
         """Abstract base method, need to be implemented in subclass."""
         return
 
-    def __call__(self, input: typing.Any, **kwargs: dict) -> list:
+    def __call__(self, input: typing.Any) -> list:
         """Call function."""
-        return self.transform(input, **kwargs)
+        return self.transform(input)
 
 
-class StatefulProcessUnit(StatelessProcessUnit, metaclass=abc.ABCMeta):
+class StatefulProcessorUnit(StatelessProcessorUnit, metaclass=abc.ABCMeta):
     """Process unit do persive state (i.e. need fit)."""
+
+    def __init__(self):
+        """Initialization."""
+        self._state = {}
+
+    @property
+    def state(self):
+        """Get current state."""
+        return self._state
 
     @abc.abstractmethod
     def fit(self, input: typing.Any) -> dict:
@@ -32,13 +41,12 @@ class StatefulProcessUnit(StatelessProcessUnit, metaclass=abc.ABCMeta):
         return
 
     def __call__(self,
-                 input: typing.Any,
-                 **kwargs: dict) -> typing.Union[list, dict]:
+                 input: typing.Any) -> typing.Union[list, dict]:
         """Call function."""
-        return self.transform(input, **kwargs), self.fit(input)
+        return self.transform(input), self.fit(input)
 
 
-class TokenizeUnit(StatelessProcessUnit):
+class TokenizeUnit(StatelessProcessorUnit):
     """Process unit for text tokenization."""
 
     def transform(self, input: str) -> list:
@@ -52,7 +60,7 @@ class TokenizeUnit(StatelessProcessUnit):
         return nltk.word_tokenize(input)
 
 
-class LowercaseUnit(StatelessProcessUnit):
+class LowercaseUnit(StatelessProcessorUnit):
     """Process unit for text lower case."""
 
     def transform(self, tokens: list) -> list:
@@ -66,7 +74,7 @@ class LowercaseUnit(StatelessProcessUnit):
         return [token.lower() for token in tokens]
 
 
-class PuncRemovalUnit(StatelessProcessUnit):
+class PuncRemovalUnit(StatelessProcessorUnit):
     """Process unit for remove punctuations."""
 
     def transform(self, tokens: list) -> list:
@@ -80,7 +88,7 @@ class PuncRemovalUnit(StatelessProcessUnit):
         return [token for token in tokens if not match_punc.search(token)]
 
 
-class DigitRemovalUnit(StatelessProcessUnit):
+class DigitRemovalUnit(StatelessProcessorUnit):
     """Process unit to remove digits."""
 
     def transform(self, tokens: list) -> list:
@@ -94,10 +102,14 @@ class DigitRemovalUnit(StatelessProcessUnit):
         return [token for token in tokens if not token.isdigit()]
 
 
-class StopRemovalUnit(StatelessProcessUnit):
+class StopRemovalUnit(StatelessProcessorUnit):
     """Process unit to remove stop words."""
 
-    def transform(self, tokens: list, **kwargs: dict) -> list:
+    def __init__(self, lang='en'):
+        """Initialization."""
+        self._lang = lang
+
+    def transform(self, tokens: list) -> list:
         """
         Remove stopwords from list of tokenized tokens.
 
@@ -106,14 +118,12 @@ class StopRemovalUnit(StatelessProcessUnit):
 
         :return tokens: list of tokenized tokens without stopwords.
         """
-        lang = kwargs.get('lang', 'en')
         return [token
                 for token
                 in tokens
-                if token not in StopRemovalUnit._get_stopwords(lang)]
+                if token not in self.get_stopwords()]
 
-    @staticmethod
-    def _get_stopwords(lang: str) -> list:
+    def get_stopwords(self) -> list:
         """
         Get stopwords based on language.
 
@@ -121,13 +131,17 @@ class StopRemovalUnit(StatelessProcessUnit):
 
         :return stop_list: list of stop words.
         """
-        return many_stop_words.get_stop_words(lang)
+        return many_stop_words.get_stop_words(self._lang)
 
 
-class StemmingUnit(StatelessProcessUnit):
+class StemmingUnit(StatelessProcessorUnit):
     """Process unit for token stemming."""
 
-    def transform(self, tokens: list, **kwargs: dict) -> list:
+    def __init__(self, stemmer='porter'):
+        """Initialization."""
+        self.stemmer = stemmer
+
+    def transform(self, tokens: list) -> list:
         """
         Reducing inflected words to their word stem, base or root form.
 
@@ -138,19 +152,19 @@ class StemmingUnit(StatelessProcessUnit):
 
         :return tokens: stemmed token.
         """
-        stemmer = kwargs.get('stemmer', 'porter')
-        if stemmer == 'porter':
+        if self.stemmer == 'porter':
             porter_stemmer = nltk.stem.PorterStemmer()
             return [porter_stemmer.stem(token) for token in tokens]
-        elif stemmer == 'lancaster' or stemmer == 'krovetz':
+        elif self.stemmer == 'lancaster' or self.stemmer == 'krovetz':
             lancaster_stemmer = nltk.stem.lancaster.LancasterStemmer()
             return [lancaster_stemmer.stem(token) for token in tokens]
         else:
             raise ValueError(
-                'Not supported supported stemmer type: {}'.format(stemmer))
+                'Not supported supported stemmer type: {}'.format(
+                    self.stemmer))
 
 
-class LemmatizationUnit(StatelessProcessUnit):
+class LemmatizationUnit(StatelessProcessorUnit):
     """Process unit for token lemmatization."""
 
     def transform(self, tokens: list) -> list:
