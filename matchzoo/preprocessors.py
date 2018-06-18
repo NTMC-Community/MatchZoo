@@ -16,7 +16,6 @@ class StatelessProcessorUnit(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def transform(self, input: typing.Any):
         """Abstract base method, need to be implemented in subclass."""
-        return
 
 
 class StatefulProcessorUnit(StatelessProcessorUnit, metaclass=abc.ABCMeta):
@@ -34,7 +33,6 @@ class StatefulProcessorUnit(StatelessProcessorUnit, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def fit(self, input: typing.Any) -> dict:
         """Abstract base method, need to be implemented in subclass."""
-        return
 
 
 class TokenizeUnit(StatelessProcessorUnit):
