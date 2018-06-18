@@ -13,7 +13,7 @@ if __name__ == '__main__':
     embed_size = int(sys.argv[3])  # 50
     embedfile = sys.argv[4]  # 'embed_glove_d50_norm'
     corpfile = path + 'corpus_preprocessed.txt'
-    relfiles = [path + 'relation_train.txt',path + 'relation_valid.txt',path + 'relation_test.txt']
+    relfiles = [path + 'relation_train.txt', path + 'relation_valid.txt', path + 'relation_test.txt']
     histfiles = [path + 'relation.train.binsum-%d.txt' % bin_num, path + 'relation.valid.binsum-%d.txt' % bin_num,
                  path + 'relation.test.binsum-%d.txt' % bin_num]
 
