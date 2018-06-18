@@ -5,7 +5,7 @@ import keras
 import keras.backend as K
 from keras.models import Sequential, Model
 from keras.layers import *
-from keras.layers import Reshape, Embedding,Merge, Dot
+from keras.layers import Reshape, Embedding, Dot
 from keras.optimizers import Adam
 from model import BasicModel
 from utils.utility import *
