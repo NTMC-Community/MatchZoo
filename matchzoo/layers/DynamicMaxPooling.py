@@ -46,14 +46,26 @@ class DynamicMaxPooling(Layer):
     def dynamic_pooling_index(len1, len2, max_len1, max_len2, 
                               compress_ratio1 = 1, compress_ratio2 = 1):
         def dpool_index_(batch_idx, len1_one, len2_one, max_len1, max_len2):
+            '''
+            TODO: Here is the check of sentences length to be positive.
+            To make sure that the lenght of the input sentences are positive. 
             if len1_one == 0:
-                print("len1 = 0 at batch_idx = {}".format(batch_idx))
+                print("[Error:DynamicPooling] len1 = 0 at batch_idx = {}".format(batch_idx))
                 exit()
             if len2_one == 0:
-                print("len2 = 0 at batch_idx = {}".format(batch_idx))
+                print("[Error:DynamicPooling] len2 = 0 at batch_idx = {}".format(batch_idx))
                 exit()
-            stride1 = 1.0 * max_len1 / len1_one
-            stride2 = 1.0 * max_len2 / len2_one
+            '''
+            if len1_one == 0:
+                stride1 = max_len1
+            else:
+                stride1 = 1.0 * max_len1 / len1_one
+
+            if len2_one == 0:
+                stride2 = max_len2
+            else:
+                stride2 = 1.0 * max_len2 / len2_one
+
             idx1_one = [int(i / stride1) for i in range(max_len1)]
             idx2_one = [int(i / stride2) for i in range(max_len2)]
             mesh1, mesh2 = np.meshgrid(idx1_one, idx2_one)
