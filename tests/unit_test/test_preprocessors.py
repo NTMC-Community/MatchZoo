@@ -1,29 +1,39 @@
-# from matchzoo.preprocessors import *
-# import pytest
-# import functools
+from matchzoo.preprocessors import *
+import pytest
 
-# def test_preprocessors():
-#     test_text = "This is an Example sentence to BE ! cleaned with digits 31."
-#     processor = chain(tokenizer,
-#                       to_lowercase,
-#                       remove_punctuation,
-#                       remove_digits,
-#                       stemming,
-#                       lemmatization)
-#     rv = processor(test_text)
-#     assert len(rv) == 10
-#     stoplist = get_stopwords('zh')
-#     assert len(stoplist) == 119
-#     terms = remove_stopwords(rv, lang='en')
-#     assert len(terms) == 5
-#     sent = '这是一个测试句子．'
-#     segmented = segmentation(sent)
-#     assert len(segmented) == 5
-#     processor = chain(tokenizer,
-#                       to_lowercase,
-#                       functools.partial(stemming, stemmer='lancaster'))
-#     rv = processor(test_text)
-#     assert 'thi' in rv
-#     with pytest.raises(ValueError):
-#         stemming(test_text, 'fakestemmer')
-                
+def test_preprocessors():
+    test_text = "This is an Example sentence to BE ! cleaned with digits 31."
+    tu = TokenizeUnit()
+    out = tu.transform(test_text)
+    assert len(out) == 13
+    assert 'an' in out
+    lu = LowercaseUnit()
+    out = lu.transform(out)
+    assert len(out) == 13
+    assert 'be' in out
+    du = DigitRemovalUnit()
+    out = du.transform(out)
+    assert len(out) == 12
+    assert '31' not in out
+    pu = PuncRemovalUnit()
+    out = pu.transform(out)
+    assert len(out) == 10
+    assert '!' not in out
+    stop_u = StopRemovalUnit()
+    out = stop_u.transform(out)
+    assert len(out) == 3
+    su_porter = StemmingUnit()
+    out_porter = su_porter.transform(out)
+    assert 'sentenc' in out_porter
+    su_lancaster = StemmingUnit(stemmer='lancaster')
+    out_lancaster = su_lancaster.transform(out)
+    assert 'cle' in out_lancaster
+    su_error = StemmingUnit(stemmer='fake')
+    with pytest.raises(ValueError):
+        su_error.transform(out)
+    leu = LemmatizationUnit()
+    out = leu.transform(out_porter)
+    assert len(out) == 3
+    StatefulProcessorUnit.__abstractmethods__=set()
+    stateful_unit = StatefulProcessorUnit()
+    assert stateful_unit.state == {}
