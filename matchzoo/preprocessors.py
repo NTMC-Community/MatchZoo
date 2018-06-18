@@ -18,10 +18,6 @@ class StatelessProcessorUnit(metaclass=abc.ABCMeta):
         """Abstract base method, need to be implemented in subclass."""
         return
 
-    def __call__(self, input: typing.Any) -> list:
-        """Call function."""
-        return self.transform(input)
-
 
 class StatefulProcessorUnit(StatelessProcessorUnit, metaclass=abc.ABCMeta):
     """Process unit do persive state (i.e. need fit)."""
@@ -39,11 +35,6 @@ class StatefulProcessorUnit(StatelessProcessorUnit, metaclass=abc.ABCMeta):
     def fit(self, input: typing.Any) -> dict:
         """Abstract base method, need to be implemented in subclass."""
         return
-
-    def __call__(self,
-                 input: typing.Any) -> typing.Union[list, dict]:
-        """Call function."""
-        return self.transform(input), self.fit(input)
 
 
 class TokenizeUnit(StatelessProcessorUnit):
