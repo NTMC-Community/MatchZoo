@@ -6,7 +6,6 @@ import keras.backend as K
 from keras import regularizers
 from keras.models import Sequential, Model
 from keras.layers import *
-#from keras.layers import Reshape, Embedding,Merge, Dot, Lambda
 from keras.optimizers import Adam
 from model import BasicModel
 import tensorflow as tf
