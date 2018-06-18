@@ -98,12 +98,12 @@ def convert_embed_2_numpy(embed_dict, max_size=0, embed=None):
     if embed is None:
         embed = np.zeros((max_size, feat_size), dtype=np.float32)
 
-    if len(embed_dict) != len(embed):
-        raise Exception("vocab_size %d is not equal to embed_size %d, change the vocab_size in the config!"
+    if len(embed_dict) > len(embed):
+        raise Exception("vocab_size %d is larger than embed_size %d, change the vocab_size in the config!"
                         % (len(embed_dict), len(embed)))
 
     for k in embed_dict:
         embed[k] = np.array(embed_dict[k])
-    print('Generate numpy embed: %s', str(embed.shape), end='\n')
+    print('Generate numpy embed:', str(embed.shape), end='\n')
     return embed
 

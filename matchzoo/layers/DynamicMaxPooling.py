@@ -56,8 +56,16 @@ class DynamicMaxPooling(Layer):
                 print("[Error:DynamicPooling] len2 = 0 at batch_idx = {}".format(batch_idx))
                 exit()
             '''
-            stride1 = 1.0 * max_len1 / len1_one
-            stride2 = 1.0 * max_len2 / len2_one
+            if len1_one == 0:
+                stride1 = max_len1
+            else:
+                stride1 = 1.0 * max_len1 / len1_one
+
+            if len2_one == 0:
+                stride2 = max_len2
+            else:
+                stride2 = 1.0 * max_len2 / len2_one
+
             idx1_one = [int(i / stride1) for i in range(max_len1)]
             idx2_one = [int(i / stride2) for i in range(max_len2)]
             mesh1, mesh2 = np.meshgrid(idx1_one, idx2_one)
