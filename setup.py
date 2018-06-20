@@ -40,7 +40,8 @@ setup(
         'h5py >= 2.7.0',
         'tqdm >= 4.19.4',
         'scipy >= 1.0.0',
-        'jieba >= 0.39'
+        'jieba >= 0.39',
+        'psutil >= 5.4.6'
     ],
     extras_require={
         'visualize': ['matplotlib >= 2.2.0'],
