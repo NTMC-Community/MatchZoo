@@ -30,7 +30,7 @@ def y(model):
 
 
 def test_naive_model(model, x, y):
-    assert model.fit(x, y)
+    assert model.fit(x, y, verbose=0)
     assert model.evaluate(x, y)
     assert model.predict(x) is not None
 
