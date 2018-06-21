@@ -16,3 +16,4 @@ log/*
 .idea/
 .pytest_cache/
 MatchZoo.egg-info/
+.vscode
