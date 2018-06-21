@@ -1,12 +1,12 @@
 # /bin/python2.7
 # -*- coding=utf8 -*-
 
-import os
+from os.path import join
 import sys
-import numpy as np
 sys.path.append('../../matchzoo/inputs')
 sys.path.append('../../matchzoo/utils')
 from preprocess import *
+
 
 def read_dict(infile):
     word_dict = {}
@@ -14,13 +14,17 @@ def read_dict(infile):
         r = line.strip().split()
         word_dict[r[1]] = r[0]
     return word_dict
+
+
 def read_doc(infile):
     doc = {}
     for line in open(infile):
         r = line.strip().split()
         doc[r[0]] = r[1:]
-        #assert len(doc[r[0]]) == int(r[1])
+        # assert len(doc[r[0]]) == int(r[1])
     return doc
+
+
 def filter_triletter(tri_stats, min_filter_num=5, max_filter_num=10000):
     tri_dict = {}
     tri_stats = sorted(tri_stats.items(), key=lambda d:d[1], reverse=True)
@@ -30,11 +34,12 @@ def filter_triletter(tri_stats, min_filter_num=5, max_filter_num=10000):
                 tri_dict[triinfo[0]] = len(tri_dict)
     return tri_dict
 
+
 if __name__ == '__main__':
     basedir = sys.argv[1]
-    in_dict_file = basedir + 'word_dict.txt'
-    out_dict_file = basedir + 'triletter_dict.txt'
-    word_triletter_map_file = basedir + 'word_triletter_map.txt'
+    in_dict_file = join(basedir, 'word_dict.txt')
+    out_dict_file = join(basedir, 'triletter_dict.txt')
+    word_triletter_map_file = join(basedir, 'word_triletter_map.txt')
 
     word_dict = read_dict(in_dict_file)
     triletter_stats = {}

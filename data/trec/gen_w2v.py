@@ -118,7 +118,7 @@ if __name__ == '__main__':
 
     w2v_file = sys.argv[1]  # w2v_file
     word_dict_file = sys.argv[2]  # word_dict_file
-    mapped_w2v_file = sys.argv[3] # output shared w2v dict
+    mapped_w2v_file = sys.argv[3]  # output shared w2v dict
 
     word_dict = {}
 
