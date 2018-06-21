@@ -1,8 +1,7 @@
 """An implementation of DSSM, Deep Structured Semantic Model."""
-import typing
 from matchzoo import engine
 from keras.models import Model
-from keras.layers import Dense, Input, Dot, Activation
+from keras.layers import Dense, Input, Dot
 
 
 class DssmModel(engine.BaseModel):
@@ -39,44 +38,51 @@ class DssmModel(engine.BaseModel):
         params.add(engine.Param('shuffle', True))
         params.add(engine.Param('optimizer', 'sgd'))
         params.add(engine.Param('num_hidden_layers', 2))
+        params.add(engine.Param('loss', 'categorical_crossentropy'))
         return params
 
     def build(self):
         """
         Build model structure.
-        DSSM use pair-wise arthitecture.
+
+        DSSM use Siamese arthitecture.
         """
         dim_triletter = self._params['input_shapes'][0][0]
-        x_in = [self._build_shared_model(dim_triletter),
-                self._build_shared_model(dim_triletter)]
+        input_shape = (dim_triletter,)
+        base_network = self._create_base_network(input_shape=input_shape)
+        # Left input and right input.
+        input_left = Input(shape=input_shape)
+        input_right = Input(shape=input_shape)
+        # Process left & right input.
+        x = [base_network(input_left),
+             base_network(input_right)]
         # Dot product with cosine similarity.
-        x = Dot(axes=1,
-                normalize=True)(x_in)
-        x_out = Activation(activation=self._params['activation_prediction'])(x)
-        self._backend = Model(inputs=x_in, outputs=x_out)
+        x = Dot(axes=[1, 1],
+                normalize=True)(x)
+        x_out = Dense(2,
+                      activation=self._params['activation_prediction'])(x)
+        self._backend = Model(
+            inputs=[input_left, input_right],
+            outputs=x_out)
 
-    def _build_shared_model(self, dim_triletter: int) -> typing.Any:
+    def _create_base_network(self, input_shape: tuple) -> Model:
         """
-        Build common architecture share to adopt pair-wise input.
+        Build base to be shared.
+
         Word-hashing layer, hidden layer * 2,  out layer.
 
-        :param: dim_triletter: dimensionality of tri-letters, depend on vocab.
+        :param: input_shape: shape of the input.
 
-        :return: 128 dimension vector representation.
+        :return: x: 128d vector(tensor) representation.
         """
-        x_in = Input(shape=(dim_triletter,))
-        # Initialize input layer.
-        x = Dense(units=self._params['dim_hidden'],
-                  input_shape=(dim_triletter,),
+        input = Input(shape=input_shape)
+        x = Dense(self._params['dim_hidden'],
                   kernel_initializer=self._params['w_initializer'],
-                  bias_initializer=self._params['b_initializer'])(x_in)
-        # Add hidden layers.
+                  bias_initializer=self._params['b_initializer'])(input)
         for _ in range(0, self._params['num_hidden_layers']):
-            x = Dense(units=self._params['dim_hidden'],
-                      input_shape=(self._params['dim_hidden'],),
+            x = Dense(self._params['dim_hidden'],
                       activation=self._params['activation_hidden'])(x)
         # Out layer, map tri-letters into 128d representation.
-        x_out = Dense(units=self._params['dim_fan_out'],
-                      input_shape=(self._params['dim_hidden'],),
-                      activation=self._params['activation_hidden'])(x)
-        return x_out
+        x = Dense(self._params['dim_fan_out'],
+                  activation=self._params['activation_hidden'])(x)
+        return Model(input, x)
