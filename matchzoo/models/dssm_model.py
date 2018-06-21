@@ -13,6 +13,8 @@ class DssmModel(engine.BaseModel):
         >>> model = DssmModel()
         >>> model.params['lr'] = 0.2
         >>> model.guess_and_fill_missing_params()
+        >>> if model.all_params_filled():
+        ...     model.build()
 
     """
 
@@ -42,7 +44,6 @@ class DssmModel(engine.BaseModel):
     def build(self):
         """
         Build model structure.
-
         DSSM use pair-wise arthitecture.
         """
         dim_triletter = self._params['input_shapes'][0][0]
@@ -57,10 +58,11 @@ class DssmModel(engine.BaseModel):
     def _build_shared_model(self, dim_triletter: int) -> typing.Any:
         """
         Build common architecture share to adopt pair-wise input.
-
         Word-hashing layer, hidden layer * 2,  out layer.
 
-        :returns:  128 dimension vector representation.
+        :param: dim_triletter: dimensionality of tri-letters, depend on vocab.
+
+        :return: 128 dimension vector representation.
         """
         x_in = Input(shape=(dim_triletter,))
         # Initialize input layer.
