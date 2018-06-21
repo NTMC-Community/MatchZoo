@@ -287,7 +287,7 @@ class DRMM_PointGenerator(object):
 
         X1[:] = self.fill_word
         for i in range(curr_batch_size):
-            if randomly:
+            if self.is_train:
                 label, d1, d2 = random.choice(self.rel)
             else:
                 label, d1, d2 = self.rel[self.point]
