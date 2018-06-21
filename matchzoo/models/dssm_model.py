@@ -23,7 +23,7 @@ class DssmModel(engine.BaseModel):
         params.add(engine.Param('w_initializer', 'glorot_normal'))
         params.add(engine.Param('b_initializer', 'zeros'))
         # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
-        params.add(engine.Param('input_shapes'))
+        params.add(engine.Param('input_shapes', [(30000,), (30000,)]))
         params.add(engine.Param('dim_fan_out', 128))
         params.add(engine.Param('dim_hidden', 300))
         params.add(engine.Param('activation_hidden', 'tanh'))
@@ -45,8 +45,7 @@ class DssmModel(engine.BaseModel):
 
         DSSM use pair-wise arthitecture.
         """
-        # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
-        dim_triletter = self._params['input_shapes']
+        dim_triletter = self._params['input_shapes'][0][0]
         x_in = [self._build_shared_model(dim_triletter),
                 self._build_shared_model(dim_triletter)]
         # Dot product with cosine similarity.
