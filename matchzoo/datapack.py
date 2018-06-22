@@ -1,5 +1,6 @@
 """Matchzoo DataPack, paiir-wise tuple (feature) and context as input."""
 
+import typing
 import pandas as pd
 
 
@@ -20,6 +21,7 @@ class DataPack(pd.DataFrame):
         <class 'matchzoo.datapack.DataPack'>
         >>> dp.size
         2
+        >>> features, context = dp.unpack()
     """
 
     _metadata = ['context']
@@ -54,3 +56,7 @@ class DataPack(pd.DataFrame):
     def size(self) -> int:
         """Get size of the data pack."""
         return self.shape[0]
+
+    def unpack(self) -> typing.Union[pd.DataFrame, dict]:
+        """Unpack DataPack."""
+        return self, self.context
