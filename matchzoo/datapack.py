@@ -1,6 +1,9 @@
 """Matchzoo DataPack, pair-wise tuple (feature) and context as input."""
 
 import typing
+from pathlib import Path
+
+import dill
 import pandas as pd
 
 
@@ -26,6 +29,9 @@ class DataPack(pd.DataFrame):
 
     _metadata = ['context']
 
+    DATA_FILENAME = 'data.pkl'
+    CONTEXT_FILENAME = 'context.pkl'
+
     def __init__(self,
                  data: list,
                  context: dict={},
@@ -40,7 +46,8 @@ class DataPack(pd.DataFrame):
                                        dtype=dtype,
                                        copy=copy)
         if self.shape[1] != 2:
-            raise ValueError("Pair-wise input expected.")
+            raise ValueError(
+                "Pair-wise input expected.")
         self.context = context
 
     @property
@@ -62,3 +69,46 @@ class DataPack(pd.DataFrame):
     def unpack(self) -> typing.Union[pd.DataFrame, dict]:
         """Unpack DataPack."""
         return self, self.context
+
+    def save(self, dirpath: typing.Union[str, Path]):
+        """
+        Save the `DataPack` object.
+
+        A saved `DataPack` is represented as a directory with two files.
+        One is a `DataPack` records (transformed user input as features),
+        the otehr one is fitted context parameters such as `vocab_size`.
+        Both of them will be saved by `pickle`.
+
+        :param dirpath: directory path of the saved `DataPack`.
+        """
+        dirpath = Path(dirpath)
+        print(dirpath)
+
+        if dirpath.exists():
+            raise FileExistsError
+        else:
+            dirpath.mkdir()
+
+        data_file_path = dirpath.joinpath(self.DATA_FILENAME)
+        dill.dump(self, open(data_file_path, mode='wb'))
+
+        context_file_path = dirpath.joinpath(self.CONTEXT_FILENAME)
+        dill.dump(self.context, open(context_file_path, mode='wb'))
+
+
+def load_datapack(dirpath: typing.Union[str, Path]) -> DataPack:
+    """
+    Load a `DataPack`. The reverse function of :meth:`DataPack.save`.
+
+    :param dirpath: directory path of the saved model
+    :return: a :class:`DataPack` instance
+    """
+    dirpath = Path(dirpath)
+
+    data_file_path = dirpath.joinpath(DataPack.DATA_FILENAME)
+    data = dill.load(open(data_file_path, 'rb'))
+
+    context_file_path = dirpath.joinpath(DataPack.CONTEXT_FILENAME)
+    context = dill.load(open(context_file_path, 'rb'))
+
+    return DataPack(data=data, context=context)
