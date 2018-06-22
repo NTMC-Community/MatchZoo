@@ -140,6 +140,7 @@ class BaseModel(abc.ABC):
             x: typing.Union[np.ndarray, typing.List[np.ndarray]],
             y: np.ndarray,
             batch_size: int = 128,
+            verbose: int = 1
     ) -> typing.Union[float, typing.List[float]]:
         """
         Evaluate the model.
@@ -149,12 +150,15 @@ class BaseModel(abc.ABC):
         :param x: input data
         :param y: labels
         :param batch_size: number of samples per gradient update
+        :param verbose: verbosity mode, 0 or 1
         :return: scalar test loss (if the model has a single output and no
             metrics) or list of scalars (if the model has multiple outputs
             and/or metrics). The attribute `model.backend.metrics_names` will
             give you the display labels for the scalar outputs.
+
         """
-        return self._backend.evaluate(x=x, y=y, batch_size=batch_size)
+        return self._backend.evaluate(x=x, y=y,
+                                      batch_size=batch_size, verbose=verbose)
 
     def predict(
             self,
@@ -222,24 +226,6 @@ class BaseModel(abc.ABC):
 
         if self._params['optimizer'] is None:
             self._params['optimizer'] = 'adam'
-
-    def all_params_filled(self) -> bool:
-        """
-        Note: likely to be moved to a higher level API in the future.
-
-        Example:
-
-            >>> import matchzoo
-            >>> model = matchzoo.models.NaiveModel()
-            >>> model.all_params_filled()
-            False
-            >>> model.guess_and_fill_missing_params()
-            >>> model.all_params_filled()
-            True
-
-        :return: `True` if all params are filled, `False` otherwise
-        """
-        return all(param.value for param in self._params)
 
 
 def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:

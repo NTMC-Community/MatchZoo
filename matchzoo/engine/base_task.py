@@ -23,6 +23,11 @@ class BaseTask(abc.ABC):
     def make_output_layer(self) -> keras.layers.Dense:
         """:return: a keras layer to match the task."""
 
+    @property
+    @abc.abstractmethod
+    def output_shape(self) -> tuple:
+        """:return: output shape of a single sample of the task."""
+
 
 def list_available_tasks(base=BaseTask) -> typing.List[typing.Type[BaseTask]]:
     """:return: a list of available task types."""

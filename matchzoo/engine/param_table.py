@@ -21,7 +21,11 @@ class ParamTable(object):
         >>> print(params)
         ham                           Parma Ham
         egg                           Over Easy
-
+        >>> params.add(Param('egg', 'Sunny side Up'))
+        Traceback (most recent call last):
+            ...
+        ValueError: Parameter named egg already exists.
+        To re-assign parameter egg value, use `params["egg"] = value` instead.
     """
 
     def __init__(self):
@@ -31,7 +35,12 @@ class ParamTable(object):
     def add(self, param: Param):
         """:param param: parameter to add."""
         if not isinstance(param, Param):
-            raise TypeError("Only accepts Param instance.")
+            raise TypeError("Only accepts a Param instance.")
+        if param.name in self._params:
+            msg = f"Parameter named {param.name} already exists.\n" \
+                  f"To re-assign parameter {param.name} value, " \
+                  f"use `params[\"{param.name}\"] = value` instead."
+            raise ValueError(msg)
         self._params[param.name] = param
 
     @property
@@ -64,3 +73,20 @@ class ParamTable(object):
     def __iter__(self) -> typing.Iterator:
         """:return: A iterator that iterates over all parameter instances."""
         yield from self._params.values()
+
+    def completed(self) -> bool:
+        """
+        :return: `True` if all params are filled, `False` otherwise.
+
+        Example:
+
+            >>> import matchzoo
+            >>> model = matchzoo.models.NaiveModel()
+            >>> model.params.completed()
+            False
+            >>> model.guess_and_fill_missing_params()
+            >>> model.params.completed()
+            True
+
+        """
+        return all(param for param in self)
