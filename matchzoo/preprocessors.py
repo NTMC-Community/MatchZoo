@@ -10,7 +10,7 @@ import many_stop_words
 match_punc = re.compile('[^\w\s]')
 
 
-class StatelessProcessorUnit(metaclass=abc.ABCMeta):
+class ProcessorUnit(metaclass=abc.ABCMeta):
     """Process unit do not persive state (i.e. do not need fit)."""
 
     @abc.abstractmethod
@@ -18,7 +18,7 @@ class StatelessProcessorUnit(metaclass=abc.ABCMeta):
         """Abstract base method, need to be implemented in subclass."""
 
 
-class StatefulProcessorUnit(StatelessProcessorUnit, metaclass=abc.ABCMeta):
+class StatefulProcessorUnit(ProcessorUnit, metaclass=abc.ABCMeta):
     """Process unit do persive state (i.e. need fit)."""
 
     def __init__(self):
@@ -35,7 +35,7 @@ class StatefulProcessorUnit(StatelessProcessorUnit, metaclass=abc.ABCMeta):
         """Abstract base method, need to be implemented in subclass."""
 
 
-class TokenizeUnit(StatelessProcessorUnit):
+class TokenizeUnit(ProcessorUnit):
     """Process unit for text tokenization."""
 
     def transform(self, input: str) -> list:
@@ -49,7 +49,7 @@ class TokenizeUnit(StatelessProcessorUnit):
         return nltk.word_tokenize(input)
 
 
-class LowercaseUnit(StatelessProcessorUnit):
+class LowercaseUnit(ProcessorUnit):
     """Process unit for text lower case."""
 
     def transform(self, tokens: list) -> list:
@@ -63,7 +63,7 @@ class LowercaseUnit(StatelessProcessorUnit):
         return [token.lower() for token in tokens]
 
 
-class PuncRemovalUnit(StatelessProcessorUnit):
+class PuncRemovalUnit(ProcessorUnit):
     """Process unit for remove punctuations."""
 
     def transform(self, tokens: list) -> list:
@@ -77,7 +77,7 @@ class PuncRemovalUnit(StatelessProcessorUnit):
         return [token for token in tokens if not match_punc.search(token)]
 
 
-class DigitRemovalUnit(StatelessProcessorUnit):
+class DigitRemovalUnit(ProcessorUnit):
     """Process unit to remove digits."""
 
     def transform(self, tokens: list) -> list:
@@ -91,7 +91,7 @@ class DigitRemovalUnit(StatelessProcessorUnit):
         return [token for token in tokens if not token.isdigit()]
 
 
-class StopRemovalUnit(StatelessProcessorUnit):
+class StopRemovalUnit(ProcessorUnit):
     """Process unit to remove stop words."""
 
     def __init__(self, lang='en'):
@@ -123,7 +123,7 @@ class StopRemovalUnit(StatelessProcessorUnit):
         return many_stop_words.get_stop_words(self._lang)
 
 
-class StemmingUnit(StatelessProcessorUnit):
+class StemmingUnit(ProcessorUnit):
     """Process unit for token stemming."""
 
     def __init__(self, stemmer='porter'):
@@ -153,7 +153,7 @@ class StemmingUnit(StatelessProcessorUnit):
                     self.stemmer))
 
 
-class LemmatizationUnit(StatelessProcessorUnit):
+class LemmatizationUnit(ProcessorUnit):
     """Process unit for token lemmatization."""
 
     def transform(self, tokens: list) -> list:
