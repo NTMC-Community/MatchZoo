@@ -7,6 +7,11 @@ from matchzoo import engine
 from matchzoo import models
 from matchzoo import tasks
 
+# To add a test for a new model, add a tuple of form:
+#       (model_class, customized_kwargs)
+# If no customized_kwargs is needed, simply put a `None`.
+# Notice that each of such tuple will go through a full testing procedure, so
+# it's quite time consuming. Don't add customized_kwargs unless you have to.
 model_setups = [
     (models.NaiveModel, None),
     (models.DenseBaselineModel, None),
