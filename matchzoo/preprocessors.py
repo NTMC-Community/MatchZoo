@@ -1,146 +1,168 @@
 """Matchzoo toolkit for text pre-processing."""
 
 import re
+import abc
 import nltk
-import jieba
 import typing
 import many_stop_words
-from functools import reduce
 
 
 match_punc = re.compile('[^\w\s]')
 
 
-def get_stopwords(lang: str='en') -> list:
-    """
-    Get stopwords based on language.
+class ProcessorUnit(metaclass=abc.ABCMeta):
+    """Process unit do not persive state (i.e. do not need fit)."""
 
-    :params lang: language code.
-
-    :return stop_list: list of stop words.
-    """
-    return many_stop_words.get_stop_words(lang)
+    @abc.abstractmethod
+    def transform(self, input: typing.Any):
+        """Abstract base method, need to be implemented in subclass."""
 
 
-def tokenizer(raw: str) -> list:
-    """
-    Word tokenization.
+class StatefulProcessorUnit(ProcessorUnit, metaclass=abc.ABCMeta):
+    """Process unit do persive state (i.e. need fit)."""
 
-    :param raw: raw input given by user.
+    def __init__(self):
+        """Initialization."""
+        self._state = {}
 
-    :return tokens: list of tokenized tokens.
-    """
-    return nltk.word_tokenize(raw)
+    @property
+    def state(self):
+        """Get current state."""
+        return self._state
 
-
-def segmentation(raw: str) -> list:
-    """
-    Chinese sentence segmentation.
-
-    :param raw: raw input given by user.
-
-    :return tokens: list of segmentated tokens.
-    """
-    return list(jieba.cut(raw))
+    @abc.abstractmethod
+    def fit(self, input: typing.Any) -> dict:
+        """Abstract base method, need to be implemented in subclass."""
 
 
-def to_lowercase(tokens: list) -> list:
-    """
-    Convert list of tokens to lower case.
+class TokenizeUnit(ProcessorUnit):
+    """Process unit for text tokenization."""
 
-    :param tokens: list of tokens.
+    def transform(self, input: str) -> list:
+        """
+        Process input data from raw terms to list of tokens.
 
-    :return tokens: lower-cased list of tokens.
-    """
-    return [token.lower() for token in tokens]
+        :param input: raw textual input.
 
-
-def remove_stopwords(tokens: list, lang: str='en') -> list:
-    """
-    Remove stopwords from list of tokenized tokens.
-
-    :param tokens: list of tokenized tokens.
-    :param lang: language code for stopwords.
-
-    :return tokens: list of tokenized tokens without stopwords.
-    """
-    return [token for token in tokens if token not in get_stopwords(lang)]
+        :return tokens: tokenized tokens as a list.
+        """
+        return nltk.word_tokenize(input)
 
 
-def remove_punctuation(tokens: list) -> list:
-    """
-    Remove punctuations from list of tokens.
+class LowercaseUnit(ProcessorUnit):
+    """Process unit for text lower case."""
 
-    :param tokens: list of
+    def transform(self, tokens: list) -> list:
+        """
+        Convert list of tokens to lower case.
 
-    :return rv: tokens  without punctuation.
-    """
-    return [token for token in tokens if not match_punc.search(token)]
+        :param tokens: list of tokens.
 
-
-def remove_digits(tokens: list) -> list:
-    """
-    Remove digits from list of tokens.
-
-    :param tokens: list of tokens to be filtered.
-
-    :return tokens: tokens of tokens without digits.
-    """
-    return [token for token in tokens if not token.isdigit()]
+        :return tokens: lower-cased list of tokens.
+        """
+        return [token.lower() for token in tokens]
 
 
-def stemming(tokens: list, stemmer: str = 'porter') -> list:
-    """
-    Reducing inflected words to their word stem, base or root form.
+class PuncRemovalUnit(ProcessorUnit):
+    """Process unit for remove punctuations."""
 
-    :param tokens: list of string to be stemmed.
+    def transform(self, tokens: list) -> list:
+        """
+        Remove punctuations from list of tokens.
 
-    :raise ValueError: stemmer type should be porter or lancaster.
+        :param tokens: list of toekns.
 
-    :return tokens: stemmed token.
-    """
-    if stemmer == 'porter':
-        porter_stemmer = nltk.stem.PorterStemmer()
-        return [porter_stemmer.stem(token) for token in tokens]
-    elif stemmer == 'lancaster' or stemmer == 'krovetz':
-        lancaster_stemmer = nltk.stem.lancaster.LancasterStemmer()
-        return [lancaster_stemmer.stem(token) for token in tokens]
-    else:
-        raise ValueError(
-            'Not supported supported stemmer type: {}'.format(stemmer))
+        :return rv: tokens  without punctuation.
+        """
+        return [token for token in tokens if not match_punc.search(token)]
 
 
-def lemmatization(tokens: list) -> list:
-    """
-    Lemmatization a sequence of tokens.
+class DigitRemovalUnit(ProcessorUnit):
+    """Process unit to remove digits."""
 
-    :param tokens: list of tokens to be lemmatized.
+    def transform(self, tokens: list) -> list:
+        """
+        Remove digits from list of tokens.
 
-    :return tokens: list of lemmatizd tokens.
-    """
-    lemmatizer = nltk.WordNetLemmatizer()
-    return [lemmatizer.lemmatize(token, pos='v') for token in tokens]
+        :param tokens: list of tokens to be filtered.
+
+        :return tokens: tokens of tokens without digits.
+        """
+        return [token for token in tokens if not token.isdigit()]
 
 
-def chain(*funcs: typing.Callable) -> typing.Callable:
-    """
-    Chain a list of functions execute as pipeline.
+class StopRemovalUnit(ProcessorUnit):
+    """Process unit to remove stop words."""
 
-    Examples:
-        >>> processor = chain(tokenizer,
-        ...                   to_lowercase,
-        ...                   remove_punctuation,
-        ...                   stemming,
-        ...                   remove_digits)
-        >>> rv = processor("An Example sentence to BE cleaned!")
-        >>> import functools
-        >>> processor = chain(tokenizer,
-        ...                   functools.partial(stemming, stemmer='lancaster'))
-        >>> rv = processor("An example sentence to BE cleaned!")
+    def __init__(self, lang='en'):
+        """Initialization."""
+        self._lang = lang
 
-    :param *funcs: functions to be executed.
+    def transform(self, tokens: list) -> list:
+        """
+        Remove stopwords from list of tokenized tokens.
 
-    :return rv: return value of the last function.
+        :param tokens: list of tokenized tokens.
+        :param lang: language code for stopwords.
 
-    """
-    return lambda x: reduce(lambda f, g: g(f), list(funcs), x)
+        :return tokens: list of tokenized tokens without stopwords.
+        """
+        return [token
+                for token
+                in tokens
+                if token not in self.get_stopwords()]
+
+    def get_stopwords(self) -> list:
+        """
+        Get stopwords based on language.
+
+        :params lang: language code.
+
+        :return stop_list: list of stop words.
+        """
+        return many_stop_words.get_stop_words(self._lang)
+
+
+class StemmingUnit(ProcessorUnit):
+    """Process unit for token stemming."""
+
+    def __init__(self, stemmer='porter'):
+        """Initialization."""
+        self.stemmer = stemmer
+
+    def transform(self, tokens: list) -> list:
+        """
+        Reducing inflected words to their word stem, base or root form.
+
+        :param tokens: list of string to be stemmed.
+        :param stemmer: stemmer to use, `porter` or `lancaster`.
+
+        :raise ValueError: stemmer type should be porter or lancaster.
+
+        :return tokens: stemmed token.
+        """
+        if self.stemmer == 'porter':
+            porter_stemmer = nltk.stem.PorterStemmer()
+            return [porter_stemmer.stem(token) for token in tokens]
+        elif self.stemmer == 'lancaster' or self.stemmer == 'krovetz':
+            lancaster_stemmer = nltk.stem.lancaster.LancasterStemmer()
+            return [lancaster_stemmer.stem(token) for token in tokens]
+        else:
+            raise ValueError(
+                'Not supported supported stemmer type: {}'.format(
+                    self.stemmer))
+
+
+class LemmatizationUnit(ProcessorUnit):
+    """Process unit for token lemmatization."""
+
+    def transform(self, tokens: list) -> list:
+        """
+        Lemmatization a sequence of tokens.
+
+        :param tokens: list of tokens to be lemmatized.
+
+        :return tokens: list of lemmatizd tokens.
+        """
+        lemmatizer = nltk.WordNetLemmatizer()
+        return [lemmatizer.lemmatize(token, pos='v') for token in tokens]
