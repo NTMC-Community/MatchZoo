@@ -38,6 +38,5 @@ class DenseBaselineModel(engine.BaseModel):
         x = keras.layers.concatenate(x_in)
         x = keras.layers.Dense(
                 self._params['num_dense_units'], activation='relu')(x)
-        x_out = keras.layers.Dense(1, activation='sigmoid')(x)
-
+        x_out = self.params['task'].make_output_layer()(x)
         self._backend = keras.models.Model(inputs=x_in, outputs=x_out)
