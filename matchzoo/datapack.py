@@ -1,4 +1,4 @@
-"""Matchzoo DataPack, paiir-wise tuple (feature) and context as input."""
+"""Matchzoo DataPack, pair-wise tuple (feature) and context as input."""
 
 import typing
 import pandas as pd
@@ -39,6 +39,8 @@ class DataPack(pd.DataFrame):
                                        columns=columns,
                                        dtype=dtype,
                                        copy=copy)
+        if self.shape[1] != 2:
+            raise ValueError("Pair-wise input expected.")
         self.context = context
 
     @property
