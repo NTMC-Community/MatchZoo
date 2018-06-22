@@ -140,6 +140,7 @@ class BaseModel(abc.ABC):
             x: typing.Union[np.ndarray, typing.List[np.ndarray]],
             y: np.ndarray,
             batch_size: int = 128,
+            verbose: int = 1
     ) -> typing.Union[float, typing.List[float]]:
         """
         Evaluate the model.
@@ -149,12 +150,15 @@ class BaseModel(abc.ABC):
         :param x: input data
         :param y: labels
         :param batch_size: number of samples per gradient update
+        :param verbose: verbosity mode, 0 or 1
         :return: scalar test loss (if the model has a single output and no
             metrics) or list of scalars (if the model has multiple outputs
             and/or metrics). The attribute `model.backend.metrics_names` will
             give you the display labels for the scalar outputs.
+
         """
-        return self._backend.evaluate(x=x, y=y, batch_size=batch_size)
+        return self._backend.evaluate(x=x, y=y,
+                                      batch_size=batch_size, verbose=verbose)
 
     def predict(
             self,
