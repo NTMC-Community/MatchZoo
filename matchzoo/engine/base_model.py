@@ -227,24 +227,6 @@ class BaseModel(abc.ABC):
         if self._params['optimizer'] is None:
             self._params['optimizer'] = 'adam'
 
-    def all_params_filled(self) -> bool:
-        """
-        Note: likely to be moved to a higher level API in the future.
-
-        Example:
-
-            >>> import matchzoo
-            >>> model = matchzoo.models.NaiveModel()
-            >>> model.all_params_filled()
-            False
-            >>> model.guess_and_fill_missing_params()
-            >>> model.all_params_filled()
-            True
-
-        :return: `True` if all params are filled, `False` otherwise
-        """
-        return all(param.value for param in self._params)
-
 
 def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
     """

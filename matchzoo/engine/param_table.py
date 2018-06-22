@@ -73,3 +73,20 @@ class ParamTable(object):
     def __iter__(self) -> typing.Iterator:
         """:return: A iterator that iterates over all parameter instances."""
         yield from self._params.values()
+
+    def completed(self) -> bool:
+        """
+        :return: `True` if all params are filled, `False` otherwise.
+
+        Example:
+
+            >>> import matchzoo
+            >>> model = matchzoo.models.NaiveModel()
+            >>> model.params.completed()
+            False
+            >>> model.guess_and_fill_missing_params()
+            >>> model.params.completed()
+            True
+
+        """
+        return all(param for param in self)
