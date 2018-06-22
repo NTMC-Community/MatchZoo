@@ -21,7 +21,11 @@ class ParamTable(object):
         >>> print(params)
         ham                           Parma Ham
         egg                           Over Easy
-
+        >>> params.add(Param('egg', 'Sunny side Up'))
+        Traceback (most recent call last):
+            ...
+        ValueError: Parameter named egg already exists.
+        To re-assign parameter egg value, use `params[egg] = value` instead.
     """
 
     def __init__(self):
@@ -31,7 +35,12 @@ class ParamTable(object):
     def add(self, param: Param):
         """:param param: parameter to add."""
         if not isinstance(param, Param):
-            raise TypeError("Only accepts Param instance.")
+            raise TypeError("Only accepts a Param instance.")
+        if param.name in self._params:
+            msg = f"Parameter named {param.name} already exists.\n" \
+                  f"To re-assign parameter {param.name} value, " \
+                  f"use `params[{param.name}] = value` instead."
+            raise ValueError(msg)
         self._params[param.name] = param
 
     @property
