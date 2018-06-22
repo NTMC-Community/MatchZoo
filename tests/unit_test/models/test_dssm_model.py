@@ -10,7 +10,7 @@ from matchzoo import tasks
 
 @pytest.fixture(scope='module')
 def model():
-    m = models.DssmModel()
+    m = models.DSSMModel()
     m.params['task'] = tasks.Classification(num_classes=2)
     m.guess_and_fill_missing_params()
     m.build()

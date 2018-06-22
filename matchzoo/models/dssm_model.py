@@ -4,13 +4,12 @@ from keras.models import Model
 from keras.layers import Dense, Input, Dot
 
 
-class DssmModel(engine.BaseModel):
+class DSSMModel(engine.BaseModel):
     """
     Deep structured semantic model.
 
     Examples:
-        >>> model = DssmModel()
-        >>> model.params['lr'] = 0.2
+        >>> model = DSSMModel()
         >>> model.guess_and_fill_missing_params()
         >>> if model.all_params_filled():
         ...     model.build()
@@ -21,24 +20,16 @@ class DssmModel(engine.BaseModel):
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params()
+        params['optimizer'] = 'sgd'
+        # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
+        params['input_shapes'] = [(30000,), (30000,)]
         params.add(engine.Param('w_initializer', 'glorot_normal'))
         params.add(engine.Param('b_initializer', 'zeros'))
-        # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
-        params.add(engine.Param('input_shapes', [(30000,), (30000,)]))
         params.add(engine.Param('dim_fan_out', 128))
         params.add(engine.Param('dim_hidden', 300))
         params.add(engine.Param('activation_hidden', 'tanh'))
         params.add(engine.Param('activation_prediction', 'softmax'))
-        params.add(engine.Param('lr', 0.01))
-        params.add(engine.Param('decay', 1e-6))
-        params.add(engine.Param('batch_size', 1024))
-        params.add(engine.Param('num_epochs', 20))
-        params.add(engine.Param('train_test_split', 0.2))
-        params.add(engine.Param('verbose', 1))
-        params.add(engine.Param('shuffle', True))
-        params.add(engine.Param('optimizer', 'sgd'))
         params.add(engine.Param('num_hidden_layers', 2))
-        params.add(engine.Param('loss', 'categorical_crossentropy'))
         return params
 
     def build(self):
