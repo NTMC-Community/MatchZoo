@@ -98,6 +98,7 @@ def load_datapack(dirpath: typing.Union[str, Path]) -> DataPack:
     dirpath = Path(dirpath)
 
     data_file_path = dirpath.joinpath(DataPack.DATA_FILENAME)
-    data = dill.load(open(data_file_path, 'rb'))
+    dp = dill.load(open(data_file_path, 'rb'))
+    data, context = dp.unpack()
 
     return DataPack(data=data, context=context)
