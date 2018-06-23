@@ -29,8 +29,7 @@ class DataPack(pd.DataFrame):
 
     _metadata = ['context']
 
-    DATA_FILENAME = 'data.pkl'
-    CONTEXT_FILENAME = 'context.pkl'
+    DATA_FILENAME = 'data.dill'
 
     def __init__(self,
                  data: list,
@@ -45,9 +44,6 @@ class DataPack(pd.DataFrame):
                                        columns=columns,
                                        dtype=dtype,
                                        copy=copy)
-        if self.shape[1] != 2:
-            raise ValueError(
-                "Pair-wise input expected.")
         self.context = context
 
     @property
@@ -82,7 +78,6 @@ class DataPack(pd.DataFrame):
         :param dirpath: directory path of the saved `DataPack`.
         """
         dirpath = Path(dirpath)
-        print(dirpath)
 
         if dirpath.exists():
             raise FileExistsError
@@ -91,9 +86,6 @@ class DataPack(pd.DataFrame):
 
         data_file_path = dirpath.joinpath(self.DATA_FILENAME)
         dill.dump(self, open(data_file_path, mode='wb'))
-
-        context_file_path = dirpath.joinpath(self.CONTEXT_FILENAME)
-        dill.dump(self.context, open(context_file_path, mode='wb'))
 
 
 def load_datapack(dirpath: typing.Union[str, Path]) -> DataPack:
@@ -107,8 +99,5 @@ def load_datapack(dirpath: typing.Union[str, Path]) -> DataPack:
 
     data_file_path = dirpath.joinpath(DataPack.DATA_FILENAME)
     data = dill.load(open(data_file_path, 'rb'))
-
-    context_file_path = dirpath.joinpath(DataPack.CONTEXT_FILENAME)
-    context = dill.load(open(context_file_path, 'rb'))
 
     return DataPack(data=data, context=context)
