@@ -16,7 +16,7 @@ class BaseModel(abc.ABC):
     """Abstract base class of all matchzoo models."""
 
     BACKEND_FILENAME = 'backend.h5'
-    PARAMS_FILENAME = 'params.pkl'
+    PARAMS_FILENAME = 'params.dill'
 
     def __init__(
             self,
