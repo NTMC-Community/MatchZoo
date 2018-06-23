@@ -235,6 +235,8 @@ class BaseModel(abc.ABC):
             return keras.layers.Dense(task.num_classes, activation='softmax')
         elif isinstance(task, tasks.Ranking):
             return keras.layers.Dense(1, activation='sigmoid')
+        else:
+            raise ValueError("Invalid task type.")
 
 
 def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
