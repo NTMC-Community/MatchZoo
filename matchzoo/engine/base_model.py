@@ -9,6 +9,7 @@ import numpy as np
 import keras
 
 from matchzoo import engine
+from matchzoo import tasks
 
 
 class BaseModel(abc.ABC):
@@ -226,6 +227,14 @@ class BaseModel(abc.ABC):
 
         if self._params['optimizer'] is None:
             self._params['optimizer'] = 'adam'
+
+    def _make_output_layer(self):
+        """:return: a correctly shaped keras dense layer for model output."""
+        task = self._params['task']
+        if isinstance(task, tasks.Classification):
+            return keras.layers.Dense(task.num_classes, activation='softmax')
+        elif isinstance(task, tasks.Ranking):
+            return keras.layers.Dense(1, activation='sigmoid')
 
 
 def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:

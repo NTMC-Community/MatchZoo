@@ -29,10 +29,3 @@ def test_classification_num_classes(arg):
 
 def test_list_available_tasks():
     assert tasks.list_available_task_types()
-
-
-@pytest.mark.parametrize("task_type", [
-    tasks.Ranking, tasks.Classification
-])
-def test_make_output_layers(task_type):
-    assert task_type().make_output_layer()
