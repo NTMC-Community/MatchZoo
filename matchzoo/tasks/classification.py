@@ -35,3 +35,8 @@ class Classification(engine.BaseTask):
     def make_output_layer(self) -> keras.layers.Dense:
         """:return: a correctly shaped keras dense layer for model output."""
         return keras.layers.Dense(self._num_classes, activation='softmax')
+
+    @property
+    def output_shape(self) -> tuple:
+        """:return: output shape of a single sample of the task."""
+        return self._num_classes,
