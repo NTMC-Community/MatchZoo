@@ -72,7 +72,9 @@ class DataPack(object):
         :param new_data_pack: A new DataPack object.
         """
         new_dataframe, new_context = new_data_pack.unpack()
-        self._dataframe = self._dataframe.append(new_dataframe)
+        self._dataframe = self._dataframe.append(
+            new_dataframe,
+            ignore_index=True)
         self._context.update(new_context)
 
     def save(self, dirpath: typing.Union[str, Path]):
