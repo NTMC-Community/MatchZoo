@@ -34,6 +34,8 @@ def test_save_load(data_pack):
     dirpath = '.tmpdir'
     data_pack.save(dirpath)
     dp = load_datapack(dirpath)
+    with pytest.raises(FileExistsError):
+        data_pack.save(dirpath)
     data, ctx = dp.unpack()
     assert data.shape[0] == 2
     assert isinstance(ctx, dict)
