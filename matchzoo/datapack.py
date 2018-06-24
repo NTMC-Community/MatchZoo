@@ -20,9 +20,9 @@ class DataPack(object):
         >>> # sample without replacement for generation.
         >>> type(dp.sample(1))
         <class 'matchzoo.datapack.DataPack'>
-        >>> dp.size
+        >>> len(dp)
         2
-        >>> features, context = dp.unpack()
+        >>> features, context = dp.dataframe, dp.context
         >>> context
         {'vocab_size': 2000}
     """
@@ -36,10 +36,19 @@ class DataPack(object):
         self._dataframe = pd.DataFrame(data)
         self._context = context
 
-    @property
-    def size(self) -> int:
+    def __len__(self) -> int:
         """Get size of the data pack."""
         return self._dataframe.shape[0]
+
+    @property
+    def dataframe(self):
+        """Get data frame."""
+        return self._dataframe
+
+    @property
+    def context(self):
+        """Get context of `DataPack`."""
+        return self._context
 
     def sample(self, number, replace=True):
         """
@@ -54,14 +63,6 @@ class DataPack(object):
         return DataPack(self._dataframe.sample(n=number, replace=replace),
                         self._context)
 
-    def unpack(self) -> typing.Union[pd.DataFrame, dict]:
-        """Unpack DataPack.
-
-        :return (dataframe, context): return `DataFrame` instance and
-                                      `context` object.
-        """
-        return self._dataframe, self._context
-
     def append(self, new_data_pack: 'DataPack'):
         """
         Append a new `DataPack` object to current `DataPack` object.
@@ -71,7 +72,8 @@ class DataPack(object):
 
         :param new_data_pack: A new DataPack object.
         """
-        new_dataframe, new_context = new_data_pack.unpack()
+        new_dataframe = new_data_pack.dataframe
+        new_context = new_data_pack.context
         self._dataframe = self._dataframe.append(
             new_dataframe,
             ignore_index=True)
@@ -110,6 +112,5 @@ def load_datapack(dirpath: typing.Union[str, Path]) -> DataPack:
 
     data_file_path = dirpath.joinpath(DataPack.DATA_FILENAME)
     dp = dill.load(open(data_file_path, 'rb'))
-    data, context = dp.unpack()
 
-    return DataPack(data=data, context=context)
+    return DataPack(data=dp.dataframe, context=dp.context)
