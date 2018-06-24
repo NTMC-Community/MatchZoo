@@ -48,7 +48,7 @@ class DSSMModel(engine.BaseModel):
         # Dot product with cosine similarity.
         x = Dot(axes=[1, 1],
                 normalize=True)(x)
-        x_out = self.params['task'].make_output_layer()(x)
+        x_out = self._make_output_layer()(x)
         self._backend = Model(
             inputs=[input_left, input_right],
             outputs=x_out)
@@ -63,6 +63,7 @@ class DSSMModel(engine.BaseModel):
 
         :return: x: 128d vector(tensor) representation.
         """
+        # TODO use sparse input in the future.
         input = Input(shape=input_shape)
         x = Dense(self._params['dim_hidden'],
                   kernel_initializer=self._params['w_initializer'],
