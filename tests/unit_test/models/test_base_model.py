@@ -19,4 +19,4 @@ def test_base_model_concrete_instantiation():
     model.guess_and_fill_missing_params()
     model.build()
     assert model.backend
-    assert model.all_params_filled()
+    assert model.params.completed()

@@ -21,3 +21,8 @@ class Ranking(engine.BaseTask):
     def make_output_layer(self):
         """:return: a correctly shaped keras dense layer for model output."""
         return keras.layers.Dense(1, activation='sigmoid')
+
+    @property
+    def output_shape(self) -> tuple:
+        """:return: output shape of a single sample of the task."""
+        return 1,
