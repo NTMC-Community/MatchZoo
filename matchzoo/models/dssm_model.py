@@ -11,8 +11,7 @@ class DSSMModel(engine.BaseModel):
     Examples:
         >>> model = DSSMModel()
         >>> model.guess_and_fill_missing_params()
-        >>> if model.all_params_filled():
-        ...     model.build()
+        >>> model.build()
 
     """
 
@@ -28,7 +27,6 @@ class DSSMModel(engine.BaseModel):
         params.add(engine.Param('dim_fan_out', 128))
         params.add(engine.Param('dim_hidden', 300))
         params.add(engine.Param('activation_hidden', 'tanh'))
-        params.add(engine.Param('activation_prediction', 'softmax'))
         params.add(engine.Param('num_hidden_layers', 2))
         return params
 
@@ -50,8 +48,7 @@ class DSSMModel(engine.BaseModel):
         # Dot product with cosine similarity.
         x = Dot(axes=[1, 1],
                 normalize=True)(x)
-        x_out = Dense(2,
-                      activation=self._params['activation_prediction'])(x)
+        x_out = self.params['task'].make_output_layer()(x)
         self._backend = Model(
             inputs=[input_left, input_right],
             outputs=x_out)
