@@ -1,8 +1,6 @@
 from matchzoo.datapack import DataPack, load_datapack
 
 import pytest
-
-import tempfile
 import shutil
 
 @pytest.fixture
@@ -33,7 +31,7 @@ def test_append(data_pack):
     assert isinstance(ctx, dict)
 
 def test_save_load(data_pack):
-    dirpath = tempfile.mkdtemp()
+    dirpath = '.tmpdir'
     data_pack.save(dirpath)
     dp = load_datapack(dirpath)
     data, ctx = dp.unpack()
