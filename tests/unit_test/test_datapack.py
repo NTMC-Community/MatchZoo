@@ -3,14 +3,17 @@ from matchzoo.datapack import DataPack, load_datapack
 import pytest
 import shutil
 
+import numpy as np
+
 @pytest.fixture
 def data_pack():
-    data = [([1,3], [2,3]), ([3,0], [1,6])]
+    data = np.zeros((2, 2))
     ctx = {'vocab_size': 2000}
     return DataPack(data, ctx)
 
 def test_length(data_pack):
-    assert len(data_pack) == 2
+    num_examples = 2
+    assert len(data_pack) == num_examples
 
 def test_sample(data_pack):
     sampled_data_pack = data_pack.sample(1)
