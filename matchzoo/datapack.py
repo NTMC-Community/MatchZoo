@@ -71,7 +71,7 @@ class DataPack(object):
         will be updated by the new one.
 
         :param new_data_pack: A new DataPack object.
-        :param new_datapack: Allow overwrite common context by new context.
+        :param overwite_context: Allow overwrite common context by new context.
         """
         new_dataframe = new_data_pack.dataframe
         new_context = new_data_pack.context
