@@ -16,6 +16,7 @@ model_setups = [
     (models.NaiveModel, None),
     (models.DenseBaselineModel, None),
     (models.DenseBaselineModel, {"num_dense_units": 512}),
+    (models.DSSMModel, None)
 ]
 
 
