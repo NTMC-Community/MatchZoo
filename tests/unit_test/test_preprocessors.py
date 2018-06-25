@@ -55,6 +55,5 @@ def test_ngram_unit(list_input):
     ngram = NgramLetterUnit()
     out = ngram.transform(list_input)
     context = ngram.state
-    print(context)
     assert '#a#' in out
     assert context.get('input_dim') == 24
