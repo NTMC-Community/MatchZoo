@@ -24,6 +24,7 @@ For core developers:
 1. Create a sub-branch under `2.0`, naming conventions:
     + For new features or enhancements, use `feature/[branch-name]`.
     + For bugs, use `hotfix/[branch-name]`
+    + For documents, use `doc/[branch-name]`
 2. Create an issue under [faneshion/Matchzoo](https://github.com/faneshion/MatchZoo/issues), write the description of the bug/enhancement.
 3. `git pull` to get the latest code, `git checkout feature/[branch-name]` to switch to your newly created branch.
 4. Edit code & add unit test.
