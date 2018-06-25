@@ -63,7 +63,7 @@ class DataPack(object):
         return DataPack(self._dataframe.sample(n=number, replace=replace),
                         self._context)
 
-    def append(self, new_data_pack: 'DataPack'):
+    def append(self, new_data_pack: 'DataPack', overwite_context: bool=True):
         """
         Append a new `DataPack` object to current `DataPack` object.
 
@@ -71,13 +71,17 @@ class DataPack(object):
         will be updated by the new one.
 
         :param new_data_pack: A new DataPack object.
+        :param new_datapack: Allow overwrite common context by new context.
         """
         new_dataframe = new_data_pack.dataframe
         new_context = new_data_pack.context
         self._dataframe = self._dataframe.append(
             new_dataframe,
             ignore_index=True)
-        self._context.update(new_context)
+        if overwite_context:
+            self._context = {**self._context, **new_context}
+        else:
+            self._context = {**new_context, **self._context}
 
     def save(self, dirpath: typing.Union[str, Path]):
         """

@@ -22,6 +22,11 @@ def test_sample(data_pack):
 def test_append(data_pack):
     data_pack.append(data_pack)
     assert len(data_pack) == 4
+    assert data_pack.context == {'vocab_size': 2000}
+    new_datapack = DataPack(data_pack.dataframe, {'vocab_size':2001})
+    data_pack.append(new_datapack, overwite_context=False)
+    assert len(data_pack) == 8
+    assert data_pack.context == {'vocab_size': 2000}
 
 def test_save_load(data_pack):
     dirpath = '.tmpdir'
