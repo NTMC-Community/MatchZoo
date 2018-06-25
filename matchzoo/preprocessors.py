@@ -195,6 +195,8 @@ class NgramLetterUnit(StatefulProcessorUnit):
 
         :param tokens: list of tokens to be transformed.
         :param ngram: By default use 3-gram (tri-letter).
+
+        :return: set of tri-letters, dependent on `ngram`.
         """
         for token in tokens:
             token = '#' + token + '#'
