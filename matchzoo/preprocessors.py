@@ -28,10 +28,12 @@ class StatefulProcessorUnit(ProcessorUnit, metaclass=abc.ABCMeta):
     @property
     def state(self):
         """Get current state."""
+        if not self._state:
+            self.fit()
         return self._state
 
     @abc.abstractmethod
-    def fit(self, input: typing.Any) -> dict:
+    def fit(self) -> dict:
         """Abstract base method, need to be implemented in subclass."""
 
 
@@ -166,3 +168,45 @@ class LemmatizationUnit(ProcessorUnit):
         """
         lemmatizer = nltk.WordNetLemmatizer()
         return [lemmatizer.lemmatize(token, pos='v') for token in tokens]
+
+
+class NgramLetterUnit(StatefulProcessorUnit):
+    """
+    Process unit for n-letter generation.
+
+    Triletter is used in :DSSMModel: and :CDSSMModel:.
+    This processor is expected to execute after `Vocab`
+    has been created.
+
+    Returned `input_dim` is the dimensionality of :DSSMModel:.
+    """
+
+    def __init__(self):
+        """Initialization."""
+        self._n_letters = set()
+        super().__init__()
+
+    def transform(self, tokens: list, ngram: int=3) -> list:
+        """
+        Transform token into tri-letter.
+
+        For example, `word` should be represented as `#wo`,
+        `wor`, `ord` and `rd#`.
+
+        :param tokens: list of tokens to be transformed.
+        :param ngram: By default use 3-gram (tri-letter).
+        """
+        for token in tokens:
+            token = '#' + token + '#'
+            while len(token) >= ngram:
+                self._n_letters.add(token[:ngram])
+                token = token[1:]
+        return self._n_letters
+
+    def fit(self):
+        """
+        Fiitting parameters for models.
+
+        In this case, `input_dim` is fitted.
+        """
+        self._state = {'input_dim': len(self._n_letters)}
