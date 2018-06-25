@@ -12,12 +12,10 @@ class DataPack(object):
     Matchzoo DataPack data structure, store dataframe and context.
 
     Example:
-        >>> # features, context generate by processors.
         >>> features = [([1,3], [2,3]), ([3,0], [1,6])]
         >>> context = {'vocab_size': 2000}
         >>> dp = DataPack(data=features,
         ...               context=context)
-        >>> # sample without replacement for generation.
         >>> type(dp.sample(1))
         <class 'matchzoo.datapack.DataPack'>
         >>> len(dp)
