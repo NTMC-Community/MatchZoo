@@ -113,4 +113,4 @@ def load_datapack(dirpath: typing.Union[str, Path]) -> DataPack:
     data_file_path = dirpath.joinpath(DataPack.DATA_FILENAME)
     dp = dill.load(open(data_file_path, 'rb'))
 
-    return DataPack(data=dp.dataframe, context=dp.context)
+    return dp
