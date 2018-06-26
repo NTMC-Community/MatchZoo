@@ -23,3 +23,10 @@ class SequenceMask(Layer):
 
     def compute_output_shape(self, input_shape):
         return (input_shape[0], self.text_maxlen)
+
+    def get_config(self):
+        config = {
+            'text_maxlen': self.text_maxlen,
+        }
+        base_config = super(SequenceMask, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))
