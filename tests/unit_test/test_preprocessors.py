@@ -53,6 +53,7 @@ def test_lemma_unit(list_input):
 
 def test_ngram_unit(list_input):
     ngram = NgramLetterUnit()
+    ngram.fit(list_input)
     out = ngram.transform(list_input)
     context = ngram.state
     assert '#a#' in out
