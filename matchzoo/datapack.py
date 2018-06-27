@@ -56,12 +56,12 @@ class DataPack(object):
         :param replace: sample with replacement, default value is `True`.
 
         :return data_pack: return `DataPack` object including sampled data
-                           and context.
+                           and context (shallow copy of the context`).
         """
         return DataPack(self._dataframe.sample(n=number, replace=replace),
-                        self._context)
+                        self._context.copy())
 
-    def append(self, new_data_pack: 'DataPack', overwite_context: bool=True):
+    def append(self, new_data_pack: 'DataPack'):
         """
         Append a new `DataPack` object to current `DataPack` object.
 
@@ -76,10 +76,7 @@ class DataPack(object):
         self._dataframe = self._dataframe.append(
             new_dataframe,
             ignore_index=True)
-        if overwite_context:
-            self._context = {**self._context, **new_context}
-        else:
-            self._context = {**new_context, **self._context}
+        self.context.update(new_context)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
