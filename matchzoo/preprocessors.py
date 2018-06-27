@@ -28,8 +28,6 @@ class StatefulProcessorUnit(ProcessorUnit, metaclass=abc.ABCMeta):
     @property
     def state(self):
         """Get current state."""
-        if not self._state:
-            self.fit()
         return self._state
 
     @abc.abstractmethod
@@ -183,8 +181,28 @@ class NgramLetterUnit(StatefulProcessorUnit):
 
     def __init__(self):
         """Initialization."""
-        self._n_letters = set()
         super().__init__()
+
+    def _create_n_letters(self, tokens: list, ngram: int=3) -> list:
+        """
+        Create n_letters.
+
+        For example, `word` should be represented as `#wo`,
+        `wor`, `ord` and `rd#`.
+
+        :param tokens: list of tokens to be transformed.
+        :param ngram: By default use 3-gram (tri-letter).
+
+        :return n_letters: generated n_letters.
+        :return: length of n_letters, dimensionality of :DSSMModel:.
+        """
+        n_letters = set()
+        for token in tokens:
+            token = '#' + token + '#'
+            while len(token) >= ngram:
+                n_letters.add(token[:ngram])
+                token = token[1:]
+        return n_letters, len(n_letters)
 
     def transform(self, tokens: list, ngram: int=3) -> list:
         """
@@ -198,17 +216,15 @@ class NgramLetterUnit(StatefulProcessorUnit):
 
         :return: set of tri-letters, dependent on `ngram`.
         """
-        for token in tokens:
-            token = '#' + token + '#'
-            while len(token) >= ngram:
-                self._n_letters.add(token[:ngram])
-                token = token[1:]
-        return self._n_letters
+        n_letters, _ = self._create_n_letters(tokens, ngram)
+        return n_letters
 
-    def fit(self):
+    def fit(self, tokens: list, ngram: int=3):
         """
-        Fiitting parameters for models.
+        Fiitting parameters (shape of word hashing layer) for :DSSM:.
 
-        In this case, `input_dim` is fitted.
+        :param tokens: list of tokens to be fitted.
+        :param ngram: By default use 3-gram (tri-letter).
         """
-        self._state = {'input_dim': len(self._n_letters)}
+        _, input_dim = self._create_n_letters(tokens, ngram)
+        self._state = {'input_dim': input_dim}
