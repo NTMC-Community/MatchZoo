@@ -31,7 +31,7 @@ class StatefulProcessorUnit(ProcessorUnit, metaclass=abc.ABCMeta):
         return self._state
 
     @abc.abstractmethod
-    def fit(self, input: typing.Any) -> dict:
+    def fit(self) -> dict:
         """Abstract base method, need to be implemented in subclass."""
 
 
@@ -166,3 +166,65 @@ class LemmatizationUnit(ProcessorUnit):
         """
         lemmatizer = nltk.WordNetLemmatizer()
         return [lemmatizer.lemmatize(token, pos='v') for token in tokens]
+
+
+class NgramLetterUnit(StatefulProcessorUnit):
+    """
+    Process unit for n-letter generation.
+
+    Triletter is used in :DSSMModel: and :CDSSMModel:.
+    This processor is expected to execute after `Vocab`
+    has been created.
+
+    Returned `input_dim` is the dimensionality of :DSSMModel:.
+    """
+
+    def __init__(self):
+        """Initialization."""
+        super().__init__()
+
+    def _create_n_letters(self, tokens: list, ngram: int=3) -> list:
+        """
+        Create n_letters.
+
+        For example, `word` should be represented as `#wo`,
+        `wor`, `ord` and `rd#`.
+
+        :param tokens: list of tokens to be transformed.
+        :param ngram: By default use 3-gram (tri-letter).
+
+        :return n_letters: generated n_letters.
+        :return: length of n_letters, dimensionality of :DSSMModel:.
+        """
+        n_letters = set()
+        for token in tokens:
+            token = '#' + token + '#'
+            while len(token) >= ngram:
+                n_letters.add(token[:ngram])
+                token = token[1:]
+        return n_letters, len(n_letters)
+
+    def transform(self, tokens: list, ngram: int=3) -> list:
+        """
+        Transform token into tri-letter.
+
+        For example, `word` should be represented as `#wo`,
+        `wor`, `ord` and `rd#`.
+
+        :param tokens: list of tokens to be transformed.
+        :param ngram: By default use 3-gram (tri-letter).
+
+        :return: set of tri-letters, dependent on `ngram`.
+        """
+        n_letters, _ = self._create_n_letters(tokens, ngram)
+        return n_letters
+
+    def fit(self, tokens: list, ngram: int=3):
+        """
+        Fiitting parameters (shape of word hashing layer) for :DSSM:.
+
+        :param tokens: list of tokens to be fitted.
+        :param ngram: By default use 3-gram (tri-letter).
+        """
+        _, input_dim = self._create_n_letters(tokens, ngram)
+        self._state = {'input_dim': input_dim}
