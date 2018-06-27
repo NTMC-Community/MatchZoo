@@ -35,7 +35,7 @@ class DataPack(object):
         self._context = context
 
     def __len__(self) -> int:
-        """Get size of the data pack."""
+        """Get numer of rows in the `DataPack` object."""
         return self._dataframe.shape[0]
 
     @property
@@ -61,31 +61,29 @@ class DataPack(object):
         return DataPack(self._dataframe.sample(n=number, replace=replace),
                         self._context.copy())
 
-    def append(self, new_data_pack: 'DataPack'):
+    def append(self, other: 'DataPack'):
         """
         Append a new `DataPack` object to current `DataPack` object.
 
         It should be noted that the context of the previous `DataPack`
         will be updated by the new one.
 
-        :param new_data_pack: A new DataPack object.
-        :param overwite_context: Allow overwrite common context by new context.
+        :param other: the `DataPack` object to be appended.
         """
-        new_dataframe = new_data_pack.dataframe
-        new_context = new_data_pack.context
+        other_dataframe = other.dataframe
+        other_context = other.context
         self._dataframe = self._dataframe.append(
-            new_dataframe,
+            other_dataframe,
             ignore_index=True)
-        self.context.update(new_context)
+        self.context.update(other_context)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
         Save the `DataPack` object.
 
-        A saved `DataPack` is represented as a directory with two files.
-        One is a `DataPack` records (transformed user input as features),
-        the otehr one is fitted context parameters such as `vocab_size`.
-        Both of them will be saved by `pickle`.
+        A saved `DataPack` is represented as a directory with a `DataPack`
+        object (transformed user input as features and context), it will be
+        saved by `pickle`.
 
         :param dirpath: directory path of the saved `DataPack`.
         """
