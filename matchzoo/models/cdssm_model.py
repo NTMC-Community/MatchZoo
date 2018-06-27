@@ -72,11 +72,14 @@ class CDSSMModel(engine.BaseModel):
             inputs=[inputs_le, inputs_ri],
             outputs=x_out)
 
-    def _triletter_level_conv(self, input_shape) -> Model:
+    def _triletter_level_conv(self, input_shape: tuple) -> Model:
         """
         Apply convolutional operation towards to each tri-letter.
 
-        :return: x: 300d vector(tensor) representation.
+        :param input_shape: tuple of input shapes.
+
+        :return: Keras `Model`, input 1 by n dimension tensor, output
+                 300d tensor.
         """
         # TODO use sparse input in the future.
         # Input word hashing layer.
@@ -92,7 +95,15 @@ class CDSSMModel(engine.BaseModel):
     
     def _document_level_max_pooling(self, input_shape: tuple) -> Model:
         """
-        Apply Max-pooling on document (N Tri-letters).
+        Apply Max-pooling on all tri-letters.
+
+        Take max at each dimension across all word-trigram features.
+        Result in a (1 * 300) tensor representation, then further reduce
+        the dimensionality use a Dense connected layer.
+
+        :param: input_shape: a tuple indicate input shapes.
+
+        :return: Keras Model, input list of tri-letters, output 128d tensor.
         """
         # Apply conv on each 90k dim tri-letter.
         # Result in a (num_triletters * 300) matrix.
