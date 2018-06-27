@@ -197,8 +197,6 @@ class Vocabulary(StatefulProcessorUnit):
         def __missing__(self, key):
             if key == 0:
                 return ''
-            else:
-                super().__missing__(key)
 
     class TokenIndex(dict):
         def __missing__(self, key):
