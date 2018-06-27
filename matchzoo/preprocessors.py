@@ -166,3 +166,52 @@ class LemmatizationUnit(ProcessorUnit):
         """
         lemmatizer = nltk.WordNetLemmatizer()
         return [lemmatizer.lemmatize(token, pos='v') for token in tokens]
+
+
+class Vocabulary(StatefulProcessorUnit):
+    """
+        >>> vocab = Vocabulary()
+        >>> vocab.fit(['A', 'B', 'C', 'D', 'E'])
+        >>> token_index = vocab.state['token_index']
+        >>> token_index  # doctest: +SKIP
+        {'E': 1, 'C': 2, 'D': 3, 'A': 4, 'B': 5}
+        >>> index_token = vocab.state['index_token']
+        >>> index_token  # doctest: +SKIP
+        {1: 'C', 2: 'A', 3: 'E', 4: 'B', 5: 'D'}
+
+        >>> token_index['out-of-vocabulary-token']
+        0
+        >>> index_token[0]
+        ''
+
+        >>> a_index = token_index['A']
+        >>> c_index = token_index['C']
+        >>> vocab.transform(['C', 'A', 'C']) == [c_index, a_index, c_index]
+        True
+        >>> vocab.transform(['C', 'A', 'OOV']) == [c_index, a_index, 0]
+        True
+
+    """
+
+    class IndexToken(dict):
+        def __missing__(self, key):
+            if key == 0:
+                return ''
+            else:
+                super().__missing__(key)
+
+    class TokenIndex(dict):
+        def __missing__(self, key):
+            return 0
+
+    def fit(self, tokens: list):
+        token_index = self.TokenIndex()
+        index_token = self.IndexToken()
+        for index, token in enumerate(set(tokens)):
+            token_index[token] = index + 1
+            index_token[index + 1] = token
+        self._state['token_index'] = token_index
+        self._state['index_token'] = index_token
+
+    def transform(self, tokens: list) -> list:
+        return [self._state['token_index'][token] for token in tokens]
