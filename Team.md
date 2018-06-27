@@ -1,4 +1,4 @@
-Development Team
+﻿Development Team
 =====
 The following people contributed to the development of the MatchZoo project：
 
@@ -28,3 +28,6 @@ The following people contributed to the development of the MatchZoo project：
     - [HomePage](http://houjp.com/)
 - **Guocheng Niu (Core Developer)** 
     - Software engineer from Baidu Inc. 
+- **Qinghua Wang (Core Developer)** 
+    - Software engineer from AsiaInfo Inc. 
+
