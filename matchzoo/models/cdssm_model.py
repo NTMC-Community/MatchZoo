@@ -1,13 +1,12 @@
-"""An implementation of CDSSM, Deep Structured Semantic Model."""
+"""An implementation of CDSSM model."""
 from matchzoo import engine
 from keras.models import Model
 from keras.layers import Dense, Input, Dot, Conv1D, Maximum
-from keras import backend as K
 
 
 class CDSSMModel(engine.BaseModel):
     """
-    Deep structured semantic model.
+    Convolutional Deep structured semantic model.
 
     Examples:
         >>> model = CDSSMModel()
@@ -44,25 +43,24 @@ class CDSSMModel(engine.BaseModel):
         dim_triletter = self._params['input_shapes'][0][0]
         num_tri_letters_le = self._params['input_shapes'][0][1]
         num_tri_letters_ri = self._params['input_shapes'][1][1]
-        input_shape_le = (dim_triletter, num_tri_letters_le)
-        input_shape_ri = (dim_triletter, num_tri_letters_ri)
+        input_shape_le = (dim_triletter, 1)
+        input_shape_ri = (dim_triletter, 1)
         # Create documen level network (Max-pooling and Dense).
         document_level_network_le = self._document_level_max_pooling(
-            input_shape_le)
+            input_shape_le, num_tri_letters_le)
         document_level_network_ri = self._document_level_max_pooling(
-            input_shape_ri)
+            input_shape_ri, num_tri_letters_ri)
         # Create inputs.
-        inputs_le = [Input(shape=(dim_triletter, num_tri_letters_le))
-                    for _
-                    in range(num_tri_letters_le)]
-                       
-        inputs_ri = [Input(shape=(dim_triletter, num_tri_letters_ri))
-                    for _
-                    in range(num_tri_letters_ri)]
+        inputs_le = [Input(shape=(dim_triletter, 1))
+                     for _
+                     in range(num_tri_letters_le)]
+
+        inputs_ri = [Input(shape=(dim_triletter, 1))
+                     for _
+                     in range(num_tri_letters_ri)]
         # Process left & right input.
-        inputs_le = document_level_network_le(inputs_le)
-        inputs_ri = document_level_network_ri(inputs_ri)
-        x = [inputs_le, inputs_ri]
+        x = [document_level_network_le(inputs_le),
+             document_level_network_ri(inputs_ri)]
         # Dot product with cosine similarity.
         x = Dot(axes=[1, 1],
                 normalize=True)(x)
@@ -92,8 +90,8 @@ class CDSSMModel(engine.BaseModel):
                    kernel_initializer=self._params['w_initializer'],
                    bias_initializer=self._params['b_initializer'])(input)
         return Model(inputs=input, outputs=x)
-    
-    def _document_level_max_pooling(self, input_shape: tuple) -> Model:
+
+    def _document_level_max_pooling(self, input_shape: tuple, num_tri_letters: int) -> Model:
         """
         Apply Max-pooling on all tri-letters.
 
@@ -107,10 +105,8 @@ class CDSSMModel(engine.BaseModel):
         """
         # Apply conv on each 90k dim tri-letter.
         # Result in a (num_triletters * 300) matrix.
-        num_tri_letters = input_shape[1]
         tri_letter_input_shape = (
-            self._params['input_shapes'][0][0],
-            num_tri_letters)
+            self._params['input_shapes'][0][0], 1)
         tri_letter_level_network = self._triletter_level_conv(
             input_shape=tri_letter_input_shape)
         # Dynamically created inputs.
