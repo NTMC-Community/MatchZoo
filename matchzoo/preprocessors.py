@@ -183,6 +183,10 @@ class Vocabulary(StatefulProcessorUnit):
         0
         >>> index_token[0]
         ''
+        >>> index_token[42]
+        Traceback (most recent call last):
+            ...
+        KeyError: 42
 
         >>> a_index = token_index['A']
         >>> c_index = token_index['C']
@@ -197,6 +201,8 @@ class Vocabulary(StatefulProcessorUnit):
         def __missing__(self, key):
             if key == 0:
                 return ''
+            else:
+                raise KeyError(key)
 
     class TokenIndex(dict):
         def __missing__(self, key):
