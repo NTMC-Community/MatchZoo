@@ -17,3 +17,4 @@ flake8_docstrings >= 1.0.2
 dill >= 0.2.7.1
 hyperopt == 0.1
 networkx == 1.11
+pandas >= 0.23.1
