@@ -1,0 +1,671 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>matchzoo package &mdash; MatchZoo 2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="matchzoo.engine package" href="matchzoo.engine.html" />
+    <link rel="prev" title="matchzoo" href="modules.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MatchZoo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">matchzoo</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">matchzoo package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.engine.html">matchzoo.engine package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.models.html">matchzoo.models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.tasks.html">matchzoo.tasks package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-matchzoo.datapack">matchzoo.datapack module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-matchzoo.preprocessors">matchzoo.preprocessors module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-matchzoo">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MatchZoo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">matchzoo</a> &raquo;</li>
+        
+      <li>matchzoo package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/matchzoo.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="matchzoo-package">
+<h1>matchzoo package<a class="headerlink" href="#matchzoo-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.engine.html">matchzoo.engine package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.base_model">matchzoo.engine.base_model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.base_task">matchzoo.engine.base_task module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.hyper_spaces">matchzoo.engine.hyper_spaces module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.param">matchzoo.engine.param module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.param_table">matchzoo.engine.param_table module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.tune">matchzoo.engine.tune module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.models.html">matchzoo.models package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.dense_baseline_model">matchzoo.models.dense_baseline_model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.dssm_model">matchzoo.models.dssm_model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.naive_model">matchzoo.models.naive_model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.tasks.html">matchzoo.tasks package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.tasks.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.tasks.html#module-matchzoo.tasks.classification">matchzoo.tasks.classification module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.tasks.html#module-matchzoo.tasks.ranking">matchzoo.tasks.ranking module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.tasks.html#module-matchzoo.tasks.utils">matchzoo.tasks.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.tasks.html#module-matchzoo.tasks">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-matchzoo.datapack">
+<span id="matchzoo-datapack-module"></span><h2>matchzoo.datapack module<a class="headerlink" href="#module-matchzoo.datapack" title="Permalink to this headline">¶</a></h2>
+<p>Matchzoo DataPack, pair-wise tuple (feature) and context as input.</p>
+<dl class="class">
+<dt id="matchzoo.datapack.DataPack">
+<em class="property">class </em><code class="descclassname">matchzoo.datapack.</code><code class="descname">DataPack</code><span class="sig-paren">(</span><em>data: list</em>, <em>context: dict = {}</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Matchzoo DataPack data structure, store dataframe and context.</p>
+<dl class="docutils">
+<dt>Example:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">features</span> <span class="o">=</span> <span class="p">[([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]),</span> <span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">])]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">context</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vocab_size&#39;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dp</span> <span class="o">=</span> <span class="n">DataPack</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">dp</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="go">&lt;class &#39;matchzoo.datapack.DataPack&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">features</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">dp</span><span class="o">.</span><span class="n">context</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">context</span>
+<span class="go">{&#39;vocab_size&#39;: 2000}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="matchzoo.datapack.DataPack.DATA_FILENAME">
+<code class="descname">DATA_FILENAME</code><em class="property"> = 'data.dill'</em><a class="headerlink" href="#matchzoo.datapack.DataPack.DATA_FILENAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.datapack.DataPack.append">
+<code class="descname">append</code><span class="sig-paren">(</span><em>other: matchzoo.datapack.DataPack</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a new <cite>DataPack</cite> object to current <cite>DataPack</cite> object.</p>
+<p>It should be noted that the context of the previous <cite>DataPack</cite>
+will be updated by the new one.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – the <cite>DataPack</cite> object to be appended.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.datapack.DataPack.context">
+<code class="descname">context</code><a class="headerlink" href="#matchzoo.datapack.DataPack.context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get context of <cite>DataPack</cite>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.datapack.DataPack.dataframe">
+<code class="descname">dataframe</code><a class="headerlink" href="#matchzoo.datapack.DataPack.dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get data frame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.datapack.DataPack.sample">
+<code class="descname">sample</code><span class="sig-paren">(</span><em>number</em>, <em>replace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample records from <cite>DataPack</cite> object, for generator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>number</strong> – number of records to be sampled, use <cite>batch_size</cite>.</li>
+<li><strong>replace</strong> – sample with replacement, default value is <cite>True</cite>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Return data_pack:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">return <cite>DataPack</cite> object including sampled data
+and context (shallow copy of the context`).</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.datapack.DataPack.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>dirpath: Union[str, pathlib.Path]</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the <cite>DataPack</cite> object.</p>
+<p>A saved <cite>DataPack</cite> is represented as a directory with a <cite>DataPack</cite>
+object (transformed user input as features and context), it will be
+saved by <cite>pickle</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> – directory path of the saved <cite>DataPack</cite>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matchzoo.datapack.load_datapack">
+<code class="descclassname">matchzoo.datapack.</code><code class="descname">load_datapack</code><span class="sig-paren">(</span><em>dirpath: Union[str, pathlib.Path]</em><span class="sig-paren">)</span> &#x2192; matchzoo.datapack.DataPack<a class="headerlink" href="#matchzoo.datapack.load_datapack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a <cite>DataPack</cite>. The reverse function of <a class="reference internal" href="#matchzoo.datapack.DataPack.save" title="matchzoo.datapack.DataPack.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DataPack.save()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> – directory path of the saved model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.preprocessors">
+<span id="matchzoo-preprocessors-module"></span><h2>matchzoo.preprocessors module<a class="headerlink" href="#module-matchzoo.preprocessors" title="Permalink to this headline">¶</a></h2>
+<p>Matchzoo toolkit for text pre-processing.</p>
+<dl class="class">
+<dt id="matchzoo.preprocessors.DigitRemovalUnit">
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">DigitRemovalUnit</code><a class="headerlink" href="#matchzoo.preprocessors.DigitRemovalUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<p>Process unit to remove digits.</p>
+<dl class="method">
+<dt id="matchzoo.preprocessors.DigitRemovalUnit.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.DigitRemovalUnit.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove digits from list of tokens.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tokens</strong> – list of tokens to be filtered.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return tokens:</th><td class="field-body">tokens of tokens without digits.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.preprocessors.LemmatizationUnit">
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">LemmatizationUnit</code><a class="headerlink" href="#matchzoo.preprocessors.LemmatizationUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<p>Process unit for token lemmatization.</p>
+<dl class="method">
+<dt id="matchzoo.preprocessors.LemmatizationUnit.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.LemmatizationUnit.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lemmatization a sequence of tokens.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tokens</strong> – list of tokens to be lemmatized.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return tokens:</th><td class="field-body">list of lemmatizd tokens.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.preprocessors.LowercaseUnit">
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">LowercaseUnit</code><a class="headerlink" href="#matchzoo.preprocessors.LowercaseUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<p>Process unit for text lower case.</p>
+<dl class="method">
+<dt id="matchzoo.preprocessors.LowercaseUnit.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.LowercaseUnit.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert list of tokens to lower case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tokens</strong> – list of tokens.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return tokens:</th><td class="field-body">lower-cased list of tokens.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.preprocessors.NgramLetterUnit">
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">NgramLetterUnit</code><a class="headerlink" href="#matchzoo.preprocessors.NgramLetterUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.StatefulProcessorUnit" title="matchzoo.preprocessors.StatefulProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.StatefulProcessorUnit</span></code></a></p>
+<p>Process unit for n-letter generation.</p>
+<p>Triletter is used in <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSMModel</span></code>.
+This processor is expected to execute after <cite>Vocab</cite>
+has been created.</p>
+<p>Returned <cite>input_dim</cite> is the dimensionality of <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSMModel</span></code>.</p>
+<dl class="method">
+<dt id="matchzoo.preprocessors.NgramLetterUnit.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>tokens: list</em>, <em>ngram: int = 3</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.NgramLetterUnit.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fiitting parameters (shape of word hashing layer) for :DSSM:.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tokens</strong> – list of tokens to be fitted.</li>
+<li><strong>ngram</strong> – By default use 3-gram (tri-letter).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.preprocessors.NgramLetterUnit.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em>, <em>ngram: int = 3</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.NgramLetterUnit.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform token into tri-letter.</p>
+<p>For example, <cite>word</cite> should be represented as <cite>#wo</cite>,
+<cite>wor</cite>, <cite>ord</cite> and <cite>rd#</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tokens</strong> – list of tokens to be transformed.</li>
+<li><strong>ngram</strong> – By default use 3-gram (tri-letter).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">set of tri-letters, dependent on <cite>ngram</cite>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.preprocessors.ProcessorUnit">
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">ProcessorUnit</code><a class="headerlink" href="#matchzoo.preprocessors.ProcessorUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Process unit do not persive state (i.e. do not need fit).</p>
+<dl class="method">
+<dt id="matchzoo.preprocessors.ProcessorUnit.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>input: Any</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.ProcessorUnit.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract base method, need to be implemented in subclass.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.preprocessors.PuncRemovalUnit">
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">PuncRemovalUnit</code><a class="headerlink" href="#matchzoo.preprocessors.PuncRemovalUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<p>Process unit for remove punctuations.</p>
+<dl class="method">
+<dt id="matchzoo.preprocessors.PuncRemovalUnit.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.PuncRemovalUnit.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove punctuations from list of tokens.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tokens</strong> – list of toekns.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return rv:</th><td class="field-body">tokens  without punctuation.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.preprocessors.StatefulProcessorUnit">
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">StatefulProcessorUnit</code><a class="headerlink" href="#matchzoo.preprocessors.StatefulProcessorUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<p>Process unit do persive state (i.e. need fit).</p>
+<dl class="method">
+<dt id="matchzoo.preprocessors.StatefulProcessorUnit.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#matchzoo.preprocessors.StatefulProcessorUnit.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract base method, need to be implemented in subclass.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.preprocessors.StatefulProcessorUnit.state">
+<code class="descname">state</code><a class="headerlink" href="#matchzoo.preprocessors.StatefulProcessorUnit.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get current state.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.preprocessors.StemmingUnit">
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">StemmingUnit</code><span class="sig-paren">(</span><em>stemmer='porter'</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.StemmingUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<p>Process unit for token stemming.</p>
+<dl class="method">
+<dt id="matchzoo.preprocessors.StemmingUnit.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.StemmingUnit.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reducing inflected words to their word stem, base or root form.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tokens</strong> – list of string to be stemmed.</li>
+<li><strong>stemmer</strong> – stemmer to use, <cite>porter</cite> or <cite>lancaster</cite>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong> – stemmer type should be porter or lancaster.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return tokens:</th><td class="field-body"><p class="first last">stemmed token.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.preprocessors.StopRemovalUnit">
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">StopRemovalUnit</code><span class="sig-paren">(</span><em>lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.StopRemovalUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<p>Process unit to remove stop words.</p>
+<dl class="method">
+<dt id="matchzoo.preprocessors.StopRemovalUnit.get_stopwords">
+<code class="descname">get_stopwords</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.StopRemovalUnit.get_stopwords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get stopwords based on language.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Params lang:</th><td class="field-body">language code.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Return stop_list:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">list of stop words.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.preprocessors.StopRemovalUnit.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.StopRemovalUnit.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove stopwords from list of tokenized tokens.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>tokens</strong> – list of tokenized tokens.</li>
+<li><strong>lang</strong> – language code for stopwords.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return tokens:</th><td class="field-body"><p class="first last">list of tokenized tokens without stopwords.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.preprocessors.TokenizeUnit">
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">TokenizeUnit</code><a class="headerlink" href="#matchzoo.preprocessors.TokenizeUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<p>Process unit for text tokenization.</p>
+<dl class="method">
+<dt id="matchzoo.preprocessors.TokenizeUnit.transform">
+<code class="descname">transform</code><span class="sig-paren">(</span><em>input: str</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.TokenizeUnit.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process input data from raw terms to list of tokens.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input</strong> – raw textual input.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return tokens:</th><td class="field-body">tokenized tokens as a list.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matchzoo" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="matchzoo.engine.html" class="btn btn-neutral float-right" title="matchzoo.engine package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral" title="matchzoo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, MatchZoo.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
