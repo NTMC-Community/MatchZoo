@@ -64,11 +64,11 @@ class HyperoptProxy(object):
 
 
 class choice(HyperoptProxy):
-    """:func:`hyperopt.hp.choice` proxy."""
+    """:function:`hyperopt.hp.choice` proxy."""
 
     def __init__(self, options: list):
         """
-        :func:`hyperopt.hp.choice` proxy.
+        :function:`hyperopt.hp.choice` proxy.
 
         :param options: options to search from
         """
@@ -76,7 +76,7 @@ class choice(HyperoptProxy):
 
 
 class quniform(HyperoptProxy):
-    """:func:`hyperopt.hp.quniform` proxy."""
+    """:function:`hyperopt.hp.quniform` proxy."""
 
     def __init__(
             self,
@@ -85,7 +85,7 @@ class quniform(HyperoptProxy):
             q: numbers.Number = 1
     ):
         """
-        :func:`hyperopt.hp.quniform` proxy.
+        :function:`hyperopt.hp.quniform` proxy.
 
         :param low: lower bound of the space
         :param high: upper bound of the space
@@ -97,7 +97,7 @@ class quniform(HyperoptProxy):
 
 
 class uniform(HyperoptProxy):
-    """:func:`hyperopt.hp.uniform` proxy."""
+    """:function:`hyperopt.hp.uniform` proxy."""
 
     def __init__(
             self,
@@ -105,7 +105,7 @@ class uniform(HyperoptProxy):
             high: numbers.Number
     ):
         """
-        :func:`hyperopt.hp.uniform` proxy.
+        :function:`hyperopt.hp.uniform` proxy.
 
         :param low: lower bound of the space
         :param high: upper bound of the space
