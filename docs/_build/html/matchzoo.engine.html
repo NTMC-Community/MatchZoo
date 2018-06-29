@@ -1,0 +1,831 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>matchzoo.engine package &mdash; MatchZoo 2.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="matchzoo.models package" href="matchzoo.models.html" />
+    <link rel="prev" title="matchzoo package" href="matchzoo.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> MatchZoo
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">matchzoo</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="matchzoo.html">matchzoo package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="matchzoo.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">matchzoo.engine package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.models.html">matchzoo.models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.tasks.html">matchzoo.tasks package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.datapack">matchzoo.datapack module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.preprocessors">matchzoo.preprocessors module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MatchZoo</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="modules.html">matchzoo</a> &raquo;</li>
+        
+          <li><a href="matchzoo.html">matchzoo package</a> &raquo;</li>
+        
+      <li>matchzoo.engine package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/matchzoo.engine.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="matchzoo-engine-package">
+<h1>matchzoo.engine package<a class="headerlink" href="#matchzoo-engine-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-matchzoo.engine.base_model">
+<span id="matchzoo-engine-base-model-module"></span><h2>matchzoo.engine.base_model module<a class="headerlink" href="#module-matchzoo.engine.base_model" title="Permalink to this headline">¶</a></h2>
+<p>Base Model.</p>
+<dl class="class">
+<dt id="matchzoo.engine.base_model.BaseModel">
+<em class="property">class </em><code class="descclassname">matchzoo.engine.base_model.</code><code class="descname">BaseModel</code><span class="sig-paren">(</span><em>params: matchzoo.engine.param_table.ParamTable = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Abstract base class of all matchzoo models.</p>
+<dl class="attribute">
+<dt id="matchzoo.engine.base_model.BaseModel.BACKEND_FILENAME">
+<code class="descname">BACKEND_FILENAME</code><em class="property"> = 'backend.h5'</em><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.BACKEND_FILENAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.engine.base_model.BaseModel.PARAMS_FILENAME">
+<code class="descname">PARAMS_FILENAME</code><em class="property"> = 'params.dill'</em><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.PARAMS_FILENAME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.engine.base_model.BaseModel.backend">
+<code class="descname">backend</code><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>:return model backend, a keras model instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.base_model.BaseModel.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model, each sub class need to impelemnt this method.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">BaseModel</span><span class="p">()</span>  
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">TypeError</span>: <span class="n">Can&#39;t instantiate abstract class BaseModel ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">pass</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MyModel</span>
+<span class="go">&lt;class &#39;matchzoo.engine.base_model.MyModel&#39;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.base_model.BaseModel.compile">
+<code class="descname">compile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.compile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compile model for training.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.base_model.BaseModel.evaluate">
+<code class="descname">evaluate</code><span class="sig-paren">(</span><em>x: Union[numpy.ndarray, typing.List[numpy.ndarray]], y: numpy.ndarray, batch_size: int = 128, verbose: int = 1</em><span class="sig-paren">)</span> &#x2192; Union[float, typing.List[float]]<a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the model.</p>
+<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">keras.models.Model.evaluate()</span></code> for more details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> – input data</li>
+<li><strong>y</strong> – labels</li>
+<li><strong>batch_size</strong> – number of samples per gradient update</li>
+<li><strong>verbose</strong> – verbosity mode, 0 or 1</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">scalar test loss (if the model has a single output and no
+metrics) or list of scalars (if the model has multiple outputs
+and/or metrics). The attribute <cite>model.backend.metrics_names</cite> will
+give you the display labels for the scalar outputs.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.base_model.BaseModel.fit">
+<code class="descname">fit</code><span class="sig-paren">(</span><em>x: Union[numpy.ndarray, typing.List[numpy.ndarray]], y: numpy.ndarray, batch_size: int = 128, epochs: int = 1, verbose: int = 1</em><span class="sig-paren">)</span> &#x2192; keras.callbacks.History<a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model.</p>
+<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">keras.models.Model.fit()</span></code> for more details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> – input data.</li>
+<li><strong>y</strong> – labels.</li>
+<li><strong>batch_size</strong> – number of samples per gradient update.</li>
+<li><strong>epochs</strong> – number of epochs to train the model.</li>
+<li><strong>verbose</strong> – 0, 1, or 2. Verbosity mode. 0 = silent, 1 = verbose,
+2 = one log line per epoch.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <cite>keras.callbacks.History</cite> instance. Its history attribute
+contains all information collected during training.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.engine.base_model.BaseModel.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; matchzoo.engine.param_table.ParamTable<a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model default parameters.</p>
+<dl class="docutils">
+<dt>The common usage is to instantiate <code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.ModelParams</span></code></dt>
+<dd>first, then set the model specific parametrs.</dd>
+<dt>Examples:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s1">&#39;num_eggs&#39;</span><span class="p">],</span> <span class="s1">&#39;eggs&#39;</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;and&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">[</span><span class="s1">&#39;ham_type&#39;</span><span class="p">])</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="nd">@classmethod</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">get_default_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">params</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">ParamTable</span><span class="p">()</span>
+<span class="gp">... </span>        <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="s1">&#39;num_eggs&#39;</span><span class="p">,</span> <span class="mi">512</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">Param</span><span class="p">(</span><span class="s1">&#39;ham_type&#39;</span><span class="p">,</span> <span class="s1">&#39;Parma Ham&#39;</span><span class="p">))</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">params</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="go">512 eggs</span>
+<span class="go">and Parma Ham</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Notice that all parameters must be serialisable for the entire model
+to be serialisable. Therefore, it’s strongly recommended to use python
+native data types to store parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">model parameters</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.base_model.BaseModel.guess_and_fill_missing_params">
+<code class="descname">guess_and_fill_missing_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.guess_and_fill_missing_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess and fill missing parameters in <a class="reference internal" href="#matchzoo.engine.base_model.BaseModel.params" title="matchzoo.engine.base_model.BaseModel.params"><code class="xref py py-attr docutils literal notranslate"><span class="pre">params</span></code></a>.</p>
+<p>Note: likely to be moved to a higher level API in the future.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.engine.base_model.BaseModel.params">
+<code class="descname">params</code><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">model parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.base_model.BaseModel.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>x: Union[numpy.ndarray, typing.List[numpy.ndarray]], batch_size=128</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate output predictions for the input samples.</p>
+<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">keras.models.Model.predict()</span></code> for more details.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> – input data</li>
+<li><strong>batch_size</strong> – number of samples per gradient update</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">numpy array(s) of predictions</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.base_model.BaseModel.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>dirpath: Union[str, pathlib.Path]</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the model.</p>
+<p>A saved model is represented as a directory with two files. One is a
+model parameters file saved by <cite>pickle</cite>, and the other one is a model
+h5 file saved by <cite>keras</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> – directory path of the saved model</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matchzoo.engine.base_model.load_model">
+<code class="descclassname">matchzoo.engine.base_model.</code><code class="descname">load_model</code><span class="sig-paren">(</span><em>dirpath: Union[str, pathlib.Path]</em><span class="sig-paren">)</span> &#x2192; matchzoo.engine.base_model.BaseModel<a class="headerlink" href="#matchzoo.engine.base_model.load_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a model. The reverse function of <a class="reference internal" href="#matchzoo.engine.base_model.BaseModel.save" title="matchzoo.engine.base_model.BaseModel.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.save()</span></code></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> – directory path of the saved model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a> instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.engine.base_task">
+<span id="matchzoo-engine-base-task-module"></span><h2>matchzoo.engine.base_task module<a class="headerlink" href="#module-matchzoo.engine.base_task" title="Permalink to this headline">¶</a></h2>
+<p>Base task.</p>
+<dl class="class">
+<dt id="matchzoo.engine.base_task.BaseTask">
+<em class="property">class </em><code class="descclassname">matchzoo.engine.base_task.</code><code class="descname">BaseTask</code><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base Task, shouldn’t be used directly.</p>
+<dl class="classmethod">
+<dt id="matchzoo.engine.base_task.BaseTask.list_available_losses">
+<em class="property">classmethod </em><code class="descname">list_available_losses</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.engine.base_task.BaseTask.list_available_losses" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of available losses.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.engine.base_task.BaseTask.list_available_metrics">
+<em class="property">classmethod </em><code class="descname">list_available_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.engine.base_task.BaseTask.list_available_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of available metrics.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.engine.base_task.BaseTask.output_shape">
+<code class="descname">output_shape</code><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask.output_shape" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">output shape of a single sample of the task.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="matchzoo.engine.base_task.list_available_tasks">
+<code class="descclassname">matchzoo.engine.base_task.</code><code class="descname">list_available_tasks</code><span class="sig-paren">(</span><em>base=&lt;class 'matchzoo.engine.base_task.BaseTask'&gt;</em><span class="sig-paren">)</span> &#x2192; List[Type[matchzoo.engine.base_task.BaseTask]]<a class="headerlink" href="#matchzoo.engine.base_task.list_available_tasks" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of available task types.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.engine.hyper_spaces">
+<span id="matchzoo-engine-hyper-spaces-module"></span><h2>matchzoo.engine.hyper_spaces module<a class="headerlink" href="#module-matchzoo.engine.hyper_spaces" title="Permalink to this headline">¶</a></h2>
+<p>Hyper parameter search spaces wrapping <cite>hyperopt</cite>.</p>
+<dl class="class">
+<dt id="matchzoo.engine.hyper_spaces.HyperoptProxy">
+<em class="property">class </em><code class="descclassname">matchzoo.engine.hyper_spaces.</code><code class="descname">HyperoptProxy</code><span class="sig-paren">(</span><em>hyperopt_func: Callable[..., hyperopt.pyll.base.Apply], **kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.hyper_spaces.HyperoptProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Hyperopt proxy class.</p>
+<p>See <cite>hyperopt</cite>’s documentation for more details:
+<a class="reference external" href="https://github.com/hyperopt/hyperopt/wiki/FMin">https://github.com/hyperopt/hyperopt/wiki/FMin</a></p>
+<p>Reason of these wrappers:</p>
+<blockquote>
+<div>A hyper space in <cite>hyperopt</cite> requires a <cite>label</cite> to instantiate. This
+<cite>label</cite> is used later as a reference to original hyper space that is
+sampled. In <cite>matchzoo</cite>, hyper spaces are used in
+<code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.Param</span></code>. Only if a hyper space’s label
+matches its parent <code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.Param</span></code>’s name, <cite>matchzoo</cite>
+can correctly back-refrenced the parameter got sampled. This can be
+done by asking the user always use the same name for a parameter and
+its hyper space, but typos can occur. As a result, these wrappers
+are created to hide hyper spaces’ <cite>label</cite>, and always correctly
+bind them with its parameter’s name.</div></blockquote>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hyperopt.pyll.stochastic</span> <span class="k">import</span> <span class="n">sample</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="p">(</span><span class="n">choice</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">numbers</span><span class="p">)(</span><span class="s1">&#39;numbers&#39;</span><span class="p">))</span> <span class="ow">in</span> <span class="n">numbers</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">sample</span><span class="p">(</span><span class="n">quniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">9</span><span class="p">)(</span><span class="s1">&#39;digit&#39;</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="mi">9</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.engine.hyper_spaces.choice">
+<em class="property">class </em><code class="descclassname">matchzoo.engine.hyper_spaces.</code><code class="descname">choice</code><span class="sig-paren">(</span><em>options: list</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.hyper_spaces.choice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.engine.hyper_spaces.HyperoptProxy" title="matchzoo.engine.hyper_spaces.HyperoptProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.hyper_spaces.HyperoptProxy</span></code></a></p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">hyperopt.hp.choice()</span></code> proxy.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.engine.hyper_spaces.quniform">
+<em class="property">class </em><code class="descclassname">matchzoo.engine.hyper_spaces.</code><code class="descname">quniform</code><span class="sig-paren">(</span><em>low: numbers.Number</em>, <em>high: numbers.Number</em>, <em>q: numbers.Number = 1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.hyper_spaces.quniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.engine.hyper_spaces.HyperoptProxy" title="matchzoo.engine.hyper_spaces.HyperoptProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.hyper_spaces.HyperoptProxy</span></code></a></p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">hyperopt.hp.quniform()</span></code> proxy.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="matchzoo.engine.hyper_spaces.uniform">
+<em class="property">class </em><code class="descclassname">matchzoo.engine.hyper_spaces.</code><code class="descname">uniform</code><span class="sig-paren">(</span><em>low: numbers.Number</em>, <em>high: numbers.Number</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.hyper_spaces.uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.engine.hyper_spaces.HyperoptProxy" title="matchzoo.engine.hyper_spaces.HyperoptProxy"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.hyper_spaces.HyperoptProxy</span></code></a></p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">hyperopt.hp.uniform()</span></code> proxy.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.engine.param">
+<span id="matchzoo-engine-param-module"></span><h2>matchzoo.engine.param module<a class="headerlink" href="#module-matchzoo.engine.param" title="Permalink to this headline">¶</a></h2>
+<p>Parameter class.</p>
+<dl class="class">
+<dt id="matchzoo.engine.param.Param">
+<em class="property">class </em><code class="descclassname">matchzoo.engine.param.</code><code class="descname">Param</code><span class="sig-paren">(</span><em>name: str, value: Any = None, hyper_space: Union[hyperopt.pyll.base.Apply, matchzoo.engine.hyper_spaces.HyperoptProxy, NoneType] = None, validator: Union[typing.Callable[[typing.Any], bool], NoneType] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.param.Param" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parameter class.</p>
+<p>Basic usages with a name and  value:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">param</span> <span class="o">=</span> <span class="n">Param</span><span class="p">(</span><span class="s1">&#39;my_param&#39;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;my_param&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">value</span>
+<span class="go">10</span>
+</pre></div>
+</div>
+<p>Use with a validator to make sure the parameter always keeps a valid
+value.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">param</span> <span class="o">=</span> <span class="n">Param</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;my_param&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">value</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">validator</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">20</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">validator</span>  
+<span class="go">&lt;function &lt;lambda&gt; at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">value</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">value</span>
+<span class="go">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Validator not satifised.</span>
+<span class="go">The validator&#39;s definition is as follows:</span>
+<span class="go">validator=lambda x: 0 &lt; x &lt; 20</span>
+</pre></div>
+</div>
+<p>Use with a hyper space. Setting up a hyper space for a parameter makes the
+parameter tunable in a <code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.Tuner</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matchzoo.engine.hyper_spaces</span> <span class="k">import</span> <span class="n">quniform</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span> <span class="o">=</span> <span class="n">Param</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;positive_num&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">hyper_space</span><span class="o">=</span><span class="n">quniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">hyper_space</span>  
+<span class="go">&lt;hyperopt.pyll.base.Apply object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hyperopt.pyll.stochastic</span> <span class="k">import</span> <span class="n">sample</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">sample</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">hyper_space</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">set</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">}</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>The boolean value of a <a class="reference internal" href="#matchzoo.engine.param.Param" title="matchzoo.engine.param.Param"><code class="xref py py-class docutils literal notranslate"><span class="pre">Param</span></code></a> instance is only <cite>True</cite>
+when the value is not <cite>None</cite>. This is because some default falsy values
+like zero or an empty list are valid parameter values. In other words,
+the boolean value means to be “if the parameter value is filled”.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">param</span> <span class="o">=</span> <span class="n">Param</span><span class="p">(</span><span class="s1">&#39;dropout&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">param</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;OK&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span> <span class="o">=</span> <span class="n">Param</span><span class="p">(</span><span class="s1">&#39;dropout&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">param</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;OK&#39;</span><span class="p">)</span>
+<span class="go">OK</span>
+</pre></div>
+</div>
+<p>A <cite>_pre_assignment_hook</cite> is initialized as a data type convertor if the
+value is set as a number to keep data type consistency of the parameter.
+This conversion supports python built-in numbers, <cite>numpy</cite> numbers, and
+any number that inherits <code class="xref py py-class docutils literal notranslate"><span class="pre">numbers.Number</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">param</span> <span class="o">=</span> <span class="n">Param</span><span class="p">(</span><span class="s1">&#39;float_param&#39;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">value</span>
+<span class="go">10.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="go">&lt;class &#39;float&#39;&gt;</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="matchzoo.engine.param.Param.hyper_space">
+<code class="descname">hyper_space</code><a class="headerlink" href="#matchzoo.engine.param.Param.hyper_space" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Hyper space of the parameter.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.engine.param.Param.name">
+<code class="descname">name</code><a class="headerlink" href="#matchzoo.engine.param.Param.name" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Name of the parameter.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.engine.param.Param.validator">
+<code class="descname">validator</code><a class="headerlink" href="#matchzoo.engine.param.Param.validator" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Validator of the parameter.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.engine.param.Param.value">
+<code class="descname">value</code><a class="headerlink" href="#matchzoo.engine.param.Param.value" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Value of the parameter.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.engine.param_table">
+<span id="matchzoo-engine-param-table-module"></span><h2>matchzoo.engine.param_table module<a class="headerlink" href="#module-matchzoo.engine.param_table" title="Permalink to this headline">¶</a></h2>
+<p>Parameters table class.</p>
+<dl class="class">
+<dt id="matchzoo.engine.param_table.ParamTable">
+<em class="property">class </em><code class="descclassname">matchzoo.engine.param_table.</code><code class="descname">ParamTable</code><a class="headerlink" href="#matchzoo.engine.param_table.ParamTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Parameter table class.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">ParamTable</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Param</span><span class="p">(</span><span class="s1">&#39;ham&#39;</span><span class="p">,</span> <span class="s1">&#39;Parma Ham&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Param</span><span class="p">(</span><span class="s1">&#39;egg&#39;</span><span class="p">,</span> <span class="s1">&#39;Over Easy&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ham&#39;</span><span class="p">]</span>
+<span class="go">&#39;Parma Ham&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;egg&#39;</span><span class="p">]</span>
+<span class="go">&#39;Over Easy&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="go">ham                           Parma Ham</span>
+<span class="go">egg                           Over Easy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">Param</span><span class="p">(</span><span class="s1">&#39;egg&#39;</span><span class="p">,</span> <span class="s1">&#39;Sunny side Up&#39;</span><span class="p">))</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">ValueError</span>: <span class="n">Parameter named egg already exists.</span>
+<span class="go">To re-assign parameter egg value, use `params[&quot;egg&quot;] = value` instead.</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="matchzoo.engine.param_table.ParamTable.add">
+<code class="descname">add</code><span class="sig-paren">(</span><em>param: matchzoo.engine.param.Param</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.param_table.ParamTable.add" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>param</strong> – parameter to add.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.param_table.ParamTable.completed">
+<code class="descname">completed</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#matchzoo.engine.param_table.ParamTable.completed" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>True</cite> if all params are filled, <cite>False</cite> otherwise.</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matchzoo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">matchzoo</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">NaiveModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">completed</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">completed</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.engine.param_table.ParamTable.hyper_space">
+<code class="descname">hyper_space</code><a class="headerlink" href="#matchzoo.engine.param_table.ParamTable.hyper_space" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Hyper space of the table, a valid <cite>hyperopt</cite> graph.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.engine.tune">
+<span id="matchzoo-engine-tune-module"></span><h2>matchzoo.engine.tune module<a class="headerlink" href="#module-matchzoo.engine.tune" title="Permalink to this headline">¶</a></h2>
+<p>Tuner class. Currently a minimum working demo.</p>
+<dl class="function">
+<dt id="matchzoo.engine.tune.tune">
+<code class="descclassname">matchzoo.engine.tune.</code><code class="descname">tune</code><span class="sig-paren">(</span><em>model: matchzoo.engine.base_model.BaseModel</em>, <em>max_evals: int = 32</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.engine.tune.tune" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tune the <cite>model</cite> <cite>max_evals</cite> times.</p>
+<p>Construct a hyper parameter searching space by extracting all parameters
+in <cite>model</cite> that have a defined hyper space. Then, using <cite>hyperopt</cite> API,
+iteratively sample parameters and test for loss, and pick the best trial
+out of all. Currently a minimum working demo.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>model</strong> – </li>
+<li><strong>max_evals</strong> – Number of evaluations of a single tuning process.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of trials of the tuning process.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matchzoo.models</span> <span class="k">import</span> <span class="n">DenseBaselineModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DenseBaselineModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">max_evals</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">trials</span> <span class="o">=</span> <span class="n">tune</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">max_evals</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">trials</span><span class="p">)</span> <span class="o">==</span> <span class="n">max_evals</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.engine">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matchzoo.engine" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="matchzoo.models.html" class="btn btn-neutral float-right" title="matchzoo.models package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="matchzoo.html" class="btn btn-neutral" title="matchzoo package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, MatchZoo.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'2.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
