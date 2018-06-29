@@ -172,11 +172,11 @@ class NgramLetterUnit(StatefulProcessorUnit):
     """
     Process unit for n-letter generation.
 
-    Triletter is used in :class:`DSSMModel`.
+    Triletter is used in :DSSMModel: and :CDSSMModel:.
     This processor is expected to execute after `Vocab`
     has been created.
 
-    Returned `input_dim` is the dimensionality of :class:`DSSMModel`.
+    Returned `input_dim` is the dimensionality of :DSSMModel:.
     """
 
     def __init__(self):

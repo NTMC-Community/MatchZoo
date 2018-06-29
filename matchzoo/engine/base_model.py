@@ -122,10 +122,10 @@ class BaseModel(abc.ABC):
 
         See :meth:`keras.models.Model.fit` for more details.
 
-        :param x: input data.
-        :param y: labels.
-        :param batch_size: number of samples per gradient update.
-        :param epochs: number of epochs to train the model.
+        :param x: input data
+        :param y: labels
+        :param batch_size: number of samples per gradient update
+        :param epochs: number of epochs to train the model
         :param verbose: 0, 1, or 2. Verbosity mode. 0 = silent, 1 = verbose,
             2 = one log line per epoch.
 
@@ -202,7 +202,7 @@ class BaseModel(abc.ABC):
 
     def guess_and_fill_missing_params(self):
         """
-        Guess and fill missing parameters in :attr:`params`.
+        Guess and fill missing parameters in :attribute:`params`.
 
         Note: likely to be moved to a higher level API in the future.
         """
