@@ -130,7 +130,7 @@ class BaseModel(abc.ABC):
             2 = one log line per epoch.
 
         :return: A `keras.callbacks.History` instance. Its history attribute
-        contains all information collected during training.
+            contains all information collected during training.
         """
         return self._backend.fit(x=x, y=y,
                                  batch_size=batch_size, epochs=epochs,
