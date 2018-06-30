@@ -38,6 +38,7 @@ setup(
       'tqdm >= 4.19.4',
       'jieba >= 0.39',
       'many_stop_words >= 0.2.2',
-      'pandas >= 0.23.1'
+      'pandas >= 0.23.1',
+      'hyperopt' == 0.1
     ]
 )
