@@ -1,0 +1,46 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2018, MatchZoo
+# This file is distributed under the same license as the MatchZoo package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: MatchZoo \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-06-30 10:05+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../../source/index.rst:7
+msgid "Welcome to MatchZoo's documentation!"
+msgstr ""
+
+#: ../../source/index.rst:20
+msgid "MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users."
+msgstr ""
+
+#: ../../source/index.rst:23
+msgid "Contents:"
+msgstr ""
+
+#: ../../source/index.rst:32
+msgid "Indices and tables"
+msgstr ""
+
+#: ../../source/index.rst:34
+msgid ":ref:`genindex`"
+msgstr ""
+
+#: ../../source/index.rst:35
+msgid ":ref:`modindex`"
+msgstr ""
+
+#: ../../source/index.rst:36
+msgid ":ref:`search`"
+msgstr ""
+

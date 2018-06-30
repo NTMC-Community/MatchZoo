@@ -1,14 +1,14 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>matchzoo package &mdash; MatchZoo 2.0 documentation</title>
+  <title>matchzoo package &mdash; MatchZoo 2.0 文档</title>
   
 
   
@@ -26,8 +26,8 @@
 
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="matchzoo.engine package" href="matchzoo.engine.html" />
     <link rel="prev" title="matchzoo" href="modules.html" /> 
 
@@ -163,9 +163,9 @@
            <div itemprop="articleBody">
             
   <div class="section" id="matchzoo-package">
-<h1>matchzoo package<a class="headerlink" href="#matchzoo-package" title="Permalink to this headline">¶</a></h1>
+<h1>matchzoo package<a class="headerlink" href="#matchzoo-package" title="永久链接至标题">¶</a></h1>
 <div class="section" id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="永久链接至标题">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="matchzoo.engine.html">matchzoo.engine package</a><ul>
@@ -199,15 +199,15 @@
 </div>
 </div>
 <div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="永久链接至标题">¶</a></h2>
 </div>
 <div class="section" id="module-matchzoo.datapack">
-<span id="matchzoo-datapack-module"></span><h2>matchzoo.datapack module<a class="headerlink" href="#module-matchzoo.datapack" title="Permalink to this headline">¶</a></h2>
+<span id="matchzoo-datapack-module"></span><h2>matchzoo.datapack module<a class="headerlink" href="#module-matchzoo.datapack" title="永久链接至标题">¶</a></h2>
 <p>Matchzoo DataPack, pair-wise tuple (feature) and context as input.</p>
 <dl class="class">
 <dt id="matchzoo.datapack.DataPack">
-<em class="property">class </em><code class="descclassname">matchzoo.datapack.</code><code class="descname">DataPack</code><span class="sig-paren">(</span><em>data: list</em>, <em>context: dict = {}</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="descclassname">matchzoo.datapack.</code><code class="descname">DataPack</code><span class="sig-paren">(</span><em>data: list</em>, <em>context: dict = {}</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Matchzoo DataPack data structure, store dataframe and context.</p>
 <dl class="docutils">
 <dt>Example:</dt>
@@ -228,12 +228,12 @@
 </dl>
 <dl class="attribute">
 <dt id="matchzoo.datapack.DataPack.DATA_FILENAME">
-<code class="descname">DATA_FILENAME</code><em class="property"> = 'data.dill'</em><a class="headerlink" href="#matchzoo.datapack.DataPack.DATA_FILENAME" title="Permalink to this definition">¶</a></dt>
+<code class="descname">DATA_FILENAME</code><em class="property"> = 'data.dill'</em><a class="headerlink" href="#matchzoo.datapack.DataPack.DATA_FILENAME" title="永久链接至目标">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="matchzoo.datapack.DataPack.append">
-<code class="descname">append</code><span class="sig-paren">(</span><em>other: matchzoo.datapack.DataPack</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.append" title="Permalink to this definition">¶</a></dt>
+<code class="descname">append</code><span class="sig-paren">(</span><em>other: matchzoo.datapack.DataPack</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.append" title="永久链接至目标">¶</a></dt>
 <dd><p>Append a new <cite>DataPack</cite> object to current <cite>DataPack</cite> object.</p>
 <p>It should be noted that the context of the previous <cite>DataPack</cite>
 will be updated by the new one.</p>
@@ -241,7 +241,7 @@ will be updated by the new one.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> – the <cite>DataPack</cite> object to be appended.</td>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>other</strong> -- the <cite>DataPack</cite> object to be appended.</td>
 </tr>
 </tbody>
 </table>
@@ -249,27 +249,27 @@ will be updated by the new one.</p>
 
 <dl class="attribute">
 <dt id="matchzoo.datapack.DataPack.context">
-<code class="descname">context</code><a class="headerlink" href="#matchzoo.datapack.DataPack.context" title="Permalink to this definition">¶</a></dt>
+<code class="descname">context</code><a class="headerlink" href="#matchzoo.datapack.DataPack.context" title="永久链接至目标">¶</a></dt>
 <dd><p>Get context of <cite>DataPack</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="matchzoo.datapack.DataPack.dataframe">
-<code class="descname">dataframe</code><a class="headerlink" href="#matchzoo.datapack.DataPack.dataframe" title="Permalink to this definition">¶</a></dt>
+<code class="descname">dataframe</code><a class="headerlink" href="#matchzoo.datapack.DataPack.dataframe" title="永久链接至目标">¶</a></dt>
 <dd><p>Get data frame.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="matchzoo.datapack.DataPack.sample">
-<code class="descname">sample</code><span class="sig-paren">(</span><em>number</em>, <em>replace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.sample" title="Permalink to this definition">¶</a></dt>
+<code class="descname">sample</code><span class="sig-paren">(</span><em>number</em>, <em>replace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.sample" title="永久链接至目标">¶</a></dt>
 <dd><p>Sample records from <cite>DataPack</cite> object, for generator.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>number</strong> – number of records to be sampled, use <cite>batch_size</cite>.</li>
-<li><strong>replace</strong> – sample with replacement, default value is <cite>True</cite>.</li>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first simple">
+<li><strong>number</strong> -- number of records to be sampled, use <cite>batch_size</cite>.</li>
+<li><strong>replace</strong> -- sample with replacement, default value is <cite>True</cite>.</li>
 </ul>
 </td>
 </tr>
@@ -284,7 +284,7 @@ and context (shallow copy of the context`).</p>
 
 <dl class="method">
 <dt id="matchzoo.datapack.DataPack.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>dirpath: Union[str, pathlib.Path]</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.save" title="Permalink to this definition">¶</a></dt>
+<code class="descname">save</code><span class="sig-paren">(</span><em>dirpath: Union[str, pathlib.Path]</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.save" title="永久链接至目标">¶</a></dt>
 <dd><p>Save the <cite>DataPack</cite> object.</p>
 <p>A saved <cite>DataPack</cite> is represented as a directory with a <cite>DataPack</cite>
 object (transformed user input as features and context), it will be
@@ -293,7 +293,7 @@ saved by <cite>pickle</cite>.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> – directory path of the saved <cite>DataPack</cite>.</td>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>dirpath</strong> -- directory path of the saved <cite>DataPack</cite>.</td>
 </tr>
 </tbody>
 </table>
@@ -303,15 +303,15 @@ saved by <cite>pickle</cite>.</p>
 
 <dl class="function">
 <dt id="matchzoo.datapack.load_datapack">
-<code class="descclassname">matchzoo.datapack.</code><code class="descname">load_datapack</code><span class="sig-paren">(</span><em>dirpath: Union[str, pathlib.Path]</em><span class="sig-paren">)</span> &#x2192; matchzoo.datapack.DataPack<a class="headerlink" href="#matchzoo.datapack.load_datapack" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">matchzoo.datapack.</code><code class="descname">load_datapack</code><span class="sig-paren">(</span><em>dirpath: Union[str, pathlib.Path]</em><span class="sig-paren">)</span> &#x2192; matchzoo.datapack.DataPack<a class="headerlink" href="#matchzoo.datapack.load_datapack" title="永久链接至目标">¶</a></dt>
 <dd><p>Load a <cite>DataPack</cite>. The reverse function of <a class="reference internal" href="#matchzoo.datapack.DataPack.save" title="matchzoo.datapack.DataPack.save"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DataPack.save()</span></code></a>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> – directory path of the saved model</td>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>dirpath</strong> -- directory path of the saved model</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> instance</td>
+<tr class="field-even field"><th class="field-name">返回:</th><td class="field-body">a <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> instance</td>
 </tr>
 </tbody>
 </table>
@@ -319,22 +319,22 @@ saved by <cite>pickle</cite>.</p>
 
 </div>
 <div class="section" id="module-matchzoo.preprocessors">
-<span id="matchzoo-preprocessors-module"></span><h2>matchzoo.preprocessors module<a class="headerlink" href="#module-matchzoo.preprocessors" title="Permalink to this headline">¶</a></h2>
+<span id="matchzoo-preprocessors-module"></span><h2>matchzoo.preprocessors module<a class="headerlink" href="#module-matchzoo.preprocessors" title="永久链接至标题">¶</a></h2>
 <p>Matchzoo toolkit for text pre-processing.</p>
 <dl class="class">
 <dt id="matchzoo.preprocessors.DigitRemovalUnit">
-<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">DigitRemovalUnit</code><a class="headerlink" href="#matchzoo.preprocessors.DigitRemovalUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">DigitRemovalUnit</code><a class="headerlink" href="#matchzoo.preprocessors.DigitRemovalUnit" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
 <p>Process unit to remove digits.</p>
 <dl class="method">
 <dt id="matchzoo.preprocessors.DigitRemovalUnit.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.DigitRemovalUnit.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.DigitRemovalUnit.transform" title="永久链接至目标">¶</a></dt>
 <dd><p>Remove digits from list of tokens.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tokens</strong> – list of tokens to be filtered.</td>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>tokens</strong> -- list of tokens to be filtered.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return tokens:</th><td class="field-body">tokens of tokens without digits.</td>
 </tr>
@@ -346,18 +346,18 @@ saved by <cite>pickle</cite>.</p>
 
 <dl class="class">
 <dt id="matchzoo.preprocessors.LemmatizationUnit">
-<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">LemmatizationUnit</code><a class="headerlink" href="#matchzoo.preprocessors.LemmatizationUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">LemmatizationUnit</code><a class="headerlink" href="#matchzoo.preprocessors.LemmatizationUnit" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
 <p>Process unit for token lemmatization.</p>
 <dl class="method">
 <dt id="matchzoo.preprocessors.LemmatizationUnit.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.LemmatizationUnit.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.LemmatizationUnit.transform" title="永久链接至目标">¶</a></dt>
 <dd><p>Lemmatization a sequence of tokens.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tokens</strong> – list of tokens to be lemmatized.</td>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>tokens</strong> -- list of tokens to be lemmatized.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return tokens:</th><td class="field-body">list of lemmatizd tokens.</td>
 </tr>
@@ -369,18 +369,18 @@ saved by <cite>pickle</cite>.</p>
 
 <dl class="class">
 <dt id="matchzoo.preprocessors.LowercaseUnit">
-<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">LowercaseUnit</code><a class="headerlink" href="#matchzoo.preprocessors.LowercaseUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">LowercaseUnit</code><a class="headerlink" href="#matchzoo.preprocessors.LowercaseUnit" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
 <p>Process unit for text lower case.</p>
 <dl class="method">
 <dt id="matchzoo.preprocessors.LowercaseUnit.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.LowercaseUnit.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.LowercaseUnit.transform" title="永久链接至目标">¶</a></dt>
 <dd><p>Convert list of tokens to lower case.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tokens</strong> – list of tokens.</td>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>tokens</strong> -- list of tokens.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return tokens:</th><td class="field-body">lower-cased list of tokens.</td>
 </tr>
@@ -392,8 +392,8 @@ saved by <cite>pickle</cite>.</p>
 
 <dl class="class">
 <dt id="matchzoo.preprocessors.NgramLetterUnit">
-<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">NgramLetterUnit</code><a class="headerlink" href="#matchzoo.preprocessors.NgramLetterUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.StatefulProcessorUnit" title="matchzoo.preprocessors.StatefulProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.StatefulProcessorUnit</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">NgramLetterUnit</code><a class="headerlink" href="#matchzoo.preprocessors.NgramLetterUnit" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="#matchzoo.preprocessors.StatefulProcessorUnit" title="matchzoo.preprocessors.StatefulProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.StatefulProcessorUnit</span></code></a></p>
 <p>Process unit for n-letter generation.</p>
 <p>Triletter is used in <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSMModel</span></code>.
 This processor is expected to execute after <cite>Vocab</cite>
@@ -401,15 +401,15 @@ has been created.</p>
 <p>Returned <cite>input_dim</cite> is the dimensionality of <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSMModel</span></code>.</p>
 <dl class="method">
 <dt id="matchzoo.preprocessors.NgramLetterUnit.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>tokens: list</em>, <em>ngram: int = 3</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.NgramLetterUnit.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>tokens: list</em>, <em>ngram: int = 3</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.NgramLetterUnit.fit" title="永久链接至目标">¶</a></dt>
 <dd><p>Fiitting parameters (shape of word hashing layer) for :DSSM:.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>tokens</strong> – list of tokens to be fitted.</li>
-<li><strong>ngram</strong> – By default use 3-gram (tri-letter).</li>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first last simple">
+<li><strong>tokens</strong> -- list of tokens to be fitted.</li>
+<li><strong>ngram</strong> -- By default use 3-gram (tri-letter).</li>
 </ul>
 </td>
 </tr>
@@ -419,7 +419,7 @@ has been created.</p>
 
 <dl class="method">
 <dt id="matchzoo.preprocessors.NgramLetterUnit.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em>, <em>ngram: int = 3</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.NgramLetterUnit.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em>, <em>ngram: int = 3</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.NgramLetterUnit.transform" title="永久链接至目标">¶</a></dt>
 <dd><p>Transform token into tri-letter.</p>
 <p>For example, <cite>word</cite> should be represented as <cite>#wo</cite>,
 <cite>wor</cite>, <cite>ord</cite> and <cite>rd#</cite>.</p>
@@ -427,13 +427,13 @@ has been created.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>tokens</strong> – list of tokens to be transformed.</li>
-<li><strong>ngram</strong> – By default use 3-gram (tri-letter).</li>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first simple">
+<li><strong>tokens</strong> -- list of tokens to be transformed.</li>
+<li><strong>ngram</strong> -- By default use 3-gram (tri-letter).</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">set of tri-letters, dependent on <cite>ngram</cite>.</p>
+<tr class="field-even field"><th class="field-name">返回:</th><td class="field-body"><p class="first last">set of tri-letters, dependent on <cite>ngram</cite>.</p>
 </td>
 </tr>
 </tbody>
@@ -444,12 +444,12 @@ has been created.</p>
 
 <dl class="class">
 <dt id="matchzoo.preprocessors.ProcessorUnit">
-<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">ProcessorUnit</code><a class="headerlink" href="#matchzoo.preprocessors.ProcessorUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">ProcessorUnit</code><a class="headerlink" href="#matchzoo.preprocessors.ProcessorUnit" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Process unit do not persive state (i.e. do not need fit).</p>
 <dl class="method">
 <dt id="matchzoo.preprocessors.ProcessorUnit.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>input: Any</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.ProcessorUnit.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>input: Any</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.ProcessorUnit.transform" title="永久链接至目标">¶</a></dt>
 <dd><p>Abstract base method, need to be implemented in subclass.</p>
 </dd></dl>
 
@@ -457,18 +457,18 @@ has been created.</p>
 
 <dl class="class">
 <dt id="matchzoo.preprocessors.PuncRemovalUnit">
-<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">PuncRemovalUnit</code><a class="headerlink" href="#matchzoo.preprocessors.PuncRemovalUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">PuncRemovalUnit</code><a class="headerlink" href="#matchzoo.preprocessors.PuncRemovalUnit" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
 <p>Process unit for remove punctuations.</p>
 <dl class="method">
 <dt id="matchzoo.preprocessors.PuncRemovalUnit.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.PuncRemovalUnit.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.PuncRemovalUnit.transform" title="永久链接至目标">¶</a></dt>
 <dd><p>Remove punctuations from list of tokens.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>tokens</strong> – list of toekns.</td>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>tokens</strong> -- list of toekns.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return rv:</th><td class="field-body">tokens  without punctuation.</td>
 </tr>
@@ -480,18 +480,18 @@ has been created.</p>
 
 <dl class="class">
 <dt id="matchzoo.preprocessors.StatefulProcessorUnit">
-<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">StatefulProcessorUnit</code><a class="headerlink" href="#matchzoo.preprocessors.StatefulProcessorUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">StatefulProcessorUnit</code><a class="headerlink" href="#matchzoo.preprocessors.StatefulProcessorUnit" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
 <p>Process unit do persive state (i.e. need fit).</p>
 <dl class="method">
 <dt id="matchzoo.preprocessors.StatefulProcessorUnit.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#matchzoo.preprocessors.StatefulProcessorUnit.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#matchzoo.preprocessors.StatefulProcessorUnit.fit" title="永久链接至目标">¶</a></dt>
 <dd><p>Abstract base method, need to be implemented in subclass.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="matchzoo.preprocessors.StatefulProcessorUnit.state">
-<code class="descname">state</code><a class="headerlink" href="#matchzoo.preprocessors.StatefulProcessorUnit.state" title="Permalink to this definition">¶</a></dt>
+<code class="descname">state</code><a class="headerlink" href="#matchzoo.preprocessors.StatefulProcessorUnit.state" title="永久链接至目标">¶</a></dt>
 <dd><p>Get current state.</p>
 </dd></dl>
 
@@ -499,24 +499,24 @@ has been created.</p>
 
 <dl class="class">
 <dt id="matchzoo.preprocessors.StemmingUnit">
-<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">StemmingUnit</code><span class="sig-paren">(</span><em>stemmer='porter'</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.StemmingUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">StemmingUnit</code><span class="sig-paren">(</span><em>stemmer='porter'</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.StemmingUnit" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
 <p>Process unit for token stemming.</p>
 <dl class="method">
 <dt id="matchzoo.preprocessors.StemmingUnit.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.StemmingUnit.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.StemmingUnit.transform" title="永久链接至目标">¶</a></dt>
 <dd><p>Reducing inflected words to their word stem, base or root form.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>tokens</strong> – list of string to be stemmed.</li>
-<li><strong>stemmer</strong> – stemmer to use, <cite>porter</cite> or <cite>lancaster</cite>.</li>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first simple">
+<li><strong>tokens</strong> -- list of string to be stemmed.</li>
+<li><strong>stemmer</strong> -- stemmer to use, <cite>porter</cite> or <cite>lancaster</cite>.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong> – stemmer type should be porter or lancaster.</p>
+<tr class="field-even field"><th class="field-name">引发:</th><td class="field-body"><p class="first"><strong>ValueError</strong> -- stemmer type should be porter or lancaster.</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Return tokens:</th><td class="field-body"><p class="first last">stemmed token.</p>
@@ -530,12 +530,12 @@ has been created.</p>
 
 <dl class="class">
 <dt id="matchzoo.preprocessors.StopRemovalUnit">
-<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">StopRemovalUnit</code><span class="sig-paren">(</span><em>lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.StopRemovalUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">StopRemovalUnit</code><span class="sig-paren">(</span><em>lang='en'</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.preprocessors.StopRemovalUnit" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
 <p>Process unit to remove stop words.</p>
 <dl class="method">
 <dt id="matchzoo.preprocessors.StopRemovalUnit.get_stopwords">
-<code class="descname">get_stopwords</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.StopRemovalUnit.get_stopwords" title="Permalink to this definition">¶</a></dt>
+<code class="descname">get_stopwords</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.StopRemovalUnit.get_stopwords" title="永久链接至目标">¶</a></dt>
 <dd><p>Get stopwords based on language.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -552,15 +552,15 @@ has been created.</p>
 
 <dl class="method">
 <dt id="matchzoo.preprocessors.StopRemovalUnit.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.StopRemovalUnit.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>tokens: list</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.StopRemovalUnit.transform" title="永久链接至目标">¶</a></dt>
 <dd><p>Remove stopwords from list of tokenized tokens.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>tokens</strong> – list of tokenized tokens.</li>
-<li><strong>lang</strong> – language code for stopwords.</li>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><ul class="first simple">
+<li><strong>tokens</strong> -- list of tokenized tokens.</li>
+<li><strong>lang</strong> -- language code for stopwords.</li>
 </ul>
 </td>
 </tr>
@@ -575,18 +575,18 @@ has been created.</p>
 
 <dl class="class">
 <dt id="matchzoo.preprocessors.TokenizeUnit">
-<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">TokenizeUnit</code><a class="headerlink" href="#matchzoo.preprocessors.TokenizeUnit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.preprocessors.</code><code class="descname">TokenizeUnit</code><a class="headerlink" href="#matchzoo.preprocessors.TokenizeUnit" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="#matchzoo.preprocessors.ProcessorUnit" title="matchzoo.preprocessors.ProcessorUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.preprocessors.ProcessorUnit</span></code></a></p>
 <p>Process unit for text tokenization.</p>
 <dl class="method">
 <dt id="matchzoo.preprocessors.TokenizeUnit.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>input: str</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.TokenizeUnit.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>input: str</em><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.preprocessors.TokenizeUnit.transform" title="永久链接至目标">¶</a></dt>
 <dd><p>Process input data from raw terms to list of tokens.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input</strong> – raw textual input.</td>
+<tr class="field-odd field"><th class="field-name">参数:</th><td class="field-body"><strong>input</strong> -- raw textual input.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return tokens:</th><td class="field-body">tokenized tokens as a list.</td>
 </tr>
@@ -598,7 +598,7 @@ has been created.</p>
 
 </div>
 <div class="section" id="module-matchzoo">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matchzoo" title="Permalink to this headline">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matchzoo" title="永久链接至标题">¶</a></h2>
 </div>
 </div>
 
@@ -645,7 +645,7 @@ has been created.</p>
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'2.0',
-            LANGUAGE:'None',
+            LANGUAGE:'zh',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,

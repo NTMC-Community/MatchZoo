@@ -1,14 +1,14 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="zh" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="zh" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>matchzoo.models package &mdash; MatchZoo 2.0 documentation</title>
+  <title>matchzoo.models package &mdash; MatchZoo 2.0 文档</title>
   
 
   
@@ -26,8 +26,8 @@
 
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="搜索" href="search.html" />
     <link rel="next" title="matchzoo.tasks package" href="matchzoo.tasks.html" />
     <link rel="prev" title="matchzoo.engine package" href="matchzoo.engine.html" /> 
 
@@ -165,17 +165,17 @@
            <div itemprop="articleBody">
             
   <div class="section" id="matchzoo-models-package">
-<h1>matchzoo.models package<a class="headerlink" href="#matchzoo-models-package" title="Permalink to this headline">¶</a></h1>
+<h1>matchzoo.models package<a class="headerlink" href="#matchzoo-models-package" title="永久链接至标题">¶</a></h1>
 <div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="永久链接至标题">¶</a></h2>
 </div>
 <div class="section" id="module-matchzoo.models.dense_baseline_model">
-<span id="matchzoo-models-dense-baseline-model-module"></span><h2>matchzoo.models.dense_baseline_model module<a class="headerlink" href="#module-matchzoo.models.dense_baseline_model" title="Permalink to this headline">¶</a></h2>
+<span id="matchzoo-models-dense-baseline-model-module"></span><h2>matchzoo.models.dense_baseline_model module<a class="headerlink" href="#module-matchzoo.models.dense_baseline_model" title="永久链接至标题">¶</a></h2>
 <p>A simple densely connected baseline model.</p>
 <dl class="class">
 <dt id="matchzoo.models.dense_baseline_model.DenseBaselineModel">
-<em class="property">class </em><code class="descclassname">matchzoo.models.dense_baseline_model.</code><code class="descname">DenseBaselineModel</code><span class="sig-paren">(</span><em>params: matchzoo.engine.param_table.ParamTable = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.models.dense_baseline_model.</code><code class="descname">DenseBaselineModel</code><span class="sig-paren">(</span><em>params: matchzoo.engine.param_table.ParamTable = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
 <p>A simple densely connected baseline model.</p>
 <dl class="docutils">
 <dt>Examples:</dt>
@@ -190,18 +190,18 @@
 </dl>
 <dl class="method">
 <dt id="matchzoo.models.dense_baseline_model.DenseBaselineModel.build">
-<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel.build" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel.build" title="永久链接至目标">¶</a></dt>
 <dd><p>Model structure.</p>
 </dd></dl>
 
 <dl class="classmethod">
 <dt id="matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params">
-<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; matchzoo.engine.param_table.ParamTable<a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; matchzoo.engine.param_table.ParamTable<a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params" title="永久链接至目标">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">model default parameters.</td>
 </tr>
 </tbody>
 </table>
@@ -211,12 +211,12 @@
 
 </div>
 <div class="section" id="module-matchzoo.models.dssm_model">
-<span id="matchzoo-models-dssm-model-module"></span><h2>matchzoo.models.dssm_model module<a class="headerlink" href="#module-matchzoo.models.dssm_model" title="Permalink to this headline">¶</a></h2>
+<span id="matchzoo-models-dssm-model-module"></span><h2>matchzoo.models.dssm_model module<a class="headerlink" href="#module-matchzoo.models.dssm_model" title="永久链接至标题">¶</a></h2>
 <p>An implementation of DSSM, Deep Structured Semantic Model.</p>
 <dl class="class">
 <dt id="matchzoo.models.dssm_model.DSSMModel">
-<em class="property">class </em><code class="descclassname">matchzoo.models.dssm_model.</code><code class="descname">DSSMModel</code><span class="sig-paren">(</span><em>params: matchzoo.engine.param_table.ParamTable = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.models.dssm_model.</code><code class="descname">DSSMModel</code><span class="sig-paren">(</span><em>params: matchzoo.engine.param_table.ParamTable = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
 <p>Deep structured semantic model.</p>
 <dl class="docutils">
 <dt>Examples:</dt>
@@ -229,19 +229,19 @@
 </dl>
 <dl class="method">
 <dt id="matchzoo.models.dssm_model.DSSMModel.build">
-<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel.build" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel.build" title="永久链接至目标">¶</a></dt>
 <dd><p>Build model structure.</p>
 <p>DSSM use Siamese arthitecture.</p>
 </dd></dl>
 
 <dl class="classmethod">
 <dt id="matchzoo.models.dssm_model.DSSMModel.get_default_params">
-<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; matchzoo.engine.param_table.ParamTable<a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel.get_default_params" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; matchzoo.engine.param_table.ParamTable<a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel.get_default_params" title="永久链接至目标">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+<tr class="field-odd field"><th class="field-name">返回:</th><td class="field-body">model default parameters.</td>
 </tr>
 </tbody>
 </table>
@@ -251,16 +251,16 @@
 
 </div>
 <div class="section" id="module-matchzoo.models.naive_model">
-<span id="matchzoo-models-naive-model-module"></span><h2>matchzoo.models.naive_model module<a class="headerlink" href="#module-matchzoo.models.naive_model" title="Permalink to this headline">¶</a></h2>
+<span id="matchzoo-models-naive-model-module"></span><h2>matchzoo.models.naive_model module<a class="headerlink" href="#module-matchzoo.models.naive_model" title="永久链接至标题">¶</a></h2>
 <p>Naive model with a simplest structure for testing purposes.</p>
 <dl class="class">
 <dt id="matchzoo.models.naive_model.NaiveModel">
-<em class="property">class </em><code class="descclassname">matchzoo.models.naive_model.</code><code class="descname">NaiveModel</code><span class="sig-paren">(</span><em>params: matchzoo.engine.param_table.ParamTable = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.naive_model.NaiveModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<em class="property">class </em><code class="descclassname">matchzoo.models.naive_model.</code><code class="descname">NaiveModel</code><span class="sig-paren">(</span><em>params: matchzoo.engine.param_table.ParamTable = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.naive_model.NaiveModel" title="永久链接至目标">¶</a></dt>
+<dd><p>基类：<a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
 <p>Naive model with a simplest structure for testing purposes.</p>
 <dl class="method">
 <dt id="matchzoo.models.naive_model.NaiveModel.build">
-<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.naive_model.NaiveModel.build" title="Permalink to this definition">¶</a></dt>
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.naive_model.NaiveModel.build" title="永久链接至目标">¶</a></dt>
 <dd><p>Build.</p>
 </dd></dl>
 
@@ -268,7 +268,7 @@
 
 </div>
 <div class="section" id="module-matchzoo.models">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matchzoo.models" title="Permalink to this headline">¶</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matchzoo.models" title="永久链接至标题">¶</a></h2>
 </div>
 </div>
 
@@ -315,7 +315,7 @@
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
             VERSION:'2.0',
-            LANGUAGE:'None',
+            LANGUAGE:'zh',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
