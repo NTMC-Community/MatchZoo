@@ -3,7 +3,6 @@ sphinx_rtd_theme >= 0.4.0
 keras >= 2.0.5
 jieba >= 0.39
 many_stop_words >= 0.2.2
-tensorflow >= 1.1.0
 nltk >= 3.2.3
 numpy >= 1.12.1
 six >= 1.10.0
