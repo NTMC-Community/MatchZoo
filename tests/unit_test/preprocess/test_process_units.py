@@ -1,4 +1,4 @@
-from matchzoo.preprocessors import *
+from matchzoo.preprocess.process_units import *
 import pytest
 
 @pytest.fixture
