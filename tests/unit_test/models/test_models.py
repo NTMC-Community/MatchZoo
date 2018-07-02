@@ -12,10 +12,12 @@ from matchzoo import tasks
 # If no customized_kwargs is needed, simply put a `None`.
 # Notice that each of such tuple will go through a full testing procedure, so
 # it's quite time consuming. Don't add customized_kwargs unless you have to.
+# Examples:
+# with no kwargs: (models.DenseBaselineModel, None)
+# with kwargs: (models.DenseBaselineModel, {"num_dense_units": 512})
 model_setups = [
     (models.NaiveModel, None),
     (models.DenseBaselineModel, None),
-    (models.DenseBaselineModel, {"num_dense_units": 512}),
     (models.DSSMModel, None)
 ]
 
