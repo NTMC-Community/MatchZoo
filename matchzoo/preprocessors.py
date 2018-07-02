@@ -31,7 +31,7 @@ class StatefulProcessorUnit(ProcessorUnit, metaclass=abc.ABCMeta):
         return self._state
 
     @abc.abstractmethod
-    def fit(self) -> dict:
+    def fit(self, input: typing.Any):
         """Abstract base method, need to be implemented in subclass."""
 
 
