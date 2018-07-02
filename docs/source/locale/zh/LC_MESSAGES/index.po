@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../source/index.rst:7
 msgid "Welcome to MatchZoo's documentation!"
-msgstr ""
+msgstr "欢迎来到Matchzoo"
 
 #: ../../source/index.rst:20
 msgid ""
