@@ -37,6 +37,8 @@ setup(
       'h5py >= 2.7.0',
       'tqdm >= 4.19.4',
       'jieba >= 0.39',
-      'many_stop_words >= 0.2.2'
+      'many_stop_words >= 0.2.2',
+      'pandas >= 0.23.1',
+      'hyperopt' == 0.1
     ]
 )
