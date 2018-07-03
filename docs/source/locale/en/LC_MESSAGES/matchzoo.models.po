@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MatchZoo \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-30 10:05+0000\n"
+"POT-Creation-Date: 2018-07-03 08:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,9 +40,9 @@ msgstr ""
 msgid "Bases: :class:`matchzoo.engine.base_model.BaseModel`"
 msgstr ""
 
-#: matchzoo.models.dense_baseline_model.DenseBaselineModel:10
-#: matchzoo.models.dssm_model.DSSMModel:8 of
-msgid "Examples:"
+#: matchzoo.models.dense_baseline_model.DenseBaselineModel:4
+#: matchzoo.models.dssm_model.DSSMModel:4 of
+msgid "Examples"
 msgstr ""
 
 #: matchzoo.models.dense_baseline_model.DenseBaselineModel.build:1 of
@@ -51,11 +51,21 @@ msgstr ""
 
 #: matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params
 #: matchzoo.models.dssm_model.DSSMModel.get_default_params of
-msgid "Returns"
+msgid "Return type"
 msgstr ""
 
 #: matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params:1
 #: matchzoo.models.dssm_model.DSSMModel.get_default_params:1 of
+msgid ":py:class:`~matchzoo.engine.param_table.ParamTable`"
+msgstr ""
+
+#: matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params
+#: matchzoo.models.dssm_model.DSSMModel.get_default_params of
+msgid "Returns"
+msgstr ""
+
+#: matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params:2
+#: matchzoo.models.dssm_model.DSSMModel.get_default_params:2 of
 msgid "model default parameters."
 msgstr ""
 

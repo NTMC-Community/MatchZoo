@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: MatchZoo \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-30 10:05+0000\n"
+"POT-Creation-Date: 2018-07-03 08:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,27 +45,51 @@ msgstr ""
 #: matchzoo.tasks.classification.Classification.output_shape
 #: matchzoo.tasks.ranking.Ranking.list_available_losses
 #: matchzoo.tasks.ranking.Ranking.list_available_metrics
-#: matchzoo.tasks.ranking.Ranking.output_shape of
-msgid "Returns"
+#: matchzoo.tasks.ranking.Ranking.output_shape
+#: matchzoo.tasks.utils.list_available_task_types of
+msgid "Return type"
 msgstr ""
 
 #: matchzoo.tasks.classification.Classification.list_available_losses:1
-#: matchzoo.tasks.ranking.Ranking.list_available_losses:1 of
+#: matchzoo.tasks.classification.Classification.list_available_metrics:1
+#: matchzoo.tasks.ranking.Ranking.list_available_losses:1
+#: matchzoo.tasks.ranking.Ranking.list_available_metrics:1 of
+msgid ":py:class:`list`"
+msgstr ""
+
+#: matchzoo.tasks.classification.Classification.list_available_losses
+#: matchzoo.tasks.classification.Classification.list_available_metrics
+#: matchzoo.tasks.ranking.Ranking.list_available_losses
+#: matchzoo.tasks.ranking.Ranking.list_available_metrics of
+msgid "Returns"
+msgstr ""
+
+#: matchzoo.tasks.classification.Classification.list_available_losses:2
+#: matchzoo.tasks.ranking.Ranking.list_available_losses:2 of
 msgid "a list of available losses."
 msgstr ""
 
-#: matchzoo.tasks.classification.Classification.list_available_metrics:1
-#: matchzoo.tasks.ranking.Ranking.list_available_metrics:1 of
+#: matchzoo.tasks.classification.Classification.list_available_metrics:2
+#: matchzoo.tasks.ranking.Ranking.list_available_metrics:2 of
 msgid "a list of available metrics."
 msgstr ""
 
 #: matchzoo.tasks.classification.Classification.num_classes:1 of
-msgid "number of classes to classify."
+msgid "*return* -- number of classes to classify."
+msgstr ""
+
+#: matchzoo.tasks.classification.Classification.num_classes:3 of
+msgid ":py:class:`int`"
 msgstr ""
 
 #: matchzoo.tasks.classification.Classification.output_shape:1
 #: matchzoo.tasks.ranking.Ranking.output_shape:1 of
-msgid "output shape of a single sample of the task."
+msgid "*return* -- output shape of a single sample of the task."
+msgstr ""
+
+#: matchzoo.tasks.classification.Classification.output_shape:3
+#: matchzoo.tasks.ranking.Ranking.output_shape:3 of
+msgid ":py:class:`tuple`"
 msgstr ""
 
 #: ../../source/matchzoo.tasks.rst:16
@@ -90,6 +114,10 @@ msgstr ""
 
 #: matchzoo.tasks.utils.list_available_task_types:1 of
 msgid "Return a list of task type class objects."
+msgstr ""
+
+#: matchzoo.tasks.utils.list_available_task_types:4 of
+msgid ":py:class:`~typing.List`\\[:py:class:`~typing.Type`\\[:py:class:`~matchzoo.engine.base_task.BaseTask`]]"
 msgstr ""
 
 #: ../../source/matchzoo.tasks.rst:33
