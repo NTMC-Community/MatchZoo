@@ -50,7 +50,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         :return: Transformed user input given transformer.
         """
         ctx = {}
-        if isinstance(preprocessor.StatefulProcessUnit):
+        if isinstance(process_unit, preprocessor.StatefulProcessorUnit):
             process_unit.fit(input)
             ctx = process_unit.state
-        return ctx, process_unit.transform(input)
+        return ctx, process_unit.transform(tokens=input)
