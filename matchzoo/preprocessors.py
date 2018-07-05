@@ -230,12 +230,12 @@ class NgramLetterUnit(StatefulProcessorUnit):
         self._state = {'input_dim': input_dim}
 
 
-class Vocabulary(StatefulProcessorUnit):
+class VocabularyUnit(StatefulProcessorUnit):
     """
     Vocabulary class.
 
     Examples:
-        >>> vocab = Vocabulary()
+        >>> vocab = VocabularyUnit()
         >>> vocab.fit(['A', 'B', 'C', 'D', 'E'])
         >>> term_index = vocab.state['term_index']
         >>> term_index  # doctest: +SKIP
