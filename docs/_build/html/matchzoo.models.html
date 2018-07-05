@@ -174,20 +174,17 @@
 <p>A simple densely connected baseline model.</p>
 <dl class="class">
 <dt id="matchzoo.models.dense_baseline_model.DenseBaselineModel">
-<em class="property">class </em><code class="descclassname">matchzoo.models.dense_baseline_model.</code><code class="descname">DenseBaselineModel</code><span class="sig-paren">(</span><em>params: matchzoo.engine.param_table.ParamTable = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matchzoo.models.dense_baseline_model.</code><code class="descname">DenseBaselineModel</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
 <p>A simple densely connected baseline model.</p>
-<dl class="docutils">
-<dt>Examples:</dt>
-<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DenseBaselineModel</span><span class="p">()</span>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DenseBaselineModel</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;input_shapes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">30</span><span class="p">,),</span> <span class="p">(</span><span class="mi">30</span><span class="p">,)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;num_dense_units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1024</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
 </pre></div>
 </div>
-</dd>
-</dl>
 <dl class="method">
 <dt id="matchzoo.models.dense_baseline_model.DenseBaselineModel.build">
 <code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel.build" title="Permalink to this definition">¶</a></dt>
@@ -196,12 +193,14 @@
 
 <dl class="classmethod">
 <dt id="matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params">
-<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; matchzoo.engine.param_table.ParamTable<a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
 </tr>
 </tbody>
 </table>
@@ -215,18 +214,15 @@
 <p>An implementation of DSSM, Deep Structured Semantic Model.</p>
 <dl class="class">
 <dt id="matchzoo.models.dssm_model.DSSMModel">
-<em class="property">class </em><code class="descclassname">matchzoo.models.dssm_model.</code><code class="descname">DSSMModel</code><span class="sig-paren">(</span><em>params: matchzoo.engine.param_table.ParamTable = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matchzoo.models.dssm_model.</code><code class="descname">DSSMModel</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
 <p>Deep structured semantic model.</p>
-<dl class="docutils">
-<dt>Examples:</dt>
-<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DSSMModel</span><span class="p">()</span>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DSSMModel</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
 </pre></div>
 </div>
-</dd>
-</dl>
 <dl class="method">
 <dt id="matchzoo.models.dssm_model.DSSMModel.build">
 <code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel.build" title="Permalink to this definition">¶</a></dt>
@@ -236,12 +232,14 @@
 
 <dl class="classmethod">
 <dt id="matchzoo.models.dssm_model.DSSMModel.get_default_params">
-<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; matchzoo.engine.param_table.ParamTable<a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel.get_default_params" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel.get_default_params" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
 </tr>
 </tbody>
 </table>
@@ -255,7 +253,7 @@
 <p>Naive model with a simplest structure for testing purposes.</p>
 <dl class="class">
 <dt id="matchzoo.models.naive_model.NaiveModel">
-<em class="property">class </em><code class="descclassname">matchzoo.models.naive_model.</code><code class="descname">NaiveModel</code><span class="sig-paren">(</span><em>params: matchzoo.engine.param_table.ParamTable = None</em>, <em>backend: keras.engine.training.Model = None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.naive_model.NaiveModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matchzoo.models.naive_model.</code><code class="descname">NaiveModel</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.naive_model.NaiveModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
 <p>Naive model with a simplest structure for testing purposes.</p>
 <dl class="method">
