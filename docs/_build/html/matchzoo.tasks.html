@@ -173,17 +173,19 @@
 <p>Classification task.</p>
 <dl class="class">
 <dt id="matchzoo.tasks.classification.Classification">
-<em class="property">class </em><code class="descclassname">matchzoo.tasks.classification.</code><code class="descname">Classification</code><span class="sig-paren">(</span><em>num_classes: int = 2</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.classification.Classification" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matchzoo.tasks.classification.</code><code class="descname">Classification</code><span class="sig-paren">(</span><em>num_classes=2</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.classification.Classification" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask" title="matchzoo.engine.base_task.BaseTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_task.BaseTask</span></code></a></p>
 <p>Classification task.</p>
 <dl class="classmethod">
 <dt id="matchzoo.tasks.classification.Classification.list_available_losses">
-<em class="property">classmethod </em><code class="descname">list_available_losses</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.tasks.classification.Classification.list_available_losses" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">list_available_losses</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.classification.Classification.list_available_losses" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of available losses.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list of available losses.</td>
 </tr>
 </tbody>
 </table>
@@ -191,12 +193,14 @@
 
 <dl class="classmethod">
 <dt id="matchzoo.tasks.classification.Classification.list_available_metrics">
-<em class="property">classmethod </em><code class="descname">list_available_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.tasks.classification.Classification.list_available_metrics" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">list_available_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.classification.Classification.list_available_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of available metrics.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list of available metrics.</td>
 </tr>
 </tbody>
 </table>
@@ -205,11 +209,12 @@
 <dl class="attribute">
 <dt id="matchzoo.tasks.classification.Classification.num_classes">
 <code class="descname">num_classes</code><a class="headerlink" href="#matchzoo.tasks.classification.Classification.num_classes" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p><em>return</em> – number of classes to classify.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">number of classes to classify.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -218,11 +223,12 @@
 <dl class="attribute">
 <dt id="matchzoo.tasks.classification.Classification.output_shape">
 <code class="descname">output_shape</code><a class="headerlink" href="#matchzoo.tasks.classification.Classification.output_shape" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p><em>return</em> – output shape of a single sample of the task.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">output shape of a single sample of the task.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -241,12 +247,14 @@
 <p>Ranking Task.</p>
 <dl class="classmethod">
 <dt id="matchzoo.tasks.ranking.Ranking.list_available_losses">
-<em class="property">classmethod </em><code class="descname">list_available_losses</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.tasks.ranking.Ranking.list_available_losses" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">list_available_losses</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.ranking.Ranking.list_available_losses" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of available losses.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list of available losses.</td>
 </tr>
 </tbody>
 </table>
@@ -254,12 +262,14 @@
 
 <dl class="classmethod">
 <dt id="matchzoo.tasks.ranking.Ranking.list_available_metrics">
-<em class="property">classmethod </em><code class="descname">list_available_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#matchzoo.tasks.ranking.Ranking.list_available_metrics" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">list_available_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.ranking.Ranking.list_available_metrics" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a list of available metrics.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list of available metrics.</td>
 </tr>
 </tbody>
 </table>
@@ -268,11 +278,12 @@
 <dl class="attribute">
 <dt id="matchzoo.tasks.ranking.Ranking.output_shape">
 <code class="descname">output_shape</code><a class="headerlink" href="#matchzoo.tasks.ranking.Ranking.output_shape" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
+<dd><p><em>return</em> – output shape of a single sample of the task.</p>
+<table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">output shape of a single sample of the task.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -286,8 +297,16 @@
 <p>Task utilities.</p>
 <dl class="function">
 <dt id="matchzoo.tasks.utils.list_available_task_types">
-<code class="descclassname">matchzoo.tasks.utils.</code><code class="descname">list_available_task_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[Type[matchzoo.engine.base_task.BaseTask]]<a class="headerlink" href="#matchzoo.tasks.utils.list_available_task_types" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">matchzoo.tasks.utils.</code><code class="descname">list_available_task_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.utils.list_available_task_types" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of task type class objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code>[<a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask" title="matchzoo.engine.base_task.BaseTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTask</span></code></a>]]</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
