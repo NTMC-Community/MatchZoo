@@ -67,11 +67,6 @@ class Pipeline(object):
 
         :param: `processor unit` to be added.
         """
-        if not isinstance(processor_unit, preprocessor.ProcessorUnit):
-            raise TypeError(
-                "ProcessprUnit expected, {} received!".format(
-                    type(processor_unit))
-            )
         # Remove duplicate.
         if processor_unit in self._processor_units:
             raise ValueError(
@@ -85,11 +80,6 @@ class Pipeline(object):
 
         :param processor_unit: `processor unit` to be removed.
         """
-        if not isinstance(processor_unit, preprocessor.ProcessorUnit):
-            raise TypeError(
-                "ProcessorUnit expected, {} received!".format(
-                    type(processor_unit))
-            )
         if processor_unit not in self._processor_units:
             raise ValueError(
                 "Trying to remove a non-exist processor unit!"
