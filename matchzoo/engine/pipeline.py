@@ -42,7 +42,10 @@ class Pipeline(object):
         self.state = {}
         self.rv = None
 
-    def fit_transform(self, input: typing.Any):
+    def fit_transform(
+        self,
+        input: typing.Any
+    ) -> typing.Union[dict, typing.Any]:
         """
         Apply fit-transform on input data.
 
@@ -61,7 +64,10 @@ class Pipeline(object):
             self.state.update(ctx)
         return self.state, self.rv
 
-    def add(self, processor_unit: preprocessor.ProcessorUnit):
+    def add(
+        self,
+        processor_unit: preprocessor.ProcessorUnit
+    ):
         """
         Add processor unit to :class:`Pipeline`.
 
@@ -70,11 +76,14 @@ class Pipeline(object):
         # Remove duplicate.
         if processor_unit in self._processor_units:
             raise ValueError(
-                "Trying to add exist processor unit!"
+                "Trying to add existed processor unit!"
             )
         self._processor_units.append(processor_unit)
 
-    def remove(self, processor_unit: preprocessor.ProcessorUnit):
+    def remove(
+        self,
+        processor_unit: preprocessor.ProcessorUnit
+    ):
         """
         Remove process unit from :class:`Pipeline`.
 
@@ -91,7 +100,9 @@ class Pipeline(object):
         return len(self._processor_units)
 
     @property
-    def processor_units(self) -> typing.List[preprocessor.ProcessorUnit]:
+    def processor_units(
+        self
+    ) -> typing.List[preprocessor.ProcessorUnit]:
         """
         Get processor units within :class:`Pipeline`.
 
