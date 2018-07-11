@@ -152,6 +152,12 @@ class SpatialGRU(Layer):
             'channel': self.channel,
             'normalize': self.normalize,
             'init_diag': self.init_diag,
+            'activation': activations.serialize(self.activation),
+            'recurrent_activation': activations.serialize(self.recurrent_activation),
+            'use_bias': self.use_bias,
+            'kernel_initializer': initializers.serialize(self.kernel_initializer),
+            'recurrent_initializer': initializers.serialize(self.recurrent_initializer),
+            'bias_initializer': initializers.serialize(self.bias_initializer)
         }
         base_config = super(SpatialGRU, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))

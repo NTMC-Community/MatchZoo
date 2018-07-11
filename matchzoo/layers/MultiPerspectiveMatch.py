@@ -60,6 +60,17 @@ class MultiPerspectiveMatch(Layer):
         output_shape = (shape1[0], shape1[1], self.output_size)
         return output_shape
 
+    def get_config(self):
+        config = {
+            'channel': self.channel,
+            'with_full_match': self.with_full_match,
+            'with_maxpool_match': self.with_maxpool_match,
+            'with_attentive_match': self.with_attentive_match,
+            'with_max_attentive_match': self.with_max_attentive_match
+        }
+        base_config = super(MultiPerspectiveMatch, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))
+
     def call(self, inputs):
 
         q_rep, q_last, q_mask, d_rep, d_last, d_mask = inputs
