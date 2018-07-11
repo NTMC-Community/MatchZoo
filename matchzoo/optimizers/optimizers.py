@@ -6,7 +6,7 @@ import six
 import keras
 from keras import backend as K
 from keras.layers import Lambda
-from keras.utils.generic_utils import deserialize_keras_object
+from keras.utils.generic_utils import deserialize_keras_object, serialize_keras_object
 from keras import optimizers
 
 if K.backend() == 'tensorflow':
@@ -61,13 +61,13 @@ def get(identifier):
     if K.backend() == 'tensorflow':
         # Wrap TF optimizer instances
         if isinstance(identifier, tf.train.Optimizer):
-            return TFOptimizer(identifier)
+            return optimizers.TFOptimizer(identifier)
     if isinstance(identifier, dict):
         return deserialize(identifier)
     elif isinstance(identifier, six.string_types):
         config = {'class_name': str(identifier), 'config': {}}
         return deserialize(config)
-    if isinstance(identifier, Optimizer):
+    if isinstance(identifier, optimizers.Optimizer):
         return identifier
     else:
         raise ValueError('Could not interpret optimizer identifier:',

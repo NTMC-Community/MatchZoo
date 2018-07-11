@@ -42,6 +42,14 @@ class DynamicMaxPooling(Layer):
         input_shape_one = input_shape[0]
         return (None, self.psize1, self.psize2, input_shape_one[3])
 
+    def get_config(self):
+        config = {
+            'psize1': self.psize1,
+            'psize2': self.psize2
+        }
+        base_config = super(DynamicMaxPooling, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))
+
     @staticmethod
     def dynamic_pooling_index(len1, len2, max_len1, max_len2, 
                               compress_ratio1 = 1, compress_ratio2 = 1):
