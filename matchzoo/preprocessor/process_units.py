@@ -284,7 +284,7 @@ class VocabularyUnit(StatefulProcessorUnit):
             return 0
 
     def fit(self, tokens: list):
-        """Build a :class:`TermIndex` and a :clsas:`IndexTerm`."""
+        """Build a :class:`TermIndex` and a :class:`IndexTerm`."""
         self._state['term_index'] = self.TermIndex()
         self._state['index_term'] = self.IndexTerm()
         terms = set(tokens)
