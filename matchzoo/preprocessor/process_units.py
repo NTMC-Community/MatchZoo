@@ -313,8 +313,13 @@ class WordHashingUnit(ProcessorUnit):
        >>> dim_triletter = 5
        >>> term_index = {'st#': 1, '#te': 2, 'est': 3, 'tes': 4}
        >>> word_hashing = WordHashingUnit(term_index, dim_triletter)
-       >>> word_hashing.transform(tri_letters)
-       array([0., 1., 1., 1., 1.])
+       >>> hashing = word_hashing.transform(tri_letters)
+       >>> hashing[0]
+       0.0
+       >>> hashing[1]
+       1.0
+       >>> hashing.shape
+       (5,)
 
     """
 
