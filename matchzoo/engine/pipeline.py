@@ -4,9 +4,11 @@ Each model-wise preprocessor should employ a sequence of :class:`ProcessorUnit`
 and :class:`StatefulProcessorUnit` to handle input data.
 """
 
+import abc
 import typing
 
 from matchzoo import preprocessor
+from matchzoo import datapack
 
 
 class Pipeline(object):
@@ -25,12 +27,6 @@ class Pipeline(object):
         >>> pipe.remove(lu)
         >>> print(len(pipe))
         2
-        >>> input = 'Test sentence to be cleaned.'
-        >>> state, rv = pipe.fit_transform(input)
-        >>> print(state)
-        {'input_dim': 24}
-        >>> 'ent' in rv
-        True
         >>> len(pipe.processor_units)
         2
 
@@ -39,30 +35,24 @@ class Pipeline(object):
     def __init__(self):
         """Class Initialization."""
         self._processor_units = []
-        self.state = {}
+        self.context = {}
         self.rv = None
 
-    def fit_transform(
+    def fit(
         self,
         input: typing.Any
-    ) -> typing.Union[dict, typing.Any]:
-        """
-        Apply fit-transform on input data.
+    ) -> typing.Callable:
+        """Fit."""
+        self.context = self._fit(input)
+        return self
 
-        :param input: Input data to the :class:`Pipeline`.
+    @abc.abstractmethod
+    def _fit(self, input: typing.Any):
+        """Fit."""
 
-        :return state: Fitted parameters based on processor units.
-        :return rv: Transformed returned value.
-        """
-        for idx, unit in enumerate(self._processor_units):
-            if idx == 0:
-                # Handle input using first processor unit.
-                ctx, self.rv = self._handle(unit, input)
-            else:
-                # Handle return value using rest processor units.
-                ctx, self.rv = self._handle(unit, self.rv)
-            self.state.update(ctx)
-        return self.state, self.rv
+    @abc.abstractmethod
+    def transform(self) -> datapack.DataPack:
+        """Transform."""
 
     def add(
         self,
@@ -109,25 +99,3 @@ class Pipeline(object):
         :return: `processor units` within :class:`Pipeline`.
         """
         return self._processor_units
-
-    def _handle(
-        self,
-        processor_unit: preprocessor.ProcessorUnit,
-        input: typing.Any
-    ) -> typing.Union[dict, typing.Any]:
-        """
-        Handle input data with current `processor unit`.
-
-        Inference whether a `processor_unit` is `Stateful`.
-
-        :param processor_unit: Given a processor unit instance.
-        :param input: Input text to be processed.
-
-        :return ctx: Context as dict, i.e. fitted parameters.
-        :return: Transformed user input given transformer.
-        """
-        ctx = {}
-        if isinstance(processor_unit, preprocessor.StatefulProcessorUnit):
-            processor_unit.fit(input)
-            ctx = processor_unit.state
-        return ctx, processor_unit.transform(input)
