@@ -308,8 +308,14 @@ class WordHashingUnit(ProcessorUnit):
     of :class:`WordHashingUnit` is the word-hashing representation
     of this document.
 
+    :class:`NgramLetterUnit` and :class:`VocabularyUnit` are two
+    essential prerequisite of :class:`WordHashingUnit`.
+
+    TODO Update :class:`WordHashingUnit` to generalize more `DSSM`
+    like models such as `CDSSM` and `LSTM-DSSM`.
+
     Examples:
-       >>> tri_letters = ['st#', '#te', 'est', 'tes']
+       >>> tri_letters = ['#te', 'tes','est', 'st#']
        >>> dim_triletter = 5
        >>> term_index = {'st#': 1, '#te': 2, 'est': 3, 'tes': 4}
        >>> word_hashing = WordHashingUnit(term_index, dim_triletter)
