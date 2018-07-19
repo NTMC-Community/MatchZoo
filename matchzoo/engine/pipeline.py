@@ -36,22 +36,28 @@ class Pipeline(object):
         """Class Initialization."""
         self._processor_units = []
         self.context = {}
-        self.rv = None
+        self.dataframe = None
 
-    def fit(
-        self,
-        input: typing.Any
-    ) -> typing.Callable:
+    def fit(self, input: typing.Any) -> typing.Callable:
         """Fit."""
         self.context = self._fit(input)
         return self
 
+    def transform(self, input) -> datapack.DataPack:
+        """Transform."""
+        self.dataframe = self._transform(input)
+        return datapack.DataPack(self.dataframe, self.context)
+    
+    def fit_transform(self, input) -> datapack.DataPack:
+        """Fit transform"""
+        return self.fit(input).transform(input)
+
     @abc.abstractmethod
     def _fit(self, input: typing.Any):
         """Fit."""
-
+    
     @abc.abstractmethod
-    def transform(self) -> datapack.DataPack:
+    def _transform(self, input):
         """Transform."""
 
     def add(
