@@ -12,6 +12,14 @@ matchzoo.engine.base\_model module
     :undoc-members:
     :show-inheritance:
 
+matchzoo.engine.base\_preprocessor module
+-----------------------------------------
+
+.. automodule:: matchzoo.engine.base_preprocessor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matchzoo.engine.base\_task module
 ---------------------------------
 
