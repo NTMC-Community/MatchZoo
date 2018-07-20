@@ -49,7 +49,7 @@ class Pipeline(object):
         return datapack.DataPack(self.dataframe, self.context)
 
     def fit_transform(self, input) -> datapack.DataPack:
-        """Fit transform"""
+        """Fit transform."""
         return self.fit(input).transform(input)
 
     @abc.abstractmethod
