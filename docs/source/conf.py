@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.abspath('../../matchzoo'))
 sys.path.insert(0, os.path.abspath('../../matchzoo/engine'))
 sys.path.insert(0, os.path.abspath('../../matchzoo/model'))
 sys.path.insert(0, os.path.abspath('../../matchzoo/task'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/preprocessor'))
 
 
 # -- Project information -----------------------------------------------------

@@ -8,6 +8,7 @@ Subpackages
 
     matchzoo.engine
     matchzoo.models
+    matchzoo.preprocessor
     matchzoo.tasks
 
 Submodules
@@ -17,14 +18,6 @@ matchzoo.datapack module
 ------------------------
 
 .. automodule:: matchzoo.datapack
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matchzoo.preprocessors module
------------------------------
-
-.. automodule:: matchzoo.preprocessors
     :members:
     :undoc-members:
     :show-inheritance:
