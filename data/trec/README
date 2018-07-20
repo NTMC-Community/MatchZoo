@@ -1,0 +1,9 @@
+# Running preparation_for_ranking.py
+
+To run the script preparation_for_ranking.py you need to have all your dataset (queries and documents) written to the
+same file trec_corpus.txt where you have the document or query ID followed with its content.
+
+# Ex:
+
+"682 adult immigrant english"
+is one line of the file trec_corpus.txt

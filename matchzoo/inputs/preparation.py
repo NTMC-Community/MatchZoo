@@ -7,6 +7,7 @@ import codecs
 import numpy as np
 import hashlib
 import random
+from tqdm import tqdm
 
 import preprocess
 
@@ -30,6 +31,15 @@ class Preparation(object):
             tid = idtag + str(len(hashid))  # start from 0, 1, 2, ...
             hashid[hex_dig] = tid
             return tid
+
+    def get_text_id_trec(self, hashid, text):
+        hash_obj = hashlib.sha1(text.encode('utf8'))  # if the text are the same, then the hash_code are also the same
+        hex_dig = hash_obj.hexdigest()
+        try:
+            return hashid[hex_dig]
+        except:
+            print("Invalid text input : "+text+"\nEXIT")
+            exit()
 
     def parse_line(self, line, delimiter='\t'):
         subs = line.split(delimiter)
@@ -81,6 +91,31 @@ class Preparation(object):
             label, t1, t2 = self.parse_line(line)
             id1 = self.get_text_id(hashid, t1, 'T')
             id2 = self.get_text_id(hashid, t2, 'T')
+            corpus[id1] = t1
+            corpus[id2] = t2
+            rels.append((label, id1, id2))
+        f.close()
+        return corpus, rels
+
+    def run_with_one_corpus_trec(self, file_path, corpus_file):
+        hashid = {}
+        f = codecs.open(corpus_file, 'r', encoding='utf8')
+        print("Getting TREC ids ...")
+        for line in tqdm(f):
+            _id = line.strip().split()[0]
+            text = line.strip()[len(_id):].strip()
+            hash_obj = hashlib.sha1(text.encode('utf8'))  # if the text are the same, then the hash_code are also the same
+            hex_dig = hash_obj.hexdigest()
+            hashid[hex_dig] = _id
+        corpus = {}
+        rels = []
+        f = codecs.open(file_path, 'r', encoding='utf8')
+        for line in f:
+            line = line
+            line = line.strip()
+            label, t1, t2 = self.parse_line(line)
+            id1 = self.get_text_id_trec(hashid, t1)
+            id2 = self.get_text_id_trec(hashid, t2)
             corpus[id1] = t1
             corpus[id2] = t2
             rels.append((label, id1, id2))
@@ -150,6 +185,42 @@ class Preparation(object):
                     curQid += 1
                     id1 = 'Q' + str(curQid)
                     curQ = t1
+                corpus[id1] = t1
+                corpus[id2] = t2
+                rels.append((label, id1, id2))
+            f.close()
+        return corpus, rels_train, rels_valid, rels_test
+
+    def run_with_train_valid_test_corpus_trec(self, train_file, valid_file, test_file, corpus_file):
+        hashid = {}
+        f = codecs.open(corpus_file, 'r', encoding='utf8')
+        print("Getting TREC ids ...")
+        for line in tqdm(f):
+            _id = line.strip().split()[0]
+            text = line.strip()[len(_id):].strip()
+            hash_obj = hashlib.sha1(text.encode('utf8'))  # if the text are the same, then the hash_code are also the same
+            hex_dig = hash_obj.hexdigest()
+            hashid[hex_dig] = _id
+        corpus = {}
+        rels = []
+        rels_train = []
+        rels_valid = []
+        rels_test = []
+        # merge corpus files, but return rels for train/valid/test seperately
+        for file_path in list([train_file, valid_file, test_file]):
+            if file_path == train_file:
+                rels = rels_train
+            elif file_path == valid_file:
+                rels = rels_valid
+            if file_path == test_file:
+                rels = rels_test
+            f = codecs.open(file_path, 'r', encoding='utf8')
+            for line in f:
+                line = line
+                line = line.strip()
+                label, t1, t2 = self.parse_line(line)
+                id2 = self.get_text_id_trec(hashid, t2)
+                id1 = self.get_text_id_trec(hashid, t1)
                 corpus[id1] = t1
                 corpus[id2] = t2
                 rels.append((label, id1, id2))
@@ -258,6 +329,39 @@ class Preparation(object):
         rel_test = select_rel_by_qids(qid_test)
 
         return rel_train, rel_valid, rel_test
+
+    @staticmethod
+    def split_n_cross_validation_for_ranking(relations, ratio):
+        
+        def select_rel_by_qids(qids):
+            rels = []
+            qids = set(qids)
+            for r, q, d in relations:
+                if q in qids:
+                    rels.append((r, q, d))
+            return rels
+
+        qid_group = set()
+        for r, q, d in relations:
+            qid_group.add(q)
+        qid_group = list(qid_group)
+        #print(qid_group)
+        random.shuffle(qid_group)
+        total_rel = len(qid_group)
+        folds = {}
+        num_valid_test = int(total_rel * (1/ratio)) # same size for test and valid folds
+        # num_train = int(total_rel - 2*num_valid_test)
+        for i in range(ratio):
+            qid_test = qid_group[i*num_valid_test:(i+1)*num_valid_test]
+            qid_valid = qid_group[(i+1)*num_valid_test:(i+2)*num_valid_test]
+            if i==(ratio-1):
+                qid_valid = qid_group[:num_valid_test]
+            qid_train = list(set(qid_group) - set(qid_test).union(qid_valid))
+            rel_train = select_rel_by_qids(qid_train)
+            rel_valid = select_rel_by_qids(qid_valid)
+            rel_test = select_rel_by_qids(qid_test)
+            folds[i] = (rel_test, rel_valid, rel_train)
+        return folds
 
 
 if __name__ == '__main__':
