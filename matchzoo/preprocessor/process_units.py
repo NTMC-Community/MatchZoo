@@ -316,9 +316,9 @@ class WordHashingUnit(ProcessorUnit):
 
     Examples:
        >>> tri_letters = ['#te', 'tes','est', 'st#']
-       >>> dim_triletter = 5
-       >>> term_index = {'st#': 1, '#te': 2, 'est': 3, 'tes': 4}
-       >>> word_hashing = WordHashingUnit(term_index, dim_triletter)
+       >>> word_hashing = WordHashingUnit(
+       ...     term_index={'': 0,'st#': 1, '#te': 2, 'est': 3, 'tes': 4},
+       ...     dim_triletter=5)
        >>> hashing = word_hashing.transform(tri_letters)
        >>> hashing[0]
        0.0
@@ -342,7 +342,7 @@ class WordHashingUnit(ProcessorUnit):
         :param dim_triletter: dimensionality of tri_leltters.
         """
         self._term_index = term_index
-        self.hashing = np.zeros(dim_triletter)
+        self._dim_triletter = dim_triletter
 
     def transform(
         self,
@@ -355,10 +355,11 @@ class WordHashingUnit(ProcessorUnit):
         :class:`NgramLetterUnit`.
         :return: Word hashing representation of `tri-letters`.
         """
+        hashing = np.zeros(self._dim_triletter)
         counted_tri_letters = dict(collections.Counter(tri_letters))
         for key, value in counted_tri_letters.items():
             # get index.
             idx = self._term_index[key]
             # update hashing layer.
-            self.hashing[idx] = value
-        return self.hashing
+            hashing[idx] = value
+        return hashing
