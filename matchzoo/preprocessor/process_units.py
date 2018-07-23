@@ -315,12 +315,12 @@ class WordHashingUnit(ProcessorUnit):
     like models such as `CDSSM` and `LSTM-DSSM`.
 
     Examples:
-       >>> tri_letters = ['#te', 'tes','est', 'st#']
+       >>> tri_letters = ['#te', 'tes','est', 'st#', 'oov']
        >>> word_hashing = WordHashingUnit(
        ...     term_index={'': 0,'st#': 1, '#te': 2, 'est': 3, 'tes': 4})
        >>> hashing = word_hashing.transform(tri_letters)
        >>> hashing[0]
-       0.0
+       1.0
        >>> hashing[1]
        1.0
        >>> hashing.shape
@@ -353,8 +353,8 @@ class WordHashingUnit(ProcessorUnit):
         :return: Word hashing representation of `tri-letters`.
         """
         hashing = np.zeros(len(self._term_index))
-        counted_tri_letters = dict(collections.Counter(tri_letters))
+        counted_tri_letters = collections.Counter(tri_letters)
         for key, value in counted_tri_letters.items():
-            idx = self._term_index[key]
+            idx = self._term_index.get(key, 0)
             hashing[idx] = value
         return hashing
