@@ -355,8 +355,6 @@ class WordHashingUnit(ProcessorUnit):
         hashing = np.zeros(len(self._term_index))
         counted_tri_letters = dict(collections.Counter(tri_letters))
         for key, value in counted_tri_letters.items():
-            # get index.
             idx = self._term_index[key]
-            # update hashing layer.
             hashing[idx] = value
         return hashing
