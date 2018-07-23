@@ -11,5 +11,4 @@ def test_base_preprocessor():
         process_unit = preprocessor.NgramLetterUnit(),
         input = input_tokens
     )
-    assert state.get('input_dim') == 9
     assert '#an' in data
