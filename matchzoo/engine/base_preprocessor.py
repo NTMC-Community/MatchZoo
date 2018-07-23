@@ -1,7 +1,6 @@
 """:class:`BasePreprocessor` define input and ouutput for processors."""
 
 import abc
-import typing
 
 from matchzoo import datapack
 
@@ -10,7 +9,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
     """:class:`BasePreprocessor` to input handle data."""
 
     @abc.abstractmethod
-    def fit(self) -> typing.Callable:
+    def fit(self) -> 'BasePreprocessor':
         """
         Fit parameters on input data.
 
