@@ -8,7 +8,7 @@ def test_base_preprocessor():
     base_preprocessor = engine.BasePreprocessor()
     input_tokens = ['animal', 'zoo']
     state, data = base_preprocessor.handle(
-        process_unit = preprocessor.NgramLetterUnit(),
+        process_unit = preprocessor.VocabularyUnit(),
         input = input_tokens
     )
-    assert '#an' in data
+    assert state.get('term_index')
