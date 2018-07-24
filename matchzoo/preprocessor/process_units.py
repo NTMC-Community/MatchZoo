@@ -188,10 +188,6 @@ class NgramLetterUnit(ProcessorUnit):
 
     """
 
-    def __init__(self):
-        """Initialization."""
-        super().__init__()
-
     def transform(self, tokens: list, ngram: int=3) -> list:
         """
         Transform token into tri-letter.
