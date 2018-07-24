@@ -3,4 +3,6 @@ from .process_units import (
     StatefulProcessorUnit,
     NgramLetterUnit,
     VocabularyUnit
+    TokenizeUnit,
+    LowercaseUnit
 )
