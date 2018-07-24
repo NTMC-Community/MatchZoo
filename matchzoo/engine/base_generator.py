@@ -3,17 +3,13 @@
 import abc
 import keras
 import threading
+import numpy as np
 
 
 class BaseGenerator(keras.utils.Sequence):
     """Matchzoo base generator."""
 
-    def __init__(
-            self,
-            batch_size = int,
-            shuffle: bool,
-            is_train: bool
-        ):
+    def __init__(self, batch_size: int, shuffle: bool, is_train: bool):
         """Initialization."""
         self.batch_size = batch_size
         self.shuffle = shuffle
@@ -46,7 +42,8 @@ class BaseGenerator(keras.utils.Sequence):
         return self._get_batches_of_transformed_sample(index_array)
 
     def __len__(self):
-        return (self.n + self.batch_size -1) // self.batch_size # round up
+        """Round up."""
+        return (self.n + self.batch_size - 1) // self.batch_size
 
     def on_epoch_end(self):
         self._set_index_array()
