@@ -324,7 +324,7 @@ class WordHashingUnit(ProcessorUnit):
        >>> hashing[1]
        1.0
        >>> hashing.shape
-       (5,)
+       (6,)
 
     """
 
@@ -352,7 +352,7 @@ class WordHashingUnit(ProcessorUnit):
         :class:`NgramLetterUnit`.
         :return: Word hashing representation of `tri-letters`.
         """
-        hashing = np.zeros(len(self._term_index))
+        hashing = np.zeros(len(self._term_index) + 1)
         counted_tri_letters = collections.Counter(tri_letters)
         for key, value in counted_tri_letters.items():
             idx = self._term_index.get(key, 0)

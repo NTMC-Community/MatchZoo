@@ -3,5 +3,10 @@ from .process_units import (
     StatefulProcessorUnit,
     TokenizeUnit,
     LowercaseUnit,
-    NgramLetterUnit
+    PuncRemovalUnit,
+    StopRemovalUnit,
+    NgramLetterUnit,
+    VocabularyUnit,
+    WordHashingUnit
 )
+from .dssm_preprocessor import DSSMPreprocessor
