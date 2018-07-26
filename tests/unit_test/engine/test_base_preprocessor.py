@@ -7,5 +7,3 @@ def test_base_preprocessor():
     base_processor = engine.BasePreprocessor()
     with pytest.raises(AttributeError):
     	base_processor.fit_transform()
-
-
