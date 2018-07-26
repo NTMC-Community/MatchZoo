@@ -1,21 +1,31 @@
 import pytest
 from matchzoo import engine
+from matchzoo.datapack import DataPack
 
 
-def test_base_generator():
+@pytest.fixture
+def x():
+    data = [
+        ([1,2,3], [2,3,4], 0, 'did-0', 'did-1'),
+        ([3,4,6], [1,3,5], 1, 'did-2', 'did-3')
+    ]
+    cts = {'vocab_size': 6, 'fill_word': 6}
+    return DataPack(data, cts)
+
+def test_base_generator(x):
     class MyBaseGenerator(engine.BaseGenerator):
-        def __init__(self, batch_size=10):
+        def __init__(self, inputs, batch_size=1):
             self.batch_size = batch_size
-            super(MyBaseGenerator, self).__init__(batch_size, False, False)
+            self.n = len(inputs)
+            super(MyBaseGenerator, self).__init__(batch_size, False)
 
-        def _total_num_instances(self):
-            return 10
-
-        def _get_batches_of_transformed_sample(self, index_array):
-            batch_size = len(index_array)
+        def _get_batches_of_transformed_samples(self, index_array):
             batch_x = [0]
             batch_y = [1]
             return (batch_x, batch_y)
 
-    generator = MyBaseGenerator()
+    generator = MyBaseGenerator(x)
     assert generator
+    x, y = generator[1]
+    assert x == [0]
+    assert y == [1]

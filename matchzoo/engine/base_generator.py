@@ -2,27 +2,27 @@
 
 import abc
 import keras
-import threading
 import numpy as np
 
 
 class BaseGenerator(keras.utils.Sequence):
-    """Matchzoo base generator."""
+    """Matchzoo base generator.
 
-    def __init__(self, batch_size: int, shuffle: bool, is_train: bool):
+    Every `Generator` must implement the `_get_batches_of_transformed_samples`
+    method.
+
+    # Arguments
+        batch_size: Integer, size of a batch.
+        shuffle: Boolean, whether to shuffle the data between epochs.
+    """
+
+    def __init__(self, batch_size: int, shuffle: bool):
         """Initialization."""
         self.batch_size = batch_size
         self.shuffle = shuffle
-        self.is_train = is_train
         self.batch_index = 0
-        self.lock = threading.Lock()
         self.index_array = None
-        self.n = self._total_num_instances()
         self.index_generator = self._flow_index()
-
-    @abc.abstractmethod
-    def _total_num_instances(self):
-        """Return the total number of instances."""
 
     def _set_index_array(self):
         self.index_array = np.arange(self.n)
@@ -39,7 +39,7 @@ class BaseGenerator(keras.utils.Sequence):
             self._set_index_array()
         index_array = self.index_array[self.batch_size * idx:
                                        self.batch_size * (idx + 1)]
-        return self._get_batches_of_transformed_sample(index_array)
+        return self._get_batches_of_transformed_samples(index_array)
 
     def __len__(self):
         """Round up."""
@@ -65,16 +65,8 @@ class BaseGenerator(keras.utils.Sequence):
                 self.batch_index = 0
             yield self.index_array[curr_index: curr_index + self.batch_size]
 
-    def __iter__(self):
-        # Need if we want to do something like:
-        # for x, y in data_gen().flow(...):
-        return self
-
-    def __next__(self, *args, **kwargs):
-        return self.next(*args, **kwargs)
-
     @abc.abstractmethod
-    def _get_batches_of_transformed_sample(self, index_array):
+    def _get_batches_of_transformed_samples(self, index_array):
         """Gets a batch of transformed samples.
 
         # Arguments
@@ -84,4 +76,3 @@ class BaseGenerator(keras.utils.Sequence):
             A batch of transformed samples.
 
         """
-        raise NotImplementedError
