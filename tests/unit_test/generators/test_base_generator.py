@@ -14,18 +14,24 @@ def x():
 
 def test_base_generator(x):
     class MyBaseGenerator(engine.BaseGenerator):
-        def __init__(self, inputs, batch_size=1):
+        def __init__(self, inputs, batch_size=1, shuffle=True):
             self.batch_size = batch_size
             self.n = len(inputs)
-            super(MyBaseGenerator, self).__init__(batch_size, False)
+            super(MyBaseGenerator, self).__init__(batch_size, shuffle)
 
-        def _get_batches_of_transformed_samples(self, index_array):
+        def _get_batch_of_transformed_samples(self, index_array):
             batch_x = [0]
             batch_y = [1]
             return (batch_x, batch_y)
 
     generator = MyBaseGenerator(x)
+    x, y = generator[0]
     assert generator
+    generator.on_epoch_end()
     x, y = generator[1]
     assert x == [0]
     assert y == [1]
+    for index_array in generator._flow_index():
+        x, y = generator._get_batch_of_transformed_samples(index_array)
+        assert x == [0]
+        assert y == [1]

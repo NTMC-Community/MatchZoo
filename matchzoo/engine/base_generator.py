@@ -6,9 +6,9 @@ import numpy as np
 
 
 class BaseGenerator(keras.utils.Sequence):
-    """Matchzoo base generator.
+    """Abstract base generator of all matchzoo generators.
 
-    Every `Generator` must implement the `_get_batches_of_transformed_samples`
+    Every `Generator` must implement the `_get_batch_of_transformed_samples`
     method.
 
     # Arguments
@@ -17,7 +17,7 @@ class BaseGenerator(keras.utils.Sequence):
     """
 
     def __init__(self, batch_size: int, shuffle: bool):
-        """Initialization."""
+        """Initialize the base generator."""
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.batch_index = 0
@@ -30,6 +30,7 @@ class BaseGenerator(keras.utils.Sequence):
             self.index_array = np.random.permutation(self.n)
 
     def __getitem__(self, idx):
+        """Get a batch from index `idx`."""
         if idx >= len(self):
             raise ValueError('Asked to retrieve element {idx}, '
                              'but the Sequence '
@@ -39,16 +40,18 @@ class BaseGenerator(keras.utils.Sequence):
             self._set_index_array()
         index_array = self.index_array[self.batch_size * idx:
                                        self.batch_size * (idx + 1)]
-        return self._get_batches_of_transformed_samples(index_array)
+        return self._get_batch_of_transformed_samples(index_array)
 
     def __len__(self):
-        """Round up."""
+        """Return the total number of batches."""
         return (self.n + self.batch_size - 1) // self.batch_size
 
     def on_epoch_end(self):
+        """Reorganize the index array while epoch is ended."""
         self._set_index_array()
 
     def reset(self):
+        """Reset the batch_index to generator from begin."""
         self.batch_index = 0
 
     def _flow_index(self):
@@ -66,11 +69,11 @@ class BaseGenerator(keras.utils.Sequence):
             yield self.index_array[curr_index: curr_index + self.batch_size]
 
     @abc.abstractmethod
-    def _get_batches_of_transformed_samples(self, index_array):
-        """Gets a batch of transformed samples.
+    def _get_batch_of_transformed_samples(self, index_array):
+        """Get a batch of transformed samples.
 
         # Arguments
-            index_array: Arrray of sample indices to include in batch.
+            index_array: Arrray of sample indices to include in a batch.
 
         # Returns
             A batch of transformed samples.
