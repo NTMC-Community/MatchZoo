@@ -183,8 +183,8 @@ class NgramLetterUnit(ProcessorUnit):
         >>> rv = triletter.transform(['word'])
         >>> len(rv)
         4
-        >>> '#wo' in rv
-        True
+        >>> sorted(rv)
+        ['#wo', 'ord', 'rd#', 'wor']
 
     """
 
@@ -200,11 +200,11 @@ class NgramLetterUnit(ProcessorUnit):
 
         :return n_letters: generated n_letters.
         """
-        n_letters = set()
+        n_letters = []
         for token in tokens:
             token = '#' + token + '#'
             while len(token) >= ngram:
-                n_letters.add(token[:ngram])
+                n_letters.append(token[:ngram])
                 token = token[1:]
         return n_letters
 
