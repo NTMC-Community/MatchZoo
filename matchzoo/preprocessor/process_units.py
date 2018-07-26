@@ -183,8 +183,8 @@ class NgramLetterUnit(ProcessorUnit):
         >>> rv = triletter.transform(['word'])
         >>> len(rv)
         4
-        >>> sorted(rv)
-        ['#wo', 'ord', 'rd#', 'wor']
+        >>> rv
+        ['#wo', 'wor', 'ord', 'rd#']
 
     """
 
