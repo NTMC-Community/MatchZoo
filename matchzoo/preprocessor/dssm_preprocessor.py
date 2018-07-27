@@ -72,13 +72,13 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """Transform."""
         output_left = []
         output_righ = []
-        term_index = self._context.get('term_index', None)
-        if not term_index:
+        if not self._context.get('term_index'):
             raise ValueError(
                 "Please fit term_index before apply transofm function")
         inputs, labels = self._detach_labels(inputs)
         units = self._prepare_stateless_units()
-        units.append(preprocessor.WordHashingUnit(term_index))
+        units.append(
+            preprocessor.WordHashingUnit(self._context['term_index']))
         for left, righ in inputs:
             for unit in units:
                 left = unit.transform(left)
