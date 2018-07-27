@@ -14,13 +14,13 @@
 
 # third-party & project configuration
 .coveragerc             @bwanglzu
-.gitignore      		@faneshion
-.travis.yml     		@bwanglzu
-CONTRIBUTING.MD 		@bwanglzu
-Makefile        		@uduse
-README.md       		@yangliuy @pl8787
-TEAM.md         		@yangliuy @pl8787
-readthedocs.yml 		@wqh17101 @bwanglzu
+.gitignore      	@faneshion
+.travis.yml     	@bwanglzu
+CONTRIBUTING.MD 	@bwanglzu
+Makefile        	@uduse
+README.md       	@yangliuy @pl8787
+TEAM.md         	@yangliuy @pl8787
+readthedocs.yml 	@wqh17101 @bwanglzu
 requirements.txt        @uduse @bwanglzu
 setup.py                @uduse @bwanglzu
 
