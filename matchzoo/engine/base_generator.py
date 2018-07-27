@@ -11,9 +11,6 @@ class BaseGenerator(keras.utils.Sequence):
     Every `Generator` must implement the `_get_batch_of_transformed_samples`
     method.
 
-    # Arguments
-        batch_size: Integer, size of a batch.
-        shuffle: Boolean, whether to shuffle the data between epochs.
     """
 
     def __init__(self, batch_size: int, shuffle: bool):
@@ -32,10 +29,9 @@ class BaseGenerator(keras.utils.Sequence):
     def __getitem__(self, idx):
         """Get a batch from index `idx`."""
         if idx >= len(self):
-            raise ValueError('Asked to retrieve element {idx}, '
-                             'but the Sequence '
-                             'has length {length}'.format(idx=idx,
-                                                          length=len(self)))
+            msg = f'Asked to retrieve element {idx}, '
+            msg += f'but the Sequence has length {len(self)}'
+            raise ValueError(msg)
         if self.index_array is None:
             self._set_index_array()
         index_array = self.index_array[self.batch_size * idx:

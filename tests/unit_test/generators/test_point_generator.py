@@ -26,7 +26,6 @@ def raw_point_generator(x, task):
     shuffle = True
     batch_size = 1
     generator = PointGenerator(x, task, batch_size, shuffle)
-    assert generator
     return generator
 
 def test_point_generator(raw_point_generator):

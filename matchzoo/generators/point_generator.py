@@ -18,23 +18,25 @@ class PointGenerator(engine.BaseGenerator):
     def __init__(
         self,
         inputs: DataPack,
-        task_type: engine.BaseTask,
+        task: engine.BaseTask,
         batch_size: int=32,
         shuffle: bool=True
     ):
         """Initialize the point generator."""
-        self.task_type = task_type
+        self._task = task
         self.n = len(inputs)
-        self.transform_data(inputs)
+        transformed_inputs = self.transform_data(inputs)
+        self.x_left, self.x_right, self.y, self.ids = transformed_inputs
         super(PointGenerator, self).__init__(batch_size, shuffle)
 
     def transform_data(self, inputs: DataPack):
         """Obtain the transformed data from datapack."""
         data = inputs.dataframe
-        self.x_left = np.asarray(data.text_left)
-        self.x_right = np.asarray(data.text_right)
-        self.y = np.asarray(data.label)
-        self.ids = np.asarray(data.id)
+        x_left = np.asarray(data.text_left)
+        x_right = np.asarray(data.text_right)
+        y = np.asarray(data.label)
+        ids = np.asarray(data.id)
+        return x_left, x_right, y, ids
 
     def _get_batch_of_transformed_samples(self, index_array):
         """Get all sampels."""
@@ -42,10 +44,10 @@ class PointGenerator(engine.BaseGenerator):
         batch_x_left = []
         batch_x_right = []
         batch_ids = []
-        if isinstance(self.task_type, tasks.Ranking):
+        if isinstance(self._task, tasks.Ranking):
             batch_y = self.y
-        elif isinstance(self.task_type, tasks.Classification):
-            batch_y = np.zeros((batch_size, self.task_type._num_classes),
+        elif isinstance(self._task, tasks.Classification):
+            batch_y = np.zeros((batch_size, self._task._num_classes),
                                dtype=np.int32)
             for i, label in enumerate(self.y[index_array]):
                 batch_y[i, label] = 1
