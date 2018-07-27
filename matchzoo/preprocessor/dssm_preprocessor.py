@@ -17,6 +17,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         ... ]
         >>> dssm_preprocessor = DSSMPreprocessor()
         >>> rv_train = dssm_preprocessor.fit_transform(train_inputs)
+        >>> dssm_preprocessor.context['dim_triletter']
+        37
         >>> type(rv_train)
         <class 'matchzoo.datapack.DataPack'>
         >>> test_inputs = [("beijing", "I visted beijing yesterday.")]
@@ -28,8 +30,12 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
     def __init__(self):
         """Initialization."""
-        self.context = {}
-        super().__init__()
+        self._context = {}
+
+    @property
+    def context(self):
+        """Get fitted parameters."""
+        return self._context
 
     def _detach_labels(self, inputs):
         """Detach."""
@@ -58,6 +64,12 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             preprocessor.NgramLetterUnit()
         ]
 
+    def _prepare_statefull_units(self, term_index):
+        """Prepare."""
+        return [
+            preprocessor.WordHashingUnit(term_index)
+        ]
+
     def _build_vocab(self, inputs):
         """Build vocabulary before fit transform."""
         vocab = []
@@ -74,21 +86,22 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         vocab = self._build_vocab(inputs)
         vocab_unit = preprocessor.VocabularyUnit()
         vocab_unit.fit(vocab)
-        self.context['term_index'] = vocab_unit.state['term_index']
-        self.context['dim_triletter'] = len(vocab_unit.state['term_index']) + 1
+        self._context['term_index'] = vocab_unit.state['term_index']
+        self._context['dim_triletter'] = len(
+            vocab_unit.state['term_index']) + 1
         return self
 
     def transform(self, inputs):
         """Transform."""
         output_left = []
         output_righ = []
-        units = self._prepare_stateless_units()
-        term_index = self.context.get('term_index', None)
+        term_index = self._context.get('term_index', None)
         if not term_index:
             raise ValueError(
                 "Before apply transofm function, please fit term_index first!")
-        units.append(preprocessor.WordHashingUnit(term_index))
         inputs, labels = self._detach_labels(inputs)
+        units = self._prepare_stateless_units() + \
+            self._prepare_statefull_units(term_index)
         for left, righ in inputs:
             for unit in units:
                 left = unit.transform(left)
@@ -98,4 +111,4 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         data = {'text_left': output_left, 'text_right': output_righ}
         if labels:
             data['labels'] = labels
-        return datapack.DataPack(data=data, context=self.context)
+        return datapack.DataPack(data=data, context=self._context)
