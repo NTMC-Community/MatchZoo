@@ -42,9 +42,9 @@ class PointGenerator(engine.BaseGenerator):
         batch_x_left = []
         batch_x_right = []
         batch_ids = []
-        if self.task_type == tasks.Ranking:
+        if isinstance(self.task_type, tasks.Ranking):
             batch_y = self.y
-        elif self.target_mode == tasks.Classification:
+        elif isinstance(self.task_type, tasks.Classification):
             batch_y = np.zeros((batch_size, self.task_type._num_classes),
                                dtype=np.int32)
             for i, label in enumerate(self.y[index_array]):
@@ -53,8 +53,8 @@ class PointGenerator(engine.BaseGenerator):
             raise ValueError('Error target mode in point generator.')
 
         for key, val in enumerate(index_array):
-            batch_x_left[key] = self.x_left[val]
-            batch_x_right[key] = self.x_right[val]
+            batch_x_left.append(self.x_left[val])
+            batch_x_right.append(self.x_right[val])
             batch_ids.append(self.ids[val])
 
         return ({'x_left': np.array(batch_x_left), 'x_right':

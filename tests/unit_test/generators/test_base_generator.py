@@ -12,6 +12,7 @@ def x():
     cts = {'vocab_size': 6, 'fill_word': 6}
     return DataPack(data, cts)
 
+@pytest.fixture
 def test_base_generator(x):
     class MyBaseGenerator(engine.BaseGenerator):
         def __init__(self, inputs, batch_size=1, shuffle=True):
@@ -23,10 +24,10 @@ def test_base_generator(x):
             batch_x = [0]
             batch_y = [1]
             return (batch_x, batch_y)
+    return MyBaseGenerator
 
-    generator = MyBaseGenerator(x)
-    x, y = generator[0]
-    assert generator
+def test_base_generator_nornal(x, test_base_generator):
+    generator = test_base_generator(x, 1, True)
     generator.on_epoch_end()
     x, y = generator[1]
     assert x == [0]
@@ -35,3 +36,4 @@ def test_base_generator(x):
         x, y = generator._get_batch_of_transformed_samples(index_array)
         assert x == [0]
         assert y == [1]
+        break
