@@ -37,23 +37,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """Get fitted parameters."""
         return self._context
 
-    def _detach_labels(self, inputs):
-        """Detach."""
-        unzipped_inputs = list(zip(*inputs))
-        if len(unzipped_inputs) == 3:
-            return zip(
-                unzipped_inputs[0],
-                unzipped_inputs[1]), unzipped_inputs[2]
-        elif len(unzipped_inputs) == 2:
-            return zip(
-                unzipped_inputs[0],
-                unzipped_inputs[1]), None
-        else:
-            msg = 'Not supported input format.'
-            msg += '(query, document, label) or '
-            msg += '(query, document) expected.'
-            raise ValueError(msg)
-
     def _prepare_stateless_units(self):
         """Prepare."""
         return [
@@ -92,7 +75,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         term_index = self._context.get('term_index', None)
         if not term_index:
             raise ValueError(
-                "Before apply transofm function, please fit term_index first!")
+                "Please fit term_index before apply transofm function")
         inputs, labels = self._detach_labels(inputs)
         units = self._prepare_stateless_units()
         units.append(preprocessor.WordHashingUnit(term_index))
