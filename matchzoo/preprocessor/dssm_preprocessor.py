@@ -38,10 +38,15 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             return zip(
                 unzipped_inputs[0],
                 unzipped_inputs[1]), unzipped_inputs[2]
-        else:
+        elif len(unzipped_inputs) == 2:
             return zip(
                 unzipped_inputs[0],
                 unzipped_inputs[1]), None
+        else:
+            msg = 'Not supported input format.'
+            msg += '(query, document, label) or '
+            msg += '(query, document) expected.'
+            raise ValueError(msg)
 
     def _prepare_stateless_units(self):
         """Prepare."""
@@ -61,7 +66,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             for unit in units:
                 left = unit.transform(left)
                 right = unit.transform(right)
-            # Extend tri-letters into vocab.
             vocab.extend(left + right)
         return vocab
 
@@ -91,18 +95,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                 righ = unit.transform(righ)
             output_left.append(left)
             output_righ.append(righ)
+        data = {'text_left': output_left, 'text_right': output_righ}
         if labels:
-            return datapack.DataPack(
-                data={
-                    'text_left': output_left,
-                    'text_right': output_righ,
-                    'labels': labels
-                },
-                context=self.context)
-        else:
-            return datapack.DataPack(
-                data={
-                    'text_left': output_left,
-                    'text_right': output_righ
-                },
-                context=self.context)
+            data['labels'] = labels
+        return datapack.DataPack(data=data, context=self.context)
