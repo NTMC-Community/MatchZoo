@@ -64,12 +64,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             preprocessor.NgramLetterUnit()
         ]
 
-    def _prepare_statefull_units(self, term_index):
-        """Prepare."""
-        return [
-            preprocessor.WordHashingUnit(term_index)
-        ]
-
     def _build_vocab(self, inputs):
         """Build vocabulary before fit transform."""
         vocab = []
@@ -100,8 +94,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             raise ValueError(
                 "Before apply transofm function, please fit term_index first!")
         inputs, labels = self._detach_labels(inputs)
-        units = self._prepare_stateless_units() + \
-            self._prepare_statefull_units(term_index)
+        units = self._prepare_stateless_units()
+        units.append(preprocessor.WordHashingUnit(term_index))
         for left, righ in inputs:
             for unit in units:
                 left = unit.transform(left)
