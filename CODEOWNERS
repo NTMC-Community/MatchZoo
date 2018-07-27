@@ -1,0 +1,42 @@
+# Watchers and contributors to MatchZoo repo directories/packages/files
+# Please see documentation of use of CODEOWNERS file at
+# https://help.github.com/articles/about-codeowners/ and
+# https://github.com/blog/2392-introducing-code-owners
+#
+# Anybody can add themselves or a team as additional watcher or contributor 
+# to get notified about changes in a specific package.
+# See https://help.github.com/articles/about-teams how to setup teams.
+
+#  Define individuals or teams that are responsible for code in a repository.
+
+# global owner.
+*       @faneshion
+
+# third-party & project configuration
+.coveragerc             @bwanglzu
+.gitignore      		@faneshion
+.travis.yml     		@bwanglzu
+CONTRIBUTING.MD 		@bwanglzu
+Makefile        		@uduse
+README.md       		@yangliuy @pl8787
+TEAM.md         		@yangliuy @pl8787
+readthedocs.yml 		@wqh17101 @bwanglzu
+requirements.txt        @uduse @bwanglzu
+setup.py                @uduse @bwanglzu
+
+# artworks
+/artworks/              @faneshion
+
+# docs
+/docs/                  @wqh17101 @bwanglzu
+
+# tests
+/tests/                 @uduse @bwanglzu
+
+# matchzoo
+/matchzoo/engine/       @uduse @bwanglzu
+/matchzoo/models/       @yangliuy @pl8787 @bwanglzu @uduse
+/matchzoo/preprocessor/ @bwanglzu @uduse
+/matchzoo/tasks/        @uduse @bwanglzu
+/matchzoo/generators/   @faneshion @pl8787 @yangliuy
+/matchzoo/*             @bwanglzu @uduse
