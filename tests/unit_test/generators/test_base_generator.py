@@ -7,7 +7,8 @@ from matchzoo.datapack import DataPack
 def x():
     data = [
         ([1,2,3], [2,3,4], 0, 'did-0', 'did-1'),
-        ([3,4,6], [1,3,5], 1, 'did-2', 'did-3')
+        ([3,4,6], [1,3,5], 1, 'did-2', 'did-3'),
+        ([1,4,5], [2,4,5], 1, 'did-2', 'did-4'),
     ]
     cts = {'vocab_size': 6, 'fill_word': 6}
     return DataPack(data, cts)
@@ -26,6 +27,14 @@ def test_base_generator(x):
             return (batch_x, batch_y)
     return MyBaseGenerator
 
+def test_base_generator_flow_idnex(x, test_base_generator):
+    generator = test_base_generator(x, 4, True)
+    for index_array in generator._flow_index():
+        x, y = generator._get_batch_of_transformed_samples(index_array)
+        assert x == [0]
+        assert y == [1]
+        break
+
 def test_base_generator_nornal(x, test_base_generator):
     generator = test_base_generator(x, 1, True)
     generator.on_epoch_end()
@@ -37,3 +46,9 @@ def test_base_generator_nornal(x, test_base_generator):
         assert x == [0]
         assert y == [1]
         break
+
+def test_base_generator_except(x, test_base_generator):
+    generator = test_base_generator(x, 1, True)
+    generator.on_epoch_end()
+    with pytest.raises(ValueError):
+        x, y = generator[4]

@@ -11,8 +11,19 @@ class PointGenerator(engine.BaseGenerator):
 
     Ponit generator can be used for classification as well as ranking.
 
-    # Arguments
-        inputs: the transformed dataset
+    Examples:
+        >>> data = [{
+        ... 'text_left':[1,2],
+        ... 'text_right': [3,4],
+        ... 'label': 0,
+        ... 'id': ('id0', 'id1')
+        ... }]
+        >>> input = DataPack(data)
+        >>> task = tasks.Classification(num_classes=2)
+        >>> from matchzoo.generators import PointGenerator
+        >>> generator = PointGenerator(input, task, 1, True)
+        >>> x, y = generator[0]
+
     """
 
     def __init__(
@@ -24,7 +35,7 @@ class PointGenerator(engine.BaseGenerator):
     ):
         """Initialize the point generator."""
         self._task = task
-        self.n = len(inputs)
+        self.n = len(inputs.dataframe)
         transformed_inputs = self.transform_data(inputs)
         self.x_left, self.x_right, self.y, self.ids = transformed_inputs
         super(PointGenerator, self).__init__(batch_size, shuffle)
