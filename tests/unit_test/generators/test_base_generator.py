@@ -18,8 +18,7 @@ def test_base_generator(x):
     class MyBaseGenerator(engine.BaseGenerator):
         def __init__(self, inputs, batch_size=1, shuffle=True):
             self.batch_size = batch_size
-            self.n = len(inputs)
-            super(MyBaseGenerator, self).__init__(batch_size, shuffle)
+            super(MyBaseGenerator, self).__init__(batch_size, len(inputs), shuffle)
 
         def _get_batch_of_transformed_samples(self, index_array):
             batch_x = [0]

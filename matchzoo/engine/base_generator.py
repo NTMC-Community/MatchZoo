@@ -8,26 +8,31 @@ import numpy as np
 class BaseGenerator(keras.utils.Sequence):
     """Abstract base generator of all matchzoo generators.
 
-    Every `Generator` must implement the `_get_batch_of_transformed_samples`
+    Every generator must implement :meth:`_get_batch_of_transformed_samples`
     method.
 
     """
 
-    def __init__(self, batch_size: int, shuffle: bool):
+    def __init__(self, batch_size: int, num_instances: int=0, shuffle:
+                 bool=True):
         """Initialize the base generator."""
         self.batch_size = batch_size
         self.shuffle = shuffle
+        self.num_instances = num_instances
         self.batch_index = 0
         self.index_array = None
         self.index_generator = self._flow_index()
 
     def _set_index_array(self):
-        self.index_array = np.arange(self.n)
+        self.index_array = np.arange(self.num_instances)
         if self.shuffle:
-            self.index_array = np.random.permutation(self.n)
+            self.index_array = np.random.permutation(self.num_instances)
 
     def __getitem__(self, idx):
-        """Get a batch from index `idx`."""
+        """Get a batch from index idx.
+
+        :param idx: the index of the batch.
+        """
         if idx >= len(self):
             msg = f'Asked to retrieve element {idx}, '
             msg += f'but the Sequence has length {len(self)}'
@@ -40,7 +45,7 @@ class BaseGenerator(keras.utils.Sequence):
 
     def __len__(self):
         """Return the total number of batches."""
-        return (self.n + self.batch_size - 1) // self.batch_size
+        return (self.num_instances + self.batch_size - 1) // self.batch_size
 
     def on_epoch_end(self):
         """Reorganize the index array while epoch is ended."""
@@ -56,9 +61,10 @@ class BaseGenerator(keras.utils.Sequence):
         while 1:
             if self.batch_index == 0:
                 self._set_index_array()
-            curr_index = (self.batch_index * self.batch_size) % self.n
+            curr_index = (self.batch_index * self.batch_size) % \
+                self.num_instances
             # note here, some samples may be missed.
-            if self.n > curr_index + self.batch_size:
+            if self.num_instances > curr_index + self.batch_size:
                 self.batch_index += 1
             else:
                 self.batch_index = 0
@@ -68,10 +74,8 @@ class BaseGenerator(keras.utils.Sequence):
     def _get_batch_of_transformed_samples(self, index_array):
         """Get a batch of transformed samples.
 
-        # Arguments
-            index_array: Arrray of sample indices to include in a batch.
+        :param index_array: Arrray of sample indices to include in a batch.
 
-        # Returns
-            A batch of transformed samples.
+        :return: A batch of transformed samples.
 
         """

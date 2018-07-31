@@ -35,10 +35,12 @@ class PointGenerator(engine.BaseGenerator):
     ):
         """Initialize the point generator."""
         self._task = task
-        self.n = len(inputs.dataframe)
         transformed_inputs = self.transform_data(inputs)
         self.x_left, self.x_right, self.y, self.ids = transformed_inputs
-        super(PointGenerator, self).__init__(batch_size, shuffle)
+        super(PointGenerator, self).__init__(batch_size,
+                                             len(inputs.dataframe),
+                                             shuffle
+                                             )
 
     def transform_data(self, inputs: DataPack):
         """Obtain the transformed data from datapack."""
@@ -50,7 +52,7 @@ class PointGenerator(engine.BaseGenerator):
         return x_left, x_right, y, ids
 
     def _get_batch_of_transformed_samples(self, index_array):
-        """Get all sampels."""
+        """Get all a batch of samples."""
         batch_size = len(index_array)
         batch_x_left = []
         batch_x_right = []
