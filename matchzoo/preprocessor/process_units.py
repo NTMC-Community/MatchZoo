@@ -368,22 +368,22 @@ class FixedLengthUnit(ProcessorUnit):
         """
         np_tokens = np.array(tokens)
         fixed_tokens = np.ones([self._text_length], dtype=np_tokens.dtype)
-        fixed_tokens = fixed_tokens.fill(self._pad_value)
+        fixed_tokens.fill(self._pad_value)
 
         if self._truncat_mode == 'pre':
             trunc_tokens = tokens[-self._text_length:]
         elif self._truncat_mode == 'post':
             trunc_tokens = tokens[:self._text_length]
         else:
-            raise ValueError('Truncating type "%s" '
-                             'not understood' % self._truncat_mode)
+            raise ValueError('{} is not a vaild ' 
+                             'truncat mode.'.format(self._truncat_mode))
 
         if self._pad_mode == 'post':
             fixed_tokens[:len(trunc_tokens)] = trunc_tokens
         elif self._pad_mode == 'pre':
             fixed_tokens[-len(trunc_tokens):] = trunc_tokens
         else:
-            raise ValueError('Padding type "%s" '
-                             'not understood' % self._pad_mode)
+            raise ValueError('{} is not a vaild ' 
+                             'pad mode.'.format(self._pad_mode))
 
         return fixed_tokens
