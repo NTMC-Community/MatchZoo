@@ -59,10 +59,10 @@ def test_ngram_unit(list_input):
 def test_fixedlength_unit(list_input):
     fixedlength = FixedLengthUnit(3)
     out = fixedlength.transform(list_input)
-    assert list(out) == ['this', 'Is', 'a'] 
+    assert list(out) == ['36', '!', 'input'] 
     fixedlength = FixedLengthUnit(3, truncat_mode='post')
     out = fixedlength.transform(list_input)
-    assert list(out) == ['36', '!', 'input'] 
+    assert list(out) == ['this', 'Is', 'a'] 
     fixedlength = FixedLengthUnit(12, pad_value='0', truncat_mode='pre', pad_mode='pre')
     out = fixedlength.transform(list_input)
     assert list(out[3:]) == list_input
