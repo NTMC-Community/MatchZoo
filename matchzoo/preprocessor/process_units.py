@@ -335,3 +335,55 @@ class WordHashingUnit(ProcessorUnit):
             idx = self._term_index.get(key, 0)
             hashing[idx] = value
         return hashing
+
+
+class FixedLengthUnit(ProcessorUnit):
+    """Process unit to get the fixed length text."""
+
+    def __init__(self, text_length, pad_value=0, pad_mode='pre', truncat_mode='pre'):
+        """
+        Class initialization.
+
+        :param text_length: fixed length of the text.
+        :param pad_value: if text length is smaller than `text_length`, 
+            filling text with `pad_value`.
+        :param pad_mode: String, 'pre' or 'post':
+            pad either before or after each sequence.
+        :param truncat_mode: String, 'pre' or 'post':
+            remove values from sequences larger than `text_length`, 
+            either at the beginning or at the end of the sequences.
+        """
+        self._text_length = text_length
+        self._pad_value = pad_value
+        self._pad_mode = pad_mode
+        self._truncat_mode = truncat_mode
+
+    def transform(self, tokens: list) -> list:
+        """
+        Transform list of tokenized tokens into the fixed length text.
+
+        :param tokens: list of tokenized tokens.
+
+        :return tokens: list of tokenized tokens in fixed length.
+        """
+        np_tokens = np.array(tokens)
+        fixed_tokens = np.ones([self._text_length], dtype=np_tokens.dtype)
+        fixed_tokens = fixed_tokens.fill(self._pad_value)
+
+        if self._truncat_mode == 'pre':
+            trunc_tokens = tokens[-self._text_length:]
+        elif self._truncat_mode == 'post':
+            trunc_tokens = tokens[:self._text_length]
+        else:
+            raise ValueError('Truncating type "%s" '
+                             'not understood' % self._truncat_mode)
+
+        if self._pad_mode == 'post':
+            fixed_tokens[:len(trunc_tokens)] = trunc_tokens
+        elif self._pad_mode == 'pre':
+            fixed_tokens[-len(trunc_tokens):] = trunc_tokens
+        else:
+            raise ValueError('Padding type "%s" '
+                             'not understood' % self._pad_mode)
+
+        return fixed_tokens

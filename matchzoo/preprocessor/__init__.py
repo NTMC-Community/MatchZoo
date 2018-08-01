@@ -4,5 +4,6 @@ from .process_units import (
     NgramLetterUnit,
     VocabularyUnit,
     TokenizeUnit,
-    LowercaseUnit
+    LowercaseUnit,
+    FixedLengthUnit
 )
