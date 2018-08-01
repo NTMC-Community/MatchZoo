@@ -345,12 +345,12 @@ class FixedLengthUnit(ProcessorUnit):
         Class initialization.
 
         :param text_length: fixed length of the text.
-        :param pad_value: if text length is smaller than `text_length`, 
-            filling text with `pad_value`.
+        :param pad_value: if text length is smaller than :attr: `text_length`, 
+            filling text with :attr: `pad_value`.
         :param pad_mode: String, 'pre' or 'post':
             pad either before or after each sequence.
         :param truncat_mode: String, 'pre' or 'post':
-            remove values from sequences larger than `text_length`, 
+            remove values from sequences larger than :attr: `text_length`, 
             either at the beginning or at the end of the sequences.
         """
         self._text_length = text_length
