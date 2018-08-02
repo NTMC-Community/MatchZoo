@@ -96,7 +96,7 @@ class DigitRemovalUnit(ProcessorUnit):
 class StopRemovalUnit(ProcessorUnit):
     """Process unit to remove stop words."""
 
-    def __init__(self, lang='en'):
+    def __init__(self, lang: str='en'):
         """Initialization."""
         self._lang = lang
 
@@ -338,20 +338,32 @@ class WordHashingUnit(ProcessorUnit):
 
 
 class FixedLengthUnit(ProcessorUnit):
-    """Process unit to get the fixed length text."""
+    """
+    FixedLengthUnit Class.
 
-    def __init__(self, text_length, pad_value=0,
-                 pad_mode='pre', truncate_mode='pre'):
+    Process unit to get the fixed length text.
+
+    Examples:
+        >>> fixedlen = FixedLengthUnit(3)
+        >>> fixedlen.transform(range(1, 6)) == [3, 4, 5]
+        True
+        >>> fixedlen = FixedLengthUnit(3)
+        >>> fixedlen.transform(range(1, 3)) == [0, 1, 2]
+        True
+    """
+
+    def __init__(self, text_length: int, pad_value: int=0,
+                 pad_mode: str='pre', truncate_mode: str='pre'):
         """
         Class initialization.
 
         :param text_length: fixed length of the text.
-        :param pad_value: if text length is smaller than :attr: `text_length`,
-            filling text with :attr: `pad_value`.
-        :param pad_mode: String, 'pre' or 'post':
+        :param pad_value: if text length is smaller than :attr:`text_length`,
+            filling text with :attr:`pad_value`.
+        :param pad_mode: String, `pre` or `post`:
             pad either before or after each sequence.
-        :param truncate_mode: String, 'pre' or 'post':
-            remove values from sequences larger than :attr: `text_length`,
+        :param truncate_mode: String, `pre` or `post`:
+            remove values from sequences larger than :attr:`text_length`,
             either at the beginning or at the end of the sequences.
         """
         self._text_length = text_length
@@ -387,4 +399,4 @@ class FixedLengthUnit(ProcessorUnit):
             raise ValueError('{} is not a vaild '
                              'pad mode.'.format(self._pad_mode))
 
-        return fixed_tokens
+        return fixed_tokens.tolist()
