@@ -350,6 +350,7 @@ class FixedLengthUnit(ProcessorUnit):
         >>> fixedlen = FixedLengthUnit(3)
         >>> fixedlen.transform(range(1, 3)) == [0, 1, 2]
         True
+
     """
 
     def __init__(self, text_length: int, pad_value: int=0,
@@ -400,3 +401,4 @@ class FixedLengthUnit(ProcessorUnit):
                              'pad mode.'.format(self._pad_mode))
 
         return fixed_tokens.tolist()
+
