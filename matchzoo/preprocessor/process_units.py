@@ -401,4 +401,3 @@ class FixedLengthUnit(ProcessorUnit):
                              'pad mode.'.format(self._pad_mode))
 
         return fixed_tokens.tolist()
-
