@@ -340,18 +340,18 @@ class WordHashingUnit(ProcessorUnit):
 class FixedLengthUnit(ProcessorUnit):
     """Process unit to get the fixed length text."""
 
-    def __init__(self, text_length, pad_value=0, 
+    def __init__(self, text_length, pad_value=0,
                  pad_mode='pre', truncate_mode='pre'):
         """
         Class initialization.
 
         :param text_length: fixed length of the text.
-        :param pad_value: if text length is smaller than :attr: `text_length`, 
+        :param pad_value: if text length is smaller than :attr: `text_length`,
             filling text with :attr: `pad_value`.
         :param pad_mode: String, 'pre' or 'post':
             pad either before or after each sequence.
         :param truncate_mode: String, 'pre' or 'post':
-            remove values from sequences larger than :attr: `text_length`, 
+            remove values from sequences larger than :attr: `text_length`,
             either at the beginning or at the end of the sequences.
         """
         self._text_length = text_length
@@ -376,7 +376,7 @@ class FixedLengthUnit(ProcessorUnit):
         elif self._truncate_mode == 'post':
             trunc_tokens = tokens[:self._text_length]
         else:
-            raise ValueError('{} is not a vaild ' 
+            raise ValueError('{} is not a vaild '
                              'truncate mode.'.format(self._truncate_mode))
 
         if self._pad_mode == 'post':
@@ -384,7 +384,7 @@ class FixedLengthUnit(ProcessorUnit):
         elif self._pad_mode == 'pre':
             fixed_tokens[-len(trunc_tokens):] = trunc_tokens
         else:
-            raise ValueError('{} is not a vaild ' 
+            raise ValueError('{} is not a vaild '
                              'pad mode.'.format(self._pad_mode))
 
         return fixed_tokens
