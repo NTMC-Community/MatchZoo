@@ -340,7 +340,8 @@ class WordHashingUnit(ProcessorUnit):
 class FixedLengthUnit(ProcessorUnit):
     """Process unit to get the fixed length text."""
 
-    def __init__(self, text_length, pad_value=0, pad_mode='pre', truncat_mode='pre'):
+    def __init__(self, text_length, pad_value=0, 
+                 pad_mode='pre', truncate_mode='pre'):
         """
         Class initialization.
 
@@ -349,14 +350,14 @@ class FixedLengthUnit(ProcessorUnit):
             filling text with :attr: `pad_value`.
         :param pad_mode: String, 'pre' or 'post':
             pad either before or after each sequence.
-        :param truncat_mode: String, 'pre' or 'post':
+        :param truncate_mode: String, 'pre' or 'post':
             remove values from sequences larger than :attr: `text_length`, 
             either at the beginning or at the end of the sequences.
         """
         self._text_length = text_length
         self._pad_value = pad_value
         self._pad_mode = pad_mode
-        self._truncat_mode = truncat_mode
+        self._truncate_mode = truncate_mode
 
     def transform(self, tokens: list) -> list:
         """
@@ -370,13 +371,13 @@ class FixedLengthUnit(ProcessorUnit):
         fixed_tokens = np.ones([self._text_length], dtype=np_tokens.dtype)
         fixed_tokens.fill(self._pad_value)
 
-        if self._truncat_mode == 'pre':
+        if self._truncate_mode == 'pre':
             trunc_tokens = tokens[-self._text_length:]
-        elif self._truncat_mode == 'post':
+        elif self._truncate_mode == 'post':
             trunc_tokens = tokens[:self._text_length]
         else:
             raise ValueError('{} is not a vaild ' 
-                             'truncat mode.'.format(self._truncat_mode))
+                             'truncate mode.'.format(self._truncate_mode))
 
         if self._pad_mode == 'post':
             fixed_tokens[:len(trunc_tokens)] = trunc_tokens
