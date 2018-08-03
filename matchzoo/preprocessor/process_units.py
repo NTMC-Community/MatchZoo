@@ -381,7 +381,7 @@ class FixedLengthUnit(ProcessorUnit):
         :return tokens: list of tokenized tokens in fixed length.
         """
         np_tokens = np.array(tokens)
-        fixed_tokens = np.ones([self._text_length], dtype=np_tokens.dtype)
+        fixed_tokens = np.zeros([self._text_length], dtype=np_tokens.dtype)
         fixed_tokens.fill(self._pad_value)
 
         if self._truncate_mode == 'pre':
