@@ -96,7 +96,7 @@ class DigitRemovalUnit(ProcessorUnit):
 class StopRemovalUnit(ProcessorUnit):
     """Process unit to remove stop words."""
 
-    def __init__(self, lang='en'):
+    def __init__(self, lang: str='en'):
         """Initialization."""
         self._lang = lang
 
@@ -335,3 +335,69 @@ class WordHashingUnit(ProcessorUnit):
             idx = self._term_index.get(key, 0)
             hashing[idx] = value
         return hashing
+
+
+class FixedLengthUnit(ProcessorUnit):
+    """
+    FixedLengthUnit Class.
+
+    Process unit to get the fixed length text.
+
+    Examples:
+        >>> fixedlen = FixedLengthUnit(3)
+        >>> fixedlen.transform(range(1, 6)) == [3, 4, 5]
+        True
+        >>> fixedlen = FixedLengthUnit(3)
+        >>> fixedlen.transform(range(1, 3)) == [0, 1, 2]
+        True
+
+    """
+
+    def __init__(self, text_length: int, pad_value: int=0,
+                 pad_mode: str='pre', truncate_mode: str='pre'):
+        """
+        Class initialization.
+
+        :param text_length: fixed length of the text.
+        :param pad_value: if text length is smaller than :attr:`text_length`,
+            filling text with :attr:`pad_value`.
+        :param pad_mode: String, `pre` or `post`:
+            pad either before or after each sequence.
+        :param truncate_mode: String, `pre` or `post`:
+            remove values from sequences larger than :attr:`text_length`,
+            either at the beginning or at the end of the sequences.
+        """
+        self._text_length = text_length
+        self._pad_value = pad_value
+        self._pad_mode = pad_mode
+        self._truncate_mode = truncate_mode
+
+    def transform(self, tokens: list) -> list:
+        """
+        Transform list of tokenized tokens into the fixed length text.
+
+        :param tokens: list of tokenized tokens.
+
+        :return tokens: list of tokenized tokens in fixed length.
+        """
+        np_tokens = np.array(tokens)
+        fixed_tokens = np.full([self._text_length], self._pad_value,
+                               dtype=np_tokens.dtype)
+
+        if self._truncate_mode == 'pre':
+            trunc_tokens = tokens[-self._text_length:]
+        elif self._truncate_mode == 'post':
+            trunc_tokens = tokens[:self._text_length]
+        else:
+            raise ValueError('{} is not a vaild '
+                             'truncate mode.'.format(self._truncate_mode))
+
+        if self._pad_mode == 'post':
+            fixed_tokens[:len(trunc_tokens)] = trunc_tokens
+        elif self._pad_mode == 'pre':
+            fixed_tokens[-len(trunc_tokens):] = trunc_tokens
+        else:
+            raise ValueError('{} is not a vaild '
+                             'pad mode.'.format(self._pad_mode))
+
+        return fixed_tokens.tolist()
