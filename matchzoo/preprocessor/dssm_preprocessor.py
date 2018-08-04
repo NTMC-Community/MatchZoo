@@ -11,9 +11,9 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
     Example:
         >>> train_inputs = [
-        ...     ("id0", "id1","beijing", "Beijing is capital of China", 1),
-        ...     ("id0", "id2","beijing", "China is in east Asia", 0),
-        ...     ("id0", "id3","beijing", "Summer in Beijing is hot.", 1)
+        ...     ("id0", "id1", "beijing", "Beijing is capital of China", 1),
+        ...     ("id0", "id2", "beijing", "China is in east Asia", 0),
+        ...     ("id0", "id3", "beijing", "Summer in Beijing is hot.", 1)
         ... ]
         >>> dssm_preprocessor = DSSMPreprocessor()
         >>> rv_train = dssm_preprocessor.fit_transform(
