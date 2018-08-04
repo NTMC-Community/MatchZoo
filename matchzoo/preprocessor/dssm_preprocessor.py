@@ -11,9 +11,9 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
     Example:
         >>> train_inputs = [
-        ...     ("beijing", "Beijing is capital of China", 1, ('id0', 'id1')),
-        ...     ("beijing", "China is in east Asia", 0, ('id0', 'id2')),
-        ...     ("beijing", "Summer in Beijing is hot.", 1, ('id0', 'id3'))
+        ...     ("id0", "id1","beijing", "Beijing is capital of China", 1),
+        ...     ("id0", "id2","beijing", "China is in east Asia", 0),
+        ...     ("id0", "id3","beijing", "Summer in Beijing is hot.", 1)
         ... ]
         >>> dssm_preprocessor = DSSMPreprocessor()
         >>> rv_train = dssm_preprocessor.fit_transform(
@@ -23,9 +23,10 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         25
         >>> type(rv_train)
         <class 'matchzoo.datapack.DataPack'>
-        >>> test_inputs = [("beijing",
-        ...                 "I visted beijing yesterday.",
-        ...                 ('id0', 'id4'))]
+        >>> test_inputs = [("id0",
+        ...                 "id4",
+        ...                 "beijing",
+        ...                 "I visted beijing yesterday.")]
         >>> rv_test = dssm_preprocessor.transform(test_inputs, stage='test')
         >>> type(rv_test)
         <class 'matchzoo.datapack.DataPack'>
@@ -60,10 +61,10 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """Build vocabulary before fit transform."""
         vocab = []
         units = self._prepare_stateless_units()
-        for input in inputs:
+        for _, _, text_left, text_right, _ in inputs:
             for unit in units:
-                left = unit.transform(input[0])
-                right = unit.transform(input[1])
+                left = unit.transform(text_left)
+                right = unit.transform(text_right)
             vocab.extend(left + right)
         return vocab
 
@@ -89,25 +90,23 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
     def transform(self, inputs, stage):
         """Transform."""
+        outputs = []
         self._check_transoform_state(stage)
-        lst_left, lst_right, lst_labels, lst_ids = ([] for i in range(4))
         units = self._prepare_stateless_units()
         units.append(
             preprocessor.WordHashingUnit(self._context['term_index']))
         for input in inputs:
             for unit in units:
-                left = unit.transform(input[0])
-                righ = unit.transform(input[1])
-            lst_left.append(left)
-            lst_right.append(righ)
-            if stage == "train":
-                lst_labels.append(input[2])
-                lst_ids.append(input[3])
+                left = unit.transform(input[2])
+                right = unit.transform(input[3])
+            if stage == 'train':
+                outputs.append((input[0], input[1], left, right, input[4]))
             else:
-                lst_ids.append(input[2])
-        data = {'text_left': lst_left,
-                'text_right': lst_right,
-                'id': lst_ids}
-        if stage == "train":
-            data['label'] = lst_labels
-        return datapack.DataPack(data=data, context=self._context)
+                outputs.append((input[0], input[1], left, right))
+        column_names = ['id_left', 'id_right', 'text_left', 'text_right']
+        if stage == 'train':
+            column_names.append('label')
+        return datapack.DataPack(
+            data=outputs,
+            context=self._context,
+            columns=column_names)
