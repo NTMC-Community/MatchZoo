@@ -41,6 +41,11 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """Get fitted parameters."""
         return self._context
 
+    @context.setter
+    def context(self, context: dict):
+        """Set pre-fitted context."""
+        self._context = context
+
     def _prepare_stateless_units(self):
         """Prepare."""
         return [
@@ -62,6 +67,16 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             vocab.extend(left + right)
         return vocab
 
+    def _check_transoform_state(self, stage):
+        """check."""
+        if stage not in ['train', 'test']:
+            msg = f'{stage} is not a valid stage name'
+            msg += '`train` or `test` expected.'
+            raise ValueError(msg)
+        if not self._context.get('term_index'):
+            raise ValueError(
+                "Please fit term_index before apply transofm function.")
+
     def fit(self, inputs):
         """Fit parameters."""
         vocab = self._build_vocab(inputs)
@@ -74,18 +89,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
     def transform(self, inputs, stage):
         """Transform."""
-        output_left = []
-        output_righ = []
-        labels = []
-        # ids is used to store (qid, did) pairs.
-        ids = []
-        if stage not in ['train', 'test']:
-            msg = f'{stage} is not a valid stage name'
-            msg += '`train` or `test` expected.'
-            raise ValueError(msg)
-        if not self._context.get('term_index'):
-            raise ValueError(
-                "Please fit term_index before apply transofm function.")
+        self._check_transoform_state(stage)
+        lst_left, lst_right, lst_labels, lst_ids = ([] for i in range(4))
         units = self._prepare_stateless_units()
         units.append(
             preprocessor.WordHashingUnit(self._context['term_index']))
@@ -93,16 +98,16 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             for unit in units:
                 left = unit.transform(input[0])
                 righ = unit.transform(input[1])
-            output_left.append(left)
-            output_righ.append(righ)
+            lst_left.append(left)
+            lst_right.append(righ)
             if stage == "train":
-                labels.append(input[2])
-                ids.append(input[3])
+                lst_labels.append(input[2])
+                lst_ids.append(input[3])
             else:
-                ids.append(input[2])
-        data = {'text_left': output_left,
-                'text_right': output_righ,
-                'id': ids}
+                lst_ids.append(input[2])
+        data = {'text_left': lst_left,
+                'text_right': lst_right,
+                'id': lst_ids}
         if stage == "train":
-            data['label'] = labels
+            data['label'] = lst_labels
         return datapack.DataPack(data=data, context=self._context)
