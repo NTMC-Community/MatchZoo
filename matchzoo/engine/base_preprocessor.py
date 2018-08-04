@@ -47,3 +47,22 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             return self.fit(inputs).transform(inputs, stage)
         else:
             return self.transform(inputs, stage)
+
+    def _make_output(
+        self,
+        output: list,
+        context: dict,
+        stage: str
+    ) -> datapack.DataPack:
+        """
+        Create :class:`DataPack` instance as output.
+
+        :param output: Transformed output using preprocessor.
+        :param context: Context to be passed to :class:`DataPack`.
+        :param stage: Indicate the pre-processing stage, `train`
+            or `test`.
+        """
+        columns = ['id_left', 'id_right', 'text_left', 'text_right']
+        if stage == 'train':
+            columns.append('label')
+        return datapack.DataPack(output, context, columns)
