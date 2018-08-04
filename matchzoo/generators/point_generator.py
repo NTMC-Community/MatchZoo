@@ -1,9 +1,11 @@
 """Matchzoo point generator."""
 
-import numpy as np
 from matchzoo import engine
 from matchzoo import tasks
-from matchzoo.datapack import DataPack
+from matchzoo import datapack
+
+import numpy as np
+import typing
 
 
 class PointGenerator(engine.BaseGenerator):
@@ -19,7 +21,7 @@ class PointGenerator(engine.BaseGenerator):
         ...     'id_right': 'id1',
         ...     'label': 0
         ... }]
-        >>> input = DataPack(data)
+        >>> input = datapack.DataPack(data)
         >>> task = tasks.Classification(num_classes=2)
         >>> from matchzoo.generators import PointGenerator
         >>> generator = PointGenerator(input, task, 1, True)
@@ -29,7 +31,7 @@ class PointGenerator(engine.BaseGenerator):
 
     def __init__(
         self,
-        inputs: DataPack,
+        inputs: datapack.DataPack,
         task: engine.BaseTask=tasks.Classification,
         batch_size: int=32,
         shuffle: bool=True
@@ -40,18 +42,17 @@ class PointGenerator(engine.BaseGenerator):
         :param task: the task is a instance of :class:`engine.BaseTask`.
         :param batch_size: number of instances in a batch.
         :param shuffle: whether to shuffle the instances while generating a
-        batch.
+            batch.
         """
         self._task = task
         self.data = self.transform_data(inputs)
         super().__init__(batch_size, len(inputs.dataframe), shuffle)
 
-    def transform_data(self, inputs: DataPack):
+    def transform_data(self, inputs: datapack.DataPack) -> dict:
         """Obtain the transformed data from :class:`DataPack`.
 
         :param inputs: An instance of :class:`DataPack` to be transformed.
         :return: the output of all the transformed inputs.
-
         """
         data = inputs.dataframe
         out = {}
@@ -59,13 +60,14 @@ class PointGenerator(engine.BaseGenerator):
             out[column] = np.asarray(data[column])
         return out
 
-    def _get_batch_of_transformed_samples(self, index_array: list):
+    def _get_batch_of_transformed_samples(
+        self,
+        index_array: list
+    ) -> typing.Tuple[dict, typing.Any]:
         """Get a batch of samples based on their ids.
 
         :param index_array: a list of instance ids.
-
         :return: A batch of transformed samples.
-
         """
         bsize = len(index_array)
         batch_x = {}
@@ -74,13 +76,13 @@ class PointGenerator(engine.BaseGenerator):
             if isinstance(self._task, tasks.Ranking):
                 batch_y = self.data['label']
             elif isinstance(self._task, tasks.Classification):
-                batch_y = np.zeros((bsize, self._task._num_classes),
+                batch_y = np.zeros((bsize, self._task.num_classes),
                                    dtype=np.int32)
                 for idx, label in enumerate(self.data['label'][index_array]):
                     batch_y[idx, label] = 1
             else:
-                msg = f"{self._task} is not a valid target mode, :class:"
-                msg += f"`Ranking` and :class:`Classification` expected."
+                msg = f"{self._task} is not a valid task type."
+                msg += ":class:`Ranking` and :class:`Classification` expected."
                 raise ValueError(msg)
         for key in self.data.keys():
             batch_x[key] = []
