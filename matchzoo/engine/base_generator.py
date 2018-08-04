@@ -13,9 +13,16 @@ class BaseGenerator(keras.utils.Sequence):
 
     """
 
-    def __init__(self, batch_size: int, num_instances: int=0, shuffle:
+    def __init__(self, batch_size: int=32, num_instances: int=0, shuffle:
                  bool=True):
-        """Initialize the base generator."""
+        """
+        :class:`BaseGenerator` constructor.
+
+        :param batch_size: number of instances for each batch
+        :param num_instances: total number of instances
+        :param shuffle: a bool variable to determine whether choose samples
+        randomly
+        """
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.num_instances = num_instances
@@ -24,6 +31,10 @@ class BaseGenerator(keras.utils.Sequence):
         self.index_generator = self._flow_index()
 
     def _set_index_array(self):
+        """Set the :attr:`index_array`.
+
+        Here the :attr:`index_array` records the index of all the instances.
+        """
         self.index_array = np.arange(self.num_instances)
         if self.shuffle:
             self.index_array = np.random.permutation(self.num_instances)
@@ -44,7 +55,7 @@ class BaseGenerator(keras.utils.Sequence):
         return self._get_batch_of_transformed_samples(index_array)
 
     def __len__(self):
-        """Return the total number of batches."""
+        """Get the total number of batches."""
         return (self.num_instances + self.batch_size - 1) // self.batch_size
 
     def on_epoch_end(self):
@@ -56,6 +67,7 @@ class BaseGenerator(keras.utils.Sequence):
         self.batch_index = 0
 
     def _flow_index(self):
+        """Yield a batch of sample indices."""
         # Ensure self.batch_index is 0.
         self.reset()
         while 1:

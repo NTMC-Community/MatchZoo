@@ -6,9 +6,9 @@ from matchzoo.datapack import DataPack
 @pytest.fixture
 def x():
     data = [
-        ([1,2,3], [2,3,4], 0, 'did-0', 'did-1'),
-        ([3,4,6], [1,3,5], 1, 'did-2', 'did-3'),
-        ([1,4,5], [2,4,5], 1, 'did-2', 'did-4'),
+        ([1,2,3], [2,3,4], 'did-0', 'did-1', 0),
+        ([3,4,6], [1,3,5], 'did-2', 'did-3', 1),
+        ([1,4,5], [2,4,5], 'did-2', 'did-4', 1),
     ]
     cts = {'vocab_size': 6, 'fill_word': 6}
     return DataPack(data, cts)
