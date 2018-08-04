@@ -13,11 +13,11 @@ class PointGenerator(engine.BaseGenerator):
 
     Examples:
         >>> data = [{
-        ... 'text_left':[1,2],
-        ... 'text_right': [3,4],
-        ... 'label': 0,
-        ... 'id_left': 'id0',
-        ... 'id_right': 'id1'
+        ...     'text_left':[1,2],
+        ...     'text_right': [3,4],
+        ...     'label': 0,
+        ...     'id_left': 'id0',
+        ...     'id_right': 'id1'
         ... }]
         >>> input = DataPack(data)
         >>> task = tasks.Classification(num_classes=2)
@@ -71,30 +71,27 @@ class PointGenerator(engine.BaseGenerator):
         :return: A batch of transformed samples.
 
         """
-        batch_size = len(index_array)
-        batch_x_left = []
-        batch_x_right = []
-        batch_id_left = []
-        batch_id_right = []
+        bsize = len(index_array)
+        bx_left, bx_right, bid_left, bid_right = [[] for i in range(4)]
         if isinstance(self._task, tasks.Ranking):
             batch_y = self.y
         elif isinstance(self._task, tasks.Classification):
-            batch_y = np.zeros((batch_size, self._task._num_classes),
+            batch_y = np.zeros((bsize, self._task._num_classes),
                                dtype=np.int32)
             for i, label in enumerate(self.y[index_array]):
                 batch_y[i, label] = 1
         else:
-            msg = "{self._task} is not a valid target mode, "
-            msg += ":class:`Ranking` and :class:`Classification` expected."
+            msg = f"{self._task} is not a valid target mode, "
+            msg += f":class:`Ranking` and :class:`Classification` expected."
             raise ValueError(msg)
 
         for key, val in enumerate(index_array):
-            batch_x_left.append(self.x_left[val])
-            batch_x_right.append(self.x_right[val])
-            batch_id_left.append(self.id_left[val])
-            batch_id_right.append(self.id_right[val])
+            bx_left.append(self.x_left[val])
+            bx_right.append(self.x_right[val])
+            bid_left.append(self.id_left[val])
+            bid_right.append(self.id_right[val])
 
-        return ({'x_left': np.array(batch_x_left), 'x_right':
-                 np.array(batch_x_right), 'id_left':
-                 batch_id_left, 'id_right': batch_id_right},
+        return ({'x_left': np.array(bx_left), 'x_right':
+                 np.array(bx_right), 'id_left':
+                 bid_left, 'id_right': bid_right},
                 np.array(batch_y))
