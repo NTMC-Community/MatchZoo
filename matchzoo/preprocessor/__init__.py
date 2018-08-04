@@ -9,6 +9,7 @@ from .process_units import (
     StopRemovalUnit,
     NgramLetterUnit,
     VocabularyUnit,
-    WordHashingUnit
+    WordHashingUnit,
+    FixedLengthUnit
 )
 from .dssm_preprocessor import DSSMPreprocessor
