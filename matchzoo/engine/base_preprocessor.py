@@ -22,7 +22,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def transform(self, inputs: list) -> datapack.DataPack:
+    def transform(self, inputs: list, stage: str) -> datapack.DataPack:
         """
         Transform input data to expected manner.
 
@@ -31,12 +31,19 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
         :param inputs: List of text-left, text-right, label triples,
             or list of text-left, text-right tuples (test stage).
+        :param stage: String indicate the pre-processing stage, `train` or
+            `test` expected.
         """
 
-    def fit_transform(self, inputs: list) -> datapack.DataPack:
+    def fit_transform(self, inputs: list, stage: str) -> datapack.DataPack:
         """
         Call fit-transform.
 
         :param inputs: List of text-left, text-right, label triples.
+        :param stage: String indicate the pre-processing stage, `train` or
+            `test` expected.
         """
-        return self.fit(inputs).transform(inputs)
+        if stage == 'train':
+            return self.fit(inputs).transform(inputs, stage)
+        else:
+            return self.transform(inputs, stage)
