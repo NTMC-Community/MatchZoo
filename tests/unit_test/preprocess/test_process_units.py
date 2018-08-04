@@ -55,3 +55,21 @@ def test_ngram_unit(list_input):
     ngram = NgramLetterUnit()
     out = ngram.transform(list_input)
     assert '#a#' in out
+
+def test_fixedlength_unit(list_input):
+    fixedlength = FixedLengthUnit(3)
+    out = fixedlength.transform(list_input)
+    assert list(out) == ['36', '!', 'input'] 
+    fixedlength = FixedLengthUnit(3, truncate_mode='post')
+    out = fixedlength.transform(list_input)
+    assert list(out) == ['this', 'Is', 'a'] 
+    fixedlength = FixedLengthUnit(12, pad_value='0', 
+                    truncate_mode='pre', pad_mode='pre')
+    out = fixedlength.transform(list_input)
+    assert list(out[3:]) == list_input
+    assert list(out[:3]) == ['0'] * 3
+    fixedlength = FixedLengthUnit(12, pad_value='0', 
+                    truncate_mode='pre', pad_mode='post')
+    out = fixedlength.transform(list_input)
+    assert list(out[:-3]) == list_input
+    assert list(out[-3:]) == ['0'] * 3
