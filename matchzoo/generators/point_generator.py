@@ -16,7 +16,8 @@ class PointGenerator(engine.BaseGenerator):
         ... 'text_left':[1,2],
         ... 'text_right': [3,4],
         ... 'label': 0,
-        ... 'id': ('id0', 'id1')
+        ... 'id_left': 'id0',
+        ... 'id_right': 'id1'
         ... }]
         >>> input = DataPack(data)
         >>> task = tasks.Classification(num_classes=2)
@@ -43,7 +44,8 @@ class PointGenerator(engine.BaseGenerator):
         """
         self._task = task
         transformed_inputs = self.transform_data(inputs)
-        self.x_left, self.x_right, self.y, self.ids = transformed_inputs
+        self.x_left, self.x_right, self.y, self.id_left, self.id_right \
+            = transformed_inputs
         super().__init__(batch_size, len(inputs.dataframe), shuffle)
 
     def transform_data(self, inputs: DataPack):
@@ -57,8 +59,9 @@ class PointGenerator(engine.BaseGenerator):
         x_left = np.asarray(data.text_left)
         x_right = np.asarray(data.text_right)
         y = np.asarray(data.label)
-        ids = np.asarray(data.id)
-        return x_left, x_right, y, ids
+        id_left = np.asarray(data.id_left)
+        id_right = np.asarray(data.id_right)
+        return x_left, x_right, y, id_left, id_right
 
     def _get_batch_of_transformed_samples(self, index_array: list):
         """Get a batch of samples based on their ids.
@@ -71,7 +74,8 @@ class PointGenerator(engine.BaseGenerator):
         batch_size = len(index_array)
         batch_x_left = []
         batch_x_right = []
-        batch_ids = []
+        batch_id_left = []
+        batch_id_right = []
         if isinstance(self._task, tasks.Ranking):
             batch_y = self.y
         elif isinstance(self._task, tasks.Classification):
@@ -80,13 +84,17 @@ class PointGenerator(engine.BaseGenerator):
             for i, label in enumerate(self.y[index_array]):
                 batch_y[i, label] = 1
         else:
-            raise ValueError('Error target mode in point generator.')
+            msg = "{self._task} is not a valid target mode, "
+            msg += ":class:`Ranking` and :class:`Classification` expected."
+            raise ValueError(msg)
 
         for key, val in enumerate(index_array):
             batch_x_left.append(self.x_left[val])
             batch_x_right.append(self.x_right[val])
-            batch_ids.append(self.ids[val])
+            batch_id_left.append(self.id_left[val])
+            batch_id_right.append(self.id_right[val])
 
         return ({'x_left': np.array(batch_x_left), 'x_right':
-                 np.array(batch_x_right), 'ids':
-                 batch_ids}, np.array(batch_y))
+                 np.array(batch_x_right), 'id_left':
+                 batch_id_left, 'id_right': batch_id_right},
+                np.array(batch_y))
