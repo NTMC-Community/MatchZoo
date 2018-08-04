@@ -4,10 +4,14 @@ from matchzoo import engine
 from matchzoo import preprocessor
 from matchzoo import datapack
 
+import typing
+
 
 class DSSMPreprocessor(engine.BasePreprocessor):
     """
     DSSM preprocessor helper.
+
+    TODO: NEED REFACTORING.
 
     Example:
         >>> train_inputs = [
@@ -49,11 +53,15 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
     @context.setter
     def context(self, context: dict):
-        """Set pre-fitted context."""
+        """
+        Set pre-fitted context.
+
+        :param context: pre-fitted context.
+        """
         self._context = context
 
     def _prepare_stateless_units(self):
-        """Prepare."""
+        """Prepare needed process units."""
         return [
             preprocessor.TokenizeUnit(),
             preprocessor.LowercaseUnit(),
@@ -62,8 +70,17 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             preprocessor.NgramLetterUnit()
         ]
 
-    def _build_vocab(self, inputs):
-        """Build vocabulary before fit transform."""
+    def _build_vocab(
+        self,
+        inputs: typing.List[tuple]
+    ) -> list:
+        """
+        Build vocabulary before fit transform.
+
+        :param inputs: Use training data as inputs.
+        :return vocab: fitted `tri-letters` using
+            :meth:`_prepare_stateless_units`.
+        """
         vocab = []
         units = self._prepare_stateless_units()
         for _, _, text_left, text_right, _ in inputs:
@@ -73,16 +90,21 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             vocab.extend(left + right)
         return vocab
 
-    def _check_transoform_state(self, stage):
-        """check."""
+    def _check_transoform_state(self, stage: str):
+        """Check arguments and context in transformation."""
         if stage not in ['train', 'test']:
             raise ValueError(f'{stage} is not a valid stage name.')
         if not self._context.get('term_index'):
             raise ValueError(
                 "Please fit term_index before apply transofm function.")
 
-    def fit(self, inputs):
-        """Fit parameters."""
+    def fit(self, inputs: typing.List[tuple]):
+        """
+        Fit pre-processing context for transformation.
+
+        :param inputs: Inputs to be preprocessed.
+        :return: class:`DSSMPreprocessor` instance.
+        """
         vocab = self._build_vocab(inputs)
         vocab_unit = preprocessor.VocabularyUnit()
         vocab_unit.fit(vocab)
@@ -91,8 +113,19 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             vocab_unit.state['term_index']) + 1
         return self
 
-    def transform(self, inputs, stage):
-        """Transform."""
+    def transform(
+        self,
+        inputs: typing.List[tuple],
+        stage: str
+    ):
+        """
+        Apply trnasformation on data, create `tri-letter` representation.
+
+        :param inputsL Inputs to be preprocessed.
+        :param stage: Pre-processing stage, `train` or `test`.
+
+        :return: Transformed data as :class:`DataPack` object.
+        """
         outputs = []
         self._check_transoform_state(stage)
         units = self._prepare_stateless_units()
