@@ -30,7 +30,8 @@ class DataPack(object):
 
     def __init__(self,
                  data: typing.Union[list, np.ndarray],
-                 context: dict={}):
+                 context: dict={},
+                 columns: list=None):
         """
         Initialize :class:`DataPack`.
 
@@ -39,7 +40,7 @@ class DataPack(object):
         :param context: Hyper-parameter fitted during
                         pre-processing stage.
         """
-        self._dataframe = pd.DataFrame(data)
+        self._dataframe = pd.DataFrame(data, columns=columns)
         self._context = context
 
     def __len__(self) -> int:
