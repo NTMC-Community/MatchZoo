@@ -2,7 +2,6 @@
 
 from matchzoo import engine
 from matchzoo import preprocessor
-from matchzoo import datapack
 
 import typing
 
@@ -139,10 +138,4 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                 outputs.append((input[0], input[1], left, right, input[4]))
             else:
                 outputs.append((input[0], input[1], left, right))
-        column_names = ['id_left', 'id_right', 'text_left', 'text_right']
-        if stage == 'train':
-            column_names.append('label')
-        return datapack.DataPack(
-            data=outputs,
-            context=self._context,
-            columns=column_names)
+        return self._make_output(outputs, self._context, stage)
