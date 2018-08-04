@@ -61,6 +61,9 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         :param context: Context to be passed to :class:`DataPack`.
         :param stage: Indicate the pre-processing stage, `train`
             or `test`.
+
+        :return: Pre-processed input as well as context stored in
+            a :class:`DataPack` object.
         """
         columns = ['id_left', 'id_right', 'text_left', 'text_right']
         if stage == 'train':

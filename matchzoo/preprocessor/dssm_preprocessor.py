@@ -2,6 +2,7 @@
 
 from matchzoo import engine
 from matchzoo import preprocessor
+from matchzoo import datapack
 
 import typing
 
@@ -116,7 +117,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         self,
         inputs: typing.List[tuple],
         stage: str
-    ):
+    ) -> datapack.DataPack:
         """
         Apply trnasformation on data, create `tri-letter` representation.
 
