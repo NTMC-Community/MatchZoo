@@ -23,11 +23,16 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         25
         >>> type(rv_train)
         <class 'matchzoo.datapack.DataPack'>
+        >>> context = dssm_preprocessor.context
+        >>> dssm_preprocessor_test = DSSMPreprocessor()
+        >>> dssm_preprocessor_test.context = context
         >>> test_inputs = [("id0",
         ...                 "id4",
         ...                 "beijing",
         ...                 "I visted beijing yesterday.")]
-        >>> rv_test = dssm_preprocessor.transform(test_inputs, stage='test')
+        >>> rv_test = dssm_preprocessor_test.transform(
+        ...     test_inputs,
+        ...     stage='test')
         >>> type(rv_test)
         <class 'matchzoo.datapack.DataPack'>
 
@@ -71,9 +76,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
     def _check_transoform_state(self, stage):
         """check."""
         if stage not in ['train', 'test']:
-            msg = f'{stage} is not a valid stage name'
-            msg += '`train` or `test` expected.'
-            raise ValueError(msg)
+            raise ValueError(f'{stage} is not a valid stage name.')
         if not self._context.get('term_index'):
             raise ValueError(
                 "Please fit term_index before apply transofm function.")
