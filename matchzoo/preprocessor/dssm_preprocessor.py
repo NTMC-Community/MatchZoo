@@ -30,7 +30,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         ...                 "id4",
         ...                 "beijing",
         ...                 "I visted beijing yesterday.")]
-        >>> rv_test = dssm_preprocessor_test.transform(
+        >>> rv_test = dssm_preprocessor_test.fit_transform(
         ...     test_inputs,
         ...     stage='test')
         >>> type(rv_test)
