@@ -6,10 +6,12 @@ from matchzoo.datapack import DataPack
 @pytest.fixture
 def x():
     data = [
-        {'text_left':[1,2,3], 'text_right': [1,2], 'label': 0, \
-         'id_left': 'did-0', 'id_right': 'did-1'},
-        {'text_left':[2,3,4], 'text_right': [3,5], 'label': 1, \
-         'id_left': 'did-2', 'id_right': 'did-3'}
+        {'text_left':[1,2,3], 'text_right': [1,2], \
+         'id_left': 'did-0', 'id_right': 'did-1', \
+        'label': 0},
+        {'text_left':[2,3,4], 'text_right': [3,5], \
+         'id_left': 'did-2', 'id_right': 'did-3', \
+         'label': 1}
     ]
     cts = {'vocab_size': 6, 'fill_word': 6}
     return DataPack(data, cts)

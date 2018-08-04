@@ -15,9 +15,9 @@ class PointGenerator(engine.BaseGenerator):
         >>> data = [{
         ...     'text_left':[1,2],
         ...     'text_right': [3,4],
-        ...     'label': 0,
         ...     'id_left': 'id0',
-        ...     'id_right': 'id1'
+        ...     'id_right': 'id1',
+        ...     'label': 0
         ... }]
         >>> input = DataPack(data)
         >>> task = tasks.Classification(num_classes=2)
@@ -43,9 +43,7 @@ class PointGenerator(engine.BaseGenerator):
         batch.
         """
         self._task = task
-        transformed_inputs = self.transform_data(inputs)
-        self.x_left, self.x_right, self.y, self.id_left, self.id_right \
-            = transformed_inputs
+        self.data = self.transform_data(inputs)
         super().__init__(batch_size, len(inputs.dataframe), shuffle)
 
     def transform_data(self, inputs: DataPack):
@@ -56,12 +54,10 @@ class PointGenerator(engine.BaseGenerator):
 
         """
         data = inputs.dataframe
-        x_left = np.asarray(data.text_left)
-        x_right = np.asarray(data.text_right)
-        y = np.asarray(data.label)
-        id_left = np.asarray(data.id_left)
-        id_right = np.asarray(data.id_right)
-        return x_left, x_right, y, id_left, id_right
+        out = {}
+        for column in data.columns:
+            out[column] = np.asarray(data[column])
+        return out
 
     def _get_batch_of_transformed_samples(self, index_array: list):
         """Get a batch of samples based on their ids.
@@ -72,26 +68,23 @@ class PointGenerator(engine.BaseGenerator):
 
         """
         bsize = len(index_array)
-        bx_left, bx_right, bid_left, bid_right = [[] for i in range(4)]
-        if isinstance(self._task, tasks.Ranking):
-            batch_y = self.y
-        elif isinstance(self._task, tasks.Classification):
-            batch_y = np.zeros((bsize, self._task._num_classes),
-                               dtype=np.int32)
-            for i, label in enumerate(self.y[index_array]):
-                batch_y[i, label] = 1
-        else:
-            msg = f"{self._task} is not a valid target mode, "
-            msg += f":class:`Ranking` and :class:`Classification` expected."
-            raise ValueError(msg)
-
-        for key, val in enumerate(index_array):
-            bx_left.append(self.x_left[val])
-            bx_right.append(self.x_right[val])
-            bid_left.append(self.id_left[val])
-            bid_right.append(self.id_right[val])
-
-        return ({'x_left': np.array(bx_left), 'x_right':
-                 np.array(bx_right), 'id_left':
-                 bid_left, 'id_right': bid_right},
-                np.array(batch_y))
+        batch_x = {}
+        batch_y = None
+        if 'label' in self.data:
+            if isinstance(self._task, tasks.Ranking):
+                batch_y = self.data['label']
+            elif isinstance(self._task, tasks.Classification):
+                batch_y = np.zeros((bsize, self._task._num_classes),
+                                   dtype=np.int32)
+                for idx, label in enumerate(self.data['label'][index_array]):
+                    batch_y[idx, label] = 1
+            else:
+                msg = f"{self._task} is not a valid target mode, :class:"
+                msg += f"`Ranking` and :class:`Classification` expected."
+                raise ValueError(msg)
+        for key in self.data.keys():
+            batch_x[key] = []
+            for val in index_array:
+                batch_x[key].append(self.data[key][val])
+            batch_x[key] = np.array(batch_x[key])
+        return (batch_x, batch_y)
