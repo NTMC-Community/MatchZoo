@@ -20,3 +20,8 @@ class Ranking(engine.BaseTask):
     def output_shape(self) -> tuple:
         """:return: output shape of a single sample of the task."""
         return 1,
+
+    @property
+    def target_datatype(self):
+        """:return: target data type, expect `float` as output."""
+        return float
