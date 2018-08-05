@@ -75,12 +75,12 @@ class PointGenerator(engine.BaseGenerator):
         batch_y = None
         if 'label' in self.data:
             if isinstance(self._task, tasks.Ranking):
-                batch_y = map(int, self.data['label'])
+                batch_y = map(self._task.target_datatype, self.data['label'])
             elif isinstance(self._task, tasks.Classification):
                 batch_y = np.zeros((bsize, self._task.num_classes),
                                    dtype=np.int32)
                 for idx, label in enumerate(self.data['label'][index_array]):
-                    label = int(label)
+                    label = self._task.target_datatype(label)
                     batch_y[idx, label] = 1
             else:
                 msg = f"{self._task} is not a valid task type."
