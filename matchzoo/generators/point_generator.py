@@ -3,6 +3,7 @@
 from matchzoo import engine
 from matchzoo import tasks
 from matchzoo import datapack
+from matchzoo import utils
 
 import numpy as np
 import typing
@@ -92,4 +93,5 @@ class PointGenerator(engine.BaseGenerator):
             for val in index_array:
                 batch_x[key].append(self.data[key][val])
             batch_x[key] = np.array(batch_x[key])
+        batch_x = utils.dotdict(batch_x)
         return (batch_x, batch_y)
