@@ -74,7 +74,7 @@ class PointGenerator(engine.BaseGenerator):
         batch_y = None
         if 'label' in self.data:
             if isinstance(self._task, tasks.Ranking):
-                batch_y = self.data['label']
+                batch_y = int(self.data['label'])
             elif isinstance(self._task, tasks.Classification):
                 batch_y = np.zeros((bsize, self._task.num_classes),
                                    dtype=np.int32)
@@ -86,6 +86,8 @@ class PointGenerator(engine.BaseGenerator):
                 msg += ":class:`Ranking` and :class:`Classification` expected."
                 raise ValueError(msg)
         for key in self.data.keys():
+            if key == 'label':
+                continue
             batch_x[key] = []
             for val in index_array:
                 batch_x[key].append(self.data[key][val])
