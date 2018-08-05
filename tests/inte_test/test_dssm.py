@@ -41,7 +41,7 @@ def inte_test_dssm():
     dssm_model.guess_and_fill_missing_params()
     dssm_model.build()
     dssm_model.compile()
-    dssm_model.fit([X['text_left'], X['text_right']], y)
+    dssm_model.fit([X.text_left, X.text_right], y)
     dssm_model.save('.tmpdir')
 
     # testing
@@ -49,8 +49,9 @@ def inte_test_dssm():
     generator = generators.PointGenerator(processed_test)
     X, y = generator[0]
     dssm_model = engine.load_model('.tmpdir')
-    predictions = dssm_model.predict([X['text_left'], X['text_right']])
-    print(predictions)
+    predictions = dssm_model.predict([X.text_left, X.text_right])
+    assert len(predictions) > 0
+    assert type(predictions[0][0]) == np.float32
     shutil.rmtree('.tmpdir')
 
     
