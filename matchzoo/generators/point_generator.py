@@ -3,6 +3,7 @@
 from matchzoo import engine
 from matchzoo import tasks
 from matchzoo import datapack
+from matchzoo import utils
 
 import numpy as np
 import typing
@@ -74,7 +75,7 @@ class PointGenerator(engine.BaseGenerator):
         batch_y = None
         if 'label' in self.data:
             if isinstance(self._task, tasks.Ranking):
-                batch_y = int(self.data['label'])
+                batch_y = map(int, self.data['label'])
             elif isinstance(self._task, tasks.Classification):
                 batch_y = np.zeros((bsize, self._task.num_classes),
                                    dtype=np.int32)
@@ -92,4 +93,5 @@ class PointGenerator(engine.BaseGenerator):
             for val in index_array:
                 batch_x[key].append(self.data[key][val])
             batch_x[key] = np.array(batch_x[key])
+        batch_x = utils.dotdict(batch_x)
         return (batch_x, batch_y)
