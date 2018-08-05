@@ -24,7 +24,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         ...     train_inputs,
         ...     stage='train')
         >>> dssm_preprocessor.context['dim_triletter']
-        25
+        37
         >>> type(rv_train)
         <class 'matchzoo.datapack.DataPack'>
         >>> context = dssm_preprocessor.context
@@ -132,7 +132,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         units.append(
             preprocessor.WordHashingUnit(self._context['term_index']))
         for input in inputs:
-            left, right= input[2], input[3]
+            left, right = input[2], input[3]
             for unit in units:
                 left = unit.transform(left)
                 right = unit.transform(right)
