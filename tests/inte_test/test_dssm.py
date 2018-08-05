@@ -2,7 +2,6 @@ import os
 import pytest
 import shutil
 import numpy as np
-np.set_printoptions(threshold=np.inf)
 
 from matchzoo import datapack
 from matchzoo import generators
@@ -55,6 +54,5 @@ def inte_test_dssm():
     shutil.rmtree('.tmpdir')
 
     
-
-
-inte_test_dssm()
+if __name__ == '__main__':
+    inte_test_dssm()
