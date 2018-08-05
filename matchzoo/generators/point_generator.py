@@ -32,7 +32,7 @@ class PointGenerator(engine.BaseGenerator):
     def __init__(
         self,
         inputs: datapack.DataPack,
-        task: engine.BaseTask=tasks.Classification,
+        task: engine.BaseTask=tasks.Classification(2),
         batch_size: int=32,
         shuffle: bool=True
     ):
@@ -79,6 +79,7 @@ class PointGenerator(engine.BaseGenerator):
                 batch_y = np.zeros((bsize, self._task.num_classes),
                                    dtype=np.int32)
                 for idx, label in enumerate(self.data['label'][index_array]):
+                    label = int(label)
                     batch_y[idx, label] = 1
             else:
                 msg = f"{self._task} is not a valid task type."
