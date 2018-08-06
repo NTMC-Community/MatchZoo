@@ -3,6 +3,7 @@
 from matchzoo import engine
 from matchzoo import tasks
 from matchzoo import datapack
+from matchzoo import utils
 
 import numpy as np
 import typing
@@ -32,7 +33,7 @@ class PointGenerator(engine.BaseGenerator):
     def __init__(
         self,
         inputs: datapack.DataPack,
-        task: engine.BaseTask=tasks.Classification,
+        task: engine.BaseTask=tasks.Classification(2),
         batch_size: int=32,
         shuffle: bool=True
     ):
@@ -74,19 +75,23 @@ class PointGenerator(engine.BaseGenerator):
         batch_y = None
         if 'label' in self.data:
             if isinstance(self._task, tasks.Ranking):
-                batch_y = self.data['label']
+                batch_y = map(self._task.target_datatype, self.data['label'])
             elif isinstance(self._task, tasks.Classification):
                 batch_y = np.zeros((bsize, self._task.num_classes),
                                    dtype=np.int32)
                 for idx, label in enumerate(self.data['label'][index_array]):
+                    label = self._task.target_datatype(label)
                     batch_y[idx, label] = 1
             else:
                 msg = f"{self._task} is not a valid task type."
                 msg += ":class:`Ranking` and :class:`Classification` expected."
                 raise ValueError(msg)
         for key in self.data.keys():
+            if key == 'label':
+                continue
             batch_x[key] = []
             for val in index_array:
                 batch_x[key].append(self.data[key][val])
             batch_x[key] = np.array(batch_x[key])
+        batch_x = utils.dotdict(batch_x)
         return (batch_x, batch_y)

@@ -98,13 +98,13 @@ class DataPack(object):
         :param dirpath: directory path of the saved :class:`DataPack`.
         """
         dirpath = Path(dirpath)
+        data_file_path = dirpath.joinpath(self.DATA_FILENAME)
 
-        if dirpath.exists():
+        if data_file_path.exists():
             raise FileExistsError
-        else:
+        elif not dirpath.exists():
             dirpath.mkdir()
 
-        data_file_path = dirpath.joinpath(self.DATA_FILENAME)
         dill.dump(self, open(data_file_path, mode='wb'))
 
 
