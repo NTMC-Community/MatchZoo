@@ -80,9 +80,9 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         """
         Save the :class:`DSSMPreprocessor` object.
 
-        A saved :class:`DSSMPreprocessor` is represented as a directory with the
-        `context` object (fitted parameters on training data), it will be saved
-        by `pickle`.
+        A saved :class:`DSSMPreprocessor` is represented as a directory with
+        the `context` object (fitted parameters on training data), it will
+        be saved by `pickle`.
 
         :param dirpath: directory path of the saved :class:`DSSMPreprocessor`.
         """
