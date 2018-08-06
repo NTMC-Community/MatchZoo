@@ -4,7 +4,7 @@
 
 # Matchzoo
 
-> MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models.<br/><br/>
+> MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models.<br/>
 > Matchzoo 是一个用于文本匹配的工具包。它的开发重点是促进深文本匹配模型的设计，比较和共享。
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
