@@ -41,10 +41,13 @@ def inte_test_dssm():
     dssm_model.build()
     dssm_model.compile()
     dssm_model.fit([X.text_left, X.text_right], y)
+    # save
+    dssm_preprocessor.save('.tmpdir')
     dssm_model.save('.tmpdir')
 
     # testing
-    processed_test = dssm_preprocessor.fit_transform(test, stage='test')
+    dssm_proprecessor = engine.load_preprocessor('.tmpdir')
+    processed_test = dssm_proprecessor.fit_transform(test, stage='test')
     generator = generators.PointGenerator(processed_test)
     X, y = generator[0]
     dssm_model = engine.load_model('.tmpdir')
