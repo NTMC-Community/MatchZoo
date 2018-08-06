@@ -41,8 +41,8 @@ dssm_preprocessor = preprocessor.DSSMPreprocessor()
 processed_tr = dssm_preprocessor.fit_transform(train, stage='train')
 processed_te = dssm_preprocessor.fit_transform(test, stage='test')
 # DSSM expect dimensionality of letter-trigrams as input shape.
-# The fitted parameters has been stored in `context` during pre-processing.
-input_shapes = processed_train.context['input_shapes']
+# The fitted parameters has been stored in `context` during preprocessing on training data.
+input_shapes = processed_tr.context['input_shapes']
 ```
 
 Use Matchzoo `generators` module to generate `point-wise`, `pair-wise` or `list-wise` inputs into batches.
