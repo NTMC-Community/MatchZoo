@@ -30,13 +30,13 @@ def inte_test_dssm():
     dssm_preprocessor = preprocessor.DSSMPreprocessor()
     processed_train = dssm_preprocessor.fit_transform(train, stage='train')
     # the dimension of dssm model is the length of tri-letters.
-    dim_triletter = processed_train.context['dim_triletter']
+    input_shapes = processed_train.context['input_shapes']
     # generator.
     generator = generators.PointGenerator(processed_train)
     X, y = generator[0]
     # Create a dssm model
     dssm_model = models.DSSMModel()
-    dssm_model.params['input_shapes'] = [(dim_triletter, ), (dim_triletter, )]
+    dssm_model.params['input_shapes'] = input_shapes
     dssm_model.guess_and_fill_missing_params()
     dssm_model.build()
     dssm_model.compile()
