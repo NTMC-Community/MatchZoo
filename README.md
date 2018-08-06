@@ -14,14 +14,15 @@
 [![Requirements Status](https://requires.io/github/faneshion/MatchZoo/requirements.svg?branch=2.0)](https://requires.io/github/faneshion/MatchZoo/requirements/?branch=2.0)
 ---
 
-# Get Started in 60 Seconds
+## Get Started in 60 Seconds
+
+First, import modules and prepare input data.
 
 ```python
-from matchzoo import generators
 from matchzoo import preprocessor
+from matchzoo import generators
 from matchzoo import models
 
-# prepare inputs.
 train = [
 	("id0", "id1", "beijing", "Beijing is capital of China", 1),
 	("id0", "id2", "beijing", "China is in east Asia", 0),
@@ -30,20 +31,32 @@ train = [
 test = [
     ("id0", "id4", "beijing", "I visted beijing yesterday.")
 ]
-# Do pre-processing.
+```
+
+Preprocess your input data in three lines of code, keep track parameters to be passed into the model.
+
+```python
 dssm_preprocessor = preprocessor.DSSMPreprocessor()
 processed_tr = dssm_preprocessor.fit_transform(train, stage='train')
 processed_te = dssm_preprocessor.fit_transform(test, stage='test')
 # DSSM expect dimensionality of letter-trigrams as input shape.
 # The fitted parameters has been stored in `context` during pre-processing.
 dim_triletter = processed_train.context['dim_triletter']
-# Generate point-wise inputs into batches
+```
+
+Use Matchzoo `generators` module to generate `point-wise`, `pair-wise` or `list-wise` inputs into batches.
+
+```python
 generator_tr = generators.PointGenerator(processed_tr)
 generator_te = generators.PointGenerator(processed_te)
 # Example, train & test with the first batch
 X_tr, y_tr = generator_tr[0]
 X_te, y_te = generator_te[0]
-# Train a DSSM Model
+```
+
+Train a [Deep Semantic Structured Model](https://www.microsoft.com/en-us/research/project/dssm/), make predictions on test data.
+
+```python
 dssm_model = models.DSSMModel()
 dssm_model.params['input_shapes'] = [(dim_triletter, ), (dim_triletter, )]
 dssm_model.guess_and_fill_missing_params()
@@ -54,3 +67,6 @@ dssm_model.fit([X_tr.text_left, X_tr.text_right], y_tr)
 predictions = dssm_model.predict([X_te.text_left, X_te.text_right])
 ```
 
+For detailed usage, such as model persistence, evaluation, please check our documention: [English](https://matchzoo.readthedocs.io/en/2.0/?badge=2.0) X [中文](https://matchzoo.readthedocs.io/zh/latest/)
+
+If you're interested in the cutting-edge research progress, papers, please take a look at [awaresome neural models-for semantic match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match).
