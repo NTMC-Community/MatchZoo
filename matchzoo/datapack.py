@@ -104,7 +104,7 @@ class DataPack(object):
             raise FileExistsError
         elif not dirpath.exists():
             dirpath.mkdir()
-        
+
         dill.dump(self, open(data_file_path, mode='wb'))
 
 
