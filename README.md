@@ -24,9 +24,9 @@ from matchzoo import generators
 from matchzoo import models
 
 train = [
-	("id0", "id1", "beijing", "Beijing is capital of China", 1),
-	("id0", "id2", "beijing", "China is in east Asia", 0),
-	("id0", "id3", "beijing", "Summer in Beijing is hot.", 1)
+    ("id0", "id1", "beijing", "Beijing is capital of China", 1),
+    ("id0", "id2", "beijing", "China is in east Asia", 0),
+    ("id0", "id3", "beijing", "Summer in Beijing is hot.", 1)
 ]
 test = [
     ("id0", "id4", "beijing", "I visted beijing yesterday.")
@@ -67,6 +67,6 @@ dssm_model.fit([X_tr.text_left, X_tr.text_right], y_tr)
 predictions = dssm_model.predict([X_te.text_left, X_te.text_right])
 ```
 
-For detailed usage, such as model persistence, evaluation, please check our documention: [English](https://matchzoo.readthedocs.io/en/2.0/?badge=2.0) X [中文](https://matchzoo.readthedocs.io/zh/latest/)
+For detailed usage, such as model persistence, evaluation, please check our documention: [English](https://matchzoo.readthedocs.io/en/2.0/?badge=2.0) [中文](https://matchzoo.readthedocs.io/zh/latest/)
 
-If you're interested in the cutting-edge research progress, papers, please take a look at [awaresome neural models-for semantic match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match).
+If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models-for semantic match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match).
