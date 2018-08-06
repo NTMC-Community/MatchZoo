@@ -1,11 +1,17 @@
 """:class:`BasePreprocessor` define input and ouutput for processors."""
 
 import abc
+import typing
+from pathlib import Path
+import dill
+
 from matchzoo import datapack
 
 
 class BasePreprocessor(metaclass=abc.ABCMeta):
     """:class:`BasePreprocessor` to input handle data."""
+
+    DATA_FILENAME = 'preprocessor.dill'
 
     @abc.abstractmethod
     def fit(self, inputs: list) -> 'BasePreprocessor':
@@ -69,3 +75,38 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         if stage == 'train':
             columns.append('label')
         return datapack.DataPack(output, context, columns)
+
+    def save(self, dirpath: typing.Union[str, Path]):
+        """
+        Save the :class:`DSSMPreprocessor` object.
+
+        A saved :class:`DSSMPreprocessor` is represented as a directory with
+        the `context` object (fitted parameters on training data), it will
+        be saved by `pickle`.
+
+        :param dirpath: directory path of the saved :class:`DSSMPreprocessor`.
+        """
+        dirpath = Path(dirpath)
+        data_file_path = dirpath.joinpath(self.DATA_FILENAME)
+
+        if data_file_path.exists():
+            raise FileExistsError
+        elif not dirpath.exists():
+            dirpath.mkdir()
+
+        dill.dump(self, open(data_file_path, mode='wb'))
+
+
+def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:
+    """
+    Load the fitted `context`. The reverse function of :meth:`save`.
+
+    :param dirpath: directory path of the saved model.
+    :return: a :class:`DSSMPreprocessor` instance.
+    """
+    dirpath = Path(dirpath)
+
+    data_file_path = dirpath.joinpath(BasePreprocessor.DATA_FILENAME)
+    dp = dill.load(open(data_file_path, 'rb'))
+
+    return dp

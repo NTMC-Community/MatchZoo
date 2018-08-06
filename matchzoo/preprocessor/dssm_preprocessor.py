@@ -23,7 +23,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         >>> rv_train = dssm_preprocessor.fit_transform(
         ...     train_inputs,
         ...     stage='train')
-        >>> dssm_preprocessor.context['dim_triletter']
+        >>> dssm_preprocessor.context['input_shapes'][0][0]
         25
         >>> type(rv_train)
         <class 'matchzoo.datapack.DataPack'>
@@ -109,8 +109,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         vocab_unit = preprocessor.VocabularyUnit()
         vocab_unit.fit(vocab)
         self._context['term_index'] = vocab_unit.state['term_index']
-        self._context['dim_triletter'] = len(
-            vocab_unit.state['term_index']) + 1
+        dim_triletter = len(vocab_unit.state['term_index']) + 1
+        self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
         return self
 
     def transform(

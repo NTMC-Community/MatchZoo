@@ -1,0 +1,50 @@
+q50	d50	Has anybody run the MEEP software on a Windows platform?	How do I install and use MEEP software on a Windows PC?
+q51	d51	Is it safe to drink tap water in Canada?	Is it safe to drink tap water in Pune?
+q52	d52	What was the main cause of World War One?	What is the real reason for World War One?
+q53	d53	What is the fastest way to sign into Yahoo Mail?	What is the fastest way to sign into Yahoo Mail Classic?
+q54	d54	What kind of user interests do inMobi and AdMob target?	What kind of data Facebook has on it's users?
+q55	d55	What are some cerebral palsy hacks?	What is cerebral palsy?
+q56	d56	How often do people travel abroad for the weekend?	How often people travel abroad?
+q57	d57	What is the 2S class in Indian Railways?	What is TQWL in IRCTC wait list?
+q58	d58	What is it like to work with Aaron Sorkin?	What's it like to work with Aaron Sorkin?
+q59	d59	What are your new year resolutions for 2017?	What will be your new year resolution for 2017 and your plan of execution?
+q60	d60	What book should you read before you die?	Can anyone enlist the 'must read' books before you die?
+q61	d61	How can I make money in travelling?	Is there any way you can make money from travelling?
+q62	d62	How does Russian politics affect Australia and New Zealand?	How do Russian politics and geostrategy affect Australia and New Zealand?
+q63	d63	What is the procedure to start a tennis academy in India?	What can be done to make India a sporting nation?
+q64	d64	What is the remedy for prolonged knee pain?	What are the remedies for knee pain due to cycling?
+q65	d65	Is Klopp overrated?	Is Jurgen Klopp an overrated manager?
+q66	d66	What caliber of tragedy would have to take place for gun advocates to change their mind about gun control?	"Why don't some ""gun control advocates"" bother to learn anything about firearms before ""advocating""?"
+q67	d67	What were the causes of Nationalism in Europe?	What were the causes of nationalism?
+q68	d68	What's your take on the speech by PM of Pakistan at the UN?	What are your views on Nawaz Sharif's speech at the UN General Assembly?
+q69	d69	What are the reviews of SensoVision System?	Is Lothar Matthaus Germany's greatest footballer?
+q70	d70	What do foreigner think of Chinese?	What do you think of Chinese people?
+q71	d71	How do you build your own computer?	How do I start building a computer?
+q72	d72	How can I get into a good college?	How do I get into a really good college?
+q73	d73	How do I overcome my pornography addiction?	How did you overcome porn addiction?
+q74	d74	How does Quora determine how many views an answer gets?	How are the number of views on Quora counted?
+q75	d75	What GMAT self-prep book is the best for the test?	Which is the best GMAT self-prep book for 2016?
+q76	d76	How much will it cost to maintain an e-commerce website in a year?	What is the cost of developing an e-commerce website and cost of maintaining it in India?
+q77	d77	"What does it mean when FaceTime says someone is ""not available"" for FaceTime?"	Why can my mom see my FaceTime history?
+q78	d78	What is the best free web hosting for php?	What are the best free web hosting services?
+q79	d79	"Is there any internship available for a student of ""Ceramic Technology"" after the third semester? If yes then please do tell me how and where!"	I am a 5th sem student pursuing computer engineering want to do a project in java so shuld i go for training? If yes then please let me know the where can i take training
+q80	d80	Does IBM Watson use ElasticSearch?	Does Google use Elasticsearch?
+q81	d81	What is the difference between a psychologist and a psychiatrist?”?	What is the difference between psychologist and psychatist?
+q82	d82	Which phone is best under 12000?	What is the best phone to buy below 15k?
+q83	d83	How do you troubleshoot a Toshiba laptop?	How do I reset a Toshiba laptop?
+q84	d84	How does the burning of fossil fuels contribute to global warming?	Why does CO2 contribute more to global warming than water vapour?
+q85	d85	How can I gain weight on my body?	What should I eat to gain weight?
+q86	d86	What are the causes of the fall of the Roman Empire?	What were the most important causes and effects of the fall of the Roman Empire?
+q87	d87	What is the difference between who and how?	"What is the difference between ""&"" and ""and""?"
+q88	d88	What are the best new car products or inventions that most people don't know about?	What are some mind-blowing vehicles tools that exist that most people don't know about?
+q89	d89	What happens if you put milk in a coffee maker?	What would happen if I put milk instead of water in my automatic drip coffee maker?
+q90	d90	Will the next generation of parenting change or stay the same?	What kind of parents will the next generation have?
+q91	d91	What is copilotsearch.com?	What is ContenVania.com?
+q92	d92	What does analytics do?	What are analytical people like?
+q93	d93	How did you prepare for AIIMS/NEET/AIPMT?	How did you prepare for the AIIMS UG entrance exams?
+q94	d94	How does a long distance relationship work?	How are long distance relationships maintained?
+q95	d95	What do you think of the removal of the MagSafe connector from Apple's 2016 MacBook Pro?	What will the CPU upgrade to the 2016 Apple MacBook Pro mean?
+q96	d96	What does Jainism say about homosexuality?	What does Jainism say about Gays and Homosexuality?
+q97	d97	Do you believe there is life after death?	Is it true that there is life after death?
+q98	d98	What is one coin?	What's this coin?
+q99	d99	What is like to have sex with cousin?	What is it like to have sex with your cousin?
