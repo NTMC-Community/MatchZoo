@@ -42,7 +42,7 @@ processed_tr = dssm_preprocessor.fit_transform(train, stage='train')
 processed_te = dssm_preprocessor.fit_transform(test, stage='test')
 # DSSM expect dimensionality of letter-trigrams as input shape.
 # The fitted parameters has been stored in `context` during pre-processing.
-dim_triletter = processed_train.context['dim_triletter']
+input_shapes = processed_train.context['input_shapes']
 ```
 
 Use Matchzoo `generators` module to generate `point-wise`, `pair-wise` or `list-wise` inputs into batches.
@@ -59,7 +59,7 @@ Train a [Deep Semantic Structured Model](https://www.microsoft.com/en-us/researc
 
 ```python
 dssm_model = models.DSSMModel()
-dssm_model.params['input_shapes'] = [(dim_triletter, ), (dim_triletter, )]
+dssm_model.params['input_shapes'] = input_shapes
 dssm_model.guess_and_fill_missing_params()
 dssm_model.build()
 dssm_model.compile()
@@ -70,4 +70,4 @@ predictions = dssm_model.predict([X_te.text_left, X_te.text_right])
 
 For detailed usage, such as model persistence, evaluation, please check our documention: [English](https://matchzoo.readthedocs.io/en/2.0/?badge=2.0) [中文](https://matchzoo.readthedocs.io/zh/latest/)
 
-If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models-for semantic match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match).
+If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match).
