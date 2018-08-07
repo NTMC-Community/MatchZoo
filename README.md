@@ -76,7 +76,7 @@ If you're interested in the cutting-edge research progress, please take a look a
 
 MatchZoo is dependennt on [Keras](https://github.com/keras-team/keras), please install one of its backend engines: TensorFlow, Theano, or CNTK. We recommend the TensorFlow backend. Two ways to install MatchZoo:
 
-**Install MatchZoo from Pypi:**:
+**Install MatchZoo from Pypi:**
 
 ```python
 pip install MatchZoo
