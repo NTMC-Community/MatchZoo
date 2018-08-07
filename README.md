@@ -1,14 +1,14 @@
 <div align='center'>
-<img src="./artworks/matchzoo-logo.png" width = "400"  alt="logo" align="center" />
+<img src="./artworks/MatchZoo-logo.png" width = "400"  alt="logo" align="center" />
 </div>
 
-# Matchzoo
+# MatchZoo
 
 > MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models.<br/>
-> Matchzoo 是一个通用的文本匹配工具包，它旨在方便大家快速的实现、比较、以及分享最新的深度文本匹配模型。
+> MatchZoo 是一个通用的文本匹配工具包，它旨在方便大家快速的实现、比较、以及分享最新的深度文本匹配模型。
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
-[![Documentation Status](http://readthedocs.org/projects/matchzoo/badge/?version=2.0)](https://matchzoo.readthedocs.io/en/2.0/?badge=2.0)
+[![Documentation Status](http://readthedocs.org/projects/MatchZoo/badge/?version=2.0)](https://MatchZoo.readthedocs.io/en/2.0/?badge=2.0)
 [![Build Status](https://travis-ci.org/faneshion/MatchZoo.svg?branch=master)](https://travis-ci.org/faneshion/MatchZoo/)
 [![codecov](https://codecov.io/gh/faneshion/MatchZoo/branch/2.0/graph/badge.svg)](https://codecov.io/gh/faneshion/MatchZoo)
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -20,9 +20,9 @@
 First, import modules and prepare input data.
 
 ```python
-from matchzoo import preprocessor
-from matchzoo import generators
-from matchzoo import models
+from MatchZoo import preprocessor
+from MatchZoo import generators
+from MatchZoo import models
 
 train = [
     ("id0", "id1", "beijing", "Beijing is capital of China", 1),
@@ -45,7 +45,7 @@ processed_te = dssm_preprocessor.fit_transform(test, stage='test')
 input_shapes = processed_tr.context['input_shapes']
 ```
 
-Use Matchzoo `generators` module to generate `point-wise`, `pair-wise` or `list-wise` inputs into batches.
+Use MatchZoo `generators` module to generate `point-wise`, `pair-wise` or `list-wise` inputs into batches.
 
 ```python
 generator_tr = generators.PointGenerator(processed_tr)
@@ -68,23 +68,23 @@ dssm_model.fit([X_tr.text_left, X_tr.text_right], y_tr)
 predictions = dssm_model.predict([X_te.text_left, X_te.text_right])
 ```
 
-For detailed usage, such as model persistence, evaluation, please check our documention: [English](https://matchzoo.readthedocs.io/en/2.0/?badge=2.0) [中文](https://matchzoo.readthedocs.io/zh/latest/)
+For detailed usage, such as model persistence, evaluation, please check our documention: [English](https://MatchZoo.readthedocs.io/en/2.0/?badge=2.0) [中文](https://MatchZoo.readthedocs.io/zh/latest/)
 
 If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match).
 
 ## Install
 
-Matchzoo is dependennt on [Keras](https://github.com/keras-team/keras), please install one of its backend engines: TensorFlow, Theano, or CNTK. We recommend the TensorFlow backend.
+MatchZoo is dependennt on [Keras](https://github.com/keras-team/keras), please install one of its backend engines: TensorFlow, Theano, or CNTK. We recommend the TensorFlow backend.
 
-Two ways to install Matchzoo:
+Two ways to install MatchZoo:
 
-**Install Matchzoo from Pypi:**:
+**Install MatchZoo from Pypi:**:
 
 ```python
-pip install matchzoo
+pip install MatchZoo
 ```
 
-**Install Matchzoo from the Github source:**
+**Install MatchZoo from the Github source:**
 
 ```python
 git clone https://github.com/faneshion/MatchZoo.git
