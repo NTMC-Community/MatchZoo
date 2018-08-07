@@ -50,7 +50,7 @@ setup(
     keywords="text matching models",
     url="https://github.com/faneshion/MatchZoo",
     packages=find_packages(),
-    ong_description=long_description,
+    long_description=long_description,
     classifiers=[
         "Development Status :: 3 - Alpha",
         'Environment :: Console',
