@@ -15,12 +15,6 @@
 [![Requirements Status](https://requires.io/github/faneshion/MatchZoo/requirements.svg?branch=2.0)](https://requires.io/github/faneshion/MatchZoo/requirements/?branch=2.0)
 ---
 
-## Install
-
-```python
-pip install matchzoo
-```
-
 ## Get Started in 60 Seconds
 
 First, import modules and prepare input data.
@@ -78,9 +72,22 @@ For detailed usage, such as model persistence, evaluation, please check our docu
 
 If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match).
 
-## Testing
+## Install
+
+Matchzoo is dependennt on [Keras](https://github.com/keras-team/keras), please install one of its backend engines: TensorFlow, Theano, or CNTK. We recommend the TensorFlow backend.
+
+Two ways to install Matchzoo:
+
+**Install Matchzoo from Pypi:**:
 
 ```python
-make init # install dependencies.
-make test # run unit tests, doc tests and pep8 check. 
+pip install matchzoo
+```
+
+**Install Matchzoo from the Github source:**
+
+```python
+git clone https://github.com/faneshion/MatchZoo.git
+cd MatchZoo
+python setup.py install
 ```
