@@ -1,5 +1,5 @@
 <div align='center'>
-<img src="./artworks/MatchZoo-logo.png" width = "400"  alt="logo" align="center" />
+<img src="./artworks/matchzoo-logo.png" width = "400"  alt="logo" align="center" />
 </div>
 
 # MatchZoo
