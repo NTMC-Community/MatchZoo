@@ -79,7 +79,7 @@ MatchZoo is dependennt on [Keras](https://github.com/keras-team/keras), please i
 **Install MatchZoo from Pypi:**
 
 ```python
-pip install MatchZoo
+pip install matchzoo
 ```
 
 **Install MatchZoo from the Github source:**
