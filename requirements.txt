@@ -8,6 +8,7 @@ dill >= 0.2.7.1
 git+git://github.com/hyperopt/hyperopt.git
 pandas >= 0.23.1
 networkx >= 2.1
+h5py >= 2.8.0
 coverage >= 4.3.4
 codecov >= 2.0.15
 pytest >= 3.6.0
