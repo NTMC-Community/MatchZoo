@@ -15,6 +15,12 @@
 [![Requirements Status](https://requires.io/github/faneshion/MatchZoo/requirements.svg?branch=2.0)](https://requires.io/github/faneshion/MatchZoo/requirements/?branch=2.0)
 ---
 
+## Install
+
+```python
+pip install matchzoo
+```
+
 ## Get Started in 60 Seconds
 
 First, import modules and prepare input data.
@@ -71,3 +77,10 @@ predictions = dssm_model.predict([X_te.text_left, X_te.text_right])
 For detailed usage, such as model persistence, evaluation, please check our documention: [English](https://matchzoo.readthedocs.io/en/2.0/?badge=2.0) [中文](https://matchzoo.readthedocs.io/zh/latest/)
 
 If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match).
+
+## Testing
+
+```python
+make init # install dependencies.
+make test # run unit tests, doc tests and pep8 check. 
+```
