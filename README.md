@@ -20,9 +20,9 @@
 First, import modules and prepare input data.
 
 ```python
-from MatchZoo import preprocessor
-from MatchZoo import generators
-from MatchZoo import models
+from matchzoo import preprocessor
+from matchzoo import generators
+from matchzoo import models
 
 train = [
     ("id0", "id1", "beijing", "Beijing is capital of China", 1),
@@ -74,9 +74,7 @@ If you're interested in the cutting-edge research progress, please take a look a
 
 ## Install
 
-MatchZoo is dependennt on [Keras](https://github.com/keras-team/keras), please install one of its backend engines: TensorFlow, Theano, or CNTK. We recommend the TensorFlow backend.
-
-Two ways to install MatchZoo:
+MatchZoo is dependennt on [Keras](https://github.com/keras-team/keras), please install one of its backend engines: TensorFlow, Theano, or CNTK. We recommend the TensorFlow backend. Two ways to install MatchZoo:
 
 **Install MatchZoo from Pypi:**:
 
