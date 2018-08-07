@@ -23,7 +23,8 @@ install_requires = [
     'dill >= 0.2.7.1',
     'git+git://github.com/hyperopt/hyperopt.git',
     'pandas >= 0.23.1',
-    'networkx >= 2.1'
+    'networkx >= 2.1',
+    'h5py >= 2.8.0'
 ]
 
 extras_requires = {
