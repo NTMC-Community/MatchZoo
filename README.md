@@ -8,11 +8,11 @@
 > MatchZoo 是一个通用的文本匹配工具包，它旨在方便大家快速的实现、比较、以及分享最新的深度文本匹配模型。
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
-[![Documentation Status](http://readthedocs.org/projects/MatchZoo/badge/?version=2.0)](https://MatchZoo.readthedocs.io/en/2.0/?badge=2.0)
-[![Build Status](https://travis-ci.org/faneshion/MatchZoo.svg?branch=master)](https://travis-ci.org/faneshion/MatchZoo/)
-[![codecov](https://codecov.io/gh/faneshion/MatchZoo/branch/2.0/graph/badge.svg)](https://codecov.io/gh/faneshion/MatchZoo)
+[![Documentation Status](http://readthedocs.org/projects/matchzoo/badge/?version=2.0)](https://matchzoo.readthedocs.io/en/2.0/?badge=2.0)
+[![Build Status](https://travis-ci.org/faneshion/matchzoo.svg?branch=master)](https://travis-ci.org/faneshion/matchzoo/)
+[![codecov](https://codecov.io/gh/faneshion/matchzoo/branch/2.0/graph/badge.svg)](https://codecov.io/gh/faneshion/matchzoo)
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Requirements Status](https://requires.io/github/faneshion/MatchZoo/requirements.svg?branch=2.0)](https://requires.io/github/faneshion/MatchZoo/requirements/?branch=2.0)
+[![Requirements Status](https://requires.io/github/faneshion/matchzoo/requirements.svg?branch=2.0)](https://requires.io/github/faneshion/matchzoo/requirements/?branch=2.0)
 ---
 
 ## Get Started in 60 Seconds
