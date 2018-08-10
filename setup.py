@@ -21,10 +21,13 @@ install_requires = [
     'numpy >= 1.12.1',
     'tqdm >= 4.19.4',
     'dill >= 0.2.7.1',
-    'git+git://github.com/hyperopt/hyperopt.git',
     'pandas >= 0.23.1',
     'networkx >= 2.1',
     'h5py >= 2.8.0'
+]
+
+dependency_links=[
+    'git+git://github.com/hyperopt/hyperopt.git'
 ]
 
 extras_requires = {
@@ -58,5 +61,6 @@ setup(
         'Programming Language :: Python :: 3.6'
     ],
     install_requires=install_requires,
+    dependency_links=dependency_links,
     extras_require=extras_requires
 )
