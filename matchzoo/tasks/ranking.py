@@ -22,6 +22,6 @@ class Ranking(engine.BaseTask):
         return 1,
 
     @property
-    def target_datatype(self):
+    def output_dtype(self):
         """:return: target data type, expect `float` as output."""
         return float
