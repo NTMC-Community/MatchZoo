@@ -35,9 +35,10 @@ class BaseGenerator(keras.utils.Sequence):
 
         Here the :attr:`index_array` records the index of all the instances.
         """
-        self.index_array = np.arange(self.num_instances)
         if self.shuffle:
             self.index_array = np.random.permutation(self.num_instances)
+        else:
+            self.index_array = np.arange(self.num_instances)
 
     def __getitem__(self, idx):
         """Get a batch from index idx.
@@ -87,7 +88,5 @@ class BaseGenerator(keras.utils.Sequence):
         """Get a batch of transformed samples.
 
         :param index_array: Arrray of sample indices to include in a batch.
-
         :return: A batch of transformed samples.
-
         """
