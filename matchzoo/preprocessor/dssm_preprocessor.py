@@ -24,7 +24,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         ...     train_inputs,
         ...     stage='train')
         >>> dssm_preprocessor.context['input_shapes'][0][0]
-        25
+        37
         >>> type(rv_train)
         <class 'matchzoo.datapack.DataPack'>
         >>> context = dssm_preprocessor.context
@@ -83,10 +83,10 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         vocab = []
         units = self._prepare_stateless_units()
-        for _, _, text_left, text_right, _ in inputs:
+        for _, _, left, right, _ in inputs:
             for unit in units:
-                left = unit.transform(text_left)
-                right = unit.transform(text_right)
+                left = unit.transform(left)
+                right = unit.transform(right)
             vocab.extend(left + right)
         return vocab
 
@@ -132,9 +132,10 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         units.append(
             preprocessor.WordHashingUnit(self._context['term_index']))
         for input in inputs:
+            left, right = input[2], input[3]
             for unit in units:
-                left = unit.transform(input[2])
-                right = unit.transform(input[3])
+                left = unit.transform(left)
+                right = unit.transform(right)
             if stage == 'train':
                 outputs.append((input[0], input[1], left, right, input[4]))
             else:

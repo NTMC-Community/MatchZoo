@@ -7,3 +7,4 @@ exclude_lines =
   TypeError
 omit = 
   matchzoo/__init__.py
+  matchzoo/version.py
