@@ -36,6 +36,6 @@ class Classification(engine.BaseTask):
         return self._num_classes,
 
     @property
-    def target_datatype(self):
+    def output_dtype(self):
         """:return: target data type, expect `int` as output."""
         return int
