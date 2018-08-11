@@ -1,6 +1,5 @@
 import pytest
 import numpy as np
-from matchzoo import tasks
 from matchzoo.generators import PairGenerator
 from matchzoo.datapack import DataPack
 
@@ -21,15 +20,11 @@ def x():
     columns = ['text_left', 'text_right', 'id_left', 'id_right', 'label']
     return DataPack(data, cts, columns)
 
-@pytest.fixture
-def task():
-    return tasks.Ranking()
-
-def test_pair_generator_one(x, task):
+def test_pair_generator_one(x):
     """Test pair generator with only one negative sample."""
     shuffle = False
     batch_size = 1
-    generator = PairGenerator(x, 1, task, batch_size, shuffle)
+    generator = PairGenerator(x, 1, batch_size, shuffle)
     x, y = generator[0]
     assert np.array_equal(x.text_left, np.array([[1], [1]]))
     assert np.array_equal(x.text_right, np.array([[4], [3]]))
@@ -37,11 +32,11 @@ def test_pair_generator_one(x, task):
     assert np.array_equal(x.id_right, np.array(['did3', 'did2']))
     assert y == [2, 1]
 
-def test_pair_generator_multi(x, task):
+def test_pair_generator_multi(x):
     """Test pair generator with multiple negative sample."""
     shuffle = False
     batch_size = 1
-    generator = PairGenerator(x, 2, task, batch_size, shuffle)
+    generator = PairGenerator(x, 2, batch_size, shuffle)
     x, y = generator[0]
     assert np.array_equal(x.text_left, np.array([[1], [1], [1]]))
     assert np.array_equal(x.text_right, np.array([[4], [3], [2]]))
