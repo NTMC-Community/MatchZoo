@@ -9,23 +9,26 @@ from matchzoo import preprocessor
 from matchzoo import models
 from matchzoo import engine
 
-
-def prepare_data():
-    """Prepare train & test data."""
+@pytest.fixture
+def train():
     train = []
-    test = []
     path = os.path.dirname(__file__)
     with open(os.path.join(path, 'train.txt')) as f:
         train = [tuple(map(str, i.split('\t'))) for i in f]
+    return train
+
+@pytest.fixture
+def test():
+    test = []
+    path = os.path.dirname(__file__)
     with open(os.path.join(path, 'test.txt')) as f:
         test = [tuple(map(str, i.split('\t'))) for i in f]
-    return train, test
+    return test
 
 
-def inte_test_dssm():
+
+def test_dssm(train, test):
     """Test DSSM model."""
-    # load data.
-    train, test = prepare_data()
     # do pre-processing.
     dssm_preprocessor = preprocessor.DSSMPreprocessor()
     processed_train = dssm_preprocessor.fit_transform(train, stage='train')
@@ -55,7 +58,3 @@ def inte_test_dssm():
     assert len(predictions) > 0
     assert type(predictions[0][0]) == np.float32
     shutil.rmtree('.tmpdir')
-
-    
-if __name__ == '__main__':
-    inte_test_dssm()
