@@ -5,6 +5,10 @@ from matchzoo import preprocessor
 from matchzoo import datapack
 
 import typing
+import logging
+from tqdm import tqdm
+
+logger = logging.getLogger(__name__)
 
 
 class DSSMPreprocessor(engine.BasePreprocessor):
@@ -83,7 +87,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         vocab = []
         units = self._prepare_stateless_units()
-        for _, _, left, right, _ in inputs:
+        logger.info("Start building vocabulary & fitting parameters.")
+        for _, _, left, right, _ in tqdm(inputs):
             for unit in units:
                 left = unit.transform(left)
                 right = unit.transform(right)
@@ -131,7 +136,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         units = self._prepare_stateless_units()
         units.append(
             preprocessor.WordHashingUnit(self._context['term_index']))
-        for input in inputs:
+        logger.info(f"Start processing input data for {stage} stage.")
+        for input in tqdm(inputs):
             left, right = input[2], input[3]
             for unit in units:
                 left = unit.transform(left)
