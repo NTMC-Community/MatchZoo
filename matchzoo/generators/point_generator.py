@@ -75,7 +75,7 @@ class PointGenerator(engine.BaseGenerator):
         batch_y = None
         if 'label' in self.data:
             if isinstance(self._task, tasks.Ranking):
-                batch_y = map(int, self.data['label'])
+                batch_y = list(map(int, self.data['label']))
             elif isinstance(self._task, tasks.Classification):
                 batch_y = np.zeros((bsize, self._task.num_classes),
                                    dtype=np.int32)
