@@ -2,7 +2,8 @@
 
 from matchzoo import engine
 
-from keras import layers, Model
+from keras import Model
+from keras.layers import Input, Conv1D, MaxPooling1D, Dense, Dot
 
 
 class CDSSMModel(engine.BaseModel):
@@ -48,21 +49,21 @@ class CDSSMModel(engine.BaseModel):
                  300d tensor.
         """
         # Input word hashing layer.
-        in_ = layers.Input(shape=input_shape)
+        input_ = Input(shape=input_shape)
         # Apply 1d convolutional on each word_ngram (lt).
-        x = layers.Conv1D(filters=self._params['dim_conv'],
-                          kernel_size=self._params['window_conv'],
-                          strides=self._params['strides'],
-                          padding=self._params['padding'],
-                          kernel_initializer=self._params['w_initializer'],
-                          bias_initializer=self._params['b_initializer'])(in_)
+        x = Conv1D(filters=self._params['dim_conv'],
+                   kernel_size=self._params['window_conv'],
+                   strides=self._params['strides'],
+                   padding=self._params['padding'],
+                   kernel_initializer=self._params['w_initializer'],
+                   bias_initializer=self._params['b_initializer'])(input_)
         # Apply max pooling by take max at each dimension across
         # all word_trigram features.
-        x = layers.MaxPooling1D(pool_size=input_shape[0])(x)
+        x = MaxPooling1D(pool_size=input_shape[0])(x)
         # Apply a none-linear transformation use tanh
-        x_out = layers.Dense(self._params['dim_fan_out'],
-                             activation=self._params['activation_dense'])(x)
-        return Model(inputs=in_, outputs=x_out)
+        x_out = Dense(self._params['dim_fan_out'],
+                      activation=self._params['activation_dense'])(x)
+        return Model(inputs=input_, outputs=x_out)
 
     def build(self):
         """
@@ -77,14 +78,14 @@ class CDSSMModel(engine.BaseModel):
         base_network_right = self._create_base_network(
             input_shape=input_shape_right)
         # Left input and right input.
-        input_left = layers.Input(shape=input_shape_left)
-        input_right = layers.Input(shape=input_shape_right)
+        input_left = Input(shape=input_shape_left)
+        input_right = Input(shape=input_shape_right)
         # Process left & right input.
         x = [base_network_left(input_left),
              base_network_right(input_right)]
         # Dot product with cosine similarity.
-        x = layers.Dot(axes=[1, 1],
-                       normalize=True)(x)
+        x = Dot(axes=[1, 1],
+                normalize=True)(x)
         x_out = self._make_output_layer()(x)
         self._backend = Model(
             inputs=[input_left, input_right],
