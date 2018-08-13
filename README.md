@@ -50,8 +50,7 @@ Use MatchZoo `generators` module to generate `point-wise`, `pair-wise` or `list-
 ```python
 generator_tr = generators.PointGenerator(processed_tr)
 generator_te = generators.PointGenerator(processed_te)
-# Example, train & test with the first batch
-X_tr, y_tr = generator_tr[0]
+# Example, train with generator, test with the first batch.
 X_te, y_te = generator_te[0]
 ```
 
@@ -63,12 +62,12 @@ dssm_model.params['input_shapes'] = input_shapes
 dssm_model.guess_and_fill_missing_params()
 dssm_model.build()
 dssm_model.compile()
-dssm_model.fit([X_tr.text_left, X_tr.text_right], y_tr)
+dssm_model.fit_generator(generator_tr)
 # Make predictions
 predictions = dssm_model.predict([X_te.text_left, X_te.text_right])
 ```
 
-For detailed usage, such as model persistence, evaluation, please check our documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
+For detailed usage, such as hyper-parameters, model persistence, evaluation, please check our documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
 
 If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match).
 
