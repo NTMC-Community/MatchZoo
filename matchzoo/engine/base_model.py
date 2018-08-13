@@ -148,13 +148,12 @@ class BaseModel(abc.ABC):
 
         See :meth:`keras.models.Model.fit_generator` for more details.
 
-        :param generator: A generator, an instance of :class:`PointGenerator`,
-            :class:`PairGenerator` or :class:`ListGenerator`.
+        :param generator: A generator, an instance of :class:`BaseGenerator`.
         :param steps_per_epoch: Total number of steps (batches of samples)
             to yield from :attr:`generator` object.
         :param epochs: Number of epochs to train the model.
-        :param verbose: Verbosity mode. 0 = silent, 1 = progress bar,
-            2 = one line per epoch.
+        :param verbose: 0, 1, or 2. Verbosity mode. 0 = silent, 1 = verbose,
+            2 = one log line per epoch.
 
         :return: A `keras.callbacks.History` instance. Its history attribute
             contains all information collected during training.
