@@ -78,15 +78,13 @@ class CDSSMModel(engine.BaseModel):
         base_network_right = self._create_base_network(
             input_shape=input_shape_right)
         # Left input and right input.
-        input_left = Input(shape=input_shape_left)
-        input_right = Input(shape=input_shape_right)
+        input_left = Input(name='text_left', shape=input_shape_left)
+        input_right = Input(name='text_right', shape=input_shape_right)
         # Process left & right input.
         x = [base_network_left(input_left),
              base_network_right(input_right)]
         # Dot product with cosine similarity.
-        x = Dot(axes=[1, 1],
-                normalize=True)(x)
+        x = Dot(axes=[1, 1], normalize=True)(x)
         x_out = self._make_output_layer()(x)
-        self._backend = Model(
-            inputs=[input_left, input_right],
-            outputs=x_out)
+        self._backend = Model(inputs=[input_left, input_right],
+                              outputs=x_out)
