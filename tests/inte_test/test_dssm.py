@@ -36,14 +36,14 @@ def test_dssm(train, test):
     input_shapes = processed_train.context['input_shapes']
     # generator.
     generator = generators.PointGenerator(processed_train)
-    X, y = generator[0]
+    # X, y = generator[0]
     # Create a dssm model
     dssm_model = models.DSSMModel()
     dssm_model.params['input_shapes'] = input_shapes
     dssm_model.guess_and_fill_missing_params()
     dssm_model.build()
     dssm_model.compile()
-    dssm_model.fit([X.text_left, X.text_right], y)
+    dssm_model.fit_generator(generator)
     # save
     dssm_preprocessor.save('.tmpdir')
     dssm_model.save('.tmpdir')
