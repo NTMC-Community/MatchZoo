@@ -9,23 +9,26 @@ from matchzoo import preprocessor
 from matchzoo import models
 from matchzoo import engine
 
-
-def prepare_data():
-    """Prepare train & test data."""
+@pytest.fixture
+def train():
     train = []
-    test = []
     path = os.path.dirname(__file__)
     with open(os.path.join(path, 'train.txt')) as f:
         train = [tuple(map(str, i.split('\t'))) for i in f]
+    return train
+
+@pytest.fixture
+def test():
+    test = []
+    path = os.path.dirname(__file__)
     with open(os.path.join(path, 'test.txt')) as f:
         test = [tuple(map(str, i.split('\t'))) for i in f]
-    return train, test
+    return test
 
 
-def inte_test_dssm():
+
+def test_dssm(train, test):
     """Test DSSM model."""
-    # load data.
-    train, test = prepare_data()
     # do pre-processing.
     dssm_preprocessor = preprocessor.DSSMPreprocessor()
     processed_train = dssm_preprocessor.fit_transform(train, stage='train')
@@ -33,14 +36,14 @@ def inte_test_dssm():
     input_shapes = processed_train.context['input_shapes']
     # generator.
     generator = generators.PointGenerator(processed_train)
-    X, y = generator[0]
+    # X, y = generator[0]
     # Create a dssm model
     dssm_model = models.DSSMModel()
     dssm_model.params['input_shapes'] = input_shapes
     dssm_model.guess_and_fill_missing_params()
     dssm_model.build()
     dssm_model.compile()
-    dssm_model.fit([X.text_left, X.text_right], y)
+    dssm_model.fit_generator(generator)
     # save
     dssm_preprocessor.save('.tmpdir')
     dssm_model.save('.tmpdir')
@@ -55,7 +58,3 @@ def inte_test_dssm():
     assert len(predictions) > 0
     assert type(predictions[0][0]) == np.float32
     shutil.rmtree('.tmpdir')
-
-    
-if __name__ == '__main__':
-    inte_test_dssm()
