@@ -37,7 +37,7 @@ class CDSSMModel(engine.BaseModel):
 
     def _create_base_network(self, input_shape: tuple) -> Model:
         """
-        Apply convolutional operation towards to each tri-letter.
+        Apply conv and maxpooling operation towards to each tri-letter.
 
         The input shape is `num_word_ngrams`*(`contextual_window`*
         `dim_triletter`), as described in the paper, `contextual_window`
@@ -46,7 +46,7 @@ class CDSSMModel(engine.BaseModel):
 
         :param input_shape: tuple of input shapes.
         :return: Keras `Model`, input 1 by n dimension tensor, output
-                 300d tensor.
+                 128d tensor.
         """
         # Input word hashing layer.
         x_in = Input(shape=input_shape)
@@ -68,7 +68,6 @@ class CDSSMModel(engine.BaseModel):
         x = Flatten()(x)
         x_out = Dense(self._params['dim_fan_out'],
                       activation=self._params['activation_hidden'])(x)
-        print(x_out._keras_shape)
         return Model(inputs=x_in, outputs=x_out)
 
     def build(self):
