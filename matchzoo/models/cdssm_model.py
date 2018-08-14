@@ -24,7 +24,7 @@ class CDSSMModel(engine.BaseModel):
         params['optimizer'] = 'sgd'
         # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
         # Dimension: (NUM_TRI_LETTERS, Contextual Sliding Window )
-        params['input_shapes'] = [(10, 90000), (20, 90000)]
+        params['input_shapes'] = [(10, 30000), (20, 30000)]
         params.add(engine.Param('w_initializer', 'glorot_normal'))
         params.add(engine.Param('b_initializer', 'zeros'))
         params.add(engine.Param('dim_fan_out', 128))
@@ -93,7 +93,3 @@ class CDSSMModel(engine.BaseModel):
         x_out = self._make_output_layer()(x)
         self._backend = Model(inputs=[input_left, input_right],
                               outputs=x_out)
-
-# cdssm = CDSSMModel()
-# cdssm.guess_and_fill_missing_params()
-# cdssm.build()
