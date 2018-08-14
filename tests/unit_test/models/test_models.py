@@ -19,7 +19,7 @@ model_setups = [
     (models.NaiveModel, None),
     (models.DenseBaselineModel, None),
     (models.DSSMModel, None),
-    # (models.CDSSMModel, None)
+    (models.CDSSMModel, None)
 ]
 
 
@@ -30,7 +30,6 @@ def num_samples(request):
 
 @pytest.fixture(scope='module', params=[
     tasks.Classification(num_classes=2),
-    tasks.Classification(num_classes=16),
     tasks.Ranking()
 ])
 def task(request):
