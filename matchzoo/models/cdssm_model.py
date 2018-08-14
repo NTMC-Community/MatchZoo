@@ -11,9 +11,9 @@ class CDSSMModel(engine.BaseModel):
     Convolutional deep structured semantic model.
 
     Examples:
-        >>> #model = CDSSMModel()
-        >>> #model.guess_and_fill_missing_params()
-        >>> #model.build()
+        >>> model = CDSSMModel()
+        >>> model.guess_and_fill_missing_params()
+        >>> model.build()
 
     """
 
