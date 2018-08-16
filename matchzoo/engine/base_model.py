@@ -148,7 +148,7 @@ class BaseModel(abc.ABC):
 
         See :meth:`keras.models.Model.fit_generator` for more details.
 
-        :param generator: A generator, an instance of 
+        :param generator: A generator, an instance of
             :class:`engine.BaseGenerator`.
         :param steps_per_epoch: Total number of steps (batches of samples)
             to yield from :attr:`generator` object.
