@@ -138,7 +138,7 @@ class BaseModel(abc.ABC):
 
     def fit_generator(
         self,
-        generator: 'BaseGenerator',
+        generator: 'engine.BaseGenerator',
         steps_per_epoch: int = None,
         epochs: int = 1,
         verbose: int = 1
@@ -148,7 +148,8 @@ class BaseModel(abc.ABC):
 
         See :meth:`keras.models.Model.fit_generator` for more details.
 
-        :param generator: A generator, an instance of :class:`BaseGenerator`.
+        :param generator: A generator, an instance of
+            :class:`engine.BaseGenerator`.
         :param steps_per_epoch: Total number of steps (batches of samples)
             to yield from :attr:`generator` object.
         :param epochs: Number of epochs to train the model.
