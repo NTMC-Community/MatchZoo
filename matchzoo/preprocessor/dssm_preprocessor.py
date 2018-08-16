@@ -5,6 +5,10 @@ from matchzoo import preprocessor
 from matchzoo import datapack
 
 import typing
+import logging
+from tqdm import tqdm
+
+logger = logging.getLogger(__name__)
 
 
 class DSSMPreprocessor(engine.BasePreprocessor):
@@ -23,8 +27,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         >>> rv_train = dssm_preprocessor.fit_transform(
         ...     train_inputs,
         ...     stage='train')
-        >>> dssm_preprocessor.context['dim_triletter']
-        25
+        >>> dssm_preprocessor.context['input_shapes'][0][0]
+        37
         >>> type(rv_train)
         <class 'matchzoo.datapack.DataPack'>
         >>> context = dssm_preprocessor.context
@@ -83,10 +87,11 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         vocab = []
         units = self._prepare_stateless_units()
-        for _, _, text_left, text_right, _ in inputs:
+        logger.info("Start building vocabulary & fitting parameters.")
+        for _, _, left, right, _ in tqdm(inputs):
             for unit in units:
-                left = unit.transform(text_left)
-                right = unit.transform(text_right)
+                left = unit.transform(left)
+                right = unit.transform(right)
             vocab.extend(left + right)
         return vocab
 
@@ -109,8 +114,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         vocab_unit = preprocessor.VocabularyUnit()
         vocab_unit.fit(vocab)
         self._context['term_index'] = vocab_unit.state['term_index']
-        self._context['dim_triletter'] = len(
-            vocab_unit.state['term_index']) + 1
+        dim_triletter = len(vocab_unit.state['term_index']) + 1
+        self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
         return self
 
     def transform(
@@ -131,10 +136,12 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         units = self._prepare_stateless_units()
         units.append(
             preprocessor.WordHashingUnit(self._context['term_index']))
-        for input in inputs:
+        logger.info(f"Start processing input data for {stage} stage.")
+        for input in tqdm(inputs):
+            left, right = input[2], input[3]
             for unit in units:
-                left = unit.transform(input[2])
-                right = unit.transform(input[3])
+                left = unit.transform(left)
+                right = unit.transform(right)
             if stage == 'train':
                 outputs.append((input[0], input[1], left, right, input[4]))
             else:

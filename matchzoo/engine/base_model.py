@@ -188,16 +188,16 @@ class BaseModel(abc.ABC):
         :param dirpath: directory path of the saved model
         """
         dirpath = Path(dirpath)
+        backend_file_path = dirpath.joinpath(self.BACKEND_FILENAME)
+        params_file_path = dirpath.joinpath(self.PARAMS_FILENAME)
 
-        if dirpath.exists():
+        if backend_file_path.exists() or params_file_path.exists():
             raise FileExistsError
-        else:
+        elif not dirpath.exists():
             dirpath.mkdir()
 
-        backend_file_path = dirpath.joinpath(self.BACKEND_FILENAME)
         self._backend.save(backend_file_path)
 
-        params_file_path = dirpath.joinpath(self.PARAMS_FILENAME)
         dill.dump(self._params, open(params_file_path, mode='wb'))
 
     def guess_and_fill_missing_params(self):

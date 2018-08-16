@@ -34,3 +34,8 @@ class Classification(engine.BaseTask):
     def output_shape(self) -> tuple:
         """:return: output shape of a single sample of the task."""
         return self._num_classes,
+
+    @property
+    def output_dtype(self):
+        """:return: target data type, expect `int` as output."""
+        return int

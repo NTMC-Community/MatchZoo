@@ -22,6 +22,11 @@ class BaseTask(abc.ABC):
     def output_shape(self) -> tuple:
         """:return: output shape of a single sample of the task."""
 
+    @property
+    @abc.abstractmethod
+    def output_dtype(self):
+        """:return: output data type for specific task."""
+
 
 def list_available_tasks(base=BaseTask) -> typing.List[typing.Type[BaseTask]]:
     """:return: a list of available task types."""

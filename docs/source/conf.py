@@ -17,10 +17,11 @@ import sys
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../matchzoo'))
 sys.path.insert(0, os.path.abspath('../../matchzoo/engine'))
-sys.path.insert(0, os.path.abspath('../../matchzoo/model'))
-sys.path.insert(0, os.path.abspath('../../matchzoo/task'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/models'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/tasks'))
 sys.path.insert(0, os.path.abspath('../../matchzoo/preprocessor'))
-
+sys.path.insert(0, os.path.abspath('../../matchzoo/generators'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/utils'))
 
 # -- Project information -----------------------------------------------------
 
