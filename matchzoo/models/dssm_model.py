@@ -40,14 +40,13 @@ class DSSMModel(engine.BaseModel):
         input_shape = (dim_triletter,)
         base_network = self._create_base_network(input_shape=input_shape)
         # Left input and right input.
-        input_left = Input(shape=input_shape)
-        input_right = Input(shape=input_shape)
+        input_left = Input(name='text_left', shape=input_shape)
+        input_right = Input(name='text_right', shape=input_shape)
         # Process left & right input.
         x = [base_network(input_left),
              base_network(input_right)]
         # Dot product with cosine similarity.
-        x = Dot(axes=[1, 1],
-                normalize=True)(x)
+        x = Dot(axes=[1, 1], normalize=True)(x)
         x_out = self._make_output_layer()(x)
         self._backend = Model(
             inputs=[input_left, input_right],
@@ -64,14 +63,14 @@ class DSSMModel(engine.BaseModel):
         :return: x: 128d vector(tensor) representation.
         """
         # TODO use sparse input in the future.
-        input = Input(shape=input_shape)
+        input_ = Input(shape=input_shape)
         x = Dense(self._params['dim_hidden'],
                   kernel_initializer=self._params['w_initializer'],
-                  bias_initializer=self._params['b_initializer'])(input)
+                  bias_initializer=self._params['b_initializer'])(input_)
         for _ in range(0, self._params['num_hidden_layers']):
             x = Dense(self._params['dim_hidden'],
                       activation=self._params['activation_hidden'])(x)
         # Out layer, map tri-letters into 128d representation.
         x = Dense(self._params['dim_fan_out'],
                   activation=self._params['activation_hidden'])(x)
-        return Model(input, x)
+        return Model(input_, x)
