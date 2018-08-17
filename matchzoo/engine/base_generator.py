@@ -1,6 +1,7 @@
 """Base generator."""
 
 import abc
+import typing
 import keras
 import numpy as np
 
@@ -45,9 +46,8 @@ class BaseGenerator(keras.utils.Sequence):
         else:
             self.index_array = np.arange(self.num_instances)
 
-    def __getitem__(self, idx: int):
-        """
-        Get a batch from index idx.
+    def __getitem__(self, idx: int) -> typing.Tuple[dict, typing.Any]:
+        """Get a batch from index idx.
 
         :param idx: the index of the batch.
         """
@@ -61,7 +61,7 @@ class BaseGenerator(keras.utils.Sequence):
                                        self.batch_size * (idx + 1)]
         return self._get_batch_of_transformed_samples(index_array)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Get the total number of batches."""
         return (self.num_instances + self.batch_size - 1) // self.batch_size
 
