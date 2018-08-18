@@ -34,9 +34,9 @@ setup.py                @uduse @bwanglzu
 /tests/                 @uduse @bwanglzu
 
 # matchzoo
-/matchzoo/engine/       @uduse @bwanglzu
-/matchzoo/models/       @yangliuy @pl8787 @bwanglzu @uduse
-/matchzoo/preprocessor/ @bwanglzu @uduse
-/matchzoo/tasks/        @uduse @bwanglzu
-/matchzoo/generators/   @faneshion @pl8787 @yangliuy
-/matchzoo/*             @bwanglzu @uduse
+/matchzoo/engine/       @uduse @bwanglzu @wqh17101
+/matchzoo/models/       @yangliuy @pl8787 @bwanglzu @uduse @wqh17101
+/matchzoo/preprocessor/ @bwanglzu @uduse @wqh17101
+/matchzoo/tasks/        @uduse @bwanglzu @wqh17101
+/matchzoo/generators/   @faneshion @pl8787 @yangliuy @wqh17101
+/matchzoo/*             @bwanglzu @uduse @wqh17101
