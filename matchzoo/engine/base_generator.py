@@ -1,20 +1,25 @@
 """Base generator."""
 
 import abc
+import typing
 import keras
 import numpy as np
 
 
 class BaseGenerator(keras.utils.Sequence):
-    """Abstract base generator of all matchzoo generators.
+    """Abstract base class of all matchzoo generators.
 
     Every generator must implement :meth:`_get_batch_of_transformed_samples`
     method.
 
     """
 
-    def __init__(self, batch_size: int=32, num_instances: int=0, shuffle:
-                 bool=True):
+    def __init__(
+        self,
+        batch_size: int=32,
+        num_instances: int=0,
+        shuffle: bool=True
+    ):
         """
         :class:`BaseGenerator` constructor.
 
@@ -31,7 +36,8 @@ class BaseGenerator(keras.utils.Sequence):
         self.index_generator = self._flow_index()
 
     def _set_index_array(self):
-        """Set the :attr:`index_array`.
+        """
+        Set the :attr:`index_array`.
 
         Here the :attr:`index_array` records the index of all the instances.
         """
@@ -40,7 +46,7 @@ class BaseGenerator(keras.utils.Sequence):
         else:
             self.index_array = np.arange(self.num_instances)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> typing.Tuple[dict, typing.Any]:
         """Get a batch from index idx.
 
         :param idx: the index of the batch.
@@ -55,7 +61,7 @@ class BaseGenerator(keras.utils.Sequence):
                                        self.batch_size * (idx + 1)]
         return self._get_batch_of_transformed_samples(index_array)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Get the total number of batches."""
         return (self.num_instances + self.batch_size - 1) // self.batch_size
 
@@ -88,5 +94,4 @@ class BaseGenerator(keras.utils.Sequence):
         """Get a batch of transformed samples.
 
         :param index_array: Arrray of sample indices to include in a batch.
-        :return: A batch of transformed samples.
         """
