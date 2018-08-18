@@ -8,7 +8,12 @@ from keras.layers import Input, Conv1D, MaxPooling1D, Dot, Dense, Flatten
 
 class CDSSMModel(engine.BaseModel):
     """
-    Convolutional deep structured semantic model.
+    CDSSM Model implementation.
+
+    A Latent Semantic Model with Convolutional-Pooling Structure for
+    Information Retrieval.
+    Learning Semantic Representations Using Convolutional Neural Networks
+    for Web Search.
 
     Examples:
         >>> model = CDSSMModel()
@@ -23,16 +28,17 @@ class CDSSMModel(engine.BaseModel):
         params = super().get_default_params()
         params['optimizer'] = 'sgd'
         # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
-        # Dimension: (NUM_TRI_LETTERS, Contextual Sliding Window )
-        params['input_shapes'] = [(10, 30000), (20, 30000)]
+        # Dimension: (NUM_TRI_LETTERS, DIM-TRILETTER )
+        params['input_shapes'] = [(10, 900), (20, 900)]
         params.add(engine.Param('w_initializer', 'glorot_normal'))
         params.add(engine.Param('b_initializer', 'zeros'))
         params.add(engine.Param('dim_fan_out', 128))
-        params.add(engine.Param('dim_conv', 300))
+        params.add(engine.Param('dim_hidden', 300))
         params.add(engine.Param('contextual_window', 3))
         params.add(engine.Param('strides', 1))
         params.add(engine.Param('padding', 'same'))
         params.add(engine.Param('activation_hidden', 'tanh'))
+        params.add(engine.Param('num_hidden_layers', 1))
         return params
 
     def _create_base_network(self, input_shape: tuple) -> Model:
@@ -53,7 +59,7 @@ class CDSSMModel(engine.BaseModel):
         # Apply 1d convolutional on each word_ngram (lt).
         # Input shape: (batch_size, num_tri_letters, 90000)
         # Sequence of num_tri_letters vectors of 90000d vectors.
-        x = Conv1D(filters=self._params['dim_conv'],
+        x = Conv1D(filters=self._params['dim_hidden'],
                    kernel_size=self._params['contextual_window'],
                    strides=self._params['strides'],
                    padding=self._params['padding'],
@@ -66,9 +72,10 @@ class CDSSMModel(engine.BaseModel):
                          padding=self._params['padding'])(x)
         # Apply a none-linear transformation use a tanh layer.
         x = Flatten()(x)
-        x_out = Dense(self._params['dim_fan_out'],
+        for _ in range(0, self._params['num_hidden_layers']):
+            x = Dense(self._params['dim_fan_out'],
                       activation=self._params['activation_hidden'])(x)
-        return Model(inputs=x_in, outputs=x_out)
+        return Model(inputs=x_in, outputs=x)
 
     def build(self):
         """
