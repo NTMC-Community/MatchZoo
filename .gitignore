@@ -11,6 +11,7 @@
 predict.*
 build/
 dist/
+data/
 log/*
 matchzoo/log/*
 matchzoo/querydecision/
@@ -18,3 +19,4 @@ log/*
 .idea/
 .pytest_cache/
 MatchZoo.egg-info/
+examples/wikiqa/.ipynb_checkpoints/*
