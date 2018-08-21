@@ -26,7 +26,7 @@ class CDSSMModel(engine.BaseModel):
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params()
-        params['optimizer'] = 'sgd'
+        params['optimizer'] = 'adam'
         # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
         # Dimension: (NUM_TRI_LETTERS, DIM-TRILETTER )
         params['input_shapes'] = [(10, 900), (20, 900)]
