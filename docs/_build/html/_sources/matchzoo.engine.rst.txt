@@ -4,10 +4,26 @@ matchzoo.engine package
 Submodules
 ----------
 
+matchzoo.engine.base\_generator module
+--------------------------------------
+
+.. automodule:: matchzoo.engine.base_generator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matchzoo.engine.base\_model module
 ----------------------------------
 
 .. automodule:: matchzoo.engine.base_model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matchzoo.engine.base\_preprocessor module
+-----------------------------------------
+
+.. automodule:: matchzoo.engine.base_preprocessor
     :members:
     :undoc-members:
     :show-inheritance:
