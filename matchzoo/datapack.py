@@ -17,7 +17,7 @@ class DataPack(object):
         ...             ['qid2', 'query 2'],
         ...             ['did1', 'document 1'],
         ...             ['did2', 'document 2']]
-        >>> mapping = [['qid1', 'did1'], ['qid2', 'did2']]
+        >>> mapping = [['qid1', 'did1', 1], ['qid2', 'did2', 1]]
         >>> context = {'vocab_size': 2000}
         >>> dp = DataPack(data=features,
         ...               mapping=mapping,
