@@ -30,6 +30,7 @@ def num_samples(request):
 
 @pytest.fixture(scope='module', params=[
     tasks.Classification(num_classes=2),
+    tasks.Classification(num_classes=16),
     tasks.Ranking()
 ])
 def task(request):
