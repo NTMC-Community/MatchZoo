@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="matchzoo.generators package" href="matchzoo.generators.html" />
+    <link rel="next" title="matchzoo.models package" href="matchzoo.models.html" />
     <link rel="prev" title="matchzoo package" href="matchzoo.html" /> 
 
   
@@ -84,16 +84,13 @@
 <li class="toctree-l2 current"><a class="reference internal" href="matchzoo.html">matchzoo package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="matchzoo.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">matchzoo.engine package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.generators.html">matchzoo.generators package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.models.html">matchzoo.models package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.preprocessor.html">matchzoo.preprocessor package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.tasks.html">matchzoo.tasks package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.utils.html">matchzoo.utils package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.datapack">matchzoo.datapack module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.version">matchzoo.version module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.preprocessors">matchzoo.preprocessors module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo">Module contents</a></li>
 </ul>
 </li>
@@ -171,31 +168,6 @@
 <h1>matchzoo.engine package<a class="headerlink" href="#matchzoo-engine-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-matchzoo.engine.base_generator">
-<span id="matchzoo-engine-base-generator-module"></span><h2>matchzoo.engine.base_generator module<a class="headerlink" href="#module-matchzoo.engine.base_generator" title="Permalink to this headline">¶</a></h2>
-<p>Base generator.</p>
-<dl class="class">
-<dt id="matchzoo.engine.base_generator.BaseGenerator">
-<em class="property">class </em><code class="descclassname">matchzoo.engine.base_generator.</code><code class="descname">BaseGenerator</code><span class="sig-paren">(</span><em>batch_size=32</em>, <em>num_instances=0</em>, <em>shuffle=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_generator.BaseGenerator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">keras.utils.data_utils.Sequence</span></code></p>
-<p>Abstract base class of all matchzoo generators.</p>
-<p>Every generator must implement <code class="xref py py-meth docutils literal notranslate"><span class="pre">_get_batch_of_transformed_samples()</span></code>
-method.</p>
-<dl class="method">
-<dt id="matchzoo.engine.base_generator.BaseGenerator.on_epoch_end">
-<code class="descname">on_epoch_end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_generator.BaseGenerator.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reorganize the index array while epoch is ended.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="matchzoo.engine.base_generator.BaseGenerator.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_generator.BaseGenerator.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset the batch_index to generator from begin.</p>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-matchzoo.engine.base_model">
 <span id="matchzoo-engine-base-model-module"></span><h2>matchzoo.engine.base_model module<a class="headerlink" href="#module-matchzoo.engine.base_model" title="Permalink to this headline">¶</a></h2>
@@ -297,37 +269,6 @@ give you the display labels for the scalar outputs.</p>
 <li><strong>y</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – labels.</li>
 <li><strong>batch_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – number of samples per gradient update.</li>
 <li><strong>epochs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – number of epochs to train the model.</li>
-<li><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – 0, 1, or 2. Verbosity mode. 0 = silent, 1 = verbose,
-2 = one log line per epoch.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">History</span></code></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <cite>keras.callbacks.History</cite> instance. Its history attribute
-contains all information collected during training.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="matchzoo.engine.base_model.BaseModel.fit_generator">
-<code class="descname">fit_generator</code><span class="sig-paren">(</span><em>generator</em>, <em>steps_per_epoch=None</em>, <em>epochs=1</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.fit_generator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit the model with matchzoo <cite>generator</cite>.</p>
-<p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">keras.models.Model.fit_generator()</span></code> for more details.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>generator</strong> (<a class="reference internal" href="#matchzoo.engine.base_generator.BaseGenerator" title="matchzoo.engine.base_generator.BaseGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseGenerator</span></code></a>) – A generator, an instance of
-<code class="xref py py-class docutils literal notranslate"><span class="pre">engine.BaseGenerator</span></code>.</li>
-<li><strong>steps_per_epoch</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Total number of steps (batches of samples)
-to yield from <code class="xref py py-attr docutils literal notranslate"><span class="pre">generator</span></code> object.</li>
-<li><strong>epochs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of epochs to train the model.</li>
 <li><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – 0, 1, or 2. Verbosity mode. 0 = silent, 1 = verbose,
 2 = one log line per epoch.</li>
 </ul>
@@ -469,124 +410,6 @@ h5 file saved by <cite>keras</cite>.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-matchzoo.engine.base_preprocessor">
-<span id="matchzoo-engine-base-preprocessor-module"></span><h2>matchzoo.engine.base_preprocessor module<a class="headerlink" href="#module-matchzoo.engine.base_preprocessor" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="#matchzoo.engine.base_preprocessor.BasePreprocessor" title="matchzoo.engine.base_preprocessor.BasePreprocessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePreprocessor</span></code></a> define input and ouutput for processors.</p>
-<dl class="class">
-<dt id="matchzoo.engine.base_preprocessor.BasePreprocessor">
-<em class="property">class </em><code class="descclassname">matchzoo.engine.base_preprocessor.</code><code class="descname">BasePreprocessor</code><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p><a class="reference internal" href="#matchzoo.engine.base_preprocessor.BasePreprocessor" title="matchzoo.engine.base_preprocessor.BasePreprocessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePreprocessor</span></code></a> to input handle data.</p>
-<dl class="attribute">
-<dt id="matchzoo.engine.base_preprocessor.BasePreprocessor.DATA_FILENAME">
-<code class="descname">DATA_FILENAME</code><em class="property"> = 'preprocessor.dill'</em><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.DATA_FILENAME" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="matchzoo.engine.base_preprocessor.BasePreprocessor.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.fit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit parameters on input data.</p>
-<p>This method is an abstract base method, need to be
-implemented in the child class.</p>
-<p>This method is expected to return itself as a callable
-object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – List of text-left, text-right, label triples.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#matchzoo.engine.base_preprocessor.BasePreprocessor" title="matchzoo.engine.base_preprocessor.BasePreprocessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePreprocessor</span></code></a></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="matchzoo.engine.base_preprocessor.BasePreprocessor.fit_transform">
-<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>inputs</em>, <em>stage</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.fit_transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call fit-transform.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>inputs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – List of text-left, text-right, label triples.</li>
-<li><strong>stage</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – String indicate the pre-processing stage, <cite>train</cite> or
-<cite>test</cite> expected.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="matchzoo.html#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="matchzoo.engine.base_preprocessor.BasePreprocessor.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>dirpath</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSMPreprocessor</span></code> object.</p>
-<p>A saved <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSMPreprocessor</span></code> is represented as a directory with
-the <cite>context</cite> object (fitted parameters on training data), it will
-be saved by <cite>pickle</cite>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – directory path of the saved <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSMPreprocessor</span></code>.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="matchzoo.engine.base_preprocessor.BasePreprocessor.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>inputs</em>, <em>stage</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transform input data to expected manner.</p>
-<p>This method is an abstract base method, need to be
-implemented in the child class.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>inputs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – List of text-left, text-right, label triples,
-or list of text-left, text-right tuples (test stage).</li>
-<li><strong>stage</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – String indicate the pre-processing stage, <cite>train</cite> or
-<cite>test</cite> expected.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="matchzoo.html#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a></p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="matchzoo.engine.base_preprocessor.load_preprocessor">
-<code class="descclassname">matchzoo.engine.base_preprocessor.</code><code class="descname">load_preprocessor</code><span class="sig-paren">(</span><em>dirpath</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.load_preprocessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load the fitted <cite>context</cite>. The reverse function of <code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – directory path of the saved model.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.html#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a></td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSMPreprocessor</span></code> instance.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
 <div class="section" id="module-matchzoo.engine.base_task">
 <span id="matchzoo-engine-base-task-module"></span><h2>matchzoo.engine.base_task module<a class="headerlink" href="#module-matchzoo.engine.base_task" title="Permalink to this headline">¶</a></h2>
 <p>Base task.</p>
@@ -623,12 +446,6 @@ or list of text-left, text-right tuples (test stage).</li>
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="matchzoo.engine.base_task.BaseTask.output_dtype">
-<code class="descname">output_dtype</code><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask.output_dtype" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – output data type for specific task.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -991,7 +808,7 @@ out of all. Currently a minimum working demo.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="matchzoo.generators.html" class="btn btn-neutral float-right" title="matchzoo.generators package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="matchzoo.models.html" class="btn btn-neutral float-right" title="matchzoo.models package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="matchzoo.html" class="btn btn-neutral" title="matchzoo package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
