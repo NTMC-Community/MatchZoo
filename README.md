@@ -1,6 +1,4 @@
-<div align='center'>
-<img src="./artworks/matchzoo-logo.png" width = "400"  alt="logo" align="center" />
-</div>
+![Logo](https://github.com/faneshion/MatchZoo/blob/master/docs/_static/images/matchzoo-logo.png)
 
 # MatchZoo
 
