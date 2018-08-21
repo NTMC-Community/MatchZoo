@@ -11,7 +11,8 @@ It is necessary for all the developers to generate the rst files which can help 
 1. You add a new script to {MatchZoo/matchzoo} or its subdirs  
 1. You add a new directory to {MatchZoo/matchzoo} or its subdirs  
 
-# How
+# How  
+## Make sure you have installed sphinx
 
 1. Enter the docs directory  
 
