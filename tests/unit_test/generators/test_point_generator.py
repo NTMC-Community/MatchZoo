@@ -14,7 +14,7 @@ def x():
          'label': 1}
     ]
     cts = {'vocab_size': 6, 'fill_word': 6}
-    return DataPack(data, cts)
+    return DataPack(data, context=cts)
 
 @pytest.fixture(scope='module', params=[
     tasks.Classification(num_classes=2),
