@@ -49,6 +49,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
     def __init__(self):
         """Initialization."""
         self._context = {}
+        self._datapack = None
+        self._cache = []
 
     @property
     def context(self):
@@ -88,20 +90,23 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         vocab = []
         units = self._prepare_stateless_units()
         logger.info("Start building vocabulary & fitting parameters.")
-        for _, _, left, right, _ in tqdm(inputs):
+        self._datapack = self.segmentation(inputs, stage='train')
+        for idx, row in tqdm(self._datapack.dataframe.iterrows()):
+            text = row['text']
             for unit in units:
-                left = unit.transform(left)
-                right = unit.transform(right)
-            vocab.extend(left + right)
+                text = unit.transform(text)
+            vocab.extend(text)
+            # cache tri-letters for transformation.
+            self._cache.append((row['id'], text))
         return vocab
 
     def _check_transoform_state(self, stage: str):
         """Check arguments and context in transformation."""
         if stage not in ['train', 'test']:
             raise ValueError(f'{stage} is not a valid stage name.')
-        if not self._context.get('term_index'):
+        if not self._context.get('input_shapes'):
             raise ValueError(
-                "Please fit term_index before apply transofm function.")
+                "Please fit input_shapes before apply transofm function.")
 
     def fit(self, inputs: typing.List[tuple]):
         """
@@ -133,17 +138,35 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         outputs = []
         self._check_transoform_state(stage)
-        units = self._prepare_stateless_units()
-        units.append(
-            preprocessor.WordHashingUnit(self._context['term_index']))
+
+        # prepare word hashing unit.
+        hashing = preprocessor.WordHashingUnit(
+            self._context['term_index'])
+
         logger.info(f"Start processing input data for {stage} stage.")
-        for input in tqdm(inputs):
-            left, right = input[2], input[3]
-            for unit in units:
-                left = unit.transform(left)
-                right = unit.transform(right)
-            if stage == 'train':
-                outputs.append((input[0], input[1], left, right, input[4]))
-            else:
-                outputs.append((input[0], input[1], left, right))
-        return self._make_output(outputs, self._context, stage)
+
+        if stage == 'train':
+            # use cached data to fit word hashing layer directly.
+            for idx, tri_letter in tqdm(self._cache):
+                outputs.append((idx, hashing.transform(tri_letter)))
+
+            return self._make_output(output=outputs,
+                                     mapping=self._datapack.mapping,
+                                     context=self._context,
+                                     stage=stage)
+        else:
+            # do preprocessing from scrach.
+            units = self._prepare_stateless_units()
+            units.append(hashing)
+            self._datapack = self.segmentation(inputs, stage='test')
+
+            for idx, row in tqdm(self._datapack.dataframe.iterrows()):
+                text = row['text']
+                for unit in units:
+                    text = unit.transform(text)
+                outputs.append((row['id'], text))
+
+            return self._make_output(output=outputs,
+                                     mapping=self._datapack.mapping,
+                                     context=self._context,
+                                     stage=stage)
