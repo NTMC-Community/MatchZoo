@@ -1,5 +1,6 @@
 Documentation Checking Process(Only for the developers)
-==========================================================
+==========================================================  
+
 # Why  
 
 It is necessary for all the developers to generate the rst files which can help us check the documents.  
@@ -18,10 +19,10 @@ It is necessary for all the developers to generate the rst files which can help 
 cd {MatchZoo/docs}
 ```  
 
-1. Generate the rst files  
+2. Generate the rst files  
 
 ```
 sphinx-apidoc -f -o source ../matchzoo
 ```  
 
-1. Commit
+3. Commit
