@@ -13,14 +13,17 @@ class DataPack(object):
     Matchzoo :class:`DataPack` data structure, store dataframe and context.
 
     Example:
-        >>> features = [([1,3], [2,3]), ([3,0], [1,6])]
+        >>> features = [['qid1', 'query 1'],
+        ...             ['qid2', 'query 2'],
+        ...             ['did1', 'document 1'],
+        ...             ['did2', 'document 2']]
+        >>> mapping = [['qid1', 'did1'], ['qid2', 'did2']]
         >>> context = {'vocab_size': 2000}
         >>> dp = DataPack(data=features,
+        ...               mapping=mapping,
         ...               context=context)
-        >>> type(dp.sample(1))
-        <class 'matchzoo.datapack.DataPack'>
         >>> len(dp)
-        2
+        4
         >>> features, context = dp.dataframe, dp.context
         >>> context
         {'vocab_size': 2000}
@@ -30,17 +33,21 @@ class DataPack(object):
 
     def __init__(self,
                  data: typing.Union[list, np.ndarray],
+                 mapping: typing.Union[list, np.ndarray]=[],
                  context: dict={},
                  columns: list=None):
         """
         Initialize :class:`DataPack`.
 
         :param data: Input data, could be list-like objects
-                     or :class:`numpy.ndarray`.
+            or :class:`numpy.ndarray`.
+        :param mapping: Store the mapping between left document
+            and right document use ids.
         :param context: Hyper-parameter fitted during
-                        pre-processing stage.
+            pre-processing stage.
         """
         self._dataframe = pd.DataFrame(data, columns=columns)
+        self._mapping = pd.DataFrame(mapping)
         self._context = context
 
     def __len__(self) -> int:
@@ -53,23 +60,14 @@ class DataPack(object):
         return self._dataframe
 
     @property
+    def mapping(self):
+        """Get :meth:`relation` of :class:`DataPack`."""
+        return self._mapping
+
+    @property
     def context(self):
         """Get :meth:`context` of class:`DataPack`."""
         return self._context
-
-    def sample(self, number, replace=True):
-        """
-        Sample records from :class:`DataPack` object, for generator.
-
-        :param number: number of records to be sampled, use `batch_size`.
-        :param replace: sample with replacement, default value is `True`.
-
-        :return data_pack: return :class:`DataPack` object including
-                           sampled data and context (shallow copy of
-                           the context`).
-        """
-        return DataPack(self._dataframe.sample(n=number, replace=replace),
-                        self._context.copy())
 
     def append(self, other: 'DataPack'):
         """

@@ -74,7 +74,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         columns = ['id_left', 'id_right', 'text_left', 'text_right']
         if stage == 'train':
             columns.append('label')
-        return datapack.DataPack(output, context, columns)
+        return datapack.DataPack(data=output, context=context, columns=columns)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
