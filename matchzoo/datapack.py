@@ -45,6 +45,8 @@ class DataPack(object):
             and right document use ids.
         :param context: Hyper-parameter fitted during
             pre-processing stage.
+        :param columns: List of column names of the :attr:`data`
+            variable.
         """
         self._dataframe = pd.DataFrame(data, columns=columns)
         self._mapping = pd.DataFrame(mapping)
