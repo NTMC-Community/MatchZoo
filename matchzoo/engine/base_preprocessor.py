@@ -74,11 +74,11 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         :return: Pre-processed input as well as context stored in
             a :class:`DataPack` object.
         """
-        _, _, merged_columns = self._get_columns(stage=stage)
+        _, _, data_columns = self._get_columns(stage=stage)
         return datapack.DataPack(data=output,
                                  mapping=mapping,
                                  context=context,
-                                 columns=merged_columns)
+                                 columns=data_columns)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
@@ -102,7 +102,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     def segmentation(self, inputs: list, stage: str) -> datapack.DataPack:
         """
-        Produce dataframe and mapping based on inputs.
+        Convert user input into :class:`DataPack` consist of two tables.
 
         The `data` field is the id with it's corresponded input text.
         The `mapping` field stores the mapping between `text_left` and
@@ -113,20 +113,20 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
         :return: User input into a :class:`DataPack` with data and mapping.
         """
-        columns, mapping_columns, merged_columns = self._get_columns(
+        all_columns, mapping_columns, data_columns = self._get_columns(
             stage=stage)
 
         # prepare data pack.
-        inputs = pd.DataFrame(inputs, columns=columns)
+        inputs = pd.DataFrame(inputs, columns=all_columns)
         mapping = inputs[mapping_columns]
-        # Merged columns
+        # Segment input into 2 dataframes.
         data_left = inputs[['id_left', 'text_left']
                            ].drop_duplicates(['id_left'])
-        data_left.columns = merged_columns
+        data_left.columns = data_columns
 
         data_right = inputs[['id_right', 'text_right']
                             ].drop_duplicates(['id_right'])
-        data_right.columns = merged_columns
+        data_right.columns = data_columns
 
         data = pd.concat([data_left, data_right])
 
@@ -134,14 +134,14 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     def _get_columns(self, stage: str) -> list:
         """Prepare columns for :class:`DataPack`."""
-        merged_columns = ['id', 'text']
+        data_columns = ['id', 'text']
         mapping_columns = ['id_left', 'id_right']
-        columns = ['id_left', 'id_right', 'text_left', 'text_right']
+        all_columns = ['id_left', 'id_right', 'text_left', 'text_right']
 
         if stage == 'train':
-            columns.append('label')
+            all_columns.append('label')
             mapping_columns.append('label')
-        return columns, mapping_columns, merged_columns
+        return all_columns, mapping_columns, data_columns
 
 
 def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:
