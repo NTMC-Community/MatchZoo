@@ -89,10 +89,19 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         vocab = []
         units = self._prepare_stateless_units()
+
         logger.info("Start building vocabulary & fitting parameters.")
+
+        # Convert user input into a datapack object.
         self._datapack = self.segmentation(inputs, stage='train')
+
+        # Loop through user input to generate tri-letters.
+        # 1. Used for build vocabulary of tri-letters (get dimension).
+        # 2. Cached tri-letters can be further used to perform input
+        #    transformation.
         for idx, row in tqdm(self._datapack.dataframe.iterrows()):
             text = row['text']
+            # For each piece of text, apply process unit sequentially.
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
@@ -104,9 +113,9 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """Check arguments and context in transformation."""
         if stage not in ['train', 'test']:
             raise ValueError(f'{stage} is not a valid stage name.')
-        if not self._context.get('input_shapes'):
+        if not self._context.get('term_index'):
             raise ValueError(
-                "Please fit input_shapes before apply transofm function.")
+                "Please fit term_index before apply transofm function.")
 
     def fit(self, inputs: typing.List[tuple]):
         """
@@ -116,8 +125,12 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :return: class:`DSSMPreprocessor` instance.
         """
         vocab = self._build_vocab(inputs)
+
+        # Initialize a vocabulary process unit to build tri-letter vocab.
         vocab_unit = preprocessor.VocabularyUnit()
         vocab_unit.fit(vocab)
+
+        # Store the fitted parameters in context.
         self._context['term_index'] = vocab_unit.state['term_index']
         dim_triletter = len(vocab_unit.state['term_index']) + 1
         self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
