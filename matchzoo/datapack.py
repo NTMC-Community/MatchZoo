@@ -83,12 +83,9 @@ class DataPack(object):
 
         :param other: the :class:`DataPack` object to be appended.
         """
-        other_dataframe = other.dataframe
-        other_context = other.context
-        self._dataframe = self._dataframe.append(
-            other_dataframe,
-            ignore_index=True)
-        self.context.update(other_context)
+        self._dataframe = pd.concat([self._dataframe, other.dataframe])
+        self._mapping = pd.concat([self._mapping, other.mapping])
+        self.context.update(other.context)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
