@@ -148,12 +148,12 @@ def dcg_at_k(r: list, k: int, method: int=0) -> float:
         3.0
         >>> dcg_at_k(r, 2)
         5.0
-        >>> round(dcg_at_k(r, 2, method=1), 2)
+        >>> round(dcg_at_k(r, 2, method=2), 2)
         4.26
         >>> round(dcg_at_k(r, 10), 2)
         9.61
-        >>> round(dcg_at_k(r, 11), 2)
-        9.61
+        >>> dcg_at_k([], 0, method=0)
+        0.0
 
     :param r: Relevance scores (list or numpy) in rank order
               (first element is the first item).
