@@ -10,7 +10,7 @@ def data_pack():
     data = np.zeros((2, 2))
     mapping = [[1,2], [3,4]]
     ctx = {'vocab_size': 2000}
-    return DataPack(data=data, mapping = mapping, context=ctx)
+    return DataPack(data=data, mapping=mapping, context=ctx)
 
 def test_length(data_pack):
     num_examples = 2
