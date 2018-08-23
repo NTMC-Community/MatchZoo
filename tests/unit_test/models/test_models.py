@@ -18,7 +18,8 @@ from matchzoo import tasks
 model_setups = [
     (models.NaiveModel, None),
     (models.DenseBaselineModel, None),
-    (models.DSSMModel, None)
+    (models.DSSMModel, None),
+    (models.CDSSMModel, None)
 ]
 
 
