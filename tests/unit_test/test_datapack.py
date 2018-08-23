@@ -8,7 +8,7 @@ import numpy as np
 @pytest.fixture
 def data_pack():
     data = np.zeros((2, 2))
-    mapping = [[1,2], [3,4]]
+    mapping = {'qid0': {'id_right': 'did0', 'label': 1}}
     ctx = {'vocab_size': 2000}
     return DataPack(data=data, mapping=mapping, context=ctx)
 
@@ -17,12 +17,7 @@ def test_length(data_pack):
     assert len(data_pack) == num_examples
 
 def test_mapping(data_pack):
-    assert data_pack.mapping.shape == (2, 2)
-
-def test_append(data_pack):
-    data_pack.append(data_pack)
-    assert len(data_pack) == 4
-    assert data_pack.context == {'vocab_size': 2000}
+    assert data_pack.mapping['qid0']['id_right'] == 'did0'
 
 def test_save_load(data_pack):
     dirpath = '.tmpdir'
