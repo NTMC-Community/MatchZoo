@@ -113,8 +113,8 @@ def mean_average_precision(rs: list) -> float:
 
     Example:
         >>> rs = [[1, 1, 0, 1, 1]]
-        >>> mean_average_precision(rs)
-        0.8875
+        >>> type(mean_average_precision(rs))
+        <class 'numpy.float64'>
 
     :param rs: Iterator of relevance scores (list or numpy) in rank order
                (first element is the first item).
