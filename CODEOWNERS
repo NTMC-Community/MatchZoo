@@ -14,15 +14,14 @@
 
 # third-party & project configuration
 .coveragerc             @bwanglzu
-.gitignore      	@faneshion
-.travis.yml     	@bwanglzu
-CONTRIBUTING.MD 	@bwanglzu
-Makefile        	@uduse
-README.md       	@yangliuy @pl8787
-TEAM.md         	@yangliuy @pl8787
-readthedocs.yml 	@wqh17101 @bwanglzu
-requirements.txt        @uduse @bwanglzu
-setup.py                @uduse @bwanglzu
+.gitignore      	      @faneshion
+.travis.yml     	      @bwanglzu
+CONTRIBUTING.MD 	      @bwanglzu
+Makefile        	      @bwanglzu
+README.md       	      @yangliuy @pl8787
+readthedocs.yml 	      @wqh17101 @bwanglzu
+requirements.txt        @faneshion @pl8787
+setup.py                @faneshion @pl8787
 
 # artworks
 /artworks/              @faneshion
@@ -31,12 +30,12 @@ setup.py                @uduse @bwanglzu
 /docs/                  @wqh17101 @bwanglzu
 
 # tests
-/tests/                 @uduse @bwanglzu
+/tests/                 @faneshion @bwanglzu
 
 # matchzoo
-/matchzoo/engine/       @uduse @bwanglzu @wqh17101
-/matchzoo/models/       @yangliuy @pl8787 @bwanglzu @uduse @wqh17101
-/matchzoo/preprocessor/ @bwanglzu @uduse @wqh17101
-/matchzoo/tasks/        @uduse @bwanglzu @wqh17101
+/matchzoo/engine/       @faneshion @bwanglzu @wqh17101
+/matchzoo/models/       @yangliuy @pl8787 @bwanglzu @wqh17101
+/matchzoo/preprocessor/ @bwanglzu @faneshion @wqh17101
+/matchzoo/tasks/        @faneshion @bwanglzu @wqh17101
 /matchzoo/generators/   @faneshion @pl8787 @yangliuy @wqh17101
-/matchzoo/*             @bwanglzu @uduse @wqh17101
+/matchzoo/*             @bwanglzu @faneshion @wqh17101

@@ -11,7 +11,7 @@ def x():
         ([1,4,5], [2,4,5], 'did-2', 'did-4', 1),
     ]
     cts = {'vocab_size': 6, 'fill_word': 6}
-    return DataPack(data, cts)
+    return DataPack(data, context=cts)
 
 @pytest.fixture
 def test_base_generator(x):
