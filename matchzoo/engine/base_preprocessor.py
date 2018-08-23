@@ -74,12 +74,11 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         :return: Pre-processed input as well as context stored in
             a :class:`DataPack` object.
         """
-        _, columns_data, columns_mapping = self._get_columns(stage=stage)
+        _, columns_data, _ = self._get_columns(stage=stage)
         return datapack.DataPack(data=output,
                                  mapping=mapping,
                                  context=context,
-                                 columns=columns_data,
-                                 columns_mapping=columns_mapping)
+                                 columns=columns_data)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
@@ -119,7 +118,11 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
         # prepare data pack.
         inputs = pd.DataFrame(inputs, columns=columns_all)
+        # get mapping columns (idx left and idx right)
         mapping = inputs[columns_mapping]
+        # Convert mapping to list of records.
+        mapping = mapping.set_index('id_left').to_dict(orient='index')
+
         # Segment input into 2 dataframes.
         data_left = inputs[['id_left', 'text_left']
                            ].drop_duplicates(['id_left'])
@@ -133,8 +136,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
         return datapack.DataPack(data=data,
                                  mapping=mapping,
-                                 columns=columns_data,
-                                 columns_mapping=columns_mapping)
+                                 columns=columns_data)
 
     def _get_columns(self, stage: str) -> list:
         """Prepare columns for :class:`DataPack`."""
