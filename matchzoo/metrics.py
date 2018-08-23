@@ -36,8 +36,8 @@ def r_precision(r: list) -> float:
 
     Example:
         >>> r = [0, 0, 1]
-        >>> round(r_precision(r), 2)
-        0.33
+        >>> r_precision(r)
+        0.33000000000000002
         >>> r = [0, 1, 0]
         >>> r_precision(r)
         0.5
@@ -71,8 +71,8 @@ def precision_at_k(r: list, k: int) -> float:
         0.0
         >>> precision_at_k(r, 2)
         0.0
-        >>> round(precision_at_k(r, 3), 2)
-        0.33
+        >>> precision_at_k(r, 3)
+        0.33000000000000002
         >>> precision_at_k(r, 4)
         Traceback (most recent call last):
             File "<stdin>", line 1, in ?
@@ -99,8 +99,8 @@ def average_precision(r: list):
 
     Example:
         >>> r = [1, 1, 0, 1, 0, 1, 0, 0, 0, 1]
-        >>> round(average_precision(r), 2)
-        0.78
+        >>> average_precision(r)
+        0.78000000000000003
 
     :param r: Relevance scores (list or numpy) in rank order
               (first element is the first item).
@@ -121,11 +121,11 @@ def mean_average_precision(rs: list) -> float:
 
     Example:
         >>> rs = [[1, 1, 0, 1, 0, 1, 0, 0, 0, 1]]
-        >>> round(mean_average_precision(rs), 2)
-        0.78
+        >>> mean_average_precision(rs)
+        0.78000000000000003
         >>> rs = [[1, 1, 0, 1, 0, 1, 0, 0, 0, 1], [0]]
-        >>> round(mean_average_precision(rs), 2)
-        0.39
+        >>> mean_average_precision(rs)
+        0.39000000000000001
 
     :param rs: Iterator of relevance scores (list or numpy) in rank order
                (first element is the first item).
@@ -148,10 +148,10 @@ def dcg_at_k(r: list, k: int, method: int=0) -> float:
         3.0
         >>> dcg_at_k(r, 2)
         5.0
-        >>> round(dcg_at_k(r, 2, method=2), 2)
-        4.26
-        >>> round(dcg_at_k(r, 10), 2)
-        9.61
+        >>> dcg_at_k(r, 2, method=2)
+        4.2599999999999998
+        >>> dcg_at_k(r, 10)
+        9.6099999999999994
         >>> dcg_at_k([], 0, method=0)
         0.0
 
@@ -186,8 +186,8 @@ def ndcg_at_k(r: list, k: int, method: int=0) -> float:
         >>> r = [2, 1, 2, 0]
         >>> round(ndcg_at_k(r, 4), 2)
         0.92
-        >>> round(ndcg_at_k(r, 4, method=1), 2)
-        0.97
+        >>> ndcg_at_k(r, 4, method=1)
+        0.96999999999999997
         >>> ndcg_at_k([0], 1)
         0.0
         >>> ndcg_at_k([1], 2)
