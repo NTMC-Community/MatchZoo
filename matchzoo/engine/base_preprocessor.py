@@ -4,6 +4,7 @@ import abc
 import typing
 from pathlib import Path
 import dill
+import pandas as pd
 
 from matchzoo import datapack
 
@@ -57,6 +58,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
     def _make_output(
         self,
         output: list,
+        mapping: pd.DataFrame,
         context: dict,
         stage: str
     ) -> datapack.DataPack:
@@ -64,6 +66,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         Create :class:`DataPack` instance as output.
 
         :param output: Transformed output using preprocessor.
+        :param mapping: Relation between query id and document id.
         :param context: Context to be passed to :class:`DataPack`.
         :param stage: Indicate the pre-processing stage, `train`
             or `test`.
@@ -71,10 +74,12 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         :return: Pre-processed input as well as context stored in
             a :class:`DataPack` object.
         """
-        columns = ['id_left', 'id_right', 'text_left', 'text_right']
-        if stage == 'train':
-            columns.append('label')
-        return datapack.DataPack(output, context, columns)
+        _, columns_data, columns_mapping = self._get_columns(stage=stage)
+        return datapack.DataPack(data=output,
+                                 mapping=mapping,
+                                 context=context,
+                                 columns=columns_data,
+                                 columns_mapping=columns_mapping)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
@@ -95,6 +100,52 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             dirpath.mkdir()
 
         dill.dump(self, open(data_file_path, mode='wb'))
+
+    def segmentation(self, inputs: list, stage: str) -> datapack.DataPack:
+        """
+        Convert user input into :class:`DataPack` consist of two tables.
+
+        The `data` table stores the id with it's corresponded input text.
+        The `mapping` table stores the mapping between `text_left` and
+            `text_right`.
+
+        :param inputs: Raw user inputs, list of tuples.
+        :param stage: `train` or `test`.
+
+        :return: User input into a :class:`DataPack` with data and mapping.
+        """
+        columns_all, columns_data, columns_mapping = self._get_columns(
+            stage=stage)
+
+        # prepare data pack.
+        inputs = pd.DataFrame(inputs, columns=columns_all)
+        mapping = inputs[columns_mapping]
+        # Segment input into 2 dataframes.
+        data_left = inputs[['id_left', 'text_left']
+                           ].drop_duplicates(['id_left'])
+        data_left.columns = columns_data
+
+        data_right = inputs[['id_right', 'text_right']
+                            ].drop_duplicates(['id_right'])
+        data_right.columns = columns_data
+
+        data = pd.concat([data_left, data_right])
+
+        return datapack.DataPack(data=data,
+                                 mapping=mapping,
+                                 columns=columns_data,
+                                 columns_mapping=columns_mapping)
+
+    def _get_columns(self, stage: str) -> list:
+        """Prepare columns for :class:`DataPack`."""
+        columns_data = ['id', 'text']
+        columns_mapping = ['id_left', 'id_right']
+        columns_all = ['id_left', 'id_right', 'text_left', 'text_right']
+
+        if stage == 'train':
+            columns_all.append('label')
+            columns_mapping.append('label')
+        return columns_all, columns_data, columns_mapping
 
 
 def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:

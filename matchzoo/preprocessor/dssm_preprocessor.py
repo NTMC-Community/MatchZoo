@@ -49,6 +49,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
     def __init__(self):
         """Initialization."""
         self._context = {}
+        self._datapack = None
+        self._cache = []
 
     @property
     def context(self):
@@ -64,7 +66,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         self._context = context
 
-    def _prepare_stateless_units(self):
+    def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""
         return [
             preprocessor.TokenizeUnit(),
@@ -74,35 +76,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             preprocessor.NgramLetterUnit()
         ]
 
-    def _build_vocab(
-        self,
-        inputs: typing.List[tuple]
-    ) -> list:
-        """
-        Build vocabulary before fit transform.
-
-        :param inputs: Use training data as inputs.
-        :return vocab: fitted `tri-letters` using
-            :meth:`_prepare_stateless_units`.
-        """
-        vocab = []
-        units = self._prepare_stateless_units()
-        logger.info("Start building vocabulary & fitting parameters.")
-        for _, _, left, right, _ in tqdm(inputs):
-            for unit in units:
-                left = unit.transform(left)
-                right = unit.transform(right)
-            vocab.extend(left + right)
-        return vocab
-
-    def _check_transoform_state(self, stage: str):
-        """Check arguments and context in transformation."""
-        if stage not in ['train', 'test']:
-            raise ValueError(f'{stage} is not a valid stage name.')
-        if not self._context.get('term_index'):
-            raise ValueError(
-                "Please fit term_index before apply transofm function.")
-
     def fit(self, inputs: typing.List[tuple]):
         """
         Fit pre-processing context for transformation.
@@ -110,9 +83,33 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :param inputs: Inputs to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
-        vocab = self._build_vocab(inputs)
+        vocab = []
+        units = self._prepare_stateless_units()
+
+        logger.info("Start building vocabulary & fitting parameters.")
+
+        # Convert user input into a datapack object.
+        self._datapack = self.segmentation(inputs, stage='train')
+
+        # Loop through user input to generate tri-letters.
+        # 1. Used for build vocabulary of tri-letters (get dimension).
+        # 2. Cached tri-letters can be further used to perform input
+        #    transformation.
+        df = self._datapack.dataframe
+
+        for idx, text in tqdm(zip(df['id'], df['text'])):
+            # For each piece of text, apply process unit sequentially.
+            for unit in units:
+                text = unit.transform(text)
+            vocab.extend(text)
+            # cache tri-letters for transformation.
+            self._cache.append((idx, text))
+
+        # Initialize a vocabulary process unit to build tri-letter vocab.
         vocab_unit = preprocessor.VocabularyUnit()
         vocab_unit.fit(vocab)
+
+        # Store the fitted parameters in context.
         self._context['term_index'] = vocab_unit.state['term_index']
         dim_triletter = len(vocab_unit.state['term_index']) + 1
         self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
@@ -124,7 +121,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         stage: str
     ) -> datapack.DataPack:
         """
-        Apply trnasformation on data, create `tri-letter` representation.
+        Apply transformation on data, create `tri-letter` representation.
 
         :param inputsL Inputs to be preprocessed.
         :param stage: Pre-processing stage, `train` or `test`.
@@ -132,18 +129,42 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         outputs = []
-        self._check_transoform_state(stage)
-        units = self._prepare_stateless_units()
-        units.append(
-            preprocessor.WordHashingUnit(self._context['term_index']))
+
+        if stage not in ['train', 'test']:
+            raise ValueError(f'{stage} is not a valid stage name.')
+        if not self._context.get('term_index'):
+            raise ValueError(
+                "Please fit term_index before apply transofm function.")
+
+        # prepare word hashing unit.
+        hashing = preprocessor.WordHashingUnit(
+            self._context['term_index'])
+
         logger.info(f"Start processing input data for {stage} stage.")
-        for input in tqdm(inputs):
-            left, right = input[2], input[3]
-            for unit in units:
-                left = unit.transform(left)
-                right = unit.transform(right)
-            if stage == 'train':
-                outputs.append((input[0], input[1], left, right, input[4]))
-            else:
-                outputs.append((input[0], input[1], left, right))
-        return self._make_output(outputs, self._context, stage)
+
+        if stage == 'train':
+            # use cached data to fit word hashing layer directly.
+            for idx, tri_letter in tqdm(self._cache):
+                outputs.append((idx, hashing.transform(tri_letter)))
+
+            return self._make_output(output=outputs,
+                                     mapping=self._datapack.mapping,
+                                     context=self._context,
+                                     stage=stage)
+        else:
+            # do preprocessing from scrach.
+            units = self._prepare_stateless_units()
+            units.append(hashing)
+            self._datapack = self.segmentation(inputs, stage='test')
+
+            df = self._datapack.dataframe
+
+            for idx, text in tqdm(zip(df['id'], df['text'])):
+                for unit in units:
+                    text = unit.transform(text)
+                outputs.append((idx, text))
+
+            return self._make_output(output=outputs,
+                                     mapping=self._datapack.mapping,
+                                     context=self._context,
+                                     stage=stage)
