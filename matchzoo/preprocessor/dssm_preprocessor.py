@@ -66,7 +66,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         self._context = context
 
-    def _prepare_stateless_units(self):
+    def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""
         return [
             preprocessor.TokenizeUnit(),
@@ -83,7 +83,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :param inputs: Inputs to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
-
         vocab = []
         units = self._prepare_stateless_units()
 
@@ -100,7 +99,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         for idx, text in tqdm(zip(df['id'], df['text'])):
             # For each piece of text, apply process unit sequentially.
-            text = [unit.transform(text) for unit in units]
+            for unit in units:
+                text = unit.transform(text)
             vocab.extend(text)
             # cache tri-letters for transformation.
             self._cache.append((idx, text))
@@ -160,7 +160,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             df = self._datapack.dataframe
 
             for idx, text in tqdm(zip(df['id'], df['text'])):
-                text = [unit.transform(text) for unit in units]
+                for unit in units:
+                    text = unit.transform(text)
                 outputs.append((idx, text))
 
             return self._make_output(output=outputs,
