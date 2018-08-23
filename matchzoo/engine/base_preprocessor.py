@@ -74,11 +74,12 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         :return: Pre-processed input as well as context stored in
             a :class:`DataPack` object.
         """
-        _, _, data_columns = self._get_columns(stage=stage)
+        _, columns_data, columns_mapping = self._get_columns(stage=stage)
         return datapack.DataPack(data=output,
                                  mapping=mapping,
                                  context=context,
-                                 columns=data_columns)
+                                 columns=columns_data,
+                                 columns_mapping=columns_mapping)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
@@ -104,8 +105,8 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         """
         Convert user input into :class:`DataPack` consist of two tables.
 
-        The `data` field is the id with it's corresponded input text.
-        The `mapping` field stores the mapping between `text_left` and
+        The `data` table stores the id with it's corresponded input text.
+        The `mapping` table stores the mapping between `text_left` and
             `text_right`.
 
         :param inputs: Raw user inputs, list of tuples.
@@ -113,35 +114,38 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
         :return: User input into a :class:`DataPack` with data and mapping.
         """
-        all_columns, mapping_columns, data_columns = self._get_columns(
+        columns_all, columns_data, columns_mapping = self._get_columns(
             stage=stage)
 
         # prepare data pack.
-        inputs = pd.DataFrame(inputs, columns=all_columns)
-        mapping = inputs[mapping_columns]
+        inputs = pd.DataFrame(inputs, columns=columns_all)
+        mapping = inputs[columns_mapping]
         # Segment input into 2 dataframes.
         data_left = inputs[['id_left', 'text_left']
                            ].drop_duplicates(['id_left'])
-        data_left.columns = data_columns
+        data_left.columns = columns_data
 
         data_right = inputs[['id_right', 'text_right']
                             ].drop_duplicates(['id_right'])
-        data_right.columns = data_columns
+        data_right.columns = columns_data
 
         data = pd.concat([data_left, data_right])
 
-        return datapack.DataPack(data=data, mapping=mapping)
+        return datapack.DataPack(data=data,
+                                 mapping=mapping,
+                                 columns=columns_data,
+                                 columns_mapping=columns_mapping)
 
     def _get_columns(self, stage: str) -> list:
         """Prepare columns for :class:`DataPack`."""
-        data_columns = ['id', 'text']
-        mapping_columns = ['id_left', 'id_right']
-        all_columns = ['id_left', 'id_right', 'text_left', 'text_right']
+        columns_data = ['id', 'text']
+        columns_mapping = ['id_left', 'id_right']
+        columns_all = ['id_left', 'id_right', 'text_left', 'text_right']
 
         if stage == 'train':
-            all_columns.append('label')
-            mapping_columns.append('label')
-        return all_columns, mapping_columns, data_columns
+            columns_all.append('label')
+            columns_mapping.append('label')
+        return columns_all, columns_data, columns_mapping
 
 
 def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:

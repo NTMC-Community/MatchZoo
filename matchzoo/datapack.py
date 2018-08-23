@@ -35,7 +35,8 @@ class DataPack(object):
                  data: typing.Union[list, np.ndarray],
                  mapping: typing.Union[list, np.ndarray]=[],
                  context: dict={},
-                 columns: list=None):
+                 columns: list=None,
+                 columns_mapping: list=None):
         """
         Initialize :class:`DataPack`.
 
@@ -47,9 +48,11 @@ class DataPack(object):
             pre-processing stage.
         :param columns: List of column names of the :attr:`data`
             variable.
+        :param columns_mapping: List of column names of the
+            :attr:`mapping` variable.
         """
         self._dataframe = pd.DataFrame(data, columns=columns)
-        self._mapping = pd.DataFrame(mapping)
+        self._mapping = pd.DataFrame(mapping, columns=columns_mapping)
         self._context = context
 
     def __len__(self) -> int:
