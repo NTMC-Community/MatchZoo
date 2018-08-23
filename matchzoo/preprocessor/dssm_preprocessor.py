@@ -76,17 +76,14 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             preprocessor.NgramLetterUnit()
         ]
 
-    def _build_vocab(
-        self,
-        inputs: typing.List[tuple]
-    ) -> list:
+    def fit(self, inputs: typing.List[tuple]):
         """
-        Build vocabulary before fit transform.
+        Fit pre-processing context for transformation.
 
-        :param inputs: Use training data as inputs.
-        :return vocab: fitted `tri-letters` using
-            :meth:`_prepare_stateless_units`.
+        :param inputs: Inputs to be preprocessed.
+        :return: class:`DSSMPreprocessor` instance.
         """
+
         vocab = []
         units = self._prepare_stateless_units()
 
@@ -99,32 +96,14 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         # 1. Used for build vocabulary of tri-letters (get dimension).
         # 2. Cached tri-letters can be further used to perform input
         #    transformation.
-        for idx, row in tqdm(self._datapack.dataframe.iterrows()):
-            text = row['text']
+        df = self._datapack.dataframe
+
+        for idx, text in tqdm(zip(df['id'], df['text'])):
             # For each piece of text, apply process unit sequentially.
-            for unit in units:
-                text = unit.transform(text)
+            text = [unit.transform(text) for unit in units]
             vocab.extend(text)
             # cache tri-letters for transformation.
-            self._cache.append((row['id'], text))
-        return vocab
-
-    def _check_transoform_state(self, stage: str):
-        """Check arguments and context in transformation."""
-        if stage not in ['train', 'test']:
-            raise ValueError(f'{stage} is not a valid stage name.')
-        if not self._context.get('term_index'):
-            raise ValueError(
-                "Please fit term_index before apply transofm function.")
-
-    def fit(self, inputs: typing.List[tuple]):
-        """
-        Fit pre-processing context for transformation.
-
-        :param inputs: Inputs to be preprocessed.
-        :return: class:`DSSMPreprocessor` instance.
-        """
-        vocab = self._build_vocab(inputs)
+            self._cache.append((idx, text))
 
         # Initialize a vocabulary process unit to build tri-letter vocab.
         vocab_unit = preprocessor.VocabularyUnit()
@@ -142,7 +121,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         stage: str
     ) -> datapack.DataPack:
         """
-        Apply trnasformation on data, create `tri-letter` representation.
+        Apply transformation on data, create `tri-letter` representation.
 
         :param inputsL Inputs to be preprocessed.
         :param stage: Pre-processing stage, `train` or `test`.
@@ -150,7 +129,12 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         outputs = []
-        self._check_transoform_state(stage)
+
+        if stage not in ['train', 'test']:
+            raise ValueError(f'{stage} is not a valid stage name.')
+        if not self._context.get('term_index'):
+            raise ValueError(
+                "Please fit term_index before apply transofm function.")
 
         # prepare word hashing unit.
         hashing = preprocessor.WordHashingUnit(
@@ -173,11 +157,11 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             units.append(hashing)
             self._datapack = self.segmentation(inputs, stage='test')
 
-            for idx, row in tqdm(self._datapack.dataframe.iterrows()):
-                text = row['text']
-                for unit in units:
-                    text = unit.transform(text)
-                outputs.append((row['id'], text))
+            df = self._datapack.dataframe
+
+            for idx, text in tqdm(zip(df['id'], df['text'])):
+                text = [unit.transform(text) for unit in units]
+                outputs.append((idx, text))
 
             return self._make_output(output=outputs,
                                      mapping=self._datapack.mapping,
