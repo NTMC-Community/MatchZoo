@@ -7,8 +7,11 @@ Subpackages
 .. toctree::
 
     matchzoo.engine
+    matchzoo.generators
     matchzoo.models
+    matchzoo.preprocessor
     matchzoo.tasks
+    matchzoo.utils
 
 Submodules
 ----------
@@ -21,10 +24,10 @@ matchzoo.datapack module
     :undoc-members:
     :show-inheritance:
 
-matchzoo.preprocessors module
------------------------------
+matchzoo.version module
+-----------------------
 
-.. automodule:: matchzoo.preprocessors
+.. automodule:: matchzoo.version
     :members:
     :undoc-members:
     :show-inheritance:

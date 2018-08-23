@@ -19,9 +19,9 @@ class DSSMModel(engine.BaseModel):
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params()
-        params['optimizer'] = 'sgd'
+        params['optimizer'] = 'adam'
         # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
-        params['input_shapes'] = [(30000,), (30000,)]
+        params['input_shapes'] = [(300,), (300,)]
         params.add(engine.Param('w_initializer', 'glorot_normal'))
         params.add(engine.Param('b_initializer', 'zeros'))
         params.add(engine.Param('dim_fan_out', 128))
