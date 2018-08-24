@@ -10,11 +10,11 @@ def x():
                'qid1': [2, 3],
                'did0': [2, 3, 4],
                'did1': [3, 4, 5]}
-    cts = {'vocab_size': 6, 'fill_word': 6}
+    ctx = {'vocab_size': 6, 'fill_word': 6}
     columns = ['id_left', 'id_right', 'label']
     return DataPack(data=data,
                     mapping=mapping,
-                    context=cts,
+                    context=ctx,
                     columns=columns
                     )
 

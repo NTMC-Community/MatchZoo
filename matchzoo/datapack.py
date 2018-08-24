@@ -13,7 +13,7 @@ class DataPack(object):
     Matchzoo :class:`DataPack` data structure, store dataframe and context.
 
     Example:
-        >>> features = {
+        >>> mapping = {
         ...     'qid1':'query 1',
         ...     'qid2':'query 2',
         ...     'did1':'document 1',
@@ -23,12 +23,12 @@ class DataPack(object):
         >>> context = {'vocab_size': 2000}
         >>> dp = DataPack(
         ...     data= data,
-        ...     mapping=features,
+        ...     mapping=mapping,
         ...     context=context
         ... )
         >>> len(dp)
         2
-        >>> features, context = dp.dataframe, dp.context
+        >>> mapping, context = dp.dataframe, dp.context
         >>> context
         {'vocab_size': 2000}
     """

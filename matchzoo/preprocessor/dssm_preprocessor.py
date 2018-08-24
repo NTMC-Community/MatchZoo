@@ -7,7 +7,6 @@ from matchzoo import datapack
 import typing
 import logging
 from tqdm import tqdm
-import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +149,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                 outputs[idx] = hashing.transform(tri_letter)
 
             return self._make_output(
-                output=pd.DataFrame(self._datapack._dataframe),
+                output=self._datapack.dataframe,
                 mapping=outputs,
                 context=self._context,
                 stage=stage
@@ -170,7 +169,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                 outputs[idx] = text
 
             return self._make_output(
-                output=pd.DataFrame(self._datapack._dataframe),
+                output=self._datapack.dataframe,
                 mapping=outputs,
                 context=self._context,
                 stage=stage

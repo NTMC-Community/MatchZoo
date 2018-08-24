@@ -17,9 +17,9 @@ class PointGenerator(engine.BaseGenerator):
     Examples:
         >>> data = [['qid0', 'did0', 1]]
         >>> columns = ['id_left', 'id_right', 'label']
-        >>> features = {'qid0': [1, 2], 'did0': [2, 3]}
+        >>> mapping = {'qid0': [1, 2], 'did0': [2, 3]}
         >>> input = datapack.DataPack(data=data,
-        ...                           mapping=features,
+        ...                           mapping=mapping,
         ...                           columns=columns
         ...                           )
         >>> task = tasks.Classification(num_classes=2)
