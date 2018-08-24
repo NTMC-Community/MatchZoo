@@ -15,7 +15,6 @@ setup(
     license="BSD",
     keywords="text matching models",
     url="https://github.com/faneshion/MatchZoo",
-    # ['data', 'docs', 'examples', 'matchzoo', 'tests'],
     packages=find_packages(),
     long_description='MatchZoo is a toolkit for text matching. '\
 	'It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models.'\
@@ -23,7 +22,6 @@ setup(
 	'Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. '\
 	'We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users.',
     classifiers=[
-        # How mature is this project? Common values are
         "Development Status :: 3 - Alpha",
         'Environment :: Console',
         'Operating System :: POSIX :: Linux',
