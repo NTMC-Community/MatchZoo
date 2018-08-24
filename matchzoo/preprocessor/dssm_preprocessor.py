@@ -95,10 +95,11 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         # 1. Used for build vocabulary of tri-letters (get dimension).
         # 2. Cached tri-letters can be further used to perform input
         #    transformation.
-        df = self._datapack.dataframe
+        mapping = self._datapack.mapping
 
-        for idx, text in tqdm(zip(df['id'], df['text'])):
+        for idx, text in tqdm(mapping.items()):
             # For each piece of text, apply process unit sequentially.
+            text = text['text']
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
@@ -147,8 +148,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             for idx, tri_letter in tqdm(self._cache):
                 outputs.append((idx, hashing.transform(tri_letter)))
 
-            return self._make_output(output=outputs,
-                                     mapping=self._datapack.mapping,
+            return self._make_output(output=self._datapack._dataframe,
+                                     mapping=outputs,
                                      context=self._context,
                                      stage=stage)
         else:
@@ -157,14 +158,15 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             units.append(hashing)
             self._datapack = self.segmentation(inputs, stage='test')
 
-            df = self._datapack.dataframe
+            mapping = self._datapack.mapping
 
-            for idx, text in tqdm(zip(df['id'], df['text'])):
+            for idx, text in tqdm(mapping.items()):
+                text = text['text']
                 for unit in units:
                     text = unit.transform(text)
                 outputs.append((idx, text))
 
-            return self._make_output(output=outputs,
-                                     mapping=self._datapack.mapping,
+            return self._make_output(output=self._datapack._dataframe,
+                                     mapping=outputs,
                                      context=self._context,
                                      stage=stage)

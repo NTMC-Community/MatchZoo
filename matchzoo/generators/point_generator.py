@@ -15,17 +15,16 @@ class PointGenerator(engine.BaseGenerator):
     Ponit generator can be used for classification as well as ranking.
 
     Examples:
-        >>> data = [{
-        ...     'text_left':[1,2],
-        ...     'text_right': [3,4],
-        ...     'id_left': 'id0',
-        ...     'id_right': 'id1',
-        ...     'label': 0
-        ... }]
-        >>> input = datapack.DataPack(data)
+        >>> data = [['qid0', 'did0', 1]]
+        >>> columns = ['id_left', 'id_right', 'label']
+        >>> features = {'qid0': [1, 2], 'did0': [2, 3]}
+        >>> input = datapack.DataPack(data=data,
+        ...                           mapping=features,
+        ...                           columns=columns
+        ...                           )
         >>> task = tasks.Classification(num_classes=2)
         >>> from matchzoo.generators import PointGenerator
-        >>> generator = PointGenerator(input, task, 1, True)
+        >>> generator = PointGenerator(input, task, 1, 'train', True)
         >>> x, y = generator[0]
 
     """
@@ -35,6 +34,7 @@ class PointGenerator(engine.BaseGenerator):
         inputs: datapack.DataPack,
         task: engine.BaseTask=tasks.Classification(2),
         batch_size: int=32,
+        stage: str = 'train',
         shuffle: bool=True
     ):
         """Construct the point generator.
@@ -47,6 +47,8 @@ class PointGenerator(engine.BaseGenerator):
         """
         self._task = task
         self.data = self.transform_data(inputs)
+        self.mapping = inputs.mapping
+        self.stage = stage
         super().__init__(batch_size, len(inputs.dataframe), shuffle)
 
     def transform_data(self, inputs: datapack.DataPack) -> dict:
@@ -73,7 +75,7 @@ class PointGenerator(engine.BaseGenerator):
         bsize = len(index_array)
         batch_x = {}
         batch_y = None
-        if 'label' in self.data:
+        if self.stage == 'train':
             if isinstance(self._task, tasks.Ranking):
                 batch_y = map(self._task.output_dtype, self.data['label'])
             elif isinstance(self._task, tasks.Classification):
@@ -90,7 +92,8 @@ class PointGenerator(engine.BaseGenerator):
                 continue
             batch_x[key] = []
             for val in index_array:
-                batch_x[key].append(self.data[key][val])
+                cont = self.mapping[self.data[key][val]]
+                batch_x[key].append(cont)
             batch_x[key] = np.array(batch_x[key])
         batch_x = utils.dotdict(batch_x)
         return (batch_x, batch_y)

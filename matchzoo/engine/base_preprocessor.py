@@ -57,8 +57,8 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     def _make_output(
         self,
-        output: list,
-        mapping: pd.DataFrame,
+        output: pd.DataFrame,
+        mapping: list,
         context: dict,
         stage: str
     ) -> datapack.DataPack:
@@ -119,20 +119,21 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         # prepare data pack.
         inputs = pd.DataFrame(inputs, columns=columns_all)
         # get mapping columns (idx left and idx right)
-        mapping = inputs[columns_mapping]
+        data = inputs[columns_data]
         # Convert mapping to list of records.
-        mapping = mapping.set_index('id_left').to_dict(orient='index')
 
         # Segment input into 2 dataframes.
-        data_left = inputs[['id_left', 'text_left']
+        mapping_left = inputs[['id_left', 'text_left']
                            ].drop_duplicates(['id_left'])
-        data_left.columns = columns_data
+        mapping_left.columns = columns_mapping
 
-        data_right = inputs[['id_right', 'text_right']
+        mapping_right = inputs[['id_right', 'text_right']
                             ].drop_duplicates(['id_right'])
-        data_right.columns = columns_data
+        mapping_right.columns = columns_mapping
 
-        data = pd.concat([data_left, data_right])
+        mapping = pd.concat([mapping_left, mapping_right])
+
+        mapping = mapping.set_index('id').to_dict(orient='index')
 
         return datapack.DataPack(data=data,
                                  mapping=mapping,
@@ -140,13 +141,13 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     def _get_columns(self, stage: str) -> list:
         """Prepare columns for :class:`DataPack`."""
-        columns_data = ['id', 'text']
-        columns_mapping = ['id_left', 'id_right']
+        columns_data = ['id_left', 'id_right']
+        columns_mapping = ['id', 'text']
         columns_all = ['id_left', 'id_right', 'text_left', 'text_right']
 
         if stage == 'train':
             columns_all.append('label')
-            columns_mapping.append('label')
+            columns_data.append('label')
         return columns_all, columns_data, columns_mapping
 
 

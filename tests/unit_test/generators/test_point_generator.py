@@ -5,16 +5,18 @@ from matchzoo.datapack import DataPack
 
 @pytest.fixture
 def x():
-    data = [
-        {'text_left':[1,2,3], 'text_right': [1,2], \
-         'id_left': 'did-0', 'id_right': 'did-1', \
-        'label': 0},
-        {'text_left':[2,3,4], 'text_right': [3,5], \
-         'id_left': 'did-2', 'id_right': 'did-3', \
-         'label': 1}
-    ]
+    data = [['qid0', 'did0', 0], ['qid1', 'did1', 1]]
+    mapping = {'qid0': [1, 2],
+               'qid1': [2, 3],
+               'did0': [2, 3, 4],
+               'did1': [3, 4, 5]}
     cts = {'vocab_size': 6, 'fill_word': 6}
-    return DataPack(data, context=cts)
+    columns = ['id_left', 'id_right', 'label']
+    return DataPack(data=data,
+                    mapping=mapping,
+                    context=cts,
+                    columns=columns
+                    )
 
 @pytest.fixture(scope='module', params=[
     tasks.Classification(num_classes=2),
@@ -27,7 +29,7 @@ def task(request):
 def raw_point_generator(x, task):
     shuffle = True
     batch_size = 1
-    generator = PointGenerator(x, task, batch_size, shuffle)
+    generator = PointGenerator(x, task, batch_size, 'train', shuffle)
     return generator
 
 def test_point_generator(raw_point_generator):
@@ -36,6 +38,6 @@ def test_point_generator(raw_point_generator):
     assert y is not None
 
 def test_taskmode_in_pointgenerator(x):
-    generator = PointGenerator(x, None, 1, False)
+    generator = PointGenerator(x, None, 1, 'train', False)
     with pytest.raises(ValueError):
         x, y = generator[0]
