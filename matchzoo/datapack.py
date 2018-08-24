@@ -13,15 +13,19 @@ class DataPack(object):
     Matchzoo :class:`DataPack` data structure, store dataframe and context.
 
     Example:
-        >>> features = {'qid1':'query 1',
-        ...             'qid2':'query 2',
-        ...             'did1':'document 1',
-        ...             'did2':'document 2'}
+        >>> features = {
+        ...     'qid1':'query 1',
+        ...     'qid2':'query 2',
+        ...     'did1':'document 1',
+        ...     'did2':'document 2'
+        ... }
         >>> data = [['qid1', 'did1', 1], ['qid2', 'did2', 1]]
         >>> context = {'vocab_size': 2000}
-        >>> dp = DataPack(data= data,
-        ...               mapping=features,
-        ...               context=context)
+        >>> dp = DataPack(
+        ...     data= data,
+        ...     mapping=features,
+        ...     context=context
+        ... )
         >>> len(dp)
         2
         >>> features, context = dp.dataframe, dp.context
@@ -49,7 +53,7 @@ class DataPack(object):
             variable.
         """
         self._dataframe = pd.DataFrame(data, columns=columns)
-        self._mapping = dict(mapping)
+        self._mapping = mapping
         self._context = context
 
     def __len__(self) -> int:

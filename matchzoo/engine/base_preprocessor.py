@@ -58,7 +58,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
     def _make_output(
         self,
         output: pd.DataFrame,
-        mapping: list,
+        mapping: dict,
         context: dict,
         stage: str
     ) -> datapack.DataPack:
@@ -120,15 +120,16 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         inputs = pd.DataFrame(inputs, columns=columns_all)
         # get mapping columns (idx left and idx right)
         data = inputs[columns_data]
-        # Convert mapping to list of records.
 
         # Segment input into 2 dataframes.
-        mapping_left = inputs[['id_left', 'text_left']
-                           ].drop_duplicates(['id_left'])
+        mapping_left = inputs[['id_left', 'text_left']].drop_duplicates(
+            ['id_left']
+        )
         mapping_left.columns = columns_mapping
 
-        mapping_right = inputs[['id_right', 'text_right']
-                            ].drop_duplicates(['id_right'])
+        mapping_right = inputs[['id_right', 'text_right']].drop_duplicates(
+            ['id_right']
+        )
         mapping_right.columns = columns_mapping
 
         mapping = pd.concat([mapping_left, mapping_right])

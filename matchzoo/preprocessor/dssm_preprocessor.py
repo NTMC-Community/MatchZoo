@@ -7,6 +7,7 @@ from matchzoo import datapack
 import typing
 import logging
 from tqdm import tqdm
+import pandas as pd
 
 logger = logging.getLogger(__name__)
 
@@ -129,7 +130,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        outputs = []
+        outputs = {}
 
         if stage not in ['train', 'test']:
             raise ValueError(f'{stage} is not a valid stage name.')
@@ -146,12 +147,14 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         if stage == 'train':
             # use cached data to fit word hashing layer directly.
             for idx, tri_letter in tqdm(self._cache):
-                outputs.append((idx, hashing.transform(tri_letter)))
+                outputs[idx] = hashing.transform(tri_letter)
 
-            return self._make_output(output=self._datapack._dataframe,
-                                     mapping=outputs,
-                                     context=self._context,
-                                     stage=stage)
+            return self._make_output(
+                output=pd.DataFrame(self._datapack._dataframe),
+                mapping=outputs,
+                context=self._context,
+                stage=stage
+            )
         else:
             # do preprocessing from scrach.
             units = self._prepare_stateless_units()
@@ -164,9 +167,11 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                 text = text['text']
                 for unit in units:
                     text = unit.transform(text)
-                outputs.append((idx, text))
+                outputs[idx] = text
 
-            return self._make_output(output=self._datapack._dataframe,
-                                     mapping=outputs,
-                                     context=self._context,
-                                     stage=stage)
+            return self._make_output(
+                output=pd.DataFrame(self._datapack._dataframe),
+                mapping=outputs,
+                context=self._context,
+                stage=stage
+            )

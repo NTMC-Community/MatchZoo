@@ -11,8 +11,8 @@ def x():
                'qid1': [2],
                'did0': [3],
                'did1': [4]}
-    cts = {'vocab_size': 6, 'fill_word': 6}
-    return DataPack(data=data, mapping=mapping, context=cts)
+    ctx = {'vocab_size': 6, 'fill_word': 6}
+    return DataPack(data=data, mapping=mapping, context=ctx)
 
 @pytest.fixture
 def test_base_generator(x):

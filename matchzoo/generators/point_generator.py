@@ -92,8 +92,8 @@ class PointGenerator(engine.BaseGenerator):
                 continue
             batch_x[key] = []
             for val in index_array:
-                cont = self.mapping[self.data[key][val]]
-                batch_x[key].append(cont)
+                feature = self.mapping[self.data[key][val]]
+                batch_x[key].append(feature)
             batch_x[key] = np.array(batch_x[key])
         batch_x = utils.dotdict(batch_x)
         return (batch_x, batch_y)
