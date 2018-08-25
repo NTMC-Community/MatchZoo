@@ -33,10 +33,9 @@ class DataPack(object):
 
     def __init__(self,
                  data: typing.Union[list, np.ndarray],
-                 mapping: typing.Union[list, np.ndarray]=[],
+                 mapping: dict={},
                  context: dict={},
-                 columns: list=None,
-                 columns_mapping: list=None):
+                 columns: list=None):
         """
         Initialize :class:`DataPack`.
 
@@ -48,11 +47,9 @@ class DataPack(object):
             pre-processing stage.
         :param columns: List of column names of the :attr:`data`
             variable.
-        :param columns_mapping: List of column names of the
-            :attr:`mapping` variable.
         """
         self._dataframe = pd.DataFrame(data, columns=columns)
-        self._mapping = pd.DataFrame(mapping, columns=columns_mapping)
+        self._mapping = mapping
         self._context = context
 
     def __len__(self) -> int:
@@ -73,19 +70,6 @@ class DataPack(object):
     def context(self):
         """Get :meth:`context` of class:`DataPack`."""
         return self._context
-
-    def append(self, other: 'DataPack'):
-        """
-        Append new :class:`DataPack` object to current :class:`DataPack`.
-
-        It should be noted that the context of the previous :class:`DataPack`
-        will be updated by the new one.
-
-        :param other: the :class:`DataPack` object to be appended.
-        """
-        self._dataframe = pd.concat([self._dataframe, other.dataframe])
-        self._mapping = pd.concat([self._mapping, other.mapping])
-        self.context.update(other.context)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
