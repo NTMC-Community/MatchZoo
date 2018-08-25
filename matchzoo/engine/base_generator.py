@@ -18,6 +18,7 @@ class BaseGenerator(keras.utils.Sequence):
         self,
         batch_size: int=32,
         num_instances: int=0,
+        stage: str='train',
         shuffle: bool=True
     ):
         """
@@ -31,9 +32,11 @@ class BaseGenerator(keras.utils.Sequence):
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.num_instances = num_instances
-        self.batch_index = 0
+        if stage not in ['train', 'test']:
+            raise ValueError(f'{stage} is not a valid stage name.')
+        self.stage = stage
         self.index_array = None
-        self.index_generator = self._flow_index()
+        self._set_index_array()
 
     def _set_index_array(self):
         """
@@ -46,7 +49,7 @@ class BaseGenerator(keras.utils.Sequence):
         else:
             self.index_array = np.arange(self.num_instances)
 
-    def __getitem__(self, idx: int) -> typing.Tuple[dict, typing.Any]:
+    def __getitem__(self, idx: int) -> typing.Tuple[dict, list]:
         """Get a batch from index idx.
 
         :param idx: the index of the batch.
@@ -55,39 +58,34 @@ class BaseGenerator(keras.utils.Sequence):
             msg = f'Asked to retrieve element {idx}, '
             msg += f'but the Sequence has length {len(self)}'
             raise ValueError(msg)
-        if self.index_array is None:
-            self._set_index_array()
-        index_array = self.index_array[self.batch_size * idx:
-                                       self.batch_size * (idx + 1)]
+        if idx == len(self) - 1:
+            index_array = self.index_array[self.batch_size * idx:]
+        else:
+            index_array = self.index_array[self.batch_size * idx:
+                                           self.batch_size * (idx + 1)]
         return self._get_batch_of_transformed_samples(index_array)
 
     def __len__(self) -> int:
         """Get the total number of batches."""
         return (self.num_instances + self.batch_size - 1) // self.batch_size
 
+    def __iter__(self) -> typing.Tuple[dict, list]:
+        """Create an generator."""
+        if self.stage == 'train':
+            while True:
+                for item in (self[i] for i in range(len(self))):
+                    yield item
+        else:
+            for item in (self[i] for i in range(len(self))):
+                yield item
+
     def on_epoch_end(self):
         """Reorganize the index array while epoch is ended."""
         self._set_index_array()
 
     def reset(self):
-        """Reset the batch_index to generator from begin."""
-        self.batch_index = 0
-
-    def _flow_index(self):
-        """Yield a batch of sample indices."""
-        # Ensure self.batch_index is 0.
-        self.reset()
-        while 1:
-            if self.batch_index == 0:
-                self._set_index_array()
-            curr_index = (self.batch_index * self.batch_size) % \
-                self.num_instances
-            # note here, some samples may be missed.
-            if self.num_instances > curr_index + self.batch_size:
-                self.batch_index += 1
-            else:
-                self.batch_index = 0
-            yield self.index_array[curr_index: curr_index + self.batch_size]
+        """Reset the generator from begin."""
+        self._set_index_array()
 
     @abc.abstractmethod
     def _get_batch_of_transformed_samples(self, index_array):

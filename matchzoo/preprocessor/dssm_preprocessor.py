@@ -95,10 +95,11 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         # 1. Used for build vocabulary of tri-letters (get dimension).
         # 2. Cached tri-letters can be further used to perform input
         #    transformation.
-        df = self._datapack.dataframe
+        content = self._datapack.content
 
-        for idx, text in tqdm(zip(df['id'], df['text'])):
+        for idx, text in tqdm(content.items()):
             # For each piece of text, apply process unit sequentially.
+            text = text['text']
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
@@ -128,7 +129,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        outputs = []
+        outputs = {}
 
         if stage not in ['train', 'test']:
             raise ValueError(f'{stage} is not a valid stage name.')
@@ -145,26 +146,31 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         if stage == 'train':
             # use cached data to fit word hashing layer directly.
             for idx, tri_letter in tqdm(self._cache):
-                outputs.append((idx, hashing.transform(tri_letter)))
+                outputs[idx] = hashing.transform(tri_letter)
 
-            return self._make_output(output=outputs,
-                                     mapping=self._datapack.mapping,
-                                     context=self._context,
-                                     stage=stage)
+            return self._make_output(
+                relation=self._datapack.relation.values,
+                content=outputs,
+                context=self._context,
+                stage=stage
+            )
         else:
             # do preprocessing from scrach.
             units = self._prepare_stateless_units()
             units.append(hashing)
             self._datapack = self.segmentation(inputs, stage='test')
 
-            df = self._datapack.dataframe
+            content = self._datapack.content
 
-            for idx, text in tqdm(zip(df['id'], df['text'])):
+            for idx, text in tqdm(content.items()):
+                text = text['text']
                 for unit in units:
                     text = unit.transform(text)
-                outputs.append((idx, text))
+                outputs[idx] = text
 
-            return self._make_output(output=outputs,
-                                     mapping=self._datapack.mapping,
-                                     context=self._context,
-                                     stage=stage)
+            return self._make_output(
+                relation=self._datapack.relation.values,
+                content=outputs,
+                context=self._context,
+                stage=stage
+            )
