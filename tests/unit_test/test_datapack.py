@@ -7,18 +7,19 @@ import numpy as np
 
 @pytest.fixture
 def data_pack():
-    data = [['qid0', 'did0', 1], ['qid1', 'did1', 0]]
-    mapping = {'qid0': [1, 2], 'qid1': [2, 3],
+    relation = [['qid0', 'did0', 1], ['qid1', 'did1', 0]]
+    content = {'qid0': [1, 2], 'qid1': [2, 3],
                'did0': [2, 3, 4], 'did1': [3, 4, 5]}
     ctx = {'vocab_size': 2000}
-    return DataPack(data=data, mapping=mapping, context=ctx)
+    columns = ['id_left', 'id_right', 'label']
+    return DataPack(relation=relation, content=content, context=ctx, columns=columns)
 
 def test_length(data_pack):
     num_examples = 2
     assert len(data_pack) == num_examples
 
-def test_mapping(data_pack):
-    assert data_pack.mapping['qid0'] == [1, 2]
+def test_content(data_pack):
+    assert data_pack.content['qid0'] == [1, 2]
 
 def test_save_load(data_pack):
     dirpath = '.tmpdir'

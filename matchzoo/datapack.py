@@ -13,22 +13,22 @@ class DataPack(object):
     Matchzoo :class:`DataPack` data structure, store dataframe and context.
 
     Example:
-        >>> mapping = {
+        >>> content = {
         ...     'qid1':'query 1',
         ...     'qid2':'query 2',
         ...     'did1':'document 1',
         ...     'did2':'document 2'
         ... }
-        >>> data = [['qid1', 'did1', 1], ['qid2', 'did2', 1]]
+        >>> relation = [['qid1', 'did1', 1], ['qid2', 'did2', 1]]
         >>> context = {'vocab_size': 2000}
         >>> dp = DataPack(
-        ...     data= data,
-        ...     mapping=mapping,
+        ...     relation=relation,
+        ...     content=content,
         ...     context=context
         ... )
         >>> len(dp)
         2
-        >>> mapping, context = dp.dataframe, dp.context
+        >>> relation, context = dp.relation, dp.context
         >>> context
         {'vocab_size': 2000}
     """
@@ -36,39 +36,38 @@ class DataPack(object):
     DATA_FILENAME = 'data.dill'
 
     def __init__(self,
-                 data: typing.Union[list, np.ndarray],
-                 mapping: dict,
+                 relation: typing.Union[list, np.ndarray],
+                 content: dict,
                  context: dict={},
                  columns: list=None):
         """
         Initialize :class:`DataPack`.
 
-        :param data: Input data, could be list-like objects
-            or :class:`numpy.ndarray`.
-        :param mapping: Store the mapping between left document
+        :param relation: Store the relation between left document
             and right document use ids.
+        :param content: Store the content of ids.
         :param context: Hyper-parameter fitted during
             pre-processing stage.
         :param columns: List of column names of the :attr:`data`
             variable.
         """
-        self._dataframe = pd.DataFrame(data, columns=columns)
-        self._mapping = mapping
+        self._relation = pd.DataFrame(relation, columns=columns)
+        self._content = content
         self._context = context
 
     def __len__(self) -> int:
         """Get numer of rows in the class:`DataPack` object."""
-        return self._dataframe.shape[0]
+        return self._relation.shape[0]
 
     @property
-    def dataframe(self):
-        """Get :meth:`dataframe` of :class:`DataPack`."""
-        return self._dataframe
-
-    @property
-    def mapping(self):
+    def relation(self):
         """Get :meth:`relation` of :class:`DataPack`."""
-        return self._mapping
+        return self._relation
+
+    @property
+    def content(self):
+        """Get :meth:`content` of :class:`DataPack`."""
+        return self._content
 
     @property
     def context(self):

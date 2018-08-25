@@ -15,17 +15,20 @@ class PointGenerator(engine.BaseGenerator):
     Ponit generator can be used for classification as well as ranking.
 
     Examples:
-        >>> data = [['qid0', 'did0', 1]]
+        >>> relation = [['qid0', 'did0', 1]]
         >>> columns = ['id_left', 'id_right', 'label']
-        >>> mapping = {'qid0': [1, 2], 'did0': [2, 3]}
-        >>> input = datapack.DataPack(data=data,
-        ...                           mapping=mapping,
+        >>> content = {'qid0': [1, 2], 'did0': [2, 3]}
+        >>> input = datapack.DataPack(relation=relation,
+        ...                           content=content,
         ...                           columns=columns
         ...                           )
         >>> task = tasks.Classification(num_classes=2)
         >>> from matchzoo.generators import PointGenerator
         >>> generator = PointGenerator(input, task, 1, 'train', True)
         >>> x, y = generator[0]
+        >>> assert x['id_left'].tolist() == [[1, 2]]
+        >>> assert x['id_right'].tolist() == [[2, 3]]
+        >>> assert y.tolist() == [[0., 1.]]
 
     """
 
@@ -34,7 +37,7 @@ class PointGenerator(engine.BaseGenerator):
         inputs: datapack.DataPack,
         task: engine.BaseTask=tasks.Classification(2),
         batch_size: int=32,
-        stage: str = 'train',
+        stage: str='train',
         shuffle: bool=True
     ):
         """Construct the point generator.
@@ -47,9 +50,8 @@ class PointGenerator(engine.BaseGenerator):
         """
         self._task = task
         self.data = self.transform_data(inputs)
-        self.mapping = inputs.mapping
-        self.stage = stage
-        super().__init__(batch_size, len(inputs.dataframe), shuffle)
+        self.content = inputs.content
+        super().__init__(batch_size, len(inputs.relation), stage, shuffle)
 
     def transform_data(self, inputs: datapack.DataPack) -> dict:
         """Obtain the transformed data from :class:`DataPack`.
@@ -57,10 +59,10 @@ class PointGenerator(engine.BaseGenerator):
         :param inputs: An instance of :class:`DataPack` to be transformed.
         :return: the output of all the transformed inputs.
         """
-        data = inputs.dataframe
+        relation = inputs.relation
         out = {}
-        for column in data.columns:
-            out[column] = np.asarray(data[column])
+        for column in relation.columns:
+            out[column] = np.asarray(relation[column])
         return out
 
     def _get_batch_of_transformed_samples(
@@ -92,7 +94,7 @@ class PointGenerator(engine.BaseGenerator):
                 continue
             batch_x[key] = []
             for val in index_array:
-                feature = self.mapping[self.data[key][val]]
+                feature = self.content[self.data[key][val]]
                 batch_x[key].append(feature)
             batch_x[key] = np.array(batch_x[key])
         batch_x = utils.dotdict(batch_x)

@@ -95,9 +95,9 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         # 1. Used for build vocabulary of tri-letters (get dimension).
         # 2. Cached tri-letters can be further used to perform input
         #    transformation.
-        mapping = self._datapack.mapping
+        content = self._datapack.content
 
-        for idx, text in tqdm(mapping.items()):
+        for idx, text in tqdm(content.items()):
             # For each piece of text, apply process unit sequentially.
             text = text['text']
             for unit in units:
@@ -149,8 +149,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                 outputs[idx] = hashing.transform(tri_letter)
 
             return self._make_output(
-                output=self._datapack.dataframe,
-                mapping=outputs,
+                relation=self._datapack.relation.values,
+                content=outputs,
                 context=self._context,
                 stage=stage
             )
@@ -160,17 +160,17 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             units.append(hashing)
             self._datapack = self.segmentation(inputs, stage='test')
 
-            mapping = self._datapack.mapping
+            content = self._datapack.content
 
-            for idx, text in tqdm(mapping.items()):
+            for idx, text in tqdm(content.items()):
                 text = text['text']
                 for unit in units:
                     text = unit.transform(text)
                 outputs[idx] = text
 
             return self._make_output(
-                output=self._datapack.dataframe,
-                mapping=outputs,
+                relation=self._datapack.relation.values,
+                content=outputs,
                 context=self._context,
                 stage=stage
             )

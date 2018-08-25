@@ -25,8 +25,6 @@ def test():
         test = [tuple(map(str, i.split('\t'))) for i in f]
     return test
 
-
-
 def test_dssm(train, test):
     """Test DSSM model."""
     # do pre-processing.
@@ -37,7 +35,7 @@ def test_dssm(train, test):
     input_shapes = processed_train.context['input_shapes']
     # generator.
     generator = generators.PointGenerator(processed_train, stage='train')
-    # X, y = generator[0]
+    X, y = generator[0]
     # Create a dssm model
     dssm_model = models.DSSMModel()
     dssm_model.params['input_shapes'] = input_shapes
