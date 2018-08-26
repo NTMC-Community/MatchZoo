@@ -4,7 +4,6 @@ import abc
 import typing
 from pathlib import Path
 import dill
-import numpy as np
 import pandas as pd
 
 from matchzoo import datapack
