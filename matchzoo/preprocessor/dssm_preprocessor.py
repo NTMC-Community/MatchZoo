@@ -95,15 +95,16 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         # 1. Used for build vocabulary of tri-letters (get dimension).
         # 2. Cached tri-letters can be further used to perform input
         #    transformation.
-        df = self._datapack.dataframe
+        content = self._datapack.content
 
-        for idx, text in tqdm(zip(df['id'], df['text'])):
+        for key, val in tqdm(content.items()):
             # For each piece of text, apply process unit sequentially.
+            text = val['text']
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
             # cache tri-letters for transformation.
-            self._cache.append((idx, text))
+            self._cache.append((key, text))
 
         # Initialize a vocabulary process unit to build tri-letter vocab.
         vocab_unit = preprocessor.VocabularyUnit()
@@ -113,6 +114,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         self._context['term_index'] = vocab_unit.state['term_index']
         dim_triletter = len(vocab_unit.state['term_index']) + 1
         self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
+        self._datapack.context = self._context
         return self
 
     def transform(
@@ -128,7 +130,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        outputs = []
+        outputs = {}
 
         if stage not in ['train', 'test']:
             raise ValueError(f'{stage} is not a valid stage name.')
@@ -145,26 +147,23 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         if stage == 'train':
             # use cached data to fit word hashing layer directly.
             for idx, tri_letter in tqdm(self._cache):
-                outputs.append((idx, hashing.transform(tri_letter)))
+                outputs[idx] = hashing.transform(tri_letter)
 
-            return self._make_output(output=outputs,
-                                     mapping=self._datapack.mapping,
-                                     context=self._context,
-                                     stage=stage)
+            self._datapack.content = outputs
+            return self._datapack
         else:
             # do preprocessing from scrach.
             units = self._prepare_stateless_units()
             units.append(hashing)
             self._datapack = self.segmentation(inputs, stage='test')
 
-            df = self._datapack.dataframe
+            content = self._datapack.content
 
-            for idx, text in tqdm(zip(df['id'], df['text'])):
+            for key, val in tqdm(content.items()):
+                text = val['text']
                 for unit in units:
                     text = unit.transform(text)
-                outputs.append((idx, text))
+                outputs[key] = text
 
-            return self._make_output(output=outputs,
-                                     mapping=self._datapack.mapping,
-                                     context=self._context,
-                                     stage=stage)
+            self._datapack.content = outputs
+            return self._datapack
