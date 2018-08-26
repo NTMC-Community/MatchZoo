@@ -16,7 +16,6 @@ with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
 
 install_requires = [
     'keras >= 2.0.5',
-    'many_stop_words >= 0.2.2',
     'nltk >= 3.2.3',
     'numpy >= 1.12.1',
     'tqdm >= 4.19.4',
