@@ -48,7 +48,7 @@ class DataPack(object):
         :param content: Store the content of ids.
         :param context: Hyper-parameter fitted during
             pre-processing stage.
-        :param columns: List of column names of the :attr:`data`
+        :param columns: List of column names of the :attr:`relation`
             variable.
         """
         self._relation = pd.DataFrame(relation, columns=columns)
@@ -69,10 +69,20 @@ class DataPack(object):
         """Get :meth:`content` of :class:`DataPack`."""
         return self._content
 
+    @content.setter
+    def content(self, value: dict):
+        """Set the value of :attr:`content`."""
+        self._content = value
+
     @property
     def context(self):
         """Get :meth:`context` of class:`DataPack`."""
         return self._context
+
+    @context.setter
+    def context(self, value: dict):
+        """Set the value of :attr:`context`."""
+        self._context = value
 
     def save(self, dirpath: typing.Union[str, Path]):
         """

@@ -4,7 +4,6 @@ import abc
 import typing
 from pathlib import Path
 import dill
-import numpy as np
 import pandas as pd
 
 from matchzoo import datapack
@@ -58,16 +57,15 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     def _make_output(
         self,
-        relation: typing.Union[list, np.ndarray],
+        data: datapack.DataPack,
         content: dict,
         context: dict,
-        stage: str
     ) -> datapack.DataPack:
         """
-        Create :class:`DataPack` instance as output.
+        Return :class:`DataPack` instance as output.
 
-        :param output: Transformed output using preprocessor.
-        :param relation: Relation between query id and document id.
+        :param data: The :class:`DataPack` need to be preprocessed.
+        :param content: Transformed content using preprocessor.
         :param context: Context to be passed to :class:`DataPack`.
         :param stage: Indicate the pre-processing stage, `train`
             or `test`.
@@ -75,11 +73,9 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         :return: Pre-processed input as well as context stored in
             a :class:`DataPack` object.
         """
-        _, columns_relation, _ = self._get_columns(stage=stage)
-        return datapack.DataPack(content=content,
-                                 relation=relation,
-                                 context=context,
-                                 columns=columns_relation)
+        data.content = content
+        data.context = context
+        return data
 
     def save(self, dirpath: typing.Union[str, Path]):
         """

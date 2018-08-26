@@ -124,7 +124,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         Apply transformation on data, create `tri-letter` representation.
 
-        :param inputsL Inputs to be preprocessed.
+        :param inputs Inputs to be preprocessed.
         :param stage: Pre-processing stage, `train` or `test`.
 
         :return: Transformed data as :class:`DataPack` object.
@@ -149,10 +149,9 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                 outputs[idx] = hashing.transform(tri_letter)
 
             return self._make_output(
-                relation=self._datapack.relation.values,
+                data=self._datapack,
                 content=outputs,
-                context=self._context,
-                stage=stage
+                context=self._context
             )
         else:
             # do preprocessing from scrach.
@@ -169,8 +168,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                 outputs[idx] = text
 
             return self._make_output(
-                relation=self._datapack.relation.values,
+                data=self._datapack,
                 content=outputs,
-                context=self._context,
-                stage=stage
+                context=self._context
             )
