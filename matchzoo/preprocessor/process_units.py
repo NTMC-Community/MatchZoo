@@ -6,7 +6,6 @@ import nltk
 import typing
 import collections
 import numpy as np
-import many_stop_words
 
 
 match_punc = re.compile('[^\w\s]')
@@ -94,11 +93,21 @@ class DigitRemovalUnit(ProcessorUnit):
 
 
 class StopRemovalUnit(ProcessorUnit):
-    """Process unit to remove stop words."""
+    """
+    Process unit to remove stop words.
 
-    def __init__(self, lang: str='en'):
+    Example:
+        >>> unit = StopRemovalUnit()
+        >>> unit.transform(['a', 'the', 'test'])
+        ['test']
+        >>> type(unit.stopwords)
+        <class 'list'>
+    """
+
+    def __init__(self, lang: str='english'):
         """Initialization."""
         self._lang = lang
+        self._stop = nltk.corpus.stopwords.words(self._lang)
 
     def transform(self, tokens: list) -> list:
         """
@@ -112,17 +121,17 @@ class StopRemovalUnit(ProcessorUnit):
         return [token
                 for token
                 in tokens
-                if token not in self.get_stopwords()]
+                if token not in self._stop]
 
-    def get_stopwords(self) -> list:
+    @property
+    def stopwords(self) -> list:
         """
         Get stopwords based on language.
 
         :params lang: language code.
-
-        :return stop_list: list of stop words.
+        :return: list of stop words.
         """
-        return many_stop_words.get_stop_words(self._lang)
+        return self._stop
 
 
 class StemmingUnit(ProcessorUnit):

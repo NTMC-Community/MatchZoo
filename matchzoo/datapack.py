@@ -13,18 +13,22 @@ class DataPack(object):
     Matchzoo :class:`DataPack` data structure, store dataframe and context.
 
     Example:
-        >>> features = [['qid1', 'query 1'],
-        ...             ['qid2', 'query 2'],
-        ...             ['did1', 'document 1'],
-        ...             ['did2', 'document 2']]
-        >>> mapping = [['qid1', 'did1', 1], ['qid2', 'did2', 1]]
+        >>> content = {
+        ...     'qid1':'query 1',
+        ...     'qid2':'query 2',
+        ...     'did1':'document 1',
+        ...     'did2':'document 2'
+        ... }
+        >>> relation = [['qid1', 'did1', 1], ['qid2', 'did2', 1]]
         >>> context = {'vocab_size': 2000}
-        >>> dp = DataPack(data=features,
-        ...               mapping=mapping,
-        ...               context=context)
+        >>> dp = DataPack(
+        ...     relation=relation,
+        ...     content=content,
+        ...     context=context
+        ... )
         >>> len(dp)
-        4
-        >>> features, context = dp.dataframe, dp.context
+        2
+        >>> relation, context = dp.relation, dp.context
         >>> context
         {'vocab_size': 2000}
     """
@@ -32,60 +36,53 @@ class DataPack(object):
     DATA_FILENAME = 'data.dill'
 
     def __init__(self,
-                 data: typing.Union[list, np.ndarray],
-                 mapping: typing.Union[list, np.ndarray]=[],
+                 relation: typing.Union[list, np.ndarray],
+                 content: dict,
                  context: dict={},
-                 columns: list=None,
-                 columns_mapping: list=None):
+                 columns: list=None):
         """
         Initialize :class:`DataPack`.
 
-        :param data: Input data, could be list-like objects
-            or :class:`numpy.ndarray`.
-        :param mapping: Store the mapping between left document
+        :param relation: Store the relation between left document
             and right document use ids.
+        :param content: Store the content of ids.
         :param context: Hyper-parameter fitted during
             pre-processing stage.
-        :param columns: List of column names of the :attr:`data`
+        :param columns: List of column names of the :attr:`relation`
             variable.
-        :param columns_mapping: List of column names of the
-            :attr:`mapping` variable.
         """
-        self._dataframe = pd.DataFrame(data, columns=columns)
-        self._mapping = pd.DataFrame(mapping, columns=columns_mapping)
+        self._relation = pd.DataFrame(relation, columns=columns)
+        self._content = content
         self._context = context
 
     def __len__(self) -> int:
         """Get numer of rows in the class:`DataPack` object."""
-        return self._dataframe.shape[0]
+        return self._relation.shape[0]
 
     @property
-    def dataframe(self):
-        """Get :meth:`dataframe` of :class:`DataPack`."""
-        return self._dataframe
-
-    @property
-    def mapping(self):
+    def relation(self):
         """Get :meth:`relation` of :class:`DataPack`."""
-        return self._mapping
+        return self._relation
+
+    @property
+    def content(self):
+        """Get :meth:`content` of :class:`DataPack`."""
+        return self._content
+
+    @content.setter
+    def content(self, value: dict):
+        """Set the value of :attr:`content`."""
+        self._content = value
 
     @property
     def context(self):
         """Get :meth:`context` of class:`DataPack`."""
         return self._context
 
-    def append(self, other: 'DataPack'):
-        """
-        Append new :class:`DataPack` object to current :class:`DataPack`.
-
-        It should be noted that the context of the previous :class:`DataPack`
-        will be updated by the new one.
-
-        :param other: the :class:`DataPack` object to be appended.
-        """
-        self._dataframe = pd.concat([self._dataframe, other.dataframe])
-        self._mapping = pd.concat([self._mapping, other.mapping])
-        self.context.update(other.context)
+    @context.setter
+    def context(self, value: dict):
+        """Set the value of :attr:`context`."""
+        self._context = value
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
