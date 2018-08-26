@@ -55,28 +55,6 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         else:
             return self.transform(inputs, stage)
 
-    def _make_output(
-        self,
-        data: datapack.DataPack,
-        content: dict,
-        context: dict,
-    ) -> datapack.DataPack:
-        """
-        Return :class:`DataPack` instance as output.
-
-        :param data: The :class:`DataPack` need to be preprocessed.
-        :param content: Transformed output using preprocessor.
-        :param context: Context to be passed to :class:`DataPack`.
-        :param stage: Indicate the pre-processing stage, `train`
-            or `test`.
-
-        :return: Pre-processed input as well as context stored in
-            a :class:`DataPack` object.
-        """
-        data.content = content
-        data.context = context
-        return data
-
     def save(self, dirpath: typing.Union[str, Path]):
         """
         Save the :class:`DSSMPreprocessor` object.

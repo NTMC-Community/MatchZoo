@@ -21,7 +21,7 @@ class PointGenerator(engine.BaseGenerator):
         >>> input = datapack.DataPack(relation=relation,
         ...                           content=content,
         ...                           columns=columns
-        ...                           )
+        ... )
         >>> task = tasks.Classification(num_classes=2)
         >>> from matchzoo.generators import PointGenerator
         >>> generator = PointGenerator(input, task, 1, 'train', True)

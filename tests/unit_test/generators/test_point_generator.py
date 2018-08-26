@@ -41,7 +41,7 @@ def test_point_generator(x, task, stage):
         assert x['id_right'].tolist() == [[2, 3, 4], [3, 4, 5], [2, 3, 4]]
         if stage == 'test':
             assert y is None
-        elif task == tasks.Classification(num_classes=3):
+        elif stage == 'train' and task == tasks.Classification(num_classes=3):
             assert y.tolist() == [
                 [1, 0, 0],
                 [0, 1, 0],

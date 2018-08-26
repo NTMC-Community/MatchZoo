@@ -114,6 +114,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         self._context['term_index'] = vocab_unit.state['term_index']
         dim_triletter = len(vocab_unit.state['term_index']) + 1
         self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
+        self._datapack.context = self._context
         return self
 
     def transform(
@@ -148,11 +149,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             for idx, tri_letter in tqdm(self._cache):
                 outputs[idx] = hashing.transform(tri_letter)
 
-            return self._make_output(
-                data=self._datapack,
-                content=outputs,
-                context=self._context
-            )
+            self._datapack.content = outputs
+            return self._datapack
         else:
             # do preprocessing from scrach.
             units = self._prepare_stateless_units()
@@ -161,14 +159,11 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
             content = self._datapack.content
 
-            for idx, text in tqdm(content.items()):
-                text = text['text']
+            for key, val in tqdm(content.items()):
+                text = val['text']
                 for unit in units:
                     text = unit.transform(text)
-                outputs[idx] = text
+                outputs[key] = text
 
-            return self._make_output(
-                data=self._datapack,
-                content=outputs,
-                context=self._context
-            )
+            self._datapack.content = outputs
+            return self._datapack
