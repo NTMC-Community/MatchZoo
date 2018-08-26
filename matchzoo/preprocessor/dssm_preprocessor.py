@@ -97,14 +97,14 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         #    transformation.
         content = self._datapack.content
 
-        for idx, text in tqdm(content.items()):
+        for key, val in tqdm(content.items()):
             # For each piece of text, apply process unit sequentially.
-            text = text['text']
+            text = val['text']
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
             # cache tri-letters for transformation.
-            self._cache.append((idx, text))
+            self._cache.append((key, text))
 
         # Initialize a vocabulary process unit to build tri-letter vocab.
         vocab_unit = preprocessor.VocabularyUnit()

@@ -4,6 +4,7 @@ import abc
 import typing
 from pathlib import Path
 import dill
+import numpy as np
 import pandas as pd
 
 from matchzoo import datapack
@@ -65,7 +66,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         Return :class:`DataPack` instance as output.
 
         :param data: The :class:`DataPack` need to be preprocessed.
-        :param content: Transformed content using preprocessor.
+        :param content: Transformed output using preprocessor.
         :param context: Context to be passed to :class:`DataPack`.
         :param stage: Indicate the pre-processing stage, `train`
             or `test`.
@@ -101,7 +102,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         """
         Convert user input into :class:`DataPack` consist of two tables.
 
-        The `content` dictstores the id with it's corresponded input text.
+        The `content` dict stores the id with it's corresponded input text.
         The `relation` table stores the relation between `text_left` and
             `text_right`.
 
