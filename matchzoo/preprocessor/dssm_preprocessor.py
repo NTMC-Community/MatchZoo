@@ -124,7 +124,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         Apply transformation on data, create `tri-letter` representation.
 
-        :param inputs Inputs to be preprocessed.
+        :param inputs: Inputs to be preprocessed.
         :param stage: Pre-processing stage, `train` or `test`.
 
         :return: Transformed data as :class:`DataPack` object.
