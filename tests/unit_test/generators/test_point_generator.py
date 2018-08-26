@@ -39,6 +39,9 @@ def test_point_generator(x, task, stage):
     for x, y in generator:
         assert x['id_left'].tolist() == [[1, 2], [2, 3], [2, 3]]
         assert x['id_right'].tolist() == [[2, 3, 4], [3, 4, 5], [2, 3, 4]]
+        assert x['ids'].tolist() == [['qid0', 'did0'],
+                            ['qid1', 'did1'],
+                            ['qid1', 'did0']]
         if stage == 'test':
             assert y is None
         elif stage == 'train' and task == tasks.Classification(num_classes=3):

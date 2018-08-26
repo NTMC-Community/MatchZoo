@@ -28,6 +28,7 @@ class PointGenerator(engine.BaseGenerator):
         >>> x, y = generator[0]
         >>> assert x['id_left'].tolist() == [[1, 2]]
         >>> assert x['id_right'].tolist() == [[2, 3]]
+        >>> assert x['ids'].tolist() == [['qid0', 'did0']]
         >>> assert y.tolist() == [[0., 1.]]
 
     """
@@ -89,13 +90,16 @@ class PointGenerator(engine.BaseGenerator):
                 msg = f"{self._task} is not a valid task type."
                 msg += ":class:`Ranking` and :class:`Classification` expected."
                 raise ValueError(msg)
+        batch_x['ids'] = [[] for i in range(bsize)]
         for key in self.data.keys():
             if key == 'label':
                 continue
             batch_x[key] = []
-            for val in index_array:
+            for idx, val in enumerate(index_array):
                 feature = self.content[self.data[key][val]]
                 batch_x[key].append(feature)
+                batch_x['ids'][idx].append(self.data[key][val])
             batch_x[key] = np.array(batch_x[key])
+        batch_x['ids'] = np.array(batch_x['ids'])
         batch_x = utils.dotdict(batch_x)
         return (batch_x, batch_y)
