@@ -3,7 +3,6 @@
 import re
 import abc
 import nltk
-from nltk.corpus import stopwords
 import typing
 import collections
 import numpy as np
@@ -108,7 +107,7 @@ class StopRemovalUnit(ProcessorUnit):
     def __init__(self, lang: str='english'):
         """Initialization."""
         self._lang = lang
-        self._stop = stopwords.words(self._lang)
+        self._stop = nltk.corpus.stopwords.words(self._lang)
 
     def transform(self, tokens: list) -> list:
         """
