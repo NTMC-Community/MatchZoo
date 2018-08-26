@@ -19,4 +19,4 @@ log/*
 .idea/
 .pytest_cache/
 MatchZoo.egg-info/
-examples/wikiqa/.ipynb_checkpoints/*
+notebooks/wikiqa/.ipynb_checkpoints/*
