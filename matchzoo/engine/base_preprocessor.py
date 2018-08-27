@@ -89,8 +89,12 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         :return: User input into a :class:`DataPack` with content and
             relation.
         """
-        columns_all, columns_relation, columns_content = self._get_columns(
-            stage=stage)
+        columns_relation = ['id_left', 'id_right']
+        columns_all = ['id_left', 'id_right', 'text_left', 'text_right']
+
+        if stage == 'train':
+            columns_all.append('label')
+            columns_relation.append('label')
 
         # prepare data pack.
         inputs = pd.DataFrame(inputs, columns=columns_all)
@@ -101,31 +105,19 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         content_left = inputs[['id_left', 'text_left']].drop_duplicates(
             ['id_left']
         )
-        content_left.columns = columns_content
+        content_left.columns = ['id', 'text']
 
         content_right = inputs[['id_right', 'text_right']].drop_duplicates(
             ['id_right']
         )
-        content_right.columns = columns_content
+        content_right.columns = ['id', 'text']
 
         content = pd.concat([content_left, content_right])
-
         content = content.set_index('id').to_dict(orient='index')
 
         return datapack.DataPack(relation=relation,
                                  content=content,
                                  columns=columns_relation)
-
-    def _get_columns(self, stage: str) -> list:
-        """Prepare columns for :class:`DataPack`."""
-        columns_relation = ['id_left', 'id_right']
-        columns_content = ['id', 'text']
-        columns_all = ['id_left', 'id_right', 'text_left', 'text_right']
-
-        if stage == 'train':
-            columns_all.append('label')
-            columns_relation.append('label')
-        return columns_all, columns_relation, columns_content
 
 
 def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:
