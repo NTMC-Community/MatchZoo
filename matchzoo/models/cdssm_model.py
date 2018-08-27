@@ -3,7 +3,7 @@
 from matchzoo import engine
 
 from keras import Model
-from keras.layers import Input, Conv1D, MaxPooling1D, Dot, Dense, Flatten
+from keras.layers import Input, Conv1D, GlobalMaxPool1D, Dot, Dense
 
 
 class CDSSMModel(engine.BaseModel):
@@ -68,14 +68,12 @@ class CDSSMModel(engine.BaseModel):
                    bias_initializer=self._params['b_initializer'])(x_in)
         # Apply max pooling by take max at each dimension across
         # all word_trigram features.
-        x = MaxPooling1D(pool_size=input_shape[1],
-                         padding=self._params['padding'])(x)
+        x = GlobalMaxPool1D()(x)
         # Apply a none-linear transformation use a tanh layer.
-        x_out = Flatten()(x)
         for _ in range(0, self._params['num_hidden_layers']):
             x = Dense(self._params['dim_fan_out'],
                       activation=self._params['activation_hidden'])(x)
-        return Model(inputs=x_in, outputs=x_out)
+        return Model(inputs=x_in, outputs=x)
 
     def build(self):
         """
@@ -94,8 +92,6 @@ class CDSSMModel(engine.BaseModel):
              base_network(input_right)]
         # Dot product with cosine similarity.
         x = Dot(axes=[1, 1], normalize=True)(x)
-        print(x._keras_shape)
         x_out = self._make_output_layer()(x)
-        print(x_out._keras_shape)
         self._backend = Model(inputs=[input_left, input_right],
                               outputs=x_out)
