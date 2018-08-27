@@ -29,7 +29,7 @@ class CDSSMModel(engine.BaseModel):
         params['optimizer'] = 'adam'
         # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
         # Dimension: (NUM_TRI_LETTERS, DIM-TRILETTER )
-        params['input_shapes'] = [(10, 900), (20, 900)]
+        params['input_shapes'] = [(None, 900), (None, 900)]
         params.add(engine.Param('w_initializer', 'glorot_normal'))
         params.add(engine.Param('b_initializer', 'zeros'))
         params.add(engine.Param('dim_fan_out', 128))
@@ -71,11 +71,11 @@ class CDSSMModel(engine.BaseModel):
         x = MaxPooling1D(pool_size=input_shape[1],
                          padding=self._params['padding'])(x)
         # Apply a none-linear transformation use a tanh layer.
-        x = Flatten()(x)
+        x_out = Flatten()(x)
         for _ in range(0, self._params['num_hidden_layers']):
             x = Dense(self._params['dim_fan_out'],
                       activation=self._params['activation_hidden'])(x)
-        return Model(inputs=x_in, outputs=x)
+        return Model(inputs=x_in, outputs=x_out)
 
     def build(self):
         """
@@ -83,20 +83,19 @@ class CDSSMModel(engine.BaseModel):
 
         CDSSM use Siamese arthitecture.
         """
-        input_shape_left = self._params['input_shapes'][0]
-        input_shape_right = self._params['input_shapes'][1]
-        base_network_left = self._create_base_network(
-            input_shape=input_shape_left)
-        base_network_right = self._create_base_network(
-            input_shape=input_shape_right)
+        input_shape = self._params['input_shapes'][0]
+        base_network = self._create_base_network(
+            input_shape=input_shape)
         # Left input and right input.
-        input_left = Input(name='id_left', shape=input_shape_left)
-        input_right = Input(name='id_right', shape=input_shape_right)
+        input_left = Input(name='id_left', shape=input_shape)
+        input_right = Input(name='id_right', shape=input_shape)
         # Process left & right input.
-        x = [base_network_left(input_left),
-             base_network_right(input_right)]
+        x = [base_network(input_left),
+             base_network(input_right)]
         # Dot product with cosine similarity.
         x = Dot(axes=[1, 1], normalize=True)(x)
+        print(x._keras_shape)
         x_out = self._make_output_layer()(x)
+        print(x_out._keras_shape)
         self._backend = Model(inputs=[input_left, input_right],
                               outputs=x_out)
