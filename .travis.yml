@@ -3,7 +3,7 @@ os:
   - linux
   - osx
 python:
-      - 3.6.3
+      - 3.6
 sudo: enabled
 install:
   - "pip install -r requirements.txt"
