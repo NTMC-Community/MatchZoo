@@ -2,15 +2,13 @@ language: python
 matrix:
     include:
         - os: linux
-          sudo: required
           python: 3.6
           env: TOXENV=py36
         - os: osx
-          sudo: required
+          sudo: enabled
           language: generic
           python: 3.6
           env: TOXENV=py36
-sudo: enabled
 install:
   - "pip install -r requirements.txt"
   - "python -m nltk.downloader punkt"
