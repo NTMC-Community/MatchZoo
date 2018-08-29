@@ -6,7 +6,6 @@ from matchzoo import datapack
 from matchzoo import utils
 
 import numpy as np
-import pandas as pd
 import typing
 
 
@@ -16,6 +15,7 @@ class PointGenerator(engine.BaseGenerator):
     Ponit generator can be used for classification as well as ranking.
 
     Examples:
+        >>> import pandas as pd
         >>> relation = [['qid0', 'did0', 1]]
         >>> left_data = [['qid0', [1, 2]]]
         >>> right_data = [['did0', [2, 3]]]
