@@ -1,9 +1,16 @@
 language: python
-python:
-      - 3.6.3
-sudo: enabled
+matrix:
+    include:
+        - os: linux
+          python: 3.6
+          env: TOXENV=py36
+        - os: osx
+          sudo: enabled
+          language: generic
+          python: 3.6
+          env: TOXENV=py36
 install:
-  - "pip install -r requirements.txt"
+  - "pip install --user -r requirements.txt"
   - "python -m nltk.downloader punkt"
   - "python -m nltk.downloader wordnet"
   - "python -m nltk.downloader stopwords"
