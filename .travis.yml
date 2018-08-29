@@ -9,6 +9,7 @@ matrix:
           language: generic
           python: 3.6
           env: TOXENV=py36
+          sudo: required
 sudo: enabled
 install:
   - "pip install -r requirements.txt"
