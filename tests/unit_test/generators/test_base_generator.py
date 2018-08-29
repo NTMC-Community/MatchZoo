@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 from matchzoo import engine
 from matchzoo.datapack import DataPack
 
@@ -7,13 +8,23 @@ from matchzoo.datapack import DataPack
 def x():
     relation = [['qid0', 'did0', 0],
             ['qid1', 'did1', 1]]
-    content = {'qid0': [1],
-               'qid1': [2],
-               'did0': [3],
-               'did1': [4]}
-    columns = ['id_left', 'id_right', 'label']
+    left_data = [['qid0', [1]],
+                 ['qid1', [2]]]
+    right_data = [['did0', [3]],
+                  ['did1', [4]]]
+    relation_columns = ['id_left', 'id_right', 'label']
+    left_columns = ['id_left', 'text_left']
+    right_columns = ['id_right', 'text_right']
     ctx = {'vocab_size': 6, 'fill_word': 6}
-    return DataPack(relation=relation, content=content, context=ctx, columns=columns)
+    relation_df = pd.DataFrame(relation, columns=relation_columns)
+    left_df = pd.DataFrame(left_data, columns=left_columns)
+    left_df.set_index('id_left', inplace=True)
+    right_df = pd.DataFrame(right_data, columns=right_columns)
+    right_df.set_index('id_right', inplace=True)
+    return DataPack(relation=relation_df,
+                    left_data=left_df,
+                    right_data=right_df,
+                    context=ctx)
 
 @pytest.fixture(scope='module', params=['train', 'test'])
 def stage(request):

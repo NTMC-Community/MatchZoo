@@ -6,6 +6,7 @@ from matchzoo import datapack
 from matchzoo import utils
 
 import numpy as np
+import pandas as pd
 import typing
 
 
@@ -16,18 +17,26 @@ class PointGenerator(engine.BaseGenerator):
 
     Examples:
         >>> relation = [['qid0', 'did0', 1]]
-        >>> columns = ['id_left', 'id_right', 'label']
-        >>> content = {'qid0': [1, 2], 'did0': [2, 3]}
-        >>> input = datapack.DataPack(relation=relation,
-        ...                           content=content,
-        ...                           columns=columns
+        >>> left_data = [['qid0', [1, 2]]]
+        >>> right_data = [['did0', [2, 3]]]
+        >>> relation_columns = ['id_left', 'id_right', 'label']
+        >>> left_columns = ['id_left', 'text_left']
+        >>> right_columns = ['id_right', 'text_right']
+        >>> relation_df = pd.DataFrame(relation, columns=relation_columns)
+        >>> left_df = pd.DataFrame(left_data, columns=left_columns)
+        >>> left_df.set_index('id_left', inplace=True)
+        >>> right_df = pd.DataFrame(right_data, columns=right_columns)
+        >>> right_df.set_index('id_right', inplace=True)
+        >>> input = datapack.DataPack(relation=relation_df,
+        ...                           left_data=left_df,
+        ...                           right_data=right_df
         ... )
         >>> task = tasks.Classification(num_classes=2)
         >>> from matchzoo.generators import PointGenerator
-        >>> generator = PointGenerator(input, task, 1, 'train', True)
+        >>> generator = PointGenerator(input, task, 1, 'train', False)
         >>> x, y = generator[0]
-        >>> assert x['id_left'].tolist() == [[1, 2]]
-        >>> assert x['id_right'].tolist() == [[2, 3]]
+        >>> assert x['text_left'].tolist() == [[1, 2]]
+        >>> assert x['text_right'].tolist() == [[2, 3]]
         >>> assert y.tolist() == [[0., 1.]]
 
     """
@@ -50,7 +59,8 @@ class PointGenerator(engine.BaseGenerator):
         """
         self._task = task
         self.data = self.transform_data(inputs)
-        self.content = inputs.content
+        self.left_data = inputs.left_data
+        self.right_data = inputs.right_data
         super().__init__(batch_size, len(inputs.relation), stage, shuffle)
 
     def transform_data(self, inputs: datapack.DataPack) -> dict:
@@ -89,13 +99,22 @@ class PointGenerator(engine.BaseGenerator):
                 msg = f"{self._task} is not a valid task type."
                 msg += ":class:`Ranking` and :class:`Classification` expected."
                 raise ValueError(msg)
-        for key in self.data.keys():
-            if key == 'label':
-                continue
-            batch_x[key] = []
-            for val in index_array:
-                feature = self.content[self.data[key][val]]
-                batch_x[key].append(feature)
-            batch_x[key] = np.array(batch_x[key])
+        batch_x['ids'] = []
+        columns = self.left_data.columns.values.tolist() + \
+            self.right_data.columns.values.tolist()
+        for column in columns:
+            batch_x[column] = []
+        for idx in index_array:
+            id_left = self.data['id_left'][idx]
+            id_right = self.data['id_right'][idx]
+            for column in self.left_data.columns:
+                val = self.left_data.loc[id_left, column]
+                batch_x[column].append(val)
+            for column in self.right_data.columns:
+                val = self.right_data.loc[id_right, column]
+                batch_x[column].append(val)
+            batch_x['ids'].append([id_left, id_right])
+        for key, val in batch_x.items():
+            batch_x[key] = np.array(val)
         batch_x = utils.dotdict(batch_x)
         return (batch_x, batch_y)

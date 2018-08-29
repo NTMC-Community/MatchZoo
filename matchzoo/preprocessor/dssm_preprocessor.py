@@ -50,7 +50,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """Initialization."""
         self._context = {}
         self._datapack = None
-        self._cache = []
+        self._cache_left = []
+        self._cache_right = []
 
     @property
     def context(self):
@@ -95,16 +96,26 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         # 1. Used for build vocabulary of tri-letters (get dimension).
         # 2. Cached tri-letters can be further used to perform input
         #    transformation.
-        content = self._datapack.content
+        left_data = self._datapack.left_data
+        right_data = self._datapack.right_data
 
-        for key, val in tqdm(content.items()):
+        for idx, row in tqdm(left_data.iterrows()):
             # For each piece of text, apply process unit sequentially.
-            text = val['text']
+            text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
             # cache tri-letters for transformation.
-            self._cache.append((key, text))
+            self._cache_left.append((row.name, text))
+
+        for idx, row in tqdm(right_data.iterrows()):
+            # For each piece of text, apply process unit sequentially.
+            text = row.text_right
+            for unit in units:
+                text = unit.transform(text)
+            vocab.extend(text)
+            # cache tri-letters for transformation.
+            self._cache_right.append((row.name, text))
 
         # Initialize a vocabulary process unit to build tri-letter vocab.
         vocab_unit = preprocessor.VocabularyUnit()
@@ -130,8 +141,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        outputs = {}
-
         if stage not in ['train', 'test']:
             raise ValueError(f'{stage} is not a valid stage name.')
         if not self._context.get('term_index'):
@@ -146,10 +155,13 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         if stage == 'train':
             # use cached data to fit word hashing layer directly.
-            for idx, tri_letter in tqdm(self._cache):
-                outputs[idx] = hashing.transform(tri_letter)
+            for idx, tri_letter in tqdm(self._cache_left):
+                tri_letter = hashing.transform(tri_letter)
+                self._datapack.left_data.at[idx, 'text_left'] = tri_letter
+            for idx, tri_letter in tqdm(self._cache_right):
+                tri_letter = hashing.transform(tri_letter)
+                self._datapack.right_data.at[idx, 'text_right'] = tri_letter
 
-            self._datapack.content = outputs
             return self._datapack
         else:
             # do preprocessing from scrach.
@@ -157,13 +169,18 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             units.append(hashing)
             self._datapack = self.segmentation(inputs, stage='test')
 
-            content = self._datapack.content
+            left_data = self._datapack.left_data
+            right_data = self._datapack.right_data
 
-            for key, val in tqdm(content.items()):
-                text = val['text']
+            for idx, row in tqdm(left_data.iterrows()):
+                text = row.text_left
                 for unit in units:
                     text = unit.transform(text)
-                outputs[key] = text
+                self._datapack.left_data.at[row.name, 'text_left'] = text
+            for idx, row in tqdm(right_data.iterrows()):
+                text = row.text_right
+                for unit in units:
+                    text = unit.transform(text)
+                self._datapack.right_data.at[idx, 'text_right'] = text
 
-            self._datapack.content = outputs
             return self._datapack

@@ -53,7 +53,7 @@ def test_dssm(train, test):
     generator = generators.PointGenerator(processed_test, stage='test')
     X, y = generator[0]
     dssm_model = engine.load_model('.tmpdir')
-    predictions = dssm_model.predict([X.id_left, X.id_right])
+    predictions = dssm_model.predict([X.text_left, X.text_right])
     assert len(predictions) > 0
     assert type(predictions[0][0]) == np.float32
     shutil.rmtree('.tmpdir')
