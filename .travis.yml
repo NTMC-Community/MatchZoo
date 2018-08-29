@@ -1,9 +1,13 @@
 language: python
-os:
-  - linux
-  - osx
-python:
-      - 3.6
+matrix:
+    include:
+        - os: linux
+          sudo: required
+          python: 3.6
+          env: TOXENV=py36
+        - os: osx
+          language: generic
+          env: TOXENV=py36
 sudo: enabled
 install:
   - "pip install -r requirements.txt"
