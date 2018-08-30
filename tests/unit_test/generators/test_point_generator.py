@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 from matchzoo import tasks
 from matchzoo.generators import PointGenerator
 from matchzoo.datapack import DataPack
@@ -8,16 +9,20 @@ def x():
     relation = [['qid0', 'did0', 0],
             ['qid1', 'did1', 1],
             ['qid1', 'did0', 2]]
-    content = {'qid0': [1, 2],
-               'qid1': [2, 3],
-               'did0': [2, 3, 4],
-               'did1': [3, 4, 5]}
+    left = [['qid0', [1, 2]],
+                 ['qid1', [2, 3]]]
+    right = [['did0', [2, 3, 4]],
+                  ['did1', [3, 4, 5]]]
     ctx = {'vocab_size': 6, 'fill_word': 6}
-    columns = ['id_left', 'id_right', 'label']
+    relation = pd.DataFrame(relation, columns=['id_left', 'id_right', 'label'])
+    left = pd.DataFrame(left, columns=['id_left', 'text_left'])
+    left.set_index('id_left', inplace=True)
+    right = pd.DataFrame(right, columns=['id_right', 'text_right'])
+    right.set_index('id_right', inplace=True)
     return DataPack(relation=relation,
-                    content=content,
-                    context=ctx,
-                    columns=columns
+                    left=left,
+                    right=right,
+                    context=ctx
                     )
 
 @pytest.fixture(scope='module', params=[
@@ -37,8 +42,11 @@ def test_point_generator(x, task, stage):
     generator = PointGenerator(x, task, batch_size, stage, shuffle)
     assert len(generator) == 1
     for x, y in generator:
-        assert x['id_left'].tolist() == [[1, 2], [2, 3], [2, 3]]
-        assert x['id_right'].tolist() == [[2, 3, 4], [3, 4, 5], [2, 3, 4]]
+        assert x['ids'].tolist() == [['qid0', 'did0'],
+                            ['qid1', 'did1'],
+                            ['qid1', 'did0']]
+        assert x['text_left'].tolist() == [[1, 2], [2, 3], [2, 3]]
+        assert x['text_right'].tolist() == [[2, 3, 4], [3, 4, 5], [2, 3, 4]]
         if stage == 'test':
             assert y is None
         elif stage == 'train' and task == tasks.Classification(num_classes=3):
@@ -59,4 +67,3 @@ def test_stage_mode_in_pointgenerator(x, task):
     generator = PointGenerator(x, None, 1, 'train', False)
     with pytest.raises(ValueError):
         x, y = generator[0]
-

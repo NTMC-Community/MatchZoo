@@ -1,19 +1,24 @@
 import pytest
+import pandas as pd
 from matchzoo import engine
 from matchzoo.datapack import DataPack
 
 
 @pytest.fixture
 def x():
-    relation = [['qid0', 'did0', 0],
-            ['qid1', 'did1', 1]]
-    content = {'qid0': [1],
-               'qid1': [2],
-               'did0': [3],
-               'did1': [4]}
-    columns = ['id_left', 'id_right', 'label']
+    relation = [['qid0', 'did0', 0], ['qid1', 'did1', 1]]
+    left = [['qid0', [1]], ['qid1', [2]]]
+    right = [['did0', [3]], ['did1', [4]]]
     ctx = {'vocab_size': 6, 'fill_word': 6}
-    return DataPack(relation=relation, content=content, context=ctx, columns=columns)
+    relation = pd.DataFrame(relation, columns=['id_left', 'id_right', 'label'])
+    left = pd.DataFrame(left, columns=['id_left', 'text_left'])
+    left.set_index('id_left', inplace=True)
+    right = pd.DataFrame(right, columns=['id_right', 'text_right'])
+    right.set_index('id_right', inplace=True)
+    return DataPack(relation=relation,
+                    left=left,
+                    right=right,
+                    context=ctx)
 
 @pytest.fixture(scope='module', params=['train', 'test'])
 def stage(request):

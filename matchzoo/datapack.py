@@ -4,7 +4,6 @@ import typing
 from pathlib import Path
 
 import dill
-import numpy as np
 import pandas as pd
 
 
@@ -13,17 +12,23 @@ class DataPack(object):
     Matchzoo :class:`DataPack` data structure, store dataframe and context.
 
     Example:
-        >>> content = {
-        ...     'qid1':'query 1',
-        ...     'qid2':'query 2',
-        ...     'did1':'document 1',
-        ...     'did2':'document 2'
-        ... }
+        >>> left = [
+        ...     ['qid1', 'query 1', 'feature 1'],
+        ...     ['qid2', 'query 2', 'feature 2']
+        ... ]
+        >>> right = [
+        ...     ['did1', 'document 1'],
+        ...     ['did2', 'document 2']
+        ... ]
         >>> relation = [['qid1', 'did1', 1], ['qid2', 'did2', 1]]
         >>> context = {'vocab_size': 2000}
+        >>> relation_df = pd.DataFrame(relation)
+        >>> left = pd.DataFrame(left)
+        >>> right = pd.DataFrame(right)
         >>> dp = DataPack(
-        ...     relation=relation,
-        ...     content=content,
+        ...     relation=relation_df,
+        ...     left=left,
+        ...     right=right,
         ...     context=context
         ... )
         >>> len(dp)
@@ -36,23 +41,24 @@ class DataPack(object):
     DATA_FILENAME = 'data.dill'
 
     def __init__(self,
-                 relation: typing.Union[list, np.ndarray],
-                 content: dict,
-                 context: dict={},
-                 columns: list=None):
+                 relation: pd.DataFrame,
+                 left: pd.DataFrame,
+                 right: pd.DataFrame,
+                 context: dict={}):
         """
         Initialize :class:`DataPack`.
 
         :param relation: Store the relation between left document
             and right document use ids.
-        :param content: Store the content of ids.
+        :param left: Store the content or features for id_left.
+        :param right: Store the content or features for
+            id_right.
         :param context: Hyper-parameter fitted during
             pre-processing stage.
-        :param columns: List of column names of the :attr:`relation`
-            variable.
         """
-        self._relation = pd.DataFrame(relation, columns=columns)
-        self._content = content
+        self._relation = relation
+        self._left = left
+        self._right = right
         self._context = context
 
     def __len__(self) -> int:
@@ -65,14 +71,30 @@ class DataPack(object):
         return self._relation
 
     @property
-    def content(self):
-        """Get :meth:`content` of :class:`DataPack`."""
-        return self._content
+    def left(self):
+        """Get :meth:`left` of :class:`DataPack`."""
+        return self._left
 
-    @content.setter
-    def content(self, value: dict):
-        """Set the value of :attr:`content`."""
-        self._content = value
+    @left.setter
+    def left(self, value: pd.DataFrame):
+        """Set the value of :attr:`left`.
+
+        Note the value should be indexed with column name.
+        """
+        self._left = value
+
+    @property
+    def right(self):
+        """Get :meth:`right` of :class:`DataPack`."""
+        return self._right
+
+    @right.setter
+    def right(self, value: pd.DataFrame):
+        """Set the value of :attr:`right`.
+
+        Note the value should be indexed with column name.
+        """
+        self._right = value
 
     @property
     def context(self):
