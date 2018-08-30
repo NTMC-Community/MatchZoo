@@ -7,6 +7,7 @@ from matchzoo import utils
 
 import numpy as np
 import typing
+import operator
 
 
 class PointGenerator(engine.BaseGenerator):
@@ -16,28 +17,24 @@ class PointGenerator(engine.BaseGenerator):
 
     Examples:
         >>> import pandas as pd
-        >>> relation_data = [['qid0', 'did0', 1]]
-        >>> left_data = [['qid0', [1, 2]]]
-        >>> right_data = [['did0', [2, 3]]]
-        >>> relation_columns = ['id_left', 'id_right', 'label']
-        >>> left_columns = ['id_left', 'text_left']
-        >>> right_columns = ['id_right', 'text_right']
-        >>> relation = pd.DataFrame(relation_data, columns=relation_columns)
-        >>> left = pd.DataFrame(left_data, columns=left_columns)
+        >>> relation = [['qid0', 'did0', 1]]
+        >>> left = [['qid0', [1, 2]]]
+        >>> right = [['did0', [2, 3]]]
+        >>> relation = pd.DataFrame(relation, 
+        ...                         columns=['id_left', 'id_right', 'label'])
+        >>> left = pd.DataFrame(left, columns=['id_left', 'text_left'])
         >>> left.set_index('id_left', inplace=True)
-        >>> right = pd.DataFrame(right_data, columns=right_columns)
+        >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
         >>> right.set_index('id_right', inplace=True)
         >>> input = datapack.DataPack(relation=relation,
         ...                           left=left,
         ...                           right=right
         ... )
-        >>> task = tasks.Classification(num_classes=2)
-        >>> from matchzoo.generators import PointGenerator
+        >>> task = tasks.Classification()
         >>> generator = PointGenerator(input, task, 1, 'train', False)
         >>> x, y = generator[0]
-        >>> assert x['text_left'].tolist() == [[1, 2]]
-        >>> assert x['text_right'].tolist() == [[2, 3]]
-        >>> assert y.tolist() == [[0., 1.]]
+        >>> x['text_left'].tolist()
+        [[1, 2]]
 
     """
 
@@ -57,17 +54,17 @@ class PointGenerator(engine.BaseGenerator):
         :param shuffle: whether to shuffle the instances while generating a
             batch.
         """
+        self._relation = self._transform_relation(inputs)
         self._task = task
-        self.data = self.transform_data(inputs)
-        self.left = inputs.left
-        self.right = inputs.right
+        self._left = inputs.left
+        self._right = inputs.right
         super().__init__(batch_size, len(inputs.relation), stage, shuffle)
 
-    def transform_data(self, inputs: datapack.DataPack) -> dict:
+    def _transform_relation(self, inputs: datapack.DataPack) -> dict:
         """Obtain the transformed data from :class:`DataPack`.
 
         :param inputs: An instance of :class:`DataPack` to be transformed.
-        :return: the output of all the transformed inputs.
+        :return: the output of all the transformed relation.
         """
         relation = inputs.relation
         out = {}
@@ -84,37 +81,41 @@ class PointGenerator(engine.BaseGenerator):
         :param index_array: a list of instance ids.
         :return: A batch of transformed samples.
         """
-        bsize = len(index_array)
         batch_x = {}
         batch_y = None
+
+        columns = self._left.columns.values.tolist() + \
+            self._right.columns.values.tolist() + ['ids']
+        for column in columns:
+            batch_x[column] = []
+        
+        # Create label field.
         if self.stage == 'train':
             if isinstance(self._task, tasks.Ranking):
-                batch_y = map(self._task.output_dtype, self.data['label'])
+                batch_y = map(self._task.output_dtype, self._relation['label'])
             elif isinstance(self._task, tasks.Classification):
-                batch_y = np.zeros((bsize, self._task.num_classes))
-                for idx, label in enumerate(self.data['label'][index_array]):
+                batch_y = np.zeros((len(index_array), self._task.num_classes))
+                for idx, label in enumerate(self._relation['label'][index_array]):
                     label = self._task.output_dtype(label)
                     batch_y[idx, label] = 1
             else:
                 msg = f"{self._task} is not a valid task type."
                 msg += ":class:`Ranking` and :class:`Classification` expected."
                 raise ValueError(msg)
-        batch_x['ids'] = []
-        columns = self.left.columns.values.tolist() + \
-            self.right.columns.values.tolist()
-        for column in columns:
-            batch_x[column] = []
-        for idx in index_array:
-            id_left = self.data['id_left'][idx]
-            id_right = self.data['id_right'][idx]
-            for column in self.left.columns:
-                val = self.left.loc[id_left, column]
-                batch_x[column].append(val)
-            for column in self.right.columns:
-                val = self.right.loc[id_right, column]
-                batch_x[column].append(val)
-            batch_x['ids'].append([id_left, id_right])
+
+        # Get batch of X.
+        ids_left = self._relation['id_left'][index_array]
+        ids_right = self._relation['id_right'][index_array]
+
+        [batch_x['ids'].append(list(item)) for item in zip(ids_left, ids_right)]
+
+        for column in self._left.columns:
+            batch_x[column] = self._left.loc[ids_left, column]
+        for column in self._right.columns:
+            batch_x[column] = self._right.loc[ids_right, column]
+
         for key, val in batch_x.items():
             batch_x[key] = np.array(val)
         batch_x = utils.dotdict(batch_x)
+
         return (batch_x, batch_y)
