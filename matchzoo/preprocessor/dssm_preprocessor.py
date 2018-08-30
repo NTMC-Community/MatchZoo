@@ -48,24 +48,10 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
     def __init__(self):
         """Initialization."""
-        self._context = {}
         self._datapack = None
         self._cache_left = []
         self._cache_right = []
-
-    @property
-    def context(self):
-        """Get fitted parameters."""
-        return self._context
-
-    @context.setter
-    def context(self, context: dict):
-        """
-        Set pre-fitted context.
-
-        :param context: pre-fitted context.
-        """
-        self._context = context
+        super().__init__()
 
     def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""

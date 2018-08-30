@@ -14,6 +14,24 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     DATA_FILENAME = 'preprocessor.dill'
 
+    def __init__(self, context={}):
+        """Initialization."""
+        self._context = context
+
+    @property
+    def context(self):
+        """Get fitted parameters."""
+        return self._context
+
+    @context.setter
+    def context(self, context: dict):
+        """
+        Set pre-fitted context.
+
+        :param context: pre-fitted context.
+        """
+        self._context = context
+
     @abc.abstractmethod
     def fit(self, inputs: list) -> 'BasePreprocessor':
         """
