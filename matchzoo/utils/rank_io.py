@@ -81,10 +81,10 @@ def read_data(filename, word_dict = None):
         line = line.strip().split()
         tid = line[0]
         if word_dict is None:
-            data[tid] = list(map(int, line[2:]))
+            data[tid] = list(map(int, line[1:]))
         else:
             data[tid] = []
-            for w in line[2:]:
+            for w in line[1:]:
                 if w not in word_dict:
                     word_dict[w] = len(word_dict)
                 data[tid].append(word_dict[w])
