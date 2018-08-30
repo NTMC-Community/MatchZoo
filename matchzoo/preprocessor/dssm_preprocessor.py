@@ -176,7 +176,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                 text = row.text_left
                 for unit in units:
                     text = unit.transform(text)
-                self._datapack.left.at[row.name, 'text_left'] = text
+                self._datapack.left.at[idx, 'text_left'] = text
             for idx, row in tqdm(right.iterrows()):
                 text = row.text_right
                 for unit in units:

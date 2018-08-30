@@ -17,9 +17,9 @@ from matchzoo import tasks
 # with kwargs: (models.DenseBaselineModel, {"num_dense_units": 512})
 model_setups = [
     (models.NaiveModel, None),
-    (models.DenseBaselineModel, None),
-    (models.DSSMModel, None),
-    (models.CDSSMModel, None)
+    (models.DenseBaselineModel, None)
+#    (models.DSSMModel, None),
+#    (models.CDSSMModel, None)
 ]
 
 

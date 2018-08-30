@@ -7,17 +7,14 @@ import pandas as pd
 
 @pytest.fixture
 def data_pack():
-    relation_data = [['qid0', 'did0', 1], ['qid1', 'did1', 0]]
-    left_data = [['qid0', [1, 2]], ['qid1', [2, 3]]]
-    right_data = [['did0', [2, 3, 4]], ['did1', [3, 4, 5]]]
+    relation = [['qid0', 'did0', 1], ['qid1', 'did1', 0]]
+    left = [['qid0', [1, 2]], ['qid1', [2, 3]]]
+    right = [['did0', [2, 3, 4]], ['did1', [3, 4, 5]]]
     ctx = {'vocab_size': 2000}
-    relation_columns = ['id_left', 'id_right', 'label']
-    left_columns = ['id_left', 'text_left']
-    right_columns = ['id_right', 'text_right']
-    relation = pd.DataFrame(relation_data, columns=relation_columns)
-    left = pd.DataFrame(left_data, columns=left_columns)
+    relation = pd.DataFrame(relation, columns=['id_left', 'id_right', 'label'])
+    left = pd.DataFrame(left, columns=['id_left', 'text_left'])
     left.set_index('id_left', inplace=True)
-    right = pd.DataFrame(right_data, columns=right_columns)
+    right = pd.DataFrame(right, columns=['id_right', 'text_right'])
     right.set_index('id_right', inplace=True)
     return DataPack(relation=relation,
                     left=left,

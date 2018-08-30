@@ -6,21 +6,18 @@ from matchzoo.datapack import DataPack
 
 @pytest.fixture
 def x():
-    relation_data = [['qid0', 'did0', 0],
+    relation = [['qid0', 'did0', 0],
             ['qid1', 'did1', 1],
             ['qid1', 'did0', 2]]
-    left_data = [['qid0', [1, 2]],
+    left = [['qid0', [1, 2]],
                  ['qid1', [2, 3]]]
-    right_data = [['did0', [2, 3, 4]],
+    right = [['did0', [2, 3, 4]],
                   ['did1', [3, 4, 5]]]
     ctx = {'vocab_size': 6, 'fill_word': 6}
-    col_relation = ['id_left', 'id_right', 'label']
-    col_left = ['id_left', 'text_left']
-    col_right = ['id_right', 'text_right']
-    relation = pd.DataFrame(relation_data, columns=col_relation)
-    left = pd.DataFrame(left_data, columns=col_left)
+    relation = pd.DataFrame(relation, columns=['id_left', 'id_right', 'label'])
+    left = pd.DataFrame(left, columns=['id_left', 'text_left'])
     left.set_index('id_left', inplace=True)
-    right = pd.DataFrame(right_data, columns=col_right)
+    right = pd.DataFrame(right, columns=['id_right', 'text_right'])
     right.set_index('id_right', inplace=True)
     return DataPack(relation=relation,
                     left=left,
