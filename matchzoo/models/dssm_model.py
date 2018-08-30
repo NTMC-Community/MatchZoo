@@ -40,8 +40,8 @@ class DSSMModel(engine.BaseModel):
         input_shape = (dim_triletter,)
         base_network = self._create_base_network(input_shape=input_shape)
         # Left input and right input.
-        input_left = Input(name='id_left', shape=input_shape)
-        input_right = Input(name='id_right', shape=input_shape)
+        input_left = Input(name='text_left', shape=input_shape)
+        input_right = Input(name='text_right', shape=input_shape)
         # Process left & right input.
         x = [base_network(input_left),
              base_network(input_right)]
