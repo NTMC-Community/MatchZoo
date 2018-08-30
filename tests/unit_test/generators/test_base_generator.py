@@ -6,7 +6,7 @@ from matchzoo.datapack import DataPack
 
 @pytest.fixture
 def x():
-    relation = [['qid0', 'did0', 0],
+    relation_data = [['qid0', 'did0', 0],
             ['qid1', 'did1', 1]]
     left_data = [['qid0', [1]],
                  ['qid1', [2]]]
@@ -16,14 +16,14 @@ def x():
     left_columns = ['id_left', 'text_left']
     right_columns = ['id_right', 'text_right']
     ctx = {'vocab_size': 6, 'fill_word': 6}
-    relation_df = pd.DataFrame(relation, columns=relation_columns)
-    left_df = pd.DataFrame(left_data, columns=left_columns)
-    left_df.set_index('id_left', inplace=True)
-    right_df = pd.DataFrame(right_data, columns=right_columns)
-    right_df.set_index('id_right', inplace=True)
-    return DataPack(relation=relation_df,
-                    left_data=left_df,
-                    right_data=right_df,
+    relation = pd.DataFrame(relation_data, columns=relation_columns)
+    left = pd.DataFrame(left_data, columns=left_columns)
+    left.set_index('id_left', inplace=True)
+    right = pd.DataFrame(right_data, columns=right_columns)
+    right.set_index('id_right', inplace=True)
+    return DataPack(relation=relation,
+                    left=left,
+                    right=right,
                     context=ctx)
 
 @pytest.fixture(scope='module', params=['train', 'test'])

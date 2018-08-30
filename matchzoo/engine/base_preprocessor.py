@@ -89,33 +89,26 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         :return: User input into a :class:`DataPack` with content and
             relation.
         """
-        col_all, col_relation, col_left, col_right = self._get_columns(
-            stage=stage)
+        col_all = ['id_left', 'id_right', 'text_left', 'text_right']
+        col_relation = ['id_left', 'id_right']
+        col_left = ['id_left', 'text_left']
+        col_right = ['id_right', 'text_right']
+        if stage == 'train':
+            col_relation.append('label')
+            col_all.append('label')
 
         # prepare data pack.
         inputs = pd.DataFrame(inputs, columns=col_all)
         # Segment input into 3 dataframes.
         relation = inputs[col_relation]
-        left_data = inputs[col_left].drop_duplicates(['id_left'])
-        left_data.set_index('id_left', inplace=True)
-        right_data = inputs[col_right].drop_duplicates(['id_right'])
-        right_data.set_index('id_right', inplace=True)
+        left = inputs[col_left].drop_duplicates(['id_left'])
+        left.set_index('id_left', inplace=True)
+        right = inputs[col_right].drop_duplicates(['id_right'])
+        right.set_index('id_right', inplace=True)
 
         return datapack.DataPack(relation=relation,
-                                 left_data=left_data,
-                                 right_data=right_data)
-
-    def _get_columns(self, stage: str) -> list:
-        """Prepare columns for :class:`DataPack`."""
-        columns_all = ['id_left', 'id_right', 'text_left', 'text_right']
-        columns_relation = ['id_left', 'id_right']
-        columns_left = ['id_left', 'text_left']
-        columns_right = ['id_right', 'text_right']
-
-        if stage == 'train':
-            columns_relation.append('label')
-            columns_all.append('label')
-        return columns_all, columns_relation, columns_left, columns_right
+                                 left=left,
+                                 right=right)
 
 
 def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:

@@ -26,14 +26,14 @@ class DataPack(object):
         >>> left_columns = ['id_left', 'left_content', 'left_feature']
         >>> right_columns = ['id_right', 'right_content']
         >>> relation_df = pd.DataFrame(relation, columns=relation_columns)
-        >>> left_df = pd.DataFrame(left_data, columns=left_columns)
-        >>> left_df.set_index('id_left', inplace=True)
-        >>> right_df = pd.DataFrame(right_data, columns=right_columns)
-        >>> right_df.set_index('id_right', inplace=True)
+        >>> left = pd.DataFrame(left_data, columns=left_columns)
+        >>> left.set_index('id_left', inplace=True)
+        >>> right = pd.DataFrame(right_data, columns=right_columns)
+        >>> right.set_index('id_right', inplace=True)
         >>> dp = DataPack(
         ...     relation=relation_df,
-        ...     left_data=left_df,
-        ...     right_data=right_df,
+        ...     left=left,
+        ...     right=right,
         ...     context=context
         ... )
         >>> len(dp)
@@ -47,23 +47,23 @@ class DataPack(object):
 
     def __init__(self,
                  relation: pd.DataFrame,
-                 left_data: pd.DataFrame,
-                 right_data: pd.DataFrame,
+                 left: pd.DataFrame,
+                 right: pd.DataFrame,
                  context: dict={}):
         """
         Initialize :class:`DataPack`.
 
         :param relation: Store the relation between left document
             and right document use ids.
-        :param left_data: Store the content or features for id_left.
-        :param right_data: Store the content or features for
+        :param left: Store the content or features for id_left.
+        :param right: Store the content or features for
             id_right.
         :param context: Hyper-parameter fitted during
             pre-processing stage.
         """
         self._relation = relation
-        self._left_data = left_data
-        self._right_data = right_data
+        self._left = left
+        self._right = right
         self._context = context
 
     def __len__(self) -> int:
@@ -76,30 +76,30 @@ class DataPack(object):
         return self._relation
 
     @property
-    def left_data(self):
-        """Get :meth:`left_data` of :class:`DataPack`."""
-        return self._left_data
+    def left(self):
+        """Get :meth:`left` of :class:`DataPack`."""
+        return self._left
 
-    @left_data.setter
-    def left_data(self, value: pd.DataFrame):
-        """Set the value of :attr:`left_data`.
+    @left.setter
+    def left(self, value: pd.DataFrame):
+        """Set the value of :attr:`left`.
 
         Note the value should be indexed with column name.
         """
-        self._left_data = value
+        self._left = value
 
     @property
-    def right_data(self):
-        """Get :meth:`right_data` of :class:`DataPack`."""
-        return self._right_data
+    def right(self):
+        """Get :meth:`right` of :class:`DataPack`."""
+        return self._right
 
-    @right_data.setter
-    def right_data(self, value: pd.DataFrame):
-        """Set the value of :attr:`right_data`.
+    @right.setter
+    def right(self, value: pd.DataFrame):
+        """Set the value of :attr:`right`.
 
         Note the value should be indexed with column name.
         """
-        self._right_data = value
+        self._right = value
 
     @property
     def context(self):

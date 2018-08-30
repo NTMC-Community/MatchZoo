@@ -16,20 +16,20 @@ class PointGenerator(engine.BaseGenerator):
 
     Examples:
         >>> import pandas as pd
-        >>> relation = [['qid0', 'did0', 1]]
+        >>> relation_data = [['qid0', 'did0', 1]]
         >>> left_data = [['qid0', [1, 2]]]
         >>> right_data = [['did0', [2, 3]]]
         >>> relation_columns = ['id_left', 'id_right', 'label']
         >>> left_columns = ['id_left', 'text_left']
         >>> right_columns = ['id_right', 'text_right']
-        >>> relation_df = pd.DataFrame(relation, columns=relation_columns)
-        >>> left_df = pd.DataFrame(left_data, columns=left_columns)
-        >>> left_df.set_index('id_left', inplace=True)
-        >>> right_df = pd.DataFrame(right_data, columns=right_columns)
-        >>> right_df.set_index('id_right', inplace=True)
-        >>> input = datapack.DataPack(relation=relation_df,
-        ...                           left_data=left_df,
-        ...                           right_data=right_df
+        >>> relation = pd.DataFrame(relation_data, columns=relation_columns)
+        >>> left = pd.DataFrame(left_data, columns=left_columns)
+        >>> left.set_index('id_left', inplace=True)
+        >>> right = pd.DataFrame(right_data, columns=right_columns)
+        >>> right.set_index('id_right', inplace=True)
+        >>> input = datapack.DataPack(relation=relation,
+        ...                           left=left,
+        ...                           right=right
         ... )
         >>> task = tasks.Classification(num_classes=2)
         >>> from matchzoo.generators import PointGenerator
@@ -59,8 +59,8 @@ class PointGenerator(engine.BaseGenerator):
         """
         self._task = task
         self.data = self.transform_data(inputs)
-        self.left_data = inputs.left_data
-        self.right_data = inputs.right_data
+        self.left = inputs.left
+        self.right = inputs.right
         super().__init__(batch_size, len(inputs.relation), stage, shuffle)
 
     def transform_data(self, inputs: datapack.DataPack) -> dict:
@@ -100,18 +100,18 @@ class PointGenerator(engine.BaseGenerator):
                 msg += ":class:`Ranking` and :class:`Classification` expected."
                 raise ValueError(msg)
         batch_x['ids'] = []
-        columns = self.left_data.columns.values.tolist() + \
-            self.right_data.columns.values.tolist()
+        columns = self.left.columns.values.tolist() + \
+            self.right.columns.values.tolist()
         for column in columns:
             batch_x[column] = []
         for idx in index_array:
             id_left = self.data['id_left'][idx]
             id_right = self.data['id_right'][idx]
-            for column in self.left_data.columns:
-                val = self.left_data.loc[id_left, column]
+            for column in self.left.columns:
+                val = self.left.loc[id_left, column]
                 batch_x[column].append(val)
-            for column in self.right_data.columns:
-                val = self.right_data.loc[id_right, column]
+            for column in self.right.columns:
+                val = self.right.loc[id_right, column]
                 batch_x[column].append(val)
             batch_x['ids'].append([id_left, id_right])
         for key, val in batch_x.items():

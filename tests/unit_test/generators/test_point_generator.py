@@ -6,7 +6,7 @@ from matchzoo.datapack import DataPack
 
 @pytest.fixture
 def x():
-    relation = [['qid0', 'did0', 0],
+    relation_data = [['qid0', 'did0', 0],
             ['qid1', 'did1', 1],
             ['qid1', 'did0', 2]]
     left_data = [['qid0', [1, 2]],
@@ -17,14 +17,14 @@ def x():
     col_relation = ['id_left', 'id_right', 'label']
     col_left = ['id_left', 'text_left']
     col_right = ['id_right', 'text_right']
-    relation_df = pd.DataFrame(relation, columns=col_relation)
-    left_df = pd.DataFrame(left_data, columns=col_left)
-    left_df.set_index('id_left', inplace=True)
-    right_df = pd.DataFrame(right_data, columns=col_right)
-    right_df.set_index('id_right', inplace=True)
-    return DataPack(relation=relation_df,
-                    left_data=left_df,
-                    right_data=right_df,
+    relation = pd.DataFrame(relation_data, columns=col_relation)
+    left = pd.DataFrame(left_data, columns=col_left)
+    left.set_index('id_left', inplace=True)
+    right = pd.DataFrame(right_data, columns=col_right)
+    right.set_index('id_right', inplace=True)
+    return DataPack(relation=relation,
+                    left=left,
+                    right=right,
                     context=ctx
                     )
 
