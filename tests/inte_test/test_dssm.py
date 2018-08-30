@@ -35,7 +35,6 @@ def test_dssm(train, test):
     input_shapes = processed_train.context['input_shapes']
     # generator.
     generator = generators.PointGenerator(processed_train, stage='train')
-    X, y = generator[0]
     # Create a dssm model
     dssm_model = models.DSSMModel()
     dssm_model.params['input_shapes'] = input_shapes

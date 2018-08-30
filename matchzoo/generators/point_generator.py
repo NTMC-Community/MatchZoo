@@ -7,7 +7,6 @@ from matchzoo import utils
 
 import numpy as np
 import typing
-import operator
 
 
 class PointGenerator(engine.BaseGenerator):
@@ -20,7 +19,7 @@ class PointGenerator(engine.BaseGenerator):
         >>> relation = [['qid0', 'did0', 1]]
         >>> left = [['qid0', [1, 2]]]
         >>> right = [['did0', [2, 3]]]
-        >>> relation = pd.DataFrame(relation, 
+        >>> relation = pd.DataFrame(relation,
         ...                         columns=['id_left', 'id_right', 'label'])
         >>> left = pd.DataFrame(left, columns=['id_left', 'text_left'])
         >>> left.set_index('id_left', inplace=True)
@@ -88,14 +87,15 @@ class PointGenerator(engine.BaseGenerator):
             self._right.columns.values.tolist() + ['ids']
         for column in columns:
             batch_x[column] = []
-        
+
         # Create label field.
         if self.stage == 'train':
             if isinstance(self._task, tasks.Ranking):
                 batch_y = map(self._task.output_dtype, self._relation['label'])
             elif isinstance(self._task, tasks.Classification):
                 batch_y = np.zeros((len(index_array), self._task.num_classes))
-                for idx, label in enumerate(self._relation['label'][index_array]):
+                for idx, label in enumerate(
+                        self._relation['label'][index_array]):
                     label = self._task.output_dtype(label)
                     batch_y[idx, label] = 1
             else:
@@ -104,15 +104,15 @@ class PointGenerator(engine.BaseGenerator):
                 raise ValueError(msg)
 
         # Get batch of X.
-        ids_left = self._relation['id_left'][index_array]
-        ids_right = self._relation['id_right'][index_array]
+        id_left = self._relation['id_left'][index_array]
+        id_right = self._relation['id_right'][index_array]
 
-        [batch_x['ids'].append(list(item)) for item in zip(ids_left, ids_right)]
+        [batch_x['ids'].append(list(item)) for item in zip(id_left, id_right)]
 
         for column in self._left.columns:
-            batch_x[column] = self._left.loc[ids_left, column]
+            batch_x[column] = self._left.loc[id_left, column].tolist()
         for column in self._right.columns:
-            batch_x[column] = self._right.loc[ids_right, column]
+            batch_x[column] = self._right.loc[id_right, column].tolist()
 
         for key, val in batch_x.items():
             batch_x[key] = np.array(val)
