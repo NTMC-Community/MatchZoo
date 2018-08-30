@@ -91,19 +91,23 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         """
         col_all = ['id_left', 'id_right', 'text_left', 'text_right']
         col_relation = ['id_left', 'id_right']
-        col_left = ['id_left', 'text_left']
-        col_right = ['id_right', 'text_right']
+
         if stage == 'train':
             col_relation.append('label')
             col_all.append('label')
 
         # prepare data pack.
         inputs = pd.DataFrame(inputs, columns=col_all)
+
         # Segment input into 3 dataframes.
         relation = inputs[col_relation]
-        left = inputs[col_left].drop_duplicates(['id_left'])
+
+        left = inputs[['id_left', 'text_left']].drop_duplicates(
+            ['id_left'])
         left.set_index('id_left', inplace=True)
-        right = inputs[col_right].drop_duplicates(['id_right'])
+
+        right = inputs[['id_right', 'text_right']].drop_duplicates(
+            ['id_right'])
         right.set_index('id_right', inplace=True)
 
         return datapack.DataPack(relation=relation,

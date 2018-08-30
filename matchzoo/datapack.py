@@ -12,24 +12,19 @@ class DataPack(object):
     Matchzoo :class:`DataPack` data structure, store dataframe and context.
 
     Example:
-        >>> left_data = [
+        >>> left = [
         ...     ['qid1', 'query 1', 'feature 1'],
         ...     ['qid2', 'query 2', 'feature 2']
         ... ]
-        >>> right_data = [
+        >>> right = [
         ...     ['did1', 'document 1'],
         ...     ['did2', 'document 2']
         ... ]
         >>> relation = [['qid1', 'did1', 1], ['qid2', 'did2', 1]]
         >>> context = {'vocab_size': 2000}
-        >>> relation_columns = ['id_left', 'id_right', 'label']
-        >>> left_columns = ['id_left', 'left_content', 'left_feature']
-        >>> right_columns = ['id_right', 'right_content']
-        >>> relation_df = pd.DataFrame(relation, columns=relation_columns)
-        >>> left = pd.DataFrame(left_data, columns=left_columns)
-        >>> left.set_index('id_left', inplace=True)
-        >>> right = pd.DataFrame(right_data, columns=right_columns)
-        >>> right.set_index('id_right', inplace=True)
+        >>> relation_df = pd.DataFrame(relation)
+        >>> left = pd.DataFrame(left)
+        >>> right = pd.DataFrame(right)
         >>> dp = DataPack(
         ...     relation=relation_df,
         ...     left=left,
