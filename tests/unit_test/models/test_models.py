@@ -17,9 +17,9 @@ from matchzoo import tasks
 # with kwargs: (models.DenseBaselineModel, {"num_dense_units": 512})
 model_setups = [
     (models.NaiveModel, None),
-    (models.DenseBaselineModel, None)
-#    (models.DSSMModel, None),
-#    (models.CDSSMModel, None)
+    (models.DenseBaselineModel, None),
+    (models.DSSMModel, None),
+    (models.CDSSMModel, None)
 ]
 
 
@@ -59,8 +59,11 @@ def compiled_model(raw_model, task):
 @pytest.fixture
 def x(compiled_model, num_samples):
     input_shapes = compiled_model.params['input_shapes']
-    return [np.random.randn(num_samples, *shape) for shape in input_shapes]
-
+    return [np.random.randn(num_samples, *shape)
+            if None not in shape
+            else np.random.randn(num_samples, *(10, 900))
+            for shape
+            in input_shapes]
 
 @pytest.fixture
 def y(compiled_model, num_samples):
