@@ -1,19 +1,9 @@
 language: python
-matrix:
-    include:
-        - os: linux
-          python: 3.6
-          env: TOXENV=py36
-        - os: osx
-          language: generic
-          python: 3.6
-          env: TOXENV=py36
-before_install:
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then virtualenv -p python3 venv; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then source venv/bin/activate; fi
-before_script:
-  - "make init"
+python:
+      - 3.6.3
+sudo: enabled
+install:
+  - "pip install -r requirements.txt"
   - "python -m nltk.downloader punkt"
   - "python -m nltk.downloader wordnet"
   - "python -m nltk.downloader stopwords"
