@@ -4,12 +4,15 @@ matrix:
         - os: linux
           python: 3.6
           env: TOXENV=py36
+          install:
+            - "pip install -r requirements.txt"
         - os: osx
           language: generic
           python: 3.6
           env: TOXENV=py36
-install:
-  - "sudo python3 -m pip install -r requirements.txt"
+          install:
+            - "pip install --user -r requirements.txt"
+before_script:
   - "python3 -m nltk.downloader punkt"
   - "python3 -m nltk.downloader wordnet"
   - "python3 -m nltk.downloader stopwords"
