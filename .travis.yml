@@ -1,7 +1,16 @@
 language: python
-python:
-      - 3.6.3
-sudo: enabled
+virtualenv:
+  system_site_packages: true
+matrix:
+    include:
+        - os: linux
+          python: 3.6
+          env: TOXENV=py36
+        - os: osx
+          sudo: enabled
+          language: generic
+          python: 3.6
+          env: TOXENV=py36
 install:
   - "pip install -r requirements.txt"
   - "python -m nltk.downloader punkt"
