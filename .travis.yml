@@ -9,10 +9,10 @@ matrix:
           python: 3.6
           env: TOXENV=py36
 install:
-  - "sudo pip install -r requirements.txt"
-  - "python -m nltk.downloader punkt"
-  - "python -m nltk.downloader wordnet"
-  - "python -m nltk.downloader stopwords"
+  - "sudo pip3 install -r requirements.txt"
+  - "python3 -m nltk.downloader punkt"
+  - "python3 -m nltk.downloader wordnet"
+  - "python3 -m nltk.downloader stopwords"
 script: make test
 env: PYTHONPATH=$PYTHONPATH:$TRAVIS_BUILD_DIR/tests:$TRAVIS_BUILD_DIR/matchzoo
 after_success:
