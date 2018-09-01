@@ -9,7 +9,7 @@ matrix:
           python: 3.6
           env: TOXENV=py36
 install:
-  - "sudo pip3 install -r requirements.txt"
+  - "sudo python3 -m pip install -r requirements.txt"
   - "python3 -m nltk.downloader punkt"
   - "python3 -m nltk.downloader wordnet"
   - "python3 -m nltk.downloader stopwords"
