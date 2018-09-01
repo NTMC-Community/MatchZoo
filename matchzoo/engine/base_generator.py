@@ -88,7 +88,7 @@ class BaseGenerator(keras.utils.Sequence):
         self._set_index_array()
 
     @abc.abstractmethod
-    def _get_batch_of_transformed_samples(self, index_array):
+    def _get_batch_of_transformed_samples(self, index_array: np.array):
         """Get a batch of transformed samples.
 
         :param index_array: Arrray of sample indices to include in a batch.

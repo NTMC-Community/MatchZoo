@@ -18,17 +18,23 @@ class PairGenerator(engine.BaseGenerator):
         >>> relation = [['qid0', 'did0', 0],
         ...             ['qid0', 'did1', 1],
         ...             ['qid0', 'did2', 2]
-        ...            ]
+        ... ]
         >>> columns = ['id_left', 'id_right', 'label']
-        >>> content = {'qid0': [1, 2],
-        ...            'did0': [2, 3],
-        ...            'did1': [3, 4],
-        ...            'did2': [4, 5],
-        ...           }
+        >>> left = [['qid0', [1, 2]]]
+        >>> right = [['did0', [2, 3]],
+        ...          ['did1', [3, 4]],
+        ...          ['did2', [4, 5]],
+        ... ]
+        >>> relation = pd.DataFrame(relation,
+        ...                         columns=['id_left', 'id_right', 'label'])
+        >>> left = pd.DataFrame(left, columns=['id_left', 'text_left'])
+        >>> left.set_index('id_left', inplace=True)
+        >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
+        >>> right.set_index('id_right', inplace=True)
         >>> input = datapack.DataPack(relation=relation,
-        ...                           content=content,
-        ...                           columns=columns
-        ...                           )
+        ...                           left=left,
+        ...                           right=right
+        ... )
         >>> from matchzoo.generators import PairGenerator
         >>> generator = PairGenerator(input, 1, 1, 1, 'train', True)
         >>> assert generator
@@ -61,25 +67,26 @@ class PairGenerator(engine.BaseGenerator):
         """
         self._num_neg = num_neg
         self._dup_time = dup_time
-        self._columns = inputs.relation.columns
-        self.content = inputs.content
-        self.pairs = self.transform_data(inputs.relation)
-        super().__init__(batch_size, len(self.pairs), stage, shuffle)
+        self._left = inputs.left
+        self._right = inputs.right
+        num_rel, self._relation = self.transform_relation(inputs.relation)
+        super().__init__(batch_size, num_rel, stage, shuffle)
 
-    def transform_data(self, inputs: pd.DataFrame) -> dict:
+    def transform_relation(self, relations: pd.DataFrame) -> pd.DataFrame:
         """Obtain the transformed data from :class:`DataPack`.
 
         Note here, label is required to make pairs.
 
-        :param inputs: An instance of :class:`DataPack` to be transformed.
-        :return: the output of all the transformed inputs.
+        :param relations: An instance of :class:`DataPack` to be transformed.
+        :return: the output of all the transformed relations.
         """
-        if 'label' not in self._columns:
-            raise ValueError(f"label is required from {inputs} \
+        if 'label' not in relations.columns:
+            raise ValueError(f"label is required from {relations} \
                              to generate pairs.")
         # Note here the main id is set to be the id_left
         pairs = []
-        for idx, group in inputs.sort_values('label', ascending=False).\
+        num_pairs = 0
+        for idx, group in relations.sort_values('label', ascending=False).\
                 groupby('id_left'):
             labels = group.label.unique()
             for label in labels:
@@ -87,42 +94,47 @@ class PairGenerator(engine.BaseGenerator):
                 pos_samples = pd.concat([pos_samples] * self._dup_time)
                 neg_samples = group[group.label < label]
                 for _, pos_sample in pos_samples.iterrows():
+                    pos_sample = pd.DataFrame([pos_sample])
                     if len(neg_samples) >= self._num_neg:
                         neg_sample = neg_samples.sample(self._num_neg,
                                                         replace=False)
-                        pairs.append((pos_sample, [neg_sample]))
-        return np.asarray(pairs)
+                        pairs.extend((pos_sample, neg_sample))
+                        num_pairs += 1
+        return num_pairs, pd.concat(pairs, ignore_index=True)
 
     def _get_batch_of_transformed_samples(
         self,
-        index_array: list
+        index_array: np.array
     ) -> typing.Tuple[dict, typing.Any]:
         """Get a batch of samples based on their ids.
 
         :param index_array: a list of instance ids.
         :return: A batch of transformed samples.
         """
+        trans_index = []
+        steps = self._num_neg + 1
+        for item in index_array:
+            trans_index.extend(list(range(item*steps, (item+1)*steps)))
         batch_x = {}
-        batch_y = []
-        for pos_sample, neg_samples in self.pairs[index_array]:
-            batch_y.append(pos_sample['label'])
-            for _, neg_sample in neg_samples[0].iterrows():
-                batch_y.append(neg_sample['label'])
-        num_ids = len(index_array) * (self._num_neg + 1)
-        batch_x['ids'] = [[] for i in range(num_ids)]
-        for key in self._columns:
-            if key == 'label':
-                continue
-            batch_x[key] = []
-            idx = 0
-            for pos_sample, neg_samples in self.pairs[index_array]:
-                batch_x[key].append(self.content[pos_sample[key]])
-                batch_x['ids'][idx].append(pos_sample[key])
-                idx += 1
-                for _, neg_sample in neg_samples[0].iterrows():
-                    batch_x[key].append(self.content[neg_sample[key]])
-                    batch_x['ids'][idx].append(neg_sample[key])
-                    idx += 1
-            batch_x[key] = np.array(batch_x[key])
+        batch_y = self._relation.iloc[trans_index, 2].tolist()
+
+        columns = self._left.columns.values.tolist() + \
+            self._right.columns.values.tolist() + ['ids']
+        for column in columns:
+            batch_x[column] = []
+
+        id_left = self._relation.iloc[trans_index, 0]
+        id_right = self._relation.iloc[trans_index, 1]
+
+        [batch_x['ids'].append(list(item)) for item in zip(id_left, id_right)]
+
+        for column in self._left.columns:
+            batch_x[column] = self._left.loc[id_left, column].tolist()
+        for column in self._right.columns:
+            batch_x[column] = self._right.loc[id_right, column].tolist()
+
+        for key, val in batch_x.items():
+            batch_x[key] = np.array(val)
+
         batch_x = utils.dotdict(batch_x)
         return (batch_x, batch_y)

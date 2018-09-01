@@ -1,4 +1,5 @@
 import pytest
+import pandas as pd
 from matchzoo.generators import PairGenerator
 from matchzoo.datapack import DataPack
 
@@ -7,16 +8,20 @@ def x():
     relation = [['qid0', 'did0', 0],
                 ['qid0', 'did1', 1],
                 ['qid0', 'did2', 2]]
-    content = {'qid0': [1, 2],
-               'did0': [1, 2, 3],
-               'did1': [2, 3, 4],
-               'did2': [3, 4, 5]}
+    left = [['qid0', [1, 2]]]
+    right = [['did0', [1, 2, 3]],
+             ['did1', [2, 3, 4]],
+             ['did2', [3, 4, 5]]]
     ctx = {'vocab_size': 6, 'fill_word': 6}
-    columns = ['id_left', 'id_right', 'label']
+    relation = pd.DataFrame(relation, columns=['id_left', 'id_right', 'label'])
+    left = pd.DataFrame(left, columns=['id_left', 'text_left'])
+    left.set_index('id_left', inplace=True)
+    right = pd.DataFrame(right, columns=['id_right', 'text_right'])
+    right.set_index('id_right', inplace=True)
     return DataPack(relation=relation,
-                    content=content,
-                    context=ctx,
-                    columns=columns
+                    left=left,
+                    right=right,
+                    context=ctx
                     )
 
 def test_pair_generator_one(x):
