@@ -1,5 +1,6 @@
 import pytest
 import pandas as pd
+import numpy as np
 from matchzoo.generators import PairGenerator
 from matchzoo.datapack import DataPack
 
@@ -26,27 +27,33 @@ def x():
 
 def test_pair_generator_one(x):
     """Test pair generator with only one negative sample."""
+    np.random.seed(111)
     shuffle = False
     batch_size = 1
     generator = PairGenerator(inputs=x,
                               num_neg=1,
-                              dup_time=2,
+                              num_dup=2,
                               batch_size=batch_size,
                               stage='train',
                               shuffle=shuffle)
     assert len(generator) == 4
-    for idx, (x, y) in enumerate(generator):
-        if idx == len(generator):
-            break
-        assert x is not None
-        assert y is not None
+    x0, y0 = generator[0]
+    assert x0['text_left'].tolist() == [[1, 2], [1, 2]]
+    assert x0['text_right'].tolist() == [[3, 4, 5], [1, 2, 3]]
+    assert x0['ids'].tolist() == [['qid0', 'did2'], ['qid0', 'did0']]
+    assert y0 == [2, 0]
 
 def test_pair_generator_multi(x):
     """Test pair generator with multiple negative sample."""
+    np.random.seed(111)
     shuffle = False
     batch_size = 1
     generator = PairGenerator(x, 2, 2, batch_size, 'test', shuffle)
     assert len(generator) == 2
-    for x, y in generator:
-        assert x is not None
-        assert y is not None
+    x0, y0 = generator[0]
+    assert x0['text_left'].tolist() == [[1, 2], [1, 2], [1, 2]]
+    assert x0['text_right'].tolist() == [[3, 4, 5], [1, 2, 3], [2, 3, 4]]
+    assert x0['ids'].tolist() == [['qid0', 'did2'],
+                                  ['qid0', 'did0'],
+                                  ['qid0', 'did1']]
+    assert y0 == [2, 0, 1]
