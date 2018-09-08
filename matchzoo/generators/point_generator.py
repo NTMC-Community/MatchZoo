@@ -32,10 +32,14 @@ class PointGenerator(engine.BaseGenerator):
         >>> task = tasks.Classification()
         >>> generator = PointGenerator(input, task, 1, 'train', False)
         >>> x, y = generator[0]
-        >>> assert x['text_left'].tolist() == [[1, 2]]
-        >>> assert x['text_right'].tolist() == [[2, 3]]
-        >>> assert x['ids'].tolist() == [['qid0', 'did0']]
-        >>> assert y.tolist() == [[0., 1.]]
+        >>> x['text_left'].tolist()
+        [[1, 2]]
+        >>> x['text_right'].tolist()
+        [[2, 3]]
+        >>> x['ids'].tolist()
+        [['qid0', 'did0']]
+        >>> y.tolist()
+        [[0.0, 1.0]]
 
     """
 
@@ -82,6 +86,7 @@ class PointGenerator(engine.BaseGenerator):
         if self.stage == 'train':
             if isinstance(self._task, tasks.Ranking):
                 batch_y = map(self._task.output_dtype, self._relation['label'])
+                batch_y = np.array(batch_y)
             elif isinstance(self._task, tasks.Classification):
                 batch_y = np.zeros((len(index_array), self._task.num_classes))
                 for idx, label in enumerate(

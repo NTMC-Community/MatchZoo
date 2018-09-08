@@ -41,7 +41,7 @@ def test_pair_generator_one(x):
     assert x0['text_left'].tolist() == [[1, 2], [1, 2]]
     assert x0['text_right'].tolist() == [[3, 4, 5], [1, 2, 3]]
     assert x0['ids'].tolist() == [['qid0', 'did2'], ['qid0', 'did0']]
-    assert y0 == [2, 0]
+    assert y0.tolist() == [2, 0]
 
 def test_pair_generator_multi(x):
     """Test pair generator with multiple negative sample."""
@@ -56,4 +56,4 @@ def test_pair_generator_multi(x):
     assert x0['ids'].tolist() == [['qid0', 'did2'],
                                   ['qid0', 'did0'],
                                   ['qid0', 'did1']]
-    assert y0 == [2, 0, 1]
+    assert y0.tolist() == [2, 0, 1]

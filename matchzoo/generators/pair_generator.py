@@ -20,7 +20,6 @@ class PairGenerator(engine.BaseGenerator):
         ...             ['qid0', 'did1', 1],
         ...             ['qid0', 'did2', 2]
         ... ]
-        >>> columns = ['id_left', 'id_right', 'label']
         >>> left = [['qid0', [1, 2]]]
         >>> right = [['did0', [2, 3]],
         ...          ['did1', [3, 4]],
@@ -37,7 +36,6 @@ class PairGenerator(engine.BaseGenerator):
         ...                           right=right
         ... )
         >>> generator = PairGenerator(input, 1, 1, 1, 'train', True)
-        >>> assert generator
         >>> len(generator)
         2
         >>> x, y = generator[0]
@@ -47,7 +45,7 @@ class PairGenerator(engine.BaseGenerator):
         [[3, 4], [2, 3]]
         >>> x['ids'].tolist()
         [['qid0', 'did1'], ['qid0', 'did0']]
-        >>> y
+        >>> y.tolist()
         [1, 0]
 
     """
@@ -122,7 +120,7 @@ class PairGenerator(engine.BaseGenerator):
         for item in index_array:
             trans_index.extend(list(range(item*steps, (item+1)*steps)))
         batch_x = {}
-        batch_y = self._relation.iloc[trans_index, 2].tolist()
+        batch_y = self._relation.iloc[trans_index, 2]
 
         columns = self._left.columns.values.tolist() + \
             self._right.columns.values.tolist() + ['ids']
