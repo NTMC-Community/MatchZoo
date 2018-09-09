@@ -65,6 +65,9 @@ class PairGenerator(engine.BaseGenerator):
         :param num_neg: the number of negative samples associated with each
             positive sample.
         :param num_dup: the number of duplicates for each positive sample.
+        This variable is used to balance samples since there are always many
+        more negative sample than positive sample, thus, we use num_dup to
+        duplicate those positive samples.
         :param batch_size: number of instances in a batch.
         :param stage: the current phase, the value can be 'train' or 'test'.
         :param shuffle: whether to shuffle the instances while generating a
@@ -82,6 +85,9 @@ class PairGenerator(engine.BaseGenerator):
         """Obtain the transformed data from :class:`DataPack`.
 
         Note here, label is required to make pairs.
+
+        TODO: support dynamic size of pairs while number of negative samples is
+        less than `_num_neg`.
 
         :param relations: An instance of :class:`DataPack` to be transformed.
         :return: the output of all the transformed relations.
