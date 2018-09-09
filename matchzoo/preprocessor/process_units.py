@@ -7,7 +7,6 @@ import typing
 import collections
 import numpy as np
 from tqdm import tqdm
-import six
 
 
 match_punc = re.compile('[^\w\s]')
@@ -422,9 +421,6 @@ class EmbeddingUnit(StatefulProcessorUnit):
         >>> embed = EmbeddingUnit('tests/unit_test/data/embed_10.txt')
         >>> # Need term_index
         >>> embed.fit({'G': 1, 'C': 2, 'D': 3, 'A': 4, '[PAD]': 0})
-        #(word_in_dict): 5
-        #(word_in_embed): 5
-        #(word_share): 3
         >>> index_state = embed.state['index_state']
         >>> index_state # doctest: +SKIP
         {4: 1, 2: 1, 3: 1, 1: 2, 0: 0}
@@ -491,7 +487,7 @@ class EmbeddingUnit(StatefulProcessorUnit):
                                                             self._embed_dim))
 
             try:
-                if isinstance(word, six.binary_type):
+                if isinstance(word, bytes):
                     word = word.decode('utf-8')
             except Exception as e:
                 print("Skipping non-UTF8 token {}".format(repr(word)))
@@ -512,10 +508,6 @@ class EmbeddingUnit(StatefulProcessorUnit):
 
         self._index_state[0] = 0
         self._embed_mat[0] = np.zeros([self._embed_dim])
-
-        print('#(word_in_dict): {}'.format(n_word_in_dict))
-        print('#(word_in_embed): {}'.format(n_word_in_embed))
-        print('#(word_share): {}'.format(n_word_share))
 
         self._state['index_state'] = self._index_state
         self._state['embed_mat'] = self._embed_mat
