@@ -19,7 +19,8 @@ model_setups = [
     (models.NaiveModel, None),
     (models.DenseBaselineModel, None),
     (models.DSSMModel, None),
-    (models.CDSSMModel, None)
+    (models.CDSSMModel, None),
+    (models.ArcIModel, None)
 ]
 
 
@@ -58,12 +59,18 @@ def compiled_model(raw_model, task):
 
 @pytest.fixture
 def x(compiled_model, num_samples):
+    rand_func = {np.float32: 
+                    lambda x: np.random.uniform(low=-1, high=1, size=x), 
+                 np.int32: 
+                    lambda x: np.random.randint(low=0, high=100, size=x)
+                }
     input_shapes = compiled_model.params['input_shapes']
-    return [np.random.randn(num_samples, *shape)
+    input_dtypes = compiled_model.params['input_dtypes']
+    return [rand_func[dtype]([num_samples]+list(shape))
             if None not in shape
-            else np.random.randn(num_samples, *(10, 900))
-            for shape
-            in input_shapes]
+            else rand_func[dtype]([num_samples]+[10, 900])
+            for shape, dtype
+            in zip(input_shapes, input_dtypes)]
 
 @pytest.fixture
 def y(compiled_model, num_samples):
