@@ -481,13 +481,13 @@ class EmbeddingUnit(StatefulProcessorUnit):
             # get rid of Unicode non-breaking spaces in the vectors.
             entries = line.rstrip().split(b" ")
 
-            word, entries = entries[0], entries[1:]
+            word, vec = entries[0], entries[1:]
 
-            if self._embed_dim != len(entries):
+            if self._embed_dim != len(vec):
                 raise RuntimeError(
                     "Vector for token {} has {} dimensions, but previously "
                     "read vectors have {} dimensions. All vectors must have "
-                    "the same number of dimensions.".format(word, len(entries),
+                    "the same number of dimensions.".format(word, len(vec),
                                                             self._embed_dim))
 
             try:
@@ -500,7 +500,7 @@ class EmbeddingUnit(StatefulProcessorUnit):
             if word in term_index:
                 index = term_index[word]
                 self._embed_mat[index] = \
-                    np.array([float(x) for x in entries])
+                    np.array([float(x) for x in vec])
                 self._index_state[index] = 1
                 n_word_share += 1
 
