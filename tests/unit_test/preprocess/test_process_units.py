@@ -1,5 +1,6 @@
 from matchzoo.preprocessor.process_units import *
 import pytest
+import numpy as np
 
 @pytest.fixture
 def raw_input():
@@ -8,6 +9,10 @@ def raw_input():
 @pytest.fixture
 def list_input():
     return ['this', 'Is', 'a', 'the', 'test', 'lIst', '36', '!', 'input']
+
+@pytest.fixture
+def term_index_input():
+    return {'G': 1, 'C': 2, 'D': 3, 'A': 4, '[PAD]': 0}
 
 def test_tokenize_unit(raw_input):
     tu = TokenizeUnit()
@@ -73,3 +78,13 @@ def test_fixedlength_unit(list_input):
     out = fixedlength.transform(list_input)
     assert list(out[:-3]) == list_input
     assert list(out[-3:]) == ['0'] * 3
+
+def test_embedding_unit(term_index_input):
+    embed = EmbeddingUnit('tests/unit_test/data/embed_10.txt')
+    embed.fit(term_index_input)
+    assert embed.state['embed_dim'] == 10
+    assert embed.state['index_state'] == {4: 1, 2: 1, 3: 1, 1: 2, 0: 0}
+    assert (embed.state['embed_mat'][0] == np.array([0] * 10)).all()
+    assert (np.abs(embed.state['embed_mat'][2] - \
+            (np.array(range(10)) * 0.1 + 0.1)) < 1e-6).all()
+
