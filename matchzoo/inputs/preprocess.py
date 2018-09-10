@@ -14,7 +14,7 @@ from nltk.stem import SnowballStemmer
 sys.path.append('../inputs')
 sys.path.append('../utils')
 from preparation import *
-from rank_io import *
+from utils.rank_io import *
 
 
 class Preprocess(object):
