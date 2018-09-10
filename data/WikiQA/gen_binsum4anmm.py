@@ -9,8 +9,8 @@ import os
 import sys
 sys.path.append('../../matchzoo/utils/')
 sys.path.append('../../matchzoo/inputs/')
-from preprocess import cal_binsum
-from rank_io import *
+from inputs.preprocess import cal_binsum
+from utils.rank_io import *
 
 
 if __name__ == '__main__':

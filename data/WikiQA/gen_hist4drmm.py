@@ -5,8 +5,8 @@ import os
 import sys
 sys.path.append('../../matchzoo/utils/')
 sys.path.append('../../matchzoo/inputs/')
-from preprocess import cal_hist
-from rank_io import *
+from inputs.preprocess import cal_hist
+from utils.rank_io import *
 
 if __name__ == '__main__':
     hist_size = int(sys.argv[1])
