@@ -126,7 +126,7 @@ class PairGenerator(engine.BaseGenerator):
         for item in index_array:
             trans_index.extend(list(range(item*steps, (item+1)*steps)))
         batch_x = {}
-        batch_y = self._relation.iloc[trans_index, 2]
+        batch_y = self._relation.iloc[trans_index, 2].values
 
         columns = self._left.columns.values.tolist() + \
             self._right.columns.values.tolist() + ['ids']
