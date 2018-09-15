@@ -92,7 +92,7 @@ if __name__ == '__main__':
     triletter_dict = filter_triletter(triletter_stats, 5, 10000)
     with open(triletter_dict_output, 'w') as f:
         for tri_id, tric in triletter_dict.items():
-            print(f, tri_id, tric, file=f)
+            print(tri_id, tric, file=f)
     with open(word_triletter_output, 'w') as f:
         for wid, trics in word_triletter_map.items():
             print(wid, ' '.join([str(triletter_dict[k]) for k in trics if k in triletter_dict]), file=f)
