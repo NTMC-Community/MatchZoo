@@ -84,11 +84,13 @@ class PointGenerator(engine.BaseGenerator):
 
         # Create label field.
         if self.stage == 'train':
-            self._relation['label'] = self._relation['label'].astype(
-                self._task.output_dtype)
             if isinstance(self._task, tasks.Ranking):
+                self._relation['label'] = self._relation['label'].astype(
+                    self._task.output_dtype)
                 batch_y = self._relation['label'][index_array].values
             elif isinstance(self._task, tasks.Classification):
+                self._relation['label'] = self._relation['label'].astype(
+                    self._task.output_dtype)
                 batch_y = np.zeros((len(index_array), self._task.num_classes))
                 for idx, label in enumerate(
                         self._relation['label'][index_array]):

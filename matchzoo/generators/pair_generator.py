@@ -95,6 +95,7 @@ class PairGenerator(engine.BaseGenerator):
         if 'label' not in relations.columns:
             raise ValueError(f"label is required from {relations} \
                              to generate pairs.")
+        relations['label'] = relations['label'].astype('int')
         # Note here the main id is set to be the id_left
         pairs = []
         for idx, group in relations.sort_values('label', ascending=False).\
