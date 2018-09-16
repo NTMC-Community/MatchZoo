@@ -59,9 +59,9 @@ class ArcIModel(engine.BaseModel):
         ArcI use Siamese arthitecture.
         """
         # Left input and right input.
-        input_left = Input(name='id_left',
+        input_left = Input(name='text_left',
                            shape=self._params['input_shapes'][0])
-        input_right = Input(name='id_right',
+        input_right = Input(name='text_right',
                             shape=self._params['input_shapes'][1])
         # Process left & right input.
         embedding = Embedding(self._params['vocab_size'],
