@@ -47,5 +47,5 @@ def test_list_generator(x, stage):
         assert y0 is None
         assert y1 is None
     elif stage == 'train':
-        assert y0.tolist() == [0]
-        assert y1.tolist() == [1, 2]
+        assert y0.tolist() == [0.0]
+        assert y1.tolist() == [1.0, 2.0]

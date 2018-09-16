@@ -3,6 +3,7 @@
 from matchzoo import engine
 from matchzoo import datapack
 from matchzoo import utils
+from matchzoo import tasks
 
 import pandas as pd
 import numpy as np
@@ -13,6 +14,10 @@ class ListGenerator(engine.BaseGenerator):
     """ListGenerator for Matchzoo.
 
     List generator can be used only for ranking.
+
+    TODO: Right now, the :class:`ListGenerator` yield a list each time, that is
+    to say, the batch_size is set to be 1. It can be extended to partial or
+    multiple lists in each batch.
 
     Examples:
         >>> np.random.seed(111)
@@ -46,7 +51,7 @@ class ListGenerator(engine.BaseGenerator):
         >>> x['ids'].tolist()
         [['qid0', 'did0'], ['qid0', 'did1'], ['qid0', 'did2']]
         >>> y.tolist()
-        [0, 1, 2]
+        [0.0, 1.0, 2.0]
 
     """
 
@@ -68,21 +73,17 @@ class ListGenerator(engine.BaseGenerator):
         self._left = inputs.left
         self._right = inputs.right
         self._relation = inputs.relation
-        self._relation['label'] = self._relation['label'].astype('int')
-        self._lists = self.transform_relation(inputs.relation)
-        num_lists = len(self._lists)
-        super().__init__(batch_size, num_lists, stage, shuffle)
+        self._task = tasks.Ranking()
+        self._lists = self.transform_relation(self._relation)
+        super().__init__(batch_size, len(self._lists), stage, shuffle)
 
-    def transform_relation(self, relations: pd.DataFrame) -> pd.DataFrame:
+    def transform_relation(self, relations: pd.DataFrame) -> list:
         """Obtain the transformed data from :class:`DataPack`.
 
         Note here, label is required to make lists.
 
-        TODO: support dynamic size of lists while number of negative samples is
-        less than `_num_neg`.
-
-        :param relations: An instance of :class:`DataPack` to be transformed.
-        :return: the output of all the transformed relations.
+        :param relations: An instance of DataFrame to be transformed.
+        :return: the output of all the lists' indices.
         """
         # Note here the main id is set to be the id_left
         lists = []
@@ -99,12 +100,13 @@ class ListGenerator(engine.BaseGenerator):
         :param index_array: a list of instance ids.
         :return: A batch of transformed samples.
         """
-        trans_index =  self._lists[index_array[0]]
-        print(trans_index)
+        trans_index = self._lists[index_array[0]]
         batch_x = {}
 
         batch_y = None
         if self.stage == 'train':
+            self._relation['label'] = self._relation['label'].astype(
+                self._task.output_dtype)
             batch_y = self._relation.iloc[trans_index, 2].values
 
         columns = self._left.columns.values.tolist() + \
