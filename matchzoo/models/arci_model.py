@@ -24,7 +24,6 @@ class ArcIModel(engine.BaseModel):
         params = super().get_default_params()
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(32,), (32,)]
-        params['input_dtypes'] = [np.int32, np.int32]
         params.add(engine.Param('trainable_embedding', False))
         params.add(engine.Param('dim_embedding', 300))
         params.add(engine.Param('vocab_size', 100))
