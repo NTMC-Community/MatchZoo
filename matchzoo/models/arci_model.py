@@ -24,21 +24,21 @@ class ArcIModel(engine.BaseModel):
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(32,), (32,)]
         params['input_dtypes'] = [np.int32, np.int32]
-        params.add(engine.Param('maxlen_left', 32))
-        params.add(engine.Param('maxlen_right', 32))
-        params.add(engine.Param('embed_finetune', False))
-        params.add(engine.Param('embed_dim', 300))
+        params.add(engine.Param('trainable_embedding', False))
+        params.add(engine.Param('dim_embedding', 300))
         params.add(engine.Param('vocab_size', 100))
         params.add(engine.Param('left_kernel_count', 32))
         params.add(engine.Param('left_kernel_size', 3))
         params.add(engine.Param('right_kernel_count', 32))
         params.add(engine.Param('right_kernel_size', 3))
-        params.add(engine.Param('q_pool_size', 16))
-        params.add(engine.Param('d_pool_size', 16))
+        params.add(engine.Param('activation', 'relu'))
+        params.add(engine.Param('left_pool_size', 16))
+        params.add(engine.Param('right_pool_size', 16))
+        params.add(engine.Param('padding', 'same'))
         params.add(engine.Param('dropout_rate', 0.0))
         params.add(engine.Param('embed',
                    np.random.uniform(-0.2, 0.2, (params['vocab_size'],
-                                                 params['embed_dim']))))
+                                                 params['dim_embedding']))))
         return params
 
     def build(self):
@@ -49,28 +49,28 @@ class ArcIModel(engine.BaseModel):
         """
         # Left input and right input.
         input_left = Input(name='id_left',
-                           shape=(self._params['maxlen_left'], ))
+                           shape=self._params['input_shapes'][0])
         input_right = Input(name='id_right',
-                            shape=(self._params['maxlen_right'], ))
+                            shape=self._params['input_shapes'][1])
         # Process left & right input.
         embedding = Embedding(self._params['vocab_size'],
-                              self._params['embed_dim'],
+                              self._params['dim_embedding'],
                               weights=[self._params['embed']],
-                              trainable=self._params['embed_finetune'])
+                              trainable=self._params['trainable_embedding'])
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
         conv_left = Conv1D(self._params['left_kernel_count'],
                            self._params['left_kernel_size'],
-                           padding='same',
-                           activation='relu')(embed_left)
+                           padding=self._params['padding'],
+                           activation=self._params['activation'])(embed_left)
         conv_right = Conv1D(self._params['right_kernel_count'],
                             self._params['right_kernel_size'],
-                            padding='same',
-                            activation='relu')(embed_right)
+                            padding=self._params['padding'],
+                            activation=self._params['activation'])(embed_right)
         pool_left = MaxPooling1D(
-                        pool_size=self._params['q_pool_size'])(conv_left)
+                        pool_size=self._params['left_pool_size'])(conv_left)
         pool_right = MaxPooling1D(
-                        pool_size=self._params['d_pool_size'])(conv_right)
+                        pool_size=self._params['right_pool_size'])(conv_right)
         pool_flat = Flatten()(Concatenate(axis=1)([pool_left, pool_right]))
         x = Dropout(rate=self._params['dropout_rate'])(pool_flat)
 
