@@ -66,12 +66,12 @@ class DataPack(object):
         return self._relation.shape[0]
 
     @property
-    def relation(self):
+    def relation(self) -> pd.DataFrame:
         """Get :meth:`relation` of :class:`DataPack`."""
         return self._relation
 
     @property
-    def left(self):
+    def left(self) -> pd.DataFrame:
         """Get :meth:`left` of :class:`DataPack`."""
         return self._left
 
@@ -84,7 +84,7 @@ class DataPack(object):
         self._left = value
 
     @property
-    def right(self):
+    def right(self) -> pd.DataFrame:
         """Get :meth:`right` of :class:`DataPack`."""
         return self._right
 
@@ -97,7 +97,7 @@ class DataPack(object):
         self._right = value
 
     @property
-    def context(self):
+    def context(self) -> dict:
         """Get :meth:`context` of class:`DataPack`."""
         return self._context
 
