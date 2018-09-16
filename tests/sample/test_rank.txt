@@ -1,0 +1,28 @@
+qid0	did0	HOW AFRICAN AMERICANS WERE IMMIGRATED TO THE US	African immigration to the United States refers to immigrants to the United States who are or were nationals of Africa .
+qid0	did1	HOW AFRICAN AMERICANS WERE IMMIGRATED TO THE US	The term African in the scope of this article refers to geographical or national origins rather than racial affiliation .
+qid0	did2	HOW AFRICAN AMERICANS WERE IMMIGRATED TO THE US	From the Immigration and Nationality Act of 1965 to 2007 , an estimated total of 0.8 to 0.9 million Africans immigrated to the United States , accounting for roughly 3.3 % of total immigration to the United States during this period .
+qid0	did3	HOW AFRICAN AMERICANS WERE IMMIGRATED TO THE US	African immigrants in the United States come from almost all regions in Africa and do not constitute a homogeneous group .
+qid0	did4	HOW AFRICAN AMERICANS WERE IMMIGRATED TO THE US	They include people from different national , linguistic , ethnic , racial , cultural and social backgrounds .
+qid0	did5	HOW AFRICAN AMERICANS WERE IMMIGRATED TO THE US	As such , African immigrants are to be distinguished from African American people , the latter of whom are descendants of mostly West and Central Africans who were involuntarily brought to the United States by means of the historic Atlantic slave trade .
+qid1	did0	how large were early jails	A prison ( from Old French prisoun ) , also known as gaol or jail , is a place in which people are physically confined and usually deprived of a range of personal freedoms .
+qid1	did1	how large were early jails	Imprisonment or incarceration is a legal penalty that may be imposed by the state for the commission of a crime .
+qid1	did2	how large were early jails	Other terms used are penitentiary , correctional facility , remand centre , detention centre , and gaol or jail .
+qid1	did3	how large were early jails	In some legal systems some of these terms have distinct meanings .
+qid1	did4	how large were early jails	A criminal suspect who has been charged with or is likely to be charged with criminal offense may be held on remand in prison if he or she is denied or unable to meet conditions of bail , or is unable or unwilling to post bail .
+qid1	did5	how large were early jails	A criminal defendant may also be held in prison while awaiting trial or a trial verdict .
+qid1	did6	how large were early jails	If found guilty , a defendant will be convicted and may receive a custodial sentence requiring imprisonment .
+qid1	did7	how large were early jails	As well as convicted or suspected criminals , prisons may be used for internment of those not charged with a crime .
+qid1	did8	how large were early jails	Prisons may also be used as a tool of political repression to detain political prisoners , prisoners of conscience , and `` enemies of the state `` , particularly by authoritarian regimes .
+qid1	did9	how large were early jails	In times of war or conflict , prisoners of war may also be detained in prisons .
+qid1	did10	how large were early jails	A prison system is the organizational arrangement of the provision and operation of prisons .
+qid2	did0	how a water pump works	A small , electrically powered pump
+qid2	did1	how a water pump works	A large , electrically driven pump ( electropump ) for waterworks near the Hengsteysee , Germany .
+qid2	did2	how a water pump works	A pump is a device that moves fluids ( liquids or gases ) , or sometimes slurries , by mechanical action .
+qid2	did3	how a water pump works	Pumps can be classified into three major groups according to the method they use to move the fluid : direct lift , displacement , and gravity pumps .
+qid2	did4	how a water pump works	Pumps operate by some mechanism ( typically reciprocating or rotary ) , and consume energy to perform mechanical work by moving the fluid .
+qid2	did5	how a water pump works	Pumps operate via many energy sources , including manual operation , electricity , engines , or wind power .
+qid3	did0	how old was sue lyon when she made lolita	Lolita is a 1962 comedy-drama film by Stanley Kubrick based on the classic novel of the same title by Vladimir Nabokov , centres around a middle-aged man who becomes obsessed with a teenage girl .
+qid3	did1	how old was sue lyon when she made lolita	The film stars James Mason as Humbert Humbert , Sue Lyon as Dolores Haze ( Lolita ) and Shelley Winters as Charlotte Haze with Peter Sellers as Clare Quilty .
+qid3	did2	how old was sue lyon when she made lolita	Due to the MPAA 's restrictions at the time , the film toned down the more provocative aspects of the novel , sometimes leaving much to the audience 's imagination .
+qid3	did3	how old was sue lyon when she made lolita	The actress who played Lolita , Sue Lyon , was fourteen at the time of filming .
+qid3	did4	how old was sue lyon when she made lolita	Kubrick later commented that , had he realized how severe the censorship limitations were going to be , he probably never would have made the film .
