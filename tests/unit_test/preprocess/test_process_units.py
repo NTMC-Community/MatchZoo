@@ -1,4 +1,5 @@
 from matchzoo.preprocessor.process_units import *
+from matchzoo.preprocessor.embedding import Embedding
 import pytest
 import numpy as np
 
@@ -79,28 +80,24 @@ def test_fixedlength_unit(list_input):
     assert list(out[:-3]) == list_input
     assert list(out[-3:]) == ['0'] * 3
 
-def test_embedding_unit(term_index_input):
-    embed = EmbeddingUnit('tests/unit_test/data/embed_10.txt')
-    embed.fit(term_index_input)
-    assert embed.state['embed_dim'] == 10
-    assert embed.state['index_state'] == {4: 1, 2: 1, 3: 1, 1: 2, 0: 0}
-    assert (embed.state['embed_mat'][0] == np.array([0] * 10)).all()
-    assert (np.abs(embed.state['embed_mat'][2] - \
+def test_embedding(term_index_input):
+    embed = Embedding('tests/unit_test/data/embed_10.txt')
+    embed.process(term_index_input)
+    assert embed.embed_dim == 10
+    assert embed.index_state == {4: 1, 2: 1, 3: 1, 1: 2, 0: 0}
+    assert (embed.embed_mat[0] == np.array([0] * 10)).all()
+    assert (np.abs(embed.embed_mat[2] - \
             (np.array(range(10)) * 0.1 + 0.1)) < 1e-6).all()
 
-    embed = EmbeddingUnit('tests/unit_test/data/embed_10.txt')
+    embed = Embedding('tests/unit_test/data/embed_10.txt')
     del term_index_input['[PAD]']
-    embed.fit(term_index_input)
-    assert embed.state['embed_dim'] == 10
-    assert embed.state['index_state'] == {4: 1, 2: 1, 3: 1, 1: 2, 0: 0}
-    assert (embed.state['embed_mat'][0] == np.array([0] * 10)).all()
-    assert (np.abs(embed.state['embed_mat'][2] - \
+    embed.process(term_index_input)
+    assert embed.embed_dim == 10
+    assert embed.index_state == {4: 1, 2: 1, 3: 1, 1: 2, 0: 0}
+    assert (embed.embed_mat[0] == np.array([0] * 10)).all()
+    assert (np.abs(embed.embed_mat[2] - \
             (np.array(range(10)) * 0.1 + 0.1)) < 1e-6).all()
 
     with pytest.raises(RuntimeError):
-        embed.transform(None)
-
-    with pytest.raises(RuntimeError):
-        embed = EmbeddingUnit('tests/unit_test/data/embed_err.txt.gb2312')
-        embed.fit(term_index_input)
-
+        embed = Embedding('tests/unit_test/data/embed_err.txt.gb2312')
+        embed.process(term_index_input)
