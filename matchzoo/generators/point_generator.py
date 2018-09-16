@@ -59,6 +59,7 @@ class PointGenerator(engine.BaseGenerator):
         :param shuffle: whether to shuffle the instances while generating a
             batch.
         """
+        print(type(inputs))
         self._relation = inputs.relation
         self._task = task
         self._left = inputs.left
