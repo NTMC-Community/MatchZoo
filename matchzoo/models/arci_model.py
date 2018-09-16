@@ -1,5 +1,6 @@
 """An implementation of ArcI Model."""
 from matchzoo import engine
+import typing
 import numpy as np
 from keras.models import Model
 from keras.layers import Input, Embedding, Conv1D, MaxPooling1D, Dropout, \
@@ -40,17 +41,13 @@ class ArcIModel(engine.BaseModel):
         params.add(engine.Param('embedding_mat',
                    np.random.uniform(-0.2, 0.2, (params['vocab_size'],
                                                  params['dim_embedding']))))
-        assert(params['num_blocks'] == len(params['left_kernel_count']))
-        assert(params['num_blocks'] == len(params['left_kernel_size']))
-        assert(params['num_blocks'] == len(params['left_pool_size']))
-        assert(params['num_blocks'] == len(params['right_kernel_count']))
-        assert(params['num_blocks'] == len(params['right_kernel_size']))
-        assert(params['num_blocks'] == len(params['right_pool_size']))
         return params
 
-    def _conv_pool_block(self, input, kernel_count: int, kernel_size: int,
-                         padding: str, activation: str, pool_size: int):
-        output = Conv1D(kernel_count, kernel_size,
+    def _conv_pool_block(self, input: typing.Any, kernel_count: int,
+                         kernel_size: int, padding: str, activation: str,
+                         pool_size: int) -> typing.Any:
+        output = Conv1D(kernel_count,
+                        kernel_size,
                         padding=padding,
                         activation=activation)(input)
         output = MaxPooling1D(pool_size=pool_size)(output)
