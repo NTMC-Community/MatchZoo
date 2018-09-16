@@ -9,7 +9,7 @@ neg_num = 1
 
 
 def rank_hinge_loss(y_true: typing.Any,
-                    y_pred: typing.Any) -> typing.Any:
+                    y_pred: typing.Any) -> float:
     """
     Calculate rank hinge loss.
 
@@ -31,7 +31,7 @@ def rank_hinge_loss(y_true: typing.Any,
 
 
 def rank_crossentropy_loss(y_true: typing.Any,
-                           y_pred: typing.Any) -> typing.Any:
+                           y_pred: typing.Any) -> float:
     """
     Calculate rank cross entropy loss.
 
