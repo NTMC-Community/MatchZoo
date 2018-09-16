@@ -69,7 +69,6 @@ class BaseModel(abc.ABC):
         params.add(engine.Param('name'))
         params.add(engine.Param('model_class', cls))
         params.add(engine.Param('input_shapes'))
-        params.add(engine.Param('input_dtypes'))
         params.add(engine.Param('task'))
         params.add(engine.Param('metrics'))
         params.add(engine.Param('loss'))
@@ -244,9 +243,6 @@ class BaseModel(abc.ABC):
 
         if self._params['input_shapes'] is None:
             self._params['input_shapes'] = [(30,), (30,)]
-
-        if self._params['input_dtypes'] is None:
-            self._params['input_dtypes'] = [np.float32, np.float32]
 
         if self._params['metrics'] is None:
             task = self._params['task']

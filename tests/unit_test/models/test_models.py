@@ -16,11 +16,11 @@ from matchzoo import tasks
 # with no kwargs: (models.DenseBaselineModel, None)
 # with kwargs: (models.DenseBaselineModel, {"num_dense_units": 512})
 model_setups = [
-    #(models.NaiveModel, None),
-    #(models.DenseBaselineModel, None),
-    #(models.DSSMModel, None),
-    #(models.CDSSMModel, None),
-    (models.ArcIModel, None)
+    (models.NaiveModel, None, [np.float32, np.float32]),
+    (models.DenseBaselineModel, None, [np.float32, np.float32]),
+    (models.DSSMModel, None, [np.float32, np.float32]),
+    (models.CDSSMModel, None, [np.float32, np.float32]),
+    (models.ArcIModel, None, [np.int32, np.int32])
 ]
 
 
@@ -40,32 +40,33 @@ def task(request):
 
 @pytest.fixture(params=model_setups)
 def raw_model(request):
-    model_class, custom_kwargs = request.param
+    model_class, custom_kwargs, input_dtypes = request.param
     model = model_class()
     if custom_kwargs:
         for key, val in custom_kwargs.items():
             model.params[key] = val
-    return model
+    return model, input_dtypes
 
 
 @pytest.fixture
 def compiled_model(raw_model, task):
-    raw_model.params['task'] = task
-    raw_model.guess_and_fill_missing_params()
-    raw_model.build()
-    raw_model.compile()
-    return raw_model
+    model, input_dtypes = raw_model
+    model.params['task'] = task
+    model.guess_and_fill_missing_params()
+    model.build()
+    model.compile()
+    return model, input_dtypes
 
 
 @pytest.fixture
 def x(compiled_model, num_samples):
+    model, input_dtypes = compiled_model
     rand_func = {np.float32: 
                     lambda x: np.random.uniform(low=-1, high=1, size=x), 
                  np.int32: 
                     lambda x: np.random.randint(low=0, high=100, size=x)
                 }
-    input_shapes = compiled_model.params['input_shapes']
-    input_dtypes = compiled_model.params['input_dtypes']
+    input_shapes = model.params['input_shapes']
     return [rand_func[dtype]([num_samples]+list(shape))
             if None not in shape
             else rand_func[dtype]([num_samples]+[10, 900])
@@ -74,26 +75,31 @@ def x(compiled_model, num_samples):
 
 @pytest.fixture
 def y(compiled_model, num_samples):
-    task = compiled_model.params['task']
+    model, input_dtypes = compiled_model
+    task = model.params['task']
     return np.random.randn(num_samples, *task.output_shape)
 
 
 def test_model_fit(compiled_model, x, y):
-    assert compiled_model.fit(x, y, verbose=0)
+    model, input_dtypes = compiled_model
+    assert model.fit(x, y, verbose=0)
 
 
 def test_model_evaluate(compiled_model, x, y):
-    assert compiled_model.evaluate(x, y, verbose=0)
+    model, input_dtypes = compiled_model
+    assert model.evaluate(x, y, verbose=0)
 
 
 def test_model_predict(compiled_model, x):
-    assert compiled_model.predict(x) is not None
+    model, input_dtypes = compiled_model
+    assert model.predict(x) is not None
 
 
 def test_save_load_model(compiled_model):
+    model, input_dtypes = compiled_model
     tmpdir = '.tmpdir'
-    compiled_model.save(tmpdir)
+    model.save(tmpdir)
     assert engine.load_model(tmpdir)
     with pytest.raises(FileExistsError):
-        compiled_model.save(tmpdir)
+        model.save(tmpdir)
     shutil.rmtree(tmpdir)
