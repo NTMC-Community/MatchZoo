@@ -3,6 +3,7 @@
 from matchzoo import engine
 from matchzoo import datapack
 from matchzoo import utils
+from matchzoo import tasks
 
 import pandas as pd
 import numpy as np
@@ -46,7 +47,7 @@ class PairGenerator(engine.BaseGenerator):
         >>> x['ids'].tolist()
         [['qid0', 'did1'], ['qid0', 'did0']]
         >>> y.tolist()
-        [1, 0]
+        [1.0, 0.0]
 
     """
 
@@ -77,6 +78,7 @@ class PairGenerator(engine.BaseGenerator):
         self._num_dup = num_dup
         self._left = inputs.left
         self._right = inputs.right
+        self._task = tasks.Ranking()
         self._relation = self.transform_relation(inputs.relation)
         num_pairs = len(self._relation) // (self._num_neg + 1)
         super().__init__(batch_size, num_pairs, stage, shuffle)
@@ -95,7 +97,8 @@ class PairGenerator(engine.BaseGenerator):
         if 'label' not in relations.columns:
             raise ValueError(f"label is required from {relations} \
                              to generate pairs.")
-        relations['label'] = relations['label'].astype('int')
+        relations['label'] = relations['label'].astype(
+            self._task.output_dtype)
         # Note here the main id is set to be the id_left
         pairs = []
         for idx, group in relations.sort_values('label', ascending=False).\
