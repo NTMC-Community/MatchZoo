@@ -25,7 +25,7 @@ class ArcIModel(engine.BaseModel):
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(32,), (32,)]
         params.add(engine.Param('trainable_embedding', False))
-        params.add(engine.Param('dim_embedding', 300))
+        params.add(engine.Param('embedding_dim', 300))
         params.add(engine.Param('vocab_size', 100))
         params.add(engine.Param('num_blocks', 1))
         params.add(engine.Param('left_kernel_count', [32]))
@@ -39,7 +39,7 @@ class ArcIModel(engine.BaseModel):
         params.add(engine.Param('dropout_rate', 0.0))
         params.add(engine.Param('embedding_mat',
                    np.random.uniform(-0.2, 0.2, (params['vocab_size'],
-                                                 params['dim_embedding']))))
+                                                 params['embedding_dim']))))
         return params
 
     def _conv_pool_block(self, input: typing.Any, kernel_count: int,
@@ -65,7 +65,7 @@ class ArcIModel(engine.BaseModel):
                             shape=self._params['input_shapes'][1])
         # Process left & right input.
         embedding = Embedding(self._params['vocab_size'],
-                              self._params['dim_embedding'],
+                              self._params['embedding_dim'],
                               weights=[self._params['embedding_mat']],
                               trainable=self._params['trainable_embedding'])
         embed_left = embedding(input_left)
