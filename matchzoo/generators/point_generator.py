@@ -34,6 +34,12 @@ class PointGenerator(engine.BaseGenerator):
         >>> x, y = generator[0]
         >>> x['text_left'].tolist()
         [[1, 2]]
+        >>> x['text_right'].tolist()
+        [[2, 3]]
+        >>> x['ids'].tolist()
+        [['qid0', 'did0']]
+        >>> y.tolist()
+        [[0.0, 1.0]]
 
     """
 
@@ -53,27 +59,15 @@ class PointGenerator(engine.BaseGenerator):
         :param shuffle: whether to shuffle the instances while generating a
             batch.
         """
-        self._relation = self._transform_relation(inputs)
+        self._relation = inputs.relation
         self._task = task
         self._left = inputs.left
         self._right = inputs.right
         super().__init__(batch_size, len(inputs.relation), stage, shuffle)
 
-    def _transform_relation(self, inputs: datapack.DataPack) -> dict:
-        """Obtain the transformed data from :class:`DataPack`.
-
-        :param inputs: An instance of :class:`DataPack` to be transformed.
-        :return: the output of all the transformed relation.
-        """
-        relation = inputs.relation
-        out = {}
-        for column in relation.columns:
-            out[column] = np.asarray(relation[column])
-        return out
-
     def _get_batch_of_transformed_samples(
         self,
-        index_array: list
+        index_array: np.array
     ) -> typing.Tuple[dict, typing.Any]:
         """Get a batch of samples based on their ids.
 
@@ -92,6 +86,7 @@ class PointGenerator(engine.BaseGenerator):
         if self.stage == 'train':
             if isinstance(self._task, tasks.Ranking):
                 batch_y = map(self._task.output_dtype, self._relation['label'])
+                batch_y = np.array(batch_y)
             elif isinstance(self._task, tasks.Classification):
                 batch_y = np.zeros((len(index_array), self._task.num_classes))
                 for idx, label in enumerate(
@@ -102,10 +97,9 @@ class PointGenerator(engine.BaseGenerator):
                 msg = f"{self._task} is not a valid task type."
                 msg += ":class:`Ranking` and :class:`Classification` expected."
                 raise ValueError(msg)
-
         # Get batch of X.
-        id_left = self._relation['id_left'][index_array]
-        id_right = self._relation['id_right'][index_array]
+        id_left = self._relation.iloc[index_array, 0]
+        id_right = self._relation.iloc[index_array, 1]
 
         [batch_x['ids'].append(list(item)) for item in zip(id_left, id_right)]
 

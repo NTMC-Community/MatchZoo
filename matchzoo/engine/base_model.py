@@ -262,7 +262,7 @@ class BaseModel(abc.ABC):
         if isinstance(task, tasks.Classification):
             return keras.layers.Dense(task.num_classes, activation='softmax')
         elif isinstance(task, tasks.Ranking):
-            return keras.layers.Dense(1, activation='sigmoid')
+            return keras.layers.Dense(1, activation='linear')
         else:
             raise ValueError("Invalid task type.")
 

@@ -27,18 +27,13 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         >>> rv_train = dssm_preprocessor.fit_transform(
         ...     train_inputs,
         ...     stage='train')
-        >>> dssm_preprocessor.context['input_shapes'][0][0]
-        37
         >>> type(rv_train)
         <class 'matchzoo.datapack.DataPack'>
-        >>> context = dssm_preprocessor.context
-        >>> dssm_preprocessor_test = DSSMPreprocessor()
-        >>> dssm_preprocessor_test.context = context
         >>> test_inputs = [("id0",
         ...                 "id4",
         ...                 "beijing",
         ...                 "I visted beijing yesterday.")]
-        >>> rv_test = dssm_preprocessor_test.fit_transform(
+        >>> rv_test = dssm_preprocessor.fit_transform(
         ...     test_inputs,
         ...     stage='test')
         >>> type(rv_test)
@@ -51,7 +46,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         self._datapack = None
         self._cache_left = []
         self._cache_right = []
-        super().__init__()
+        self._context = {}
 
     def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""
