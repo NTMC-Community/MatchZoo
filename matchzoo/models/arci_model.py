@@ -27,19 +27,34 @@ class ArcIModel(engine.BaseModel):
         params.add(engine.Param('trainable_embedding', False))
         params.add(engine.Param('dim_embedding', 300))
         params.add(engine.Param('vocab_size', 100))
-        params.add(engine.Param('left_kernel_count', 32))
-        params.add(engine.Param('left_kernel_size', 3))
-        params.add(engine.Param('right_kernel_count', 32))
-        params.add(engine.Param('right_kernel_size', 3))
+        params.add(engine.Param('num_blocks', 1))
+        params.add(engine.Param('left_kernel_count', [32]))
+        params.add(engine.Param('left_kernel_size', [3]))
+        params.add(engine.Param('right_kernel_count', [32]))
+        params.add(engine.Param('right_kernel_size', [3]))
         params.add(engine.Param('activation', 'relu'))
-        params.add(engine.Param('left_pool_size', 16))
-        params.add(engine.Param('right_pool_size', 16))
+        params.add(engine.Param('left_pool_size', [16]))
+        params.add(engine.Param('right_pool_size', [16]))
         params.add(engine.Param('padding', 'same'))
         params.add(engine.Param('dropout_rate', 0.0))
-        params.add(engine.Param('embed',
+        params.add(engine.Param('embedding_mat',
                    np.random.uniform(-0.2, 0.2, (params['vocab_size'],
                                                  params['dim_embedding']))))
+        assert(params['num_blocks'] == len(params['left_kernel_count']))
+        assert(params['num_blocks'] == len(params['left_kernel_size']))
+        assert(params['num_blocks'] == len(params['left_pool_size']))
+        assert(params['num_blocks'] == len(params['right_kernel_count']))
+        assert(params['num_blocks'] == len(params['right_kernel_size']))
+        assert(params['num_blocks'] == len(params['right_pool_size']))
         return params
+
+    def _conv_pool_block(self, input, kernel_count: int, kernel_size: int,
+                         padding: str, activation: str, pool_size: int):
+        output = Conv1D(kernel_count, kernel_size,
+                        padding=padding,
+                        activation=activation)(input)
+        output = MaxPooling1D(pool_size=pool_size)(output)
+        return output
 
     def build(self):
         """
@@ -55,24 +70,29 @@ class ArcIModel(engine.BaseModel):
         # Process left & right input.
         embedding = Embedding(self._params['vocab_size'],
                               self._params['dim_embedding'],
-                              weights=[self._params['embed']],
+                              weights=[self._params['embedding_mat']],
                               trainable=self._params['trainable_embedding'])
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
-        conv_left = Conv1D(self._params['left_kernel_count'],
-                           self._params['left_kernel_size'],
-                           padding=self._params['padding'],
-                           activation=self._params['activation'])(embed_left)
-        conv_right = Conv1D(self._params['right_kernel_count'],
-                            self._params['right_kernel_size'],
-                            padding=self._params['padding'],
-                            activation=self._params['activation'])(embed_right)
-        pool_left = MaxPooling1D(
-                        pool_size=self._params['left_pool_size'])(conv_left)
-        pool_right = MaxPooling1D(
-                        pool_size=self._params['right_pool_size'])(conv_right)
-        pool_flat = Flatten()(Concatenate(axis=1)([pool_left, pool_right]))
-        x = Dropout(rate=self._params['dropout_rate'])(pool_flat)
+
+        for i in range(self._params['num_blocks']):
+            embed_left = self._conv_pool_block(
+                                     embed_left,
+                                     self._params['left_kernel_count'][i],
+                                     self._params['left_kernel_size'][i],
+                                     self._params['padding'],
+                                     self._params['activation'],
+                                     self._params['left_pool_size'][i])
+            embed_right = self._conv_pool_block(
+                                     embed_right,
+                                     self._params['right_kernel_count'][i],
+                                     self._params['right_kernel_size'][i],
+                                     self._params['padding'],
+                                     self._params['activation'],
+                                     self._params['right_pool_size'][i])
+
+        embed_flat = Flatten()(Concatenate(axis=1)([embed_left, embed_right]))
+        x = Dropout(rate=self._params['dropout_rate'])(embed_flat)
 
         x_out = self._make_output_layer()(x)
         self._backend = Model(
