@@ -46,7 +46,7 @@ class Embedding():
         :param embedding_file: the embeding input file path.
         """
         self._embedding_file = embedding_file
-        self._dim_embedding = 0
+        self._embedding_dim = 0
         self._index_state = {}
         self._embedding_mat = None
 
@@ -56,9 +56,9 @@ class Embedding():
         return self._embedding_file
 
     @property
-    def dim_embedding(self):
+    def embedding_dim(self):
         """Get embedding dimension."""
-        return self._dim_embedding
+        return self._embedding_dim
 
     @property
     def index_state(self):
@@ -87,12 +87,12 @@ class Embedding():
 
         with open(self._embedding_file, 'rb') as embedding_file_ptr:
             # Read the header of the embed file
-            num_embed_words, self._dim_embedding = \
+            num_embed_words, self._embedding_dim = \
                 map(int, embedding_file_ptr.readline().rstrip().split(b" "))
 
             self._embedding_mat = np.random.uniform(-0.25, 0.25,
                                                     (num_dict_words,
-                                                     self._dim_embedding))
+                                                     self._embedding_dim))
 
             # Go through all embedding file
             for line in tqdm(embedding_file_ptr):
@@ -102,13 +102,13 @@ class Embedding():
 
                 word, vec = entries[0], entries[1:]
 
-                if self._dim_embedding != len(vec):
+                if self._embedding_dim != len(vec):
                     raise RuntimeError(
                         "Vector for token {} has {} dimensions, but "
                         "previously read vectors have {} dimensions. "
                         "All vectors must have the same number of "
                         "dimensions.".format(word, len(vec),
-                                             self._dim_embedding))
+                                             self._embedding_dim))
 
                 try:
                     if isinstance(word, bytes):
@@ -131,4 +131,4 @@ class Embedding():
                     self._index_state[index] = 2
 
             self._index_state[0] = 0
-            self._embedding_mat[0] = np.zeros([self._dim_embedding])
+            self._embedding_mat[0] = np.zeros([self._embedding_dim])

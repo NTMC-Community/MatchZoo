@@ -9,7 +9,7 @@ def term_index_input():
 def test_embedding(term_index_input):
     embed = Embedding('tests/sample/embed_10.txt')
     embed.build(term_index_input)
-    assert embed.dim_embedding == 10
+    assert embed.embedding_dim == 10
     assert embed.embedding_file == 'tests/sample/embed_10.txt'
     assert embed.index_state == {4: 1, 2: 1, 3: 1, 1: 2, 0: 0}
     assert (embed.embedding_mat[0] == np.array([0] * 10)).all()
@@ -19,7 +19,7 @@ def test_embedding(term_index_input):
     embed = Embedding('tests/sample/embed_10.txt')
     del term_index_input['[PAD]']
     embed.build(term_index_input)
-    assert embed.dim_embedding == 10
+    assert embed.embedding_dim == 10
     assert embed.index_state == {4: 1, 2: 1, 3: 1, 1: 2, 0: 0}
     assert (embed.embedding_mat[0] == np.array([0] * 10)).all()
     assert (np.abs(embed.embedding_mat[2] - \
