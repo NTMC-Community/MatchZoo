@@ -16,9 +16,9 @@ class Embedding():
           gluonnlp/embedding/token_embedding.py
 
     Examples:
-        >>> embed = Embedding('tests/unit_test/data/embed_10.txt')
+        >>> embed = Embedding('tests/sample/embed_10.txt')
         >>> # Need term_index
-        >>> embed.process({'G': 1, 'C': 2, 'D': 3, 'A': 4, '[PAD]': 0})
+        >>> embed.build({'G': 1, 'C': 2, 'D': 3, 'A': 4, '[PAD]': 0})
         >>> index_state = embed.index_state
         >>> index_state # doctest: +SKIP
         {4: 1, 2: 1, 3: 1, 1: 2, 0: 0}
@@ -74,8 +74,8 @@ class Embedding():
         """Get constructed embedding matrix."""
         return self._embedding_mat
 
-    def process(self, term_index: dict):
-        """Build a :attr:`embedding_mat` and a :attr:`index_state`."""
+    def build(self, term_index: dict):
+        """Build an :attr:`embedding_mat` and an :attr:`index_state`."""
         num_dict_words = max(term_index.values()) + 1
         if num_dict_words != len(term_index):
             logger.warning("Some words are not shown in term_index({}). Total "
