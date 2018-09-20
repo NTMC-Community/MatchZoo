@@ -414,7 +414,7 @@ class WordHashingWindowUnit(ProcessorUnit):
        >>> hashing[1][7]
        1.0
        >>> hashing.shape
-       (6,)
+       (2,21)
 
         """
     def __init__(
