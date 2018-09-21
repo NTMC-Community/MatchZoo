@@ -14,12 +14,23 @@ logger = logging.getLogger(__name__)
 class CDSSMPreprocessor(engine.BasePreprocessor):
     """CDSSM preprocessor helper."""
 
-    def __init__(self):
+    @staticmethod
+    def _flatten(words: list) -> list:
+        """Flatten word list."""
+        flattened = list()
+        for word in words:
+            for letter in word:
+                flattened.extend(letter)
+        return flattened
+
+    def __init__(self, letter_ngram: int=3, sliding_window: int=3):
         """Initialization."""
         self._datapack = None
         self._cache_left = []
         self._cache_right = []
         self._context = {}
+        self._letter_ngram = letter_ngram
+        self._sliding_window = sliding_window
 
     def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""
@@ -28,16 +39,9 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             preprocessor.LowercaseUnit(),
             preprocessor.PuncRemovalUnit(),
             preprocessor.StopRemovalUnit(),
-            preprocessor.NgramLetterUnit(),
-            preprocessor.LetterSlideWindowUnit()
+            preprocessor.NgramLetterUnit(self._letter_ngram),
+            preprocessor.SlidingWindowUnit(self._sliding_window)
         ]
-
-    def _flatten(self, words: list) -> list:
-        flattened = list()
-        for word in words:
-            for letter in word:
-                flattened.extend(letter)
-        return flattened
 
     def fit(self, inputs: typing.List[tuple]):
         """
@@ -66,8 +70,6 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
-            # text = self._flatten(text)
-            # vocab.extend(text)
             vocab.extend(self._flatten(text))
             # cache tri-letters for transformation.
             self._cache_left.append((row.name, text))
@@ -77,8 +79,6 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
-            # text = self._flatten(text)
-            # vocab.extend(text)
             vocab.extend(self._flatten(text))
             # cache tri-letters for transformation.
             self._cache_right.append((row.name, text))
@@ -90,6 +90,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         # Store the fitted parameters in context.
         self._context['term_index'] = vocab_unit.state['term_index']
         dim_triletter = len(vocab_unit.state['term_index']) + 1
+        # TODO: how to define the input_shapes
         self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
         self._datapack.context = self._context
         return self

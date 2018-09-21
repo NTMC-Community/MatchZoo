@@ -11,6 +11,8 @@ from .process_units import (
     SlidingWindowUnit,
     VocabularyUnit,
     WordHashingUnit,
+    WordHashingWindowUnit,
     FixedLengthUnit
 )
 from .dssm_preprocessor import DSSMPreprocessor
+from .cdssm_preprocessor import CDSSMPreprocessor

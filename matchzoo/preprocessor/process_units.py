@@ -197,7 +197,11 @@ class NgramLetterUnit(ProcessorUnit):
 
     """
 
-    def transform(self, tokens: list, ngram: int=3) -> list:
+    def __init__(self, ngram: int=3):
+        """Initialization."""
+        self.ngram = ngram
+
+    def transform(self, tokens: list) -> list:
         """
         Transform token into tri-letter.
 
@@ -205,15 +209,14 @@ class NgramLetterUnit(ProcessorUnit):
         `wor`, `ord` and `rd#`.
 
         :param tokens: list of tokens to be transformed.
-        :param ngram: By default use 3-gram (tri-letter).
 
         :return n_letters: generated n_letters.
         """
         n_letters = []
         for token in tokens:
             token = '#' + token + '#'
-            while len(token) >= ngram:
-                n_letters.append(token[:ngram])
+            while len(token) >= self.ngram:
+                n_letters.append(token[:self.ngram])
                 token = token[1:]
         return n_letters
 
@@ -236,7 +239,11 @@ class SlidingWindowUnit(ProcessorUnit):
 
     """
 
-    def transform(self, letters: list, k: int=3) -> list:
+    def __init__(self, sliding_window: int=3):
+        """Initialization."""
+        self.sliding_window = sliding_window
+
+    def transform(self, letters: list) -> list:
         """
         Concatenate letter_ngram by sliding window.
 
@@ -244,7 +251,6 @@ class SlidingWindowUnit(ProcessorUnit):
         as [['#<s>#'], ['#wo', 'wor', 'ord', 'rd#'], ['#<s>#']]
 
         :param letters: list of letter_ngram.
-        :param k: sliding window size.
         :return: sliding letter_ngram.
         """
         words, tmp_word = [['#<s>#']], list()
@@ -255,8 +261,8 @@ class SlidingWindowUnit(ProcessorUnit):
                 tmp_word = list()
         words.append(['#<s>#'])
         word_ngram = list()
-        while len(words) >= k:
-            word_ngram.append(words[:k])
+        while len(words) >= self.sliding_window:
+            word_ngram.append(words[:self.sliding_window])
             words = words[1:]
         return word_ngram
 
