@@ -230,7 +230,7 @@ class SlidingWindowUnit(ProcessorUnit):
     before `Vocab` has been created.
 
     Examples:
-        >>> sliding = SlidingWindowUnit()
+        >>> sliding = SlidingWindowUnit(nb_window=1)
         >>> out = sliding.transform(['#wo', 'wor', 'ord', 'rd#'])
         >>> len(out)
         1
@@ -239,9 +239,16 @@ class SlidingWindowUnit(ProcessorUnit):
 
     """
 
-    def __init__(self, sliding_window: int=3):
-        """Initialization."""
-        self.sliding_window = sliding_window
+    def __init__(self, sliding_window: int=3, nb_window: int=5):
+        """
+        Initialization.
+
+        :param sliding_window: sliding window length.
+        :param nb_window: window numbers that pads
+         different sentences to the same dimensions.
+        """
+        self._sliding_window = sliding_window
+        self._nb_window = nb_window
 
     def transform(self, letters: list) -> list:
         """
@@ -260,10 +267,17 @@ class SlidingWindowUnit(ProcessorUnit):
                 words.append(tmp_word)
                 tmp_word = list()
         words.append(['#<s>#'])
+        counter = 0
         word_ngram = list()
-        while len(words) >= self.sliding_window:
-            word_ngram.append(words[:self.sliding_window])
+        while len(words) >= self._sliding_window and \
+                counter < self._nb_window:
+            word_ngram.append(words[:self._sliding_window])
             words = words[1:]
+            counter += 1
+        while counter < self._nb_window:
+            word_ngram.append([['#<UNK>#']
+                               for _ in range(self._sliding_window)])
+            counter += 1
         return word_ngram
 
 

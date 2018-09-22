@@ -23,14 +23,23 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
                 flattened.extend(letter)
         return flattened
 
-    def __init__(self, letter_ngram: int=3, sliding_window: int=3):
-        """Initialization."""
+    def __init__(self, letter_ngram: int=3,
+                 sliding_window: int=3, nb_window: int=5):
+        """
+        Initialization.
+
+        :param letter_ngram: letter ngram.
+        :param sliding_window: sliding window length.
+        :param nb_window: window numbers that pads
+         different sentences to the same dimensions.
+        """
         self._datapack = None
         self._cache_left = []
         self._cache_right = []
         self._context = {}
         self._letter_ngram = letter_ngram
         self._sliding_window = sliding_window
+        self._nb_window = nb_window
 
     def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""
@@ -40,7 +49,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             preprocessor.PuncRemovalUnit(),
             preprocessor.StopRemovalUnit(),
             preprocessor.NgramLetterUnit(self._letter_ngram),
-            preprocessor.SlidingWindowUnit(self._sliding_window)
+            preprocessor.SlidingWindowUnit(self._sliding_window,
+                                           self._nb_window)
         ]
 
     def fit(self, inputs: typing.List[tuple]):
@@ -90,8 +100,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         # Store the fitted parameters in context.
         self._context['term_index'] = vocab_unit.state['term_index']
         dim_triletter = len(vocab_unit.state['term_index']) + 1
-        # TODO: how to define the input_shapes
-        self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
+        shape = (self._nb_window, self._sliding_window*dim_triletter)
+        self._context['input_shapes'] = [shape, shape]
         self._datapack.context = self._context
         return self
 
@@ -128,10 +138,9 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             for idx, words in tqdm(self._cache_right):
                 words = hashing.transform(words)
                 self._datapack.right.at[idx, 'text_right'] = words
-
             return self._datapack
         else:
-            # do preprocessing from scrach.
+            # do preprocessing from scratch.
             units = self._prepare_stateless_units()
             units.append(hashing)
             self._datapack = self.segmentation(inputs, stage='test')
