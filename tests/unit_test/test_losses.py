@@ -21,10 +21,10 @@ def test_hinge_loss():
     true_value = K.variable(np.array([[1.2], [1], [0.8],
                                       [1], [1], [0.8]]))
     pred_value = K.variable(np.array([[1.2], [0.1], [-0.5],
-                                      [0], [-2], [-0.3]]))
+                                      [0], [0], [-0.3]]))
     losses.margin = 1
     losses.neg_num = 2
-    expected_loss = (0 + 1 - 0.3 + 0) / 2.0
+    expected_loss = (0 + 1 - 0.15) / 2.0
     loss = K.eval(losses.rank_hinge_loss(true_value, pred_value))
     assert np.isclose(expected_loss, loss)
 
