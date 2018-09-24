@@ -7,7 +7,7 @@ from tqdm import tqdm
 logger = logging.getLogger(__name__)
 
 
-class Embedding():
+class Embedding(object):
     """
     Embedding class.
 
@@ -51,17 +51,17 @@ class Embedding():
         self._embedding_mat = None
 
     @property
-    def embedding_file(self):
+    def embedding_file(self) -> str:
         """Get embedding file name."""
         return self._embedding_file
 
     @property
-    def embedding_dim(self):
+    def embedding_dim(self) -> int:
         """Get embedding dimension."""
         return self._embedding_dim
 
     @property
-    def index_state(self):
+    def index_state(self) -> dict:
         """
         Get word index state dictionary.
 
@@ -70,7 +70,7 @@ class Embedding():
         return self._index_state
 
     @property
-    def embedding_mat(self):
+    def embedding_mat(self) -> np.ndarray:
         """Get constructed embedding matrix."""
         return self._embedding_mat
 
