@@ -34,8 +34,7 @@ setup(
         'Programming Language :: Python :: 3.6'
     ],
     install_requires=[
-	'keras-preprocessing==1.0.3',
-        'keras >= 2.0.5',
+        'keras == 2.2.1',
         'tensorflow >= 1.1.0',
         'nltk >= 3.2.3',
         'numpy >= 1.12.1',
