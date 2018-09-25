@@ -61,7 +61,7 @@ class ArcIPreprocessor(engine.BasePreprocessor):
             preprocessor.StopRemovalUnit()
         ]
 
-    def fit(self, inputs: typing.List[tuple]):
+    def fit(self, inputs: typing.List[tuple]) -> ArcIPreprocessor:
         """
         Fit pre-processing context for transformation.
 
