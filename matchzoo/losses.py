@@ -1,15 +1,18 @@
 """Self defined loss function."""
 import typing
+import numpy as np
 from keras import backend as K
 from keras import layers
 
+
+__TensorType = typing.Union[np.ndarray, float]
 # TODO: Loss function parameters setting.
 margin = 1.0
 neg_num = 1
 
 
-def rank_hinge_loss(y_true: typing.Any,
-                    y_pred: typing.Any) -> typing.Any:
+def rank_hinge_loss(y_true: __TensorType,
+                    y_pred: __TensorType) -> __TensorType:
     """
     Calculate rank hinge loss.
 
@@ -30,8 +33,8 @@ def rank_hinge_loss(y_true: typing.Any,
     return K.mean(loss)
 
 
-def rank_crossentropy_loss(y_true: typing.Any,
-                           y_pred: typing.Any) -> typing.Any:
+def rank_crossentropy_loss(y_true: __TensorType,
+                           y_pred: __TensorType) -> __TensorType:
     """
     Calculate rank cross entropy loss.
 
