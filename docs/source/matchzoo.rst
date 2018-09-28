@@ -24,6 +24,38 @@ matchzoo.datapack module
     :undoc-members:
     :show-inheritance:
 
+matchzoo.embedding module
+-------------------------
+
+.. automodule:: matchzoo.embedding
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matchzoo.logger module
+----------------------
+
+.. automodule:: matchzoo.logger
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matchzoo.losses module
+----------------------
+
+.. automodule:: matchzoo.losses
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matchzoo.metrics module
+-----------------------
+
+.. automodule:: matchzoo.metrics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matchzoo.version module
 -----------------------
 
