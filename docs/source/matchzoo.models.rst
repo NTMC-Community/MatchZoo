@@ -4,6 +4,22 @@ matchzoo.models package
 Submodules
 ----------
 
+matchzoo.models.arci\_model module
+----------------------------------
+
+.. automodule:: matchzoo.models.arci_model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+matchzoo.models.cdssm\_model module
+-----------------------------------
+
+.. automodule:: matchzoo.models.cdssm_model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matchzoo.models.dense\_baseline\_model module
 ---------------------------------------------
 
