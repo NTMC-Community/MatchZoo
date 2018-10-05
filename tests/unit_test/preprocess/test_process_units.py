@@ -9,6 +9,11 @@ def raw_input():
 def list_input():
     return ['this', 'Is', 'a', 'the', 'test', 'lIst', '36', '!', 'input']
 
+@pytest.fixture
+def window_input():
+    return ['#ha', 'hav', 'ave', 've#', '#a#', '#go', 'goo', 'ood',
+            'od#', '#dr', 'dre', 'rea', 'eam', 'am#', '#!#']
+
 def test_tokenize_unit(raw_input):
     tu = TokenizeUnit()
     out = tu.transform(raw_input)
@@ -55,6 +60,12 @@ def test_ngram_unit(list_input):
     ngram = NgramLetterUnit()
     out = ngram.transform(list_input)
     assert '#a#' in out
+
+def test_sliding_unit(window_input):
+    ngram = SlidingWindowUnit()
+    out = ngram.transform(window_input)
+    print(out)
+    assert len(out) == 5
 
 def test_fixedlength_unit(list_input):
     fixedlength = FixedLengthUnit(3)

@@ -67,6 +67,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         """
         dirpath = Path(dirpath)
         data_file_path = dirpath.joinpath(self.DATA_FILENAME)
+        print(data_file_path)
 
         if data_file_path.exists():
             raise FileExistsError
