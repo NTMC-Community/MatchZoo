@@ -44,7 +44,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
     def __init__(self):
         """Initialization."""
         self._datapack = None
-
         self._context = {}
 
     def _prepare_process_unit(self) -> list:
@@ -75,7 +74,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         # Loop through user input to generate tri-letters.
         # Used for build vocabulary of tri-letters (get dimension).
-
         for idx, row in tqdm(self._datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
