@@ -4,10 +4,11 @@ import re
 import abc
 import nltk
 import typing
+import logging
 import collections
 import numpy as np
 
-
+logger = logging.getLogger(__name__)
 match_punc = re.compile('[^\w\s]')
 
 
@@ -381,8 +382,9 @@ class SlidingWindowUnit(ProcessorUnit):
         """
         output = list()
         if len(inputs) < self._sliding_window:
-            raise ValueError(
+            logger.info(
                 'Input data can not fill user-defined window.')
+            output.append(np.concatenate(inputs, axis=-1))
         while len(inputs) >= self._sliding_window:
             output.append(np.concatenate(
                 inputs[:self._sliding_window], axis=-1))
