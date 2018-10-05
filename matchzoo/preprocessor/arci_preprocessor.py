@@ -1,14 +1,14 @@
 """ArcI Preprocessor."""
+import os
+
+import typing
+import logging
+from tqdm import tqdm
 
 from matchzoo import engine
 from matchzoo import preprocessor
 from matchzoo import datapack
 from matchzoo.embedding import Embedding
-
-import os
-import typing
-import logging
-from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
