@@ -44,11 +44,10 @@ class DSSMPreprocessor(engine.BasePreprocessor):
     def __init__(self):
         """Initialization."""
         self._datapack = None
-        self._cache_left = []
-        self._cache_right = []
+
         self._context = {}
 
-    def _prepare_stateless_units(self) -> list:
+    def _prepare_process_unit(self) -> list:
         """Prepare needed process units."""
         return [
             preprocessor.TokenizeUnit(),
@@ -66,37 +65,30 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :return: class:`DSSMPreprocessor` instance.
         """
         vocab = []
-        units = self._prepare_stateless_units()
+        units = self._prepare_process_unit()
 
         logger.info("Start building vocabulary & fitting parameters.")
 
-        # Convert user input into a datapack object.
+        # Convert user input into a datapack object with two tables.
+        # left, right and  relation.
         self._datapack = self.segmentation(inputs, stage='train')
 
         # Loop through user input to generate tri-letters.
-        # 1. Used for build vocabulary of tri-letters (get dimension).
-        # 2. Cached tri-letters can be further used to perform input
-        #    transformation.
-        left = self._datapack.left
-        right = self._datapack.right
+        # Used for build vocabulary of tri-letters (get dimension).
 
-        for idx, row in tqdm(left.iterrows()):
+        for idx, row in tqdm(self._datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
-            # cache tri-letters for transformation.
-            self._cache_left.append((row.name, text))
 
-        for idx, row in tqdm(right.iterrows()):
+        for idx, row in tqdm(self._datapack.right.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
-            # cache tri-letters for transformation.
-            self._cache_right.append((row.name, text))
 
         # Initialize a vocabulary process unit to build tri-letter vocab.
         vocab_unit = preprocessor.VocabularyUnit()
@@ -128,40 +120,25 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             raise ValueError(
                 "Please fit term_index before apply transofm function.")
 
+        logger.info(f"Start processing input data for {stage} stage.")
+
+        # do preprocessing from scrach.
+        units = self._prepare_process_unit()
         # prepare word hashing unit.
         hashing = preprocessor.WordHashingUnit(
             self._context['term_index'])
+        units.append(hashing)
+        self._datapack = self.segmentation(inputs, stage=stage)
 
-        logger.info(f"Start processing input data for {stage} stage.")
+        for idx, row in tqdm(self._datapack.left.iterrows()):
+            text = row.text_left
+            for unit in units:
+                text = unit.transform(text)
+            self._datapack.left.at[idx, 'text_left'] = text
+        for idx, row in tqdm(self._datapack.right.iterrows()):
+            text = row.text_right
+            for unit in units:
+                text = unit.transform(text)
+            self._datapack.right.at[idx, 'text_right'] = text
 
-        if stage == 'train':
-            # use cached data to fit word hashing layer directly.
-            for idx, tri_letter in tqdm(self._cache_left):
-                tri_letter = hashing.transform(tri_letter)
-                self._datapack.left.at[idx, 'text_left'] = tri_letter
-            for idx, tri_letter in tqdm(self._cache_right):
-                tri_letter = hashing.transform(tri_letter)
-                self._datapack.right.at[idx, 'text_right'] = tri_letter
-
-            return self._datapack
-        else:
-            # do preprocessing from scrach.
-            units = self._prepare_stateless_units()
-            units.append(hashing)
-            self._datapack = self.segmentation(inputs, stage='test')
-
-            left = self._datapack.left
-            right = self._datapack.right
-
-            for idx, row in tqdm(left.iterrows()):
-                text = row.text_left
-                for unit in units:
-                    text = unit.transform(text)
-                self._datapack.left.at[idx, 'text_left'] = text
-            for idx, row in tqdm(right.iterrows()):
-                text = row.text_right
-                for unit in units:
-                    text = unit.transform(text)
-                self._datapack.right.at[idx, 'text_right'] = text
-
-            return self._datapack
+        return self._datapack
