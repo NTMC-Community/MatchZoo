@@ -13,7 +13,7 @@ def test_base_preprocessor(base_preprocessor):
     	base_preprocessor.fit_transform([], 'train')
 
 def test_save_load(base_preprocessor):
-    dirpath = '.tmpdir'
+    dirpath = '.mztmpdir'
     base_preprocessor.save(dirpath)
     preprocessor = engine.load_preprocessor(dirpath)
     with pytest.raises(FileExistsError):

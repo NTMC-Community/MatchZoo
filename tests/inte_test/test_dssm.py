@@ -37,12 +37,12 @@ def dssm_preprocessor():
 @pytest.fixture
 def processed_train(train, dssm_preprocessor) -> datapack.DataPack:
     preprocessed_train = dssm_preprocessor.fit_transform(train, stage='train')
-    dssm_preprocessor.save('.tmpdir')
+    dssm_preprocessor.save('.mztmpdir')
     return preprocessed_train
 
 @pytest.fixture
 def processed_test(test) -> datapack.DataPack:
-    dssm_proprecessor = engine.load_preprocessor('.tmpdir')
+    dssm_proprecessor = engine.load_preprocessor('.mztmpdir')
     return dssm_proprecessor.fit_transform(test, stage='test')
 
 @pytest.fixture(params=['point', 'pair'])
@@ -76,12 +76,13 @@ def test_dssm(processed_train,
     dssm_model.compile()
     dssm_model.fit_generator(train_generator)
     # save
-    dssm_model.save('.tmpdir')
+    tmpdir = '.mztmpdir'
+    dssm_model.save(tmpdir)
 
     # testing
     X, y = test_generator[0]
-    dssm_model = engine.load_model('.tmpdir')
+    dssm_model = engine.load_model(tmpdir)
     predictions = dssm_model.predict([X.text_left, X.text_right])
     assert len(predictions) > 0
     assert type(predictions[0][0]) == np.float32
-    shutil.rmtree('.tmpdir')
+    shutil.rmtree(tmpdir)
