@@ -10,6 +10,7 @@ from .process_units import (
     NgramLetterUnit,
     VocabularyUnit,
     WordHashingUnit,
+    SlidingWindowUnit,
     FixedLengthUnit
 )
 from .dssm_preprocessor import DSSMPreprocessor
