@@ -1,5 +1,6 @@
 from matchzoo.preprocessor.process_units import *
 import pytest
+import numpy as np
 
 @pytest.fixture
 def raw_input():
@@ -8,6 +9,14 @@ def raw_input():
 @pytest.fixture
 def list_input():
     return ['this', 'Is', 'a', 'the', 'test', 'lIst', '36', '!', 'input']
+
+@pytest.fixture
+def vec_input():
+    return np.array([[0, 0, 0, 0, 1],
+                     [0, 0, 0, 1, 0],
+                     [0, 0, 1, 0, 0],
+                     [0, 1, 0, 0, 0],
+                     [1, 0, 0, 0, 0]])
 
 def test_tokenize_unit(raw_input):
     tu = TokenizeUnit()
@@ -55,6 +64,11 @@ def test_ngram_unit(list_input):
     ngram = NgramLetterUnit()
     out = ngram.transform(list_input)
     assert '#a#' in out
+
+def test_sliding_unit(vec_input):
+    sliding = SlidingWindowUnit()
+    out = sliding.transform(vec_input)
+    assert out.shape == (3, 15)
 
 def test_fixedlength_unit(list_input):
     fixedlength = FixedLengthUnit(3)
