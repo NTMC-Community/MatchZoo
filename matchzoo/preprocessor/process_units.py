@@ -380,7 +380,7 @@ class SlidingWindowUnit(ProcessorUnit):
         :param inputs: sequential input data.
         :return: window sliding result.
         """
-        output = list()
+        output = []
         if len(inputs) < self._sliding_window:
             logger.info(
                 'Input data can not fill user-defined window.')
