@@ -79,10 +79,6 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         """
         Convert user input into :class:`DataPack` consist of two tables.
 
-        The `content` dict stores the id with it's corresponded input text.
-        The `relation` table stores the relation between `text_left` and
-            `text_right`.
-
         :param inputs: Raw user inputs, list of tuples.
         :param stage: `train` or `test`.
 
