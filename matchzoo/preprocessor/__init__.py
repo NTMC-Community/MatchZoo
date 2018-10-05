@@ -8,6 +8,7 @@ from .process_units import (
     PuncRemovalUnit,
     StopRemovalUnit,
     NgramLetterUnit,
+    SlidingWindowUnit,
     VocabularyUnit,
     WordHashingUnit,
     FixedLengthUnit
