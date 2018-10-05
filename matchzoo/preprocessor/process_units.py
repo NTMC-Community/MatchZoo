@@ -375,6 +375,9 @@ class SlidingWindowUnit(ProcessorUnit):
         """
         Compute the result of a window sliding through input data.
 
+        For short inputs that can not fill :attr:`sliding_window`, the
+        unit return an empty array.
+
         :param inputs: sequential input data.
         :return: window sliding result.
         """
