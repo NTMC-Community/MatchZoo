@@ -4,11 +4,9 @@ import re
 import abc
 import nltk
 import typing
-import logging
 import collections
 import numpy as np
 
-logger = logging.getLogger(__name__)
 match_punc = re.compile('[^\w\s]')
 
 
