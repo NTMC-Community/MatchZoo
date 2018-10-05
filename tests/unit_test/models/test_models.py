@@ -97,7 +97,7 @@ def test_model_predict(compiled_model, x):
 
 def test_save_load_model(compiled_model):
     model, input_dtypes = compiled_model
-    tmpdir = '.mztmpdir'
+    tmpdir = '.tmpdir'
     model.save(tmpdir)
     assert engine.load_model(tmpdir)
     with pytest.raises(FileExistsError):
