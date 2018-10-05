@@ -2,7 +2,6 @@ language: python
 python:
       - 3.6.3
 sudo: enabled
-cache: clear
 install:
   - "pip install -r requirements.txt"
   - "python -m nltk.downloader punkt"
