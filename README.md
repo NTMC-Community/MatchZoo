@@ -7,8 +7,6 @@
 ---
 MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface (collection of papers: [awesome-neural-models-for-semantic-match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match)). Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users.
 
-We're developing [MatchZoo 2.0](https://github.com/faneshion/MatchZoo/tree/2.0), take a look at our [project page](https://github.com/faneshion/MatchZoo/projects) and [issues labeled with 2.0](https://github.com/faneshion/MatchZoo/issues?q=is%3Aissue+is%3Aopen+label%3A2.0).
-
 <table>
   <tr>
     <th width=30%, bgcolor=#999999 >Tasks</th> 
