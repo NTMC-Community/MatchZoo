@@ -4,10 +4,12 @@ import re
 import abc
 import nltk
 import typing
+import logging
 import collections
 import numpy as np
 
 
+logger = logging.getLogger(__name__)
 match_punc = re.compile('[^\w\s]')
 
 
@@ -216,6 +218,50 @@ class NgramLetterUnit(ProcessorUnit):
                 n_letters.append(token[:ngram])
                 token = token[1:]
         return n_letters
+
+
+class SlidingWindowUnit(ProcessorUnit):
+    """
+    SlidingWindowUnit class.
+
+    Used to get information from a window sliding
+    through the input data.
+    Examples:
+        >>> data = np.array([[0,0,0],[1,1,1],[2,2,2],[3,3,3]])
+        >>> sliding = SlidingWindowUnit()
+        >>> output = sliding.transform(data)
+        >>> output.shape
+        (2, 9)
+        >>> output[0]
+        array([0, 0, 0, 1, 1, 1, 2, 2, 2])
+
+    """
+
+    def __init__(self, sliding_window: int=3):
+        """
+        Class initialization.
+
+        :param sliding_window: sliding window length.
+        """
+        self._sliding_window = sliding_window
+
+    def transform(self, inputs: np.ndarray) -> np.ndarray:
+        """
+        Compute the result of a window sliding through input data.
+
+        :param inputs: sequential input data.
+        :return: window sliding result.
+        """
+        output = []
+        if len(inputs) < self._sliding_window:
+            logger.info(
+                'Input data can not fill user-defined window.')
+            output.append(np.concatenate(inputs, axis=-1))
+        while len(inputs) >= self._sliding_window:
+            output.append(np.concatenate(
+                inputs[:self._sliding_window], axis=-1))
+            inputs = inputs[1:]
+        return np.array(output)
 
 
 class VocabularyUnit(StatefulProcessorUnit):
