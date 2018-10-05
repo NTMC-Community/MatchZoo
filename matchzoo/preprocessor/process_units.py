@@ -381,10 +381,6 @@ class SlidingWindowUnit(ProcessorUnit):
         :return: window sliding result.
         """
         output = []
-        if len(inputs) < self._sliding_window:
-            logger.info(
-                'Input data can not fill user-defined window.')
-            output.append(np.concatenate(inputs, axis=-1))
         while len(inputs) >= self._sliding_window:
             output.append(np.concatenate(
                 inputs[:self._sliding_window], axis=-1))
