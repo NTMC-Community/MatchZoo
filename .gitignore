@@ -12,7 +12,6 @@
 predict.*
 build/
 dist/
-data/
 log/*
 .ipynb_checkpoints/
 matchzoo/log/*
