@@ -2,9 +2,9 @@
 
 import abc
 import typing
-from pathlib import Path
+
 import dill
-import pandas as pd
+from pathlib import Path
 
 from matchzoo import datapack
 
@@ -74,41 +74,6 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             dirpath.mkdir()
 
         dill.dump(self, open(data_file_path, mode='wb'))
-
-    def segmentation(self, inputs: list, stage: str) -> datapack.DataPack:
-        """
-        Convert user input into :class:`DataPack` consist of two tables.
-
-        :param inputs: Raw user inputs, list of tuples.
-        :param stage: `train` or `test`.
-
-        :return: User input into a :class:`DataPack` with content and
-            relation.
-        """
-        col_all = ['id_left', 'id_right', 'text_left', 'text_right']
-        col_relation = ['id_left', 'id_right']
-
-        if stage == 'train':
-            col_relation.append('label')
-            col_all.append('label')
-
-        # prepare data pack.
-        inputs = pd.DataFrame(inputs, columns=col_all)
-
-        # Segment input into 3 dataframes.
-        relation = inputs[col_relation]
-
-        left = inputs[['id_left', 'text_left']].drop_duplicates(
-            ['id_left'])
-        left.set_index('id_left', inplace=True)
-
-        right = inputs[['id_right', 'text_right']].drop_duplicates(
-            ['id_right'])
-        right.set_index('id_right', inplace=True)
-
-        return datapack.DataPack(relation=relation,
-                                 left=left,
-                                 right=right)
 
 
 def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:
