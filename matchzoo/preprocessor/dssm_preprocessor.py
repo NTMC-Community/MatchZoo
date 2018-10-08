@@ -125,7 +125,7 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         hashing = preprocessor.WordHashingUnit(
             self._context['term_index'])
         units.append(hashing)
-        self._datapack = self.segmentation(inputs, stage=stage)
+        self._datapack = self.segment(inputs, stage=stage)
 
         for idx, row in tqdm(self._datapack.left.iterrows()):
             text = row.text_left
