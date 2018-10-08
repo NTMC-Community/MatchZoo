@@ -40,7 +40,8 @@ def test_pair_generator_one(x):
     x0, y0 = generator[0]
     assert x0['text_left'].tolist() == [[1, 2], [1, 2]]
     assert x0['text_right'].tolist() == [[3, 4, 5], [1, 2, 3]]
-    assert x0['ids'].tolist() == [['qid0', 'did2'], ['qid0', 'did0']]
+    assert x0['id_left'].tolist() == ['qid0', 'qid0']
+    assert x0['id_right'].tolist() == ['did2', 'did0']
     assert y0.tolist() == [2, 0]
 
 def test_pair_generator_multi(x):
@@ -53,7 +54,6 @@ def test_pair_generator_multi(x):
     x0, y0 = generator[0]
     assert x0['text_left'].tolist() == [[1, 2], [1, 2], [1, 2]]
     assert x0['text_right'].tolist() == [[3, 4, 5], [1, 2, 3], [2, 3, 4]]
-    assert x0['ids'].tolist() == [['qid0', 'did2'],
-                                  ['qid0', 'did0'],
-                                  ['qid0', 'did1']]
+    assert x0['id_left'].tolist() == ['qid0', 'qid0', 'qid0']
+    assert x0['id_right'].tolist() == ['did2', 'did0', 'did1']
     assert y0.tolist() == [2, 0, 1]

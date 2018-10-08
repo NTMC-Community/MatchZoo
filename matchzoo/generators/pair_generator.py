@@ -44,8 +44,10 @@ class PairGenerator(engine.BaseGenerator):
         [[1, 2], [1, 2]]
         >>> x['text_right'].tolist()
         [[3, 4], [2, 3]]
-        >>> x['ids'].tolist()
-        [['qid0', 'did1'], ['qid0', 'did0']]
+        >>> x['id_left'].tolist()
+        ['qid0', 'qid0']
+        >>> x['id_right'].tolist()
+        ['did1', 'did0']
         >>> y.tolist()
         [1.0, 0.0]
 
@@ -140,7 +142,8 @@ class PairGenerator(engine.BaseGenerator):
         id_left = self._relation.iloc[trans_index, 0]
         id_right = self._relation.iloc[trans_index, 1]
 
-        [batch_x['ids'].append(list(item)) for item in zip(id_left, id_right)]
+        batch_x['id_left'] = id_left
+        batch_x['id_right'] = id_right
 
         for column in self._left.columns:
             batch_x[column] = self._left.loc[id_left, column].tolist()
