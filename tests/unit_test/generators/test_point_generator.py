@@ -42,9 +42,8 @@ def test_point_generator(x, task, stage):
     generator = PointGenerator(x, task, batch_size, stage, shuffle)
     assert len(generator) == 1
     for x, y in generator:
-        assert x['ids'].tolist() == [['qid0', 'did0'],
-                            ['qid1', 'did1'],
-                            ['qid1', 'did0']]
+        assert x['id_left'].tolist() == ['qid0', 'qid1', 'qid1']
+        assert x['id_right'].tolist() == ['did0', 'did1', 'did0']
         assert x['text_left'].tolist() == [[1, 2], [2, 3], [2, 3]]
         assert x['text_right'].tolist() == [[2, 3, 4], [3, 4, 5], [2, 3, 4]]
         if stage == 'test':

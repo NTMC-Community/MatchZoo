@@ -13,4 +13,5 @@ from .process_units import (
     SlidingWindowUnit,
     FixedLengthUnit
 )
+from .segment_mixin import SegmentMixin
 from .dssm_preprocessor import DSSMPreprocessor
