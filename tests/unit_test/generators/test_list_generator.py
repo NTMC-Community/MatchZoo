@@ -37,10 +37,12 @@ def test_list_generator(x, stage):
     assert len(generator) == 2
     x0, y0 = generator[0]
     x1, y1 = generator[1]
-    assert x0['ids'].tolist() == [['qid0', 'did0']]
+    assert x0['id_left'].tolist() == ['qid0']
+    assert x0['id_right'].tolist() == ['did0']
     assert x0['text_left'].tolist() == [[1, 2]]
     assert x0['text_right'].tolist() == [[2, 3, 4]]
-    assert x1['ids'].tolist() == [['qid1', 'did1'], ['qid1', 'did0']]
+    assert x1['id_left'].tolist() == ['qid1', 'qid1']
+    assert x1['id_right'].tolist() == ['did1', 'did0']
     assert x1['text_left'].tolist() == [[2, 3], [2, 3]]
     assert x1['text_right'].tolist() == [[3, 4, 5], [2, 3, 4]]
     if stage == 'test':
