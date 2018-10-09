@@ -1,5 +1,6 @@
 """ArcI Preprocessor."""
 import os
+import errno
 
 import typing
 import logging
@@ -104,13 +105,17 @@ class ArcIPreprocessor(engine.BasePreprocessor):
         # Initialize a vocabulary process unit to build words vocab.
         self._vocab_unit.fit(vocab)
 
-        if os.path.isfile(self._embedding_file):
+        if len(self._embedding_file) == 0:
+            pass
+        elif os.path.isfile(self._embedding_file):
             embed_module = Embedding(embedding_file=self._embedding_file)
             embed_module.build(self._vocab_unit.state['term_index'])
             self._context['embedding_mat'] = embed_module.embedding_mat
         else:
-            logger.info("Embedding file [{}] not found."
-                        .format(self._embedding_file))
+            logger.error("Embedding file [{}] not found."
+                         .format(self._embedding_file))
+            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
+                                    self._embedding_file)
 
         # Store the fitted parameters in context.
         self._context['term_index'] = self._vocab_unit.state['term_index']

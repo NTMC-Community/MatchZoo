@@ -44,3 +44,10 @@ def test_arci_preprocessor_embed(train_inputs, validation_inputs):
     assert len(rv_valid.left) == 1
     assert len(rv_valid.right) == 1
     assert len(rv_valid.relation) == 1
+
+def test_arci_preprocessor_embed_err(train_inputs, validation_inputs):
+    with pytest.raises(FileNotFoundError):
+        arci_preprocessor = ArcIPreprocessor("tests/sample/embed_word_err.txt")
+        rv_train = arci_preprocessor.fit_transform(
+            train_inputs,
+            stage='train')
