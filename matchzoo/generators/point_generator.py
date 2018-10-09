@@ -36,8 +36,10 @@ class PointGenerator(engine.BaseGenerator):
         [[1, 2]]
         >>> x['text_right'].tolist()
         [[2, 3]]
-        >>> x['ids'].tolist()
-        [['qid0', 'did0']]
+        >>> x['id_left'].tolist()
+        ['qid0']
+        >>> x['id_right'].tolist()
+        ['did0']
         >>> y.tolist()
         [[0.0, 1.0]]
 
@@ -78,7 +80,7 @@ class PointGenerator(engine.BaseGenerator):
         batch_y = None
 
         columns = self._left.columns.values.tolist() + \
-            self._right.columns.values.tolist() + ['ids']
+            self._right.columns.values.tolist() + ['id_left', 'id_right']
         for column in columns:
             batch_x[column] = []
 
@@ -103,7 +105,8 @@ class PointGenerator(engine.BaseGenerator):
         id_left = self._relation.iloc[index_array, 0]
         id_right = self._relation.iloc[index_array, 1]
 
-        [batch_x['ids'].append(list(item)) for item in zip(id_left, id_right)]
+        batch_x['id_left'] = id_left
+        batch_x['id_right'] = id_right
 
         for column in self._left.columns:
             batch_x[column] = self._left.loc[id_left, column].tolist()

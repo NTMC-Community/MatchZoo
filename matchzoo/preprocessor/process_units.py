@@ -7,7 +7,7 @@ import typing
 import collections
 import numpy as np
 
-match_punc = re.compile('[^\w\s]')
+match_punc = re.compile(r'[^\w\s]')
 
 
 class ProcessorUnit(metaclass=abc.ABCMeta):
