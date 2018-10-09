@@ -47,8 +47,6 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
     def __init__(self, embedding_file: str=''):
         """Initialization."""
         self._datapack = None
-        self._cache_left = []
-        self._cache_right = []
         self._context = {}
         self._embedding_file = embedding_file
         self._vocab_unit = preprocessor.VocabularyUnit()
@@ -90,8 +88,6 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
-            # cache words for transformation.
-            self._cache_left.append((row.name, text))
 
         for idx, row in tqdm(right.iterrows()):
             # For each piece of text, apply process unit sequentially.
@@ -99,8 +95,6 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
-            # cache words for transformation.
-            self._cache_right.append((row.name, text))
 
         # Initialize a vocabulary process unit to build words vocab.
         self._vocab_unit.fit(vocab)
@@ -143,33 +137,23 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         logger.info(f"Start processing input data for {stage} stage.")
 
-        if stage == 'train':
-            # use cached data directly.
-            for idx, word in tqdm(self._cache_left):
-                word = self._vocab_unit.transform(word)
-                self._datapack.left.at[idx, 'text_left'] = word
-            for idx, word in tqdm(self._cache_right):
-                word = self._vocab_unit.transform(word)
-                self._datapack.right.at[idx, 'text_right'] = word
-            return self._datapack
-        else:
-            # do preprocessing from scrach.
-            units = self._prepare_stateless_units()
-            units.append(self._vocab_unit)
-            self._datapack = self.segment(inputs, stage='test')
+        # do preprocessing from scrach.
+        units = self._prepare_stateless_units()
+        units.append(self._vocab_unit)
+        self._datapack = self.segment(inputs, stage=stage)
 
-            left = self._datapack.left
-            right = self._datapack.right
+        left = self._datapack.left
+        right = self._datapack.right
 
-            for idx, row in tqdm(left.iterrows()):
-                text = row.text_left
-                for unit in units:
-                    text = unit.transform(text)
-                self._datapack.left.at[idx, 'text_left'] = text
-            for idx, row in tqdm(right.iterrows()):
-                text = row.text_right
-                for unit in units:
-                    text = unit.transform(text)
-                self._datapack.right.at[idx, 'text_right'] = text
+        for idx, row in tqdm(left.iterrows()):
+            text = row.text_left
+            for unit in units:
+                text = unit.transform(text)
+            self._datapack.left.at[idx, 'text_left'] = text
+        for idx, row in tqdm(right.iterrows()):
+            text = row.text_right
+            for unit in units:
+                text = unit.transform(text)
+            self._datapack.right.at[idx, 'text_right'] = text
 
-            return self._datapack
+        return self._datapack
