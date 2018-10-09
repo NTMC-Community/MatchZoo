@@ -11,7 +11,7 @@ from tqdm import tqdm
 logger = logging.getLogger(__name__)
 
 
-class DSSMPreprocessor(engine.BasePreprocessor):
+class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
     """
     DSSM preprocessor helper.
 
@@ -71,7 +71,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
-        self._datapack = self.segmentation(inputs, stage='train')
+        self._datapack = self.segment(inputs, stage='train')
 
         # Loop through user input to generate tri-letters.
         # 1. Used for build vocabulary of tri-letters (get dimension).
@@ -148,7 +148,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             # do preprocessing from scrach.
             units = self._prepare_stateless_units()
             units.append(hashing)
-            self._datapack = self.segmentation(inputs, stage='test')
+            self._datapack = self.segment(inputs, stage='test')
 
             left = self._datapack.left
             right = self._datapack.right

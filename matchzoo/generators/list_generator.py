@@ -48,8 +48,10 @@ class ListGenerator(engine.BaseGenerator):
         [[1, 2], [1, 2], [1, 2]]
         >>> x['text_right'].tolist()
         [[2, 3], [3, 4], [4, 5]]
-        >>> x['ids'].tolist()
-        [['qid0', 'did0'], ['qid0', 'did1'], ['qid0', 'did2']]
+        >>> x['id_left'].tolist()
+        ['qid0', 'qid0', 'qid0']
+        >>> x['id_right'].tolist()
+        ['did0', 'did1', 'did2']
         >>> y.tolist()
         [0.0, 1.0, 2.0]
 
@@ -110,13 +112,14 @@ class ListGenerator(engine.BaseGenerator):
             batch_y = self._relation.iloc[trans_index, 2].values
 
         columns = self._left.columns.values.tolist() + \
-            self._right.columns.values.tolist() + ['ids']
+            self._right.columns.values.tolist() + ['id_left', 'id_right']
         batch_x = dict([(column, []) for column in columns])
 
         id_left = self._relation.iloc[trans_index, 0]
         id_right = self._relation.iloc[trans_index, 1]
 
-        [batch_x['ids'].append(list(item)) for item in zip(id_left, id_right)]
+        batch_x['id_left'] = id_left
+        batch_x['id_right'] = id_right
 
         for column in self._left.columns:
             batch_x[column] = self._left.loc[id_left, column].tolist()
