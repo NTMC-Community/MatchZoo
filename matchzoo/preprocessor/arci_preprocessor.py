@@ -14,7 +14,7 @@ from matchzoo.embedding import Embedding
 logger = logging.getLogger(__name__)
 
 
-class ArcIPreprocessor(engine.BasePreprocessor):
+class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
     """
     ArcI preprocessor helper.
 
@@ -75,7 +75,7 @@ class ArcIPreprocessor(engine.BasePreprocessor):
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
-        self._datapack = self.segmentation(inputs, stage='train')
+        self._datapack = self.segment(inputs, stage='train')
 
         # Loop through user input to generate words.
         # 1. Used for build vocabulary of words (get dimension).
@@ -156,7 +156,7 @@ class ArcIPreprocessor(engine.BasePreprocessor):
             # do preprocessing from scrach.
             units = self._prepare_stateless_units()
             units.append(self._vocab_unit)
-            self._datapack = self.segmentation(inputs, stage='test')
+            self._datapack = self.segment(inputs, stage='test')
 
             left = self._datapack.left
             right = self._datapack.right
