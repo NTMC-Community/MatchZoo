@@ -1,0 +1,7 @@
+7 5
+asia 1 2 3 4 5
+beijing 1 1 1 1 1
+hot 2 2 2 2 2
+east 3 3 3 3 3
+capital 4 4 4 4 4
+china 5 5 5 5 5
