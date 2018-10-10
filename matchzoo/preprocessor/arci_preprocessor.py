@@ -18,8 +18,6 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
     """
     ArcI preprocessor helper.
 
-    TODO: NEED REFACTORING.
-
     Example:
         >>> train_inputs = [
         ...     ("id0", "id1", "beijing", "Beijing is capital of China", 1),
@@ -79,17 +77,14 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         # 1. Used for build vocabulary of words (get dimension).
         # 2. Cached words can be further used to perform input
         #    transformation.
-        left = self._datapack.left
-        right = self._datapack.right
-
-        for idx, row in tqdm(left.iterrows()):
+        for idx, row in tqdm(self._datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
-        for idx, row in tqdm(right.iterrows()):
+        for idx, row in tqdm(self._datapack.right.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_right
             for unit in units:
@@ -134,23 +129,21 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         if not self._context.get('term_index'):
             raise ValueError(
                 "Please fit term_index before apply transofm function.")
+        if stage == 'test':
+            self._datapack = self.segment(inputs, stage=stage)
 
         logger.info(f"Start processing input data for {stage} stage.")
 
         # do preprocessing from scrach.
         units = self._prepare_stateless_units()
         units.append(self._vocab_unit)
-        self._datapack = self.segment(inputs, stage=stage)
 
-        left = self._datapack.left
-        right = self._datapack.right
-
-        for idx, row in tqdm(left.iterrows()):
+        for idx, row in tqdm(self._datapack.left.iterrows()):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             self._datapack.left.at[idx, 'text_left'] = text
-        for idx, row in tqdm(right.iterrows()):
+        for idx, row in tqdm(self._datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
