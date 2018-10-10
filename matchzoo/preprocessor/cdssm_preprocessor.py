@@ -15,21 +15,15 @@ logger = logging.getLogger(__name__)
 class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
     """CDSSM preprocessor helper."""
 
-    def __init__(self, sliding_window: int=3, window_num: int=5):
+    def __init__(self, sliding_window: int=3):
         """Initialization.
 
         :param sliding_window: sliding window length.
-        :param window_num: fixed window number.
-        :param pad_value: padding value.
-        :param pad_mode: padding mode, `pre` or `post`.
-        :param truncate_mode: truncate mode, `pre` or `post`.
         :param remove: user-defined removed tokens.
         """
         self._datapack = None
         self._context = {}
         self._sliding_window = sliding_window
-        self._window_num = window_num
-        self._length = sliding_window + window_num - 1
 
     def _prepare_process_units(self) -> list:
         """Prepare needed process units."""
@@ -51,34 +45,24 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         """
         vocab = []
         units = self._prepare_process_units()
-        ngram_unit = preprocessor.NgramLetterUnit()
+        units.append(preprocessor.NgramLetterUnit())
 
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
         self._datapack = self.segment(inputs, stage='train')
 
-        # Loop through user input to generate tri-letters.
-        # 1. Used for build vocabulary of tri-letters (get dimension).
-        # 2. Cached tri-letters can be further used to perform input
-        #    transformation.
-        left = self._datapack.left
-        right = self._datapack.right
-
-        for idx, row in tqdm(left.iterrows()):
+        for idx, row in tqdm(self._datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
-            text = ngram_unit.transform(text)
             vocab.extend(text)
 
-        for idx, row in tqdm(right.iterrows()):
-            # For each piece of text, apply process unit sequentially.
+        for idx, row in tqdm(self._datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
-            text = ngram_unit.transform(text)
             vocab.extend(text)
 
         # Initialize a vocabulary process unit to build tri-letter vocab.
@@ -87,11 +71,9 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         # Store the fitted parameters in context.
         self._context['term_index'] = vocab_unit.state['term_index']
-        ngram_num = len(vocab_unit.state['term_index']) + 1
-        self._context['input_shapes'] = [(self._window_num,
-                                          ngram_num*self._sliding_window),
-                                         (self._window_num,
-                                          ngram_num*self._sliding_window)]
+        dim_triletter = len(vocab_unit.state['term_index']) + 1
+        self._context['input_shapes'] = [(None, dim_triletter * self._sliding_window),
+                                         (None, dim_triletter * self._sliding_window)]
         self._datapack.context = self._context
         return self
 
@@ -113,14 +95,16 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         if not self._context.get('term_index'):
             raise ValueError(
                 "Please fit term_index before apply transofm function.")
+        if stage == 'test':
+            self._datapack = self.segment(inputs, stage=stage)
+
 
         # prepare pipeline unit.
         units = self._prepare_process_units()
         sliding_unit = preprocessor.SlidingWindowUnit(self._sliding_window)
         ngram_unit = preprocessor.NgramLetterUnit()
-        hash_unit = preprocessor.WordHashingUnit(
-            self._context['term_index'])
-        self._datapack = self.segment(inputs, stage=stage)
+        hash_unit = preprocessor.WordHashingUnit(self._context['term_index'])
+        
         self._datapack.context = self._context
 
         logger.info(f"Start processing input data for {stage} stage.")
