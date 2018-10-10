@@ -48,19 +48,19 @@ class MultiPerspectiveLayer(Layer):
         	                            trainable=True)
             if self._strategies.get('maxpooling'):
         	self.maxp = self.add_weight(name='maxpooling',
-        		                        shape=(input_shape[0][1], self._output_dim),
-        		                        initializer='uniform',
-        		                        trainable=True)
+        		                    shape=(input_shape[0][1], self._output_dim),
+        		                    initializer='uniform',
+        		                    trainable=True)
             if self._strategies.get('attentive'):
         	self.atte = self.add_weight(name='attentive',
-        		                        shape=(input_shape[0][1], self._output_dim),
-        		                        initializer='uniform',
-        		                        trainable=True)
+        		                    shape=(input_shape[0][1], self._output_dim),
+        		                    initializer='uniform',
+        		                    trainable=True)
             if self._strategies.get('max-attentive'):
         	self.maxa = self.add_weight(name='max-attentive',
-        		                        shape=(input_shape[0][1], self._output_dim),
-        		                        initializer='uniform',
-        		                        trainable=True)
+        		                    shape=(input_shape[0][1], self._output_dim),
+        		                    initializer='uniform',
+        		                    trainable=True)
             super(MultiPerspectiveLayer, self).build(input_shape)
 
     def call(self, x: list):
