@@ -123,7 +123,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         # prepare pipeline unit.
         units = self._prepare_process_units()
-        slide_unit = preprocessor.SlidingWindowUnit(self._sliding_window)
+        units.append(preprocessor.SlidingWindowUnit(self._sliding_window))
         ngram_unit = preprocessor.NgramLetterUnit()
         hash_unit = preprocessor.WordHashingUnit(self._context['term_index'])
 
@@ -133,7 +133,6 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
-            text = slide_unit.transform(text)
             # apply word ngram transformation towards to term in the window.
             text = [ngram_unit.transform(term) for term in text]
             # Flatten.
@@ -146,7 +145,6 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
-            text = slide_unit.transform(text)
             text = [ngram_unit.transform(term) for term in text]
             text = list(itertools.chain(*text))
             text = hash_unit.transform(text)
