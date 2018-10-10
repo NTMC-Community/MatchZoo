@@ -32,19 +32,3 @@ def test_cdssm_preprocessor(train_inputs, validation_inputs):
     assert len(rv_valid.left) == 1
     assert len(rv_valid.right) == 1
     assert len(rv_valid.relation) == 1
-    with pytest.raises(ValueError):
-        cdssm_preprocessor = CDSSMPreprocessor(truncate_mode='a')
-    cdssm_preprocessor = CDSSMPreprocessor(truncate_mode='post')
-    rv_train = cdssm_preprocessor.fit_transform(train_inputs, stage='train')
-    with pytest.raises(ValueError):
-        cdssm_preprocessor = CDSSMPreprocessor(pad_mode='a')
-    cdssm_preprocessor = CDSSMPreprocessor(pad_mode='post')
-    rv_train = cdssm_preprocessor.fit_transform(train_inputs, stage='train')
-    cdssm_preprocessor = CDSSMPreprocessor()
-    rv_train = cdssm_preprocessor.fit_transform(
-        train_inputs,
-        stage='train')
-    cdssm_preprocessor = CDSSMPreprocessor()
-    rv_train = cdssm_preprocessor.fit_transform(
-        train_inputs,
-        stage='train')
