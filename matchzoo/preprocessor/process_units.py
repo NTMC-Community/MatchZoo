@@ -197,6 +197,7 @@ class NgramLetterUnit(ProcessorUnit):
     """
 
     def __init__(self, remove: list=[]):
+        """Initialization."""
         self._remove = remove
 
     def transform(self, tokens: list, ngram: int=3) -> list:
@@ -277,6 +278,7 @@ class VocabularyUnit(StatefulProcessorUnit):
             return 0
 
     def __init__(self, remove: list=[]):
+        """Initialization."""
         super(VocabularyUnit, self).__init__()
         self._remove = remove
 

@@ -18,7 +18,15 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
     def __init__(self, sliding_window: int=3, window_num: int=5,
                  pad_value: str='UNKNOW', pad_mode: str='pre',
                  truncate_mode: str='pre', remove: list=[]):
-        """Initialization."""
+        """Initialization.
+
+        :param sliding_window: sliding window length.
+        :param window_num: fixed window number.
+        :param pad_value: padding value.
+        :param pad_mode: padding mode, `pre` or `post`.
+        :param truncate_mode: truncate mode, `pre` or `post`.
+        :param remove: user-defined removed tokens.
+        """
         self._datapack = None
         if truncate_mode not in ['pre', 'post']:
             raise ValueError('{} is not a vaild '
@@ -49,6 +57,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
     def fit(self, inputs: typing.List[tuple]):
         """
         Fit pre-processing context for transformation.
+
+        Can be simplified by compute vocabulary term and index.
 
         :param inputs: Inputs to be preprocessed.
         :return: class:`CDSSMPreprocessor` instance.
@@ -105,7 +115,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         stage: str
     ) -> datapack.DataPack:
         """
-        Apply transformation on data, create `tri-letter` representation.
+        Apply transformation on data, create `letter-trigram` representation.
 
         :param inputs: Inputs to be preprocessed.
         :param stage: Pre-processing stage, `train` or `test`.
