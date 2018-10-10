@@ -6,14 +6,37 @@ from matchzoo import datapack
 
 import typing
 import logging
-import numpy as np
+import itertools
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
 
 class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
-    """CDSSM preprocessor helper."""
+    """CDSSM preprocessor helper.
+
+    Example:
+        >>> train_inputs = [
+        ...     ("id0", "id1", "beijing", "Beijing is capital of China", 1),
+        ...     ("id0", "id2", "beijing", "China is in east Asia", 0),
+        ...     ("id0", "id3", "beijing", "Summer in Beijing is hot.", 1)
+        ... ]
+        >>> cdssm_preprocessor = CDSSMPreprocessor()
+        >>> rv_train = cdssm_preprocessor.fit_transform(
+        ...     train_inputs,
+        ...     stage='train')
+        >>> type(rv_train)
+        <class 'matchzoo.datapack.DataPack'>
+        >>> test_inputs = [("id0",
+        ...                 "id4",
+        ...                 "beijing",
+        ...                 "I visted beijing yesterday.")]
+        >>> rv_test = cdssm_preprocessor.fit_transform(
+        ...     test_inputs,
+        ...     stage='test')
+        >>> type(rv_test)
+        <class 'matchzoo.datapack.DataPack'>
+    """
 
     def __init__(self, sliding_window: int=3):
         """Initialization.
@@ -71,9 +94,9 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         # Store the fitted parameters in context.
         self._context['term_index'] = vocab_unit.state['term_index']
-        dim_triletter = len(vocab_unit.state['term_index']) + 1
-        self._context['input_shapes'] = [(None, dim_triletter * self._sliding_window),
-                                         (None, dim_triletter * self._sliding_window)]
+        dim = len(vocab_unit.state['term_index']) + 1
+        self._context['input_shapes'] = [(None, dim * self._sliding_window),
+                                         (None, dim * self._sliding_window)]
         self._datapack.context = self._context
         return self
 
@@ -98,14 +121,11 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         if stage == 'test':
             self._datapack = self.segment(inputs, stage=stage)
 
-
         # prepare pipeline unit.
         units = self._prepare_process_units()
-        sliding_unit = preprocessor.SlidingWindowUnit(self._sliding_window)
+        slide_unit = preprocessor.SlidingWindowUnit(self._sliding_window)
         ngram_unit = preprocessor.NgramLetterUnit()
         hash_unit = preprocessor.WordHashingUnit(self._context['term_index'])
-        
-        self._datapack.context = self._context
 
         logger.info(f"Start processing input data for {stage} stage.")
 
@@ -113,21 +133,23 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
-            text = sliding_unit.transform(text)
-            if len(text):
-                text = np.apply_along_axis(lambda x: np.concatenate(
-                    [hash_unit.transform(ngram_unit.transform([w])) for w in x],
-                    axis=-1), -1, text)
+            text = slide_unit.transform(text)
+            # apply word ngram transformation towards to term in the window.
+            text = [ngram_unit.transform(term) for term in text]
+            # Flatten.
+            text = list(itertools.chain(*text))
+            # Word hashing.
+            text = hash_unit.transform(text)
             self._datapack.left.at[idx, 'text_left'] = text
+
         for idx, row in tqdm(self._datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
-            text = sliding_unit.transform(text)
-            if len(text):
-                text = np.apply_along_axis(lambda x: np.concatenate(
-                    [hash_unit.transform(ngram_unit.transform([w])) for w in x],
-                    axis=-1), -1, text)
+            text = slide_unit.transform(text)
+            text = [ngram_unit.transform(term) for term in text]
+            text = list(itertools.chain(*text))
+            text = hash_unit.transform(text)
             self._datapack.right.at[idx, 'text_right'] = text
 
         return self._datapack
