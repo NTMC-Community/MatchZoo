@@ -274,6 +274,8 @@ class VocabularyUnit(StatefulProcessorUnit):
         """Build a :class:`TermIndex` and a :class:`IndexTerm`."""
         self._state['term_index'] = self.TermIndex()
         self._state['index_term'] = self.IndexTerm()
+        # convert high dimension tokens to 1d tokens
+        tokens = np.array(tokens).flatten().tolist()
         terms = set(tokens)
         for index, term in enumerate(terms):
             self._state['term_index'][term] = index + 1
@@ -353,11 +355,9 @@ class SlidingWindowUnit(ProcessorUnit):
     through the input data.
 
     Examples:
-        >>> data = np.array([[0,0,0],[1,1,1],[2,2,2],[3,3,3]])
+        >>> data = [[0,0,0],[1,1,1],[2,2,2],[3,3,3]]
         >>> sliding = SlidingWindowUnit()
         >>> output = sliding.transform(data)
-        >>> output.shape
-        (2, 9)
         >>> output[0]
         array([0, 0, 0, 1, 1, 1, 2, 2, 2])
 
@@ -371,7 +371,7 @@ class SlidingWindowUnit(ProcessorUnit):
         """
         self._sliding_window = sliding_window
 
-    def transform(self, inputs: np.ndarray) -> np.ndarray:
+    def transform(self, inputs: list) -> list:
         """
         Compute the result of a window sliding through input data.
 
@@ -382,11 +382,14 @@ class SlidingWindowUnit(ProcessorUnit):
         :return: window sliding result.
         """
         output = []
+        inputs = np.array(inputs)
+        if len(inputs.shape) == 1:
+            inputs = np.expand_dims(inputs, -1)
         while len(inputs) >= self._sliding_window:
             output.append(np.concatenate(
                 inputs[:self._sliding_window], axis=-1))
             inputs = inputs[1:]
-        return np.array(output)
+        return np.array(output).tolist()
 
 
 class FixedLengthUnit(ProcessorUnit):
