@@ -196,6 +196,10 @@ class NgramLetterUnit(ProcessorUnit):
 
     """
 
+    def __init__(self, remove: list=[]):
+        """Initialization."""
+        self._remove = remove
+
     def transform(self, tokens: list, ngram: int=3) -> list:
         """
         Transform token into tri-letter.
@@ -210,6 +214,9 @@ class NgramLetterUnit(ProcessorUnit):
         """
         n_letters = []
         for token in tokens:
+            if token in self._remove:
+                n_letters.append(token)
+                continue
             token = '#' + token + '#'
             while len(token) >= ngram:
                 n_letters.append(token[:ngram])
@@ -270,11 +277,19 @@ class VocabularyUnit(StatefulProcessorUnit):
             """Map out-of-vocabulary terms to index 0."""
             return 0
 
+    def __init__(self, remove: list=[]):
+        """Initialization."""
+        super(VocabularyUnit, self).__init__()
+        self._remove = remove
+
     def fit(self, tokens: list):
         """Build a :class:`TermIndex` and a :class:`IndexTerm`."""
         self._state['term_index'] = self.TermIndex()
         self._state['index_term'] = self.IndexTerm()
-        terms = set(tokens)
+        if len(self._remove):
+            terms = set(tokens) - set(self._remove)
+        else:
+            terms = set(tokens)
         for index, term in enumerate(terms):
             self._state['term_index'][term] = index + 1
             self._state['index_term'][index + 1] = term
@@ -382,6 +397,9 @@ class SlidingWindowUnit(ProcessorUnit):
         :return: window sliding result.
         """
         output = []
+        inputs = np.array(inputs)
+        if len(inputs.shape) == 1:
+            inputs = np.expand_dims(inputs, -1)
         while len(inputs) >= self._sliding_window:
             output.append(np.concatenate(
                 inputs[:self._sliding_window], axis=-1))
