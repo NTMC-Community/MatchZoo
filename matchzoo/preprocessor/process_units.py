@@ -366,9 +366,11 @@ class SlidingWindowUnit(ProcessorUnit):
     through the input data.
 
     Examples:
-        >>> data = [[0,0,0],[1,1,1],[2,2,2],[3,3,3]]
+        >>> data = np.array([[0,0,0],[1,1,1],[2,2,2],[3,3,3]])
         >>> sliding = SlidingWindowUnit()
         >>> output = sliding.transform(data)
+        >>> output.shape
+        (2, 9)
         >>> output[0]
         array([0, 0, 0, 1, 1, 1, 2, 2, 2])
 
