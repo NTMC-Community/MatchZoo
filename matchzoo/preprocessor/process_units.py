@@ -196,6 +196,9 @@ class NgramLetterUnit(ProcessorUnit):
 
     """
 
+    def __init__(self, remove: list=[]):
+        self._remove = remove
+
     def transform(self, tokens: list, ngram: int=3) -> list:
         """
         Transform token into tri-letter.
@@ -210,6 +213,9 @@ class NgramLetterUnit(ProcessorUnit):
         """
         n_letters = []
         for token in tokens:
+            if token in self._remove:
+                n_letters.append(token)
+                continue
             token = '#' + token + '#'
             while len(token) >= ngram:
                 n_letters.append(token[:ngram])
@@ -270,13 +276,18 @@ class VocabularyUnit(StatefulProcessorUnit):
             """Map out-of-vocabulary terms to index 0."""
             return 0
 
+    def __init__(self, remove: list=[]):
+        super(VocabularyUnit, self).__init__()
+        self._remove = remove
+
     def fit(self, tokens: list):
         """Build a :class:`TermIndex` and a :class:`IndexTerm`."""
         self._state['term_index'] = self.TermIndex()
         self._state['index_term'] = self.IndexTerm()
-        # convert high dimension tokens to 1d tokens
-        tokens = np.array(tokens).flatten().tolist()
-        terms = set(tokens)
+        if len(self._remove):
+            terms = set(tokens) - set(self._remove)
+        else:
+            terms = set(tokens)
         for index, term in enumerate(terms):
             self._state['term_index'][term] = index + 1
             self._state['index_term'][index + 1] = term
@@ -371,7 +382,7 @@ class SlidingWindowUnit(ProcessorUnit):
         """
         self._sliding_window = sliding_window
 
-    def transform(self, inputs: list) -> list:
+    def transform(self, inputs: np.ndarray) -> np.ndarray:
         """
         Compute the result of a window sliding through input data.
 
@@ -389,7 +400,7 @@ class SlidingWindowUnit(ProcessorUnit):
             output.append(np.concatenate(
                 inputs[:self._sliding_window], axis=-1))
             inputs = inputs[1:]
-        return np.array(output).tolist()
+        return np.array(output)
 
 
 class FixedLengthUnit(ProcessorUnit):
