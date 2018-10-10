@@ -70,20 +70,17 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         # Convert user input into a datapack object.
         self._datapack = self.segment(inputs, stage='train')
-        
-        left = self._datapack.left
-        right = self._datapack.right
 
         # Loop through user input to generate tri-letters.
         # Used for build vocabulary of tri-letters (get dimension).
-        for idx, row in tqdm(left.iterrows()):
+        for idx, row in tqdm(self._datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
-        for idx, row in tqdm(right.iterrows()):
+        for idx, row in tqdm(self._datapack.right.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_right
             for unit in units:
@@ -119,6 +116,8 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         if not self._context.get('term_index'):
             raise ValueError(
                 "Please fit term_index before apply transofm function.")
+        if stage == 'test':
+            self._datapack = self.segment(inputs, stage='test')
 
         logger.info(f"Start processing input data for {stage} stage.")
 
@@ -128,17 +127,13 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         hashing = preprocessor.WordHashingUnit(
             self._context['term_index'])
         units.append(hashing)
-        self._datapack = self.segment(inputs, stage=stage)
-        
-        left = self._datapack.left
-        right = self._datapack.right
 
-        for idx, row in tqdm(left.iterrows()):
+        for idx, row in tqdm(self._datapack.left.iterrows()):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             self._datapack.left.at[idx, 'text_left'] = text
-        for idx, row in tqdm(right.iterrows()):
+        for idx, row in tqdm(self._datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
