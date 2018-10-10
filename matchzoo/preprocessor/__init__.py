@@ -15,3 +15,4 @@ from .process_units import (
 )
 from .segment_mixin import SegmentMixin
 from .dssm_preprocessor import DSSMPreprocessor
+from .arci_preprocessor import ArcIPreprocessor
