@@ -135,10 +135,10 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
                 text = unit.transform(text)
             # apply word ngram transformation towards to term in the window.
             text = [ngram_unit.transform(term) for term in text]
+            # Word hashing for each list of tri-letters.
+            text = [hash_unit.transform(term) for term in text]
             # Flatten.
             text = list(itertools.chain(*text))
-            # Word hashing.
-            text = hash_unit.transform(text)
             self._datapack.left.at[idx, 'text_left'] = text
 
         for idx, row in tqdm(self._datapack.right.iterrows()):
@@ -146,8 +146,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             for unit in units:
                 text = unit.transform(text)
             text = [ngram_unit.transform(term) for term in text]
+            text = [hash_unit.transform(term) for term in text]
             text = list(itertools.chain(*text))
-            text = hash_unit.transform(text)
             self._datapack.right.at[idx, 'text_right'] = text
 
         return self._datapack
