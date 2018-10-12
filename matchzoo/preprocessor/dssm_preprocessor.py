@@ -1,12 +1,13 @@
 """DSSM Preprocessor."""
 
+import typing
+import logging
+
+from tqdm import tqdm
+
 from matchzoo import engine
 from matchzoo import preprocessor
 from matchzoo import datapack
-
-import typing
-import logging
-from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
