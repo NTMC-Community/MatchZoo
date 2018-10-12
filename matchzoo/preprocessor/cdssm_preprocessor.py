@@ -118,7 +118,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             raise ValueError(
                 "Please fit term_index before apply transofm function.")
         if stage == 'test':
-            self._datapack = self.segment(inputs, stage=stage)
+            self._datapack = self.segment(inputs, stage='test')
 
         # prepare pipeline unit.
         units = self._prepare_process_units()
