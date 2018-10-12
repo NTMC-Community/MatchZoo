@@ -10,14 +10,12 @@ from matchzoo import models
 from matchzoo import engine
 from matchzoo import tasks
 
-
 @pytest.fixture
 def train():
     path = os.path.dirname(__file__)
     with open(os.path.join(path, '../sample/train_rank.txt')) as f:
         train = [tuple(map(str, i.strip().split('\t'))) for i in f]
     return train
-
 
 @pytest.fixture
 def test():
@@ -26,16 +24,13 @@ def test():
         test = [tuple(map(str, i.strip().split('\t'))) for i in f]
     return test
 
-
 @pytest.fixture
 def task() -> engine.BaseTask:
     return tasks.Ranking()
 
-
 @pytest.fixture
 def cdssm_preprocessor():
     return preprocessor.CDSSMPreprocessor()
-
 
 @pytest.fixture
 def processed_train(train, cdssm_preprocessor) -> datapack.DataPack:
@@ -43,12 +38,10 @@ def processed_train(train, cdssm_preprocessor) -> datapack.DataPack:
     cdssm_preprocessor.save('.tmpdir')
     return preprocessed_train
 
-
 @pytest.fixture
 def processed_test(test) -> datapack.DataPack:
     cdssm_preprocessor = engine.load_preprocessor('.tmpdir')
     return cdssm_preprocessor.fit_transform(test, stage='test')
-
 
 @pytest.fixture(params=['point', 'pair'])
 def train_generator(request, processed_train, task) -> engine.BaseGenerator:
@@ -59,14 +52,12 @@ def train_generator(request, processed_train, task) -> engine.BaseGenerator:
     elif request.param == 'pair':
         return generators.PairGenerator(processed_train, stage='train')
 
-
 @pytest.fixture(params=['point', 'list'])
 def test_generator(request, processed_test, task) -> engine.BaseGenerator:
     if request.param == 'point':
         return generators.PointGenerator(processed_test, task=task, stage='test')
     elif request.param == 'list':
         return generators.ListGenerator(processed_test, stage='test')
-
 
 def test_cdssm(processed_train, task, train_generator, test_generator):
     """Test CDSSM model."""
