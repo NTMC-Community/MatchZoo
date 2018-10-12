@@ -23,7 +23,11 @@ def test_cdssm_preprocessor(train_inputs, validation_inputs):
     assert len(rv_train.left) == 1
     assert len(rv_train.right) == 3
     assert len(rv_train.relation) == 3
-    assert 3 * (len(cdssm_preprocessor._context['term_index'])+1) == 198
+    value = rv_train.left.at['id0', 'text_left']
+    # just one window out
+    assert len(value) == 1
+    # each window is 198-dims
+    assert len(value[0]) == 198
     assert sorted(cdssm_preprocessor._context.keys()) == ['input_shapes', 'term_index']
     rv_valid = cdssm_preprocessor.fit_transform(
         validation_inputs,
