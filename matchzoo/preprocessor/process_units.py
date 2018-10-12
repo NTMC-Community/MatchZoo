@@ -2,9 +2,10 @@
 
 import re
 import abc
-import nltk
 import typing
 import collections
+
+import nltk
 import numpy as np
 
 match_punc = re.compile(r'[^\w\s]')

@@ -1,5 +1,6 @@
 """Self defined loss function for ranking tasks."""
 import typing
+
 import numpy as np
 from keras import layers
 from keras import backend as K

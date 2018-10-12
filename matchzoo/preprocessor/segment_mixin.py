@@ -1,6 +1,7 @@
 """Convert list of input into class:`DataPack` expected format."""
 
 import pandas as pd
+
 from matchzoo import datapack
 
 
