@@ -1,12 +1,12 @@
 """CDSSM Preprocessor."""
 
-from matchzoo import engine
-from matchzoo import preprocessor
-from matchzoo import datapack
-
 import typing
 import logging
 from tqdm import tqdm
+
+from matchzoo import engine
+from matchzoo import preprocessor
+from matchzoo import datapack
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +87,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
                 text = unit.transform(text)
             vocab.extend(text)
 
-        # Initialize a vocabulary process unit to build tri-letter vocab.
+        # Initialize a vocabulary process unit to build letter-ngram vocab.
         vocab_unit = preprocessor.VocabularyUnit()
         vocab_unit.fit(vocab)
 
@@ -145,11 +145,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
-            # apply ngram unit to each token
             text = [ngram_unit.transform([term]) for term in text]
-            # apply word hashing to each token ngram.
             text = [hash_unit.transform(term) for term in text]
-            # sliding text to user-defined window
             text = slide_unit.transform(text)
             self._datapack.right.at[idx, 'text_right'] = text
 
