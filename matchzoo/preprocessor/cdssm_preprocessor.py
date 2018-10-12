@@ -1,4 +1,4 @@
-"""DSSM Preprocessor."""
+"""CDSSM Preprocessor."""
 
 from matchzoo import engine
 from matchzoo import preprocessor
@@ -6,7 +6,6 @@ from matchzoo import datapack
 
 import typing
 import logging
-import itertools
 from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
@@ -123,9 +122,10 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         # prepare pipeline unit.
         units = self._prepare_process_units()
-        units.append(preprocessor.SlidingWindowUnit(self._sliding_window))
+        # can not merge into units
         ngram_unit = preprocessor.NgramLetterUnit()
         hash_unit = preprocessor.WordHashingUnit(self._context['term_index'])
+        slide_unit = preprocessor.SlidingWindowUnit(self._sliding_window)
 
         logger.info(f"Start processing input data for {stage} stage.")
 
@@ -133,21 +133,24 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
-            # apply word ngram transformation towards to term in the window.
-            text = [ngram_unit.transform(term) for term in text]
-            # Word hashing for each list of tri-letters.
+            # apply ngram unit to each token
+            text = [ngram_unit.transform([term]) for term in text]
+            # apply word hashing to each token ngram.
             text = [hash_unit.transform(term) for term in text]
-            # Flatten.
-            text = list(itertools.chain(*text))
+            # sliding text to user-defined window
+            text = slide_unit.transform(text)
             self._datapack.left.at[idx, 'text_left'] = text
 
         for idx, row in tqdm(self._datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
-            text = [ngram_unit.transform(term) for term in text]
+            # apply ngram unit to each token
+            text = [ngram_unit.transform([term]) for term in text]
+            # apply word hashing to each token ngram.
             text = [hash_unit.transform(term) for term in text]
-            text = list(itertools.chain(*text))
+            # sliding text to user-defined window
+            text = slide_unit.transform(text)
             self._datapack.right.at[idx, 'text_right'] = text
 
         return self._datapack

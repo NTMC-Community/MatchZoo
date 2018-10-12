@@ -353,13 +353,13 @@ class SlidingWindowUnit(ProcessorUnit):
     through the input data.
 
     Examples:
-        >>> data = np.array([[0,0,0],[1,1,1],[2,2,2],[3,3,3]])
+        >>> data = [[0,0,0],[1,1,1],[2,2,2],[3,3,3]]
         >>> sliding = SlidingWindowUnit()
         >>> output = sliding.transform(data)
-        >>> output.shape
-        (2, 9)
+        >>> len(output)
+        2
         >>> output[0]
-        array([0, 0, 0, 1, 1, 1, 2, 2, 2])
+        [0, 0, 0, 1, 1, 1, 2, 2, 2]
 
     """
 
@@ -371,7 +371,7 @@ class SlidingWindowUnit(ProcessorUnit):
         """
         self._sliding_window = sliding_window
 
-    def transform(self, inputs: np.ndarray) -> np.ndarray:
+    def transform(self, inputs: list) -> list:
         """
         Compute the result of a window sliding through input data.
 
@@ -387,9 +387,9 @@ class SlidingWindowUnit(ProcessorUnit):
             inputs = np.expand_dims(inputs, -1)
         while len(inputs) >= self._sliding_window:
             output.append(np.concatenate(
-                inputs[:self._sliding_window], axis=-1))
+                inputs[:self._sliding_window], axis=-1).tolist())
             inputs = inputs[1:]
-        return np.array(output)
+        return output
 
 
 class FixedLengthUnit(ProcessorUnit):
