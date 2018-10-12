@@ -69,6 +69,8 @@ def test_sliding_unit(vec_input):
     sliding = SlidingWindowUnit()
     out = sliding.transform(vec_input)
     assert len(out) == 3
+    out = sliding.transform(vec_input[0])
+    assert len(out) == 3
 
 def test_fixedlength_unit(list_input):
     fixedlength = FixedLengthUnit(3)
