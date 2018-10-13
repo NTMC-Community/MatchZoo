@@ -52,12 +52,12 @@ class ArcIModel(engine.BaseModel):
 
     @property
     def embedding_mat(self):
+        """Get pretrained embedding for ArcI model."""
         # Check if provided embedding matrix
         if self._params['embedding_mat'] is None:
             self._params['embedding_mat'] = \
                np.random.uniform(-0.2, 0.2, (self._params['vocab_size'],
                                              self._params['embedding_dim']))
-        
         return self._params['embedding_mat']
 
     @embedding_mat.setter
@@ -77,7 +77,6 @@ class ArcIModel(engine.BaseModel):
 
         ArcI use Siamese arthitecture.
         """
-
         # Left input and right input.
         input_left = Input(name='text_left',
                            shape=self._params['input_shapes'][0])

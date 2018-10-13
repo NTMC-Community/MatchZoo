@@ -31,7 +31,7 @@ def test_arci_preprocessor_noembed(train_inputs, validation_inputs):
 
 def test_arci_preprocessor_embed(train_inputs, validation_inputs):
     arci_preprocessor = ArcIPreprocessor(
-                            fixed_len=[5, 3],
+                            fixed_length=[5, 3],
                             embedding_file="tests/sample/embed_word.txt"
                         )
     rv_train = arci_preprocessor.fit_transform(
