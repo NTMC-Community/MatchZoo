@@ -38,6 +38,7 @@ class ArcIModel(engine.BaseModel):
         params.add(engine.Param('padding', 'same'))
         params.add(engine.Param('dropout_rate', 0.0))
         params.add(engine.Param('embedding_mat', None))
+        params.add(engine.Param('embedding_random_scale', 0.2))
         return params
 
     def _conv_pool_block(self, input: typing.Any, kernel_count: int,
@@ -51,13 +52,14 @@ class ArcIModel(engine.BaseModel):
         return output
 
     @property
-    def embedding_mat(self):
+    def embedding_mat(self) -> np.ndarray:
         """Get pretrained embedding for ArcI model."""
         # Check if provided embedding matrix
         if self._params['embedding_mat'] is None:
+            s = self._params['embedding_random_scale']
             self._params['embedding_mat'] = \
-               np.random.uniform(-0.2, 0.2, (self._params['vocab_size'],
-                                             self._params['embedding_dim']))
+                np.random.uniform(-s, s, (self._params['vocab_size'],
+                                          self._params['embedding_dim']))
         return self._params['embedding_mat']
 
     @embedding_mat.setter
