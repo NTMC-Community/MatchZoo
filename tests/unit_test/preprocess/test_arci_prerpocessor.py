@@ -20,8 +20,6 @@ def test_arci_preprocessor_noembed(train_inputs, validation_inputs):
     assert len(rv_train.left) == 1
     assert len(rv_train.right) == 3
     assert len(rv_train.relation) == 3
-    print(rv_train.left)
-    print(rv_train.right)
     assert sorted(arci_preprocessor._context.keys()) == ['input_shapes',
                                                          'term_index']
     rv_valid = arci_preprocessor.fit_transform(
@@ -30,8 +28,6 @@ def test_arci_preprocessor_noembed(train_inputs, validation_inputs):
     assert len(rv_valid.left) == 1
     assert len(rv_valid.right) == 1
     assert len(rv_valid.relation) == 1
-    print(rv_train.left)
-    print(rv_train.right)
 
 def test_arci_preprocessor_embed(train_inputs, validation_inputs):
     arci_preprocessor = ArcIPreprocessor(
@@ -44,8 +40,6 @@ def test_arci_preprocessor_embed(train_inputs, validation_inputs):
     assert len(rv_train.left) == 1
     assert len(rv_train.right) == 3
     assert len(rv_train.relation) == 3
-    print(rv_train.left)
-    print(rv_train.right)
     assert sorted(arci_preprocessor._context.keys()) == ['embedding_mat', 
                                                          'input_shapes',
                                                          'term_index']
@@ -55,8 +49,6 @@ def test_arci_preprocessor_embed(train_inputs, validation_inputs):
     assert len(rv_valid.left) == 1
     assert len(rv_valid.right) == 1
     assert len(rv_valid.relation) == 1
-    print(rv_train.left)
-    print(rv_train.right)
 
 def test_arci_preprocessor_embed_err(train_inputs, validation_inputs):
     with pytest.raises(FileNotFoundError):
