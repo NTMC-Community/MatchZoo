@@ -20,7 +20,8 @@ def test_arci_preprocessor_noembed(train_inputs, validation_inputs):
     assert len(rv_train.left) == 1
     assert len(rv_train.right) == 3
     assert len(rv_train.relation) == 3
-    assert sorted(arci_preprocessor._context.keys()) == ['term_index']
+    assert sorted(arci_preprocessor._context.keys()) == ['input_shapes',
+                                                         'term_index']
     rv_valid = arci_preprocessor.fit_transform(
         validation_inputs,
         stage='test')
@@ -29,7 +30,10 @@ def test_arci_preprocessor_noembed(train_inputs, validation_inputs):
     assert len(rv_valid.relation) == 1
 
 def test_arci_preprocessor_embed(train_inputs, validation_inputs):
-    arci_preprocessor = ArcIPreprocessor("tests/sample/embed_word.txt")
+    arci_preprocessor = ArcIPreprocessor(
+                            fixed_length=[5, 3],
+                            embedding_file="tests/sample/embed_word.txt"
+                        )
     rv_train = arci_preprocessor.fit_transform(
         train_inputs,
         stage='train')
@@ -37,6 +41,7 @@ def test_arci_preprocessor_embed(train_inputs, validation_inputs):
     assert len(rv_train.right) == 3
     assert len(rv_train.relation) == 3
     assert sorted(arci_preprocessor._context.keys()) == ['embedding_mat', 
+                                                         'input_shapes',
                                                          'term_index']
     rv_valid = arci_preprocessor.fit_transform(
         validation_inputs,
@@ -47,7 +52,8 @@ def test_arci_preprocessor_embed(train_inputs, validation_inputs):
 
 def test_arci_preprocessor_embed_err(train_inputs, validation_inputs):
     with pytest.raises(FileNotFoundError):
-        arci_preprocessor = ArcIPreprocessor("tests/sample/embed_word_err.txt")
+        arci_preprocessor = ArcIPreprocessor(
+                                embedding_file="tests/sample/embed_word_err.txt")
         rv_train = arci_preprocessor.fit_transform(
             train_inputs,
             stage='train')
