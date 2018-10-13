@@ -32,7 +32,7 @@ def task(request) -> engine.BaseTask:
 
 @pytest.fixture(scope='module', params=[
     preprocessor.ArcIPreprocessor(),
-    preprocessor.ArcIPreprocessor(fixed_len=[10, 10],
+    preprocessor.ArcIPreprocessor(fixed_length=[10, 10],
                                   embedding_file=os.path.join(
                                                     os.path.dirname(__file__), 
                                                     '../sample/embed_rank.txt'
@@ -81,7 +81,7 @@ def test_arci(processed_train,
     arci_model.params['vocab_size'] = \
         len(processed_train.context['term_index']) + 1
     if 'embedding_mat' in processed_train.context:
-        arci_model.set_embedding_mat(processed_train.context['embedding_mat'])
+        arci_model.embedding_mat = processed_train.context['embedding_mat']
     arci_model.params['task'] = task
     arci_model.guess_and_fill_missing_params()
     arci_model.build()
