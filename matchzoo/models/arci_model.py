@@ -33,13 +33,11 @@ class ArcIModel(engine.BaseModel):
         params.add(engine.Param('right_kernel_count', [32]))
         params.add(engine.Param('right_kernel_size', [3]))
         params.add(engine.Param('activation', 'relu'))
-        params.add(engine.Param('left_pool_size', [16]))
-        params.add(engine.Param('right_pool_size', [16]))
+        params.add(engine.Param('left_pool_size', [2]))
+        params.add(engine.Param('right_pool_size', [2]))
         params.add(engine.Param('padding', 'same'))
         params.add(engine.Param('dropout_rate', 0.0))
-        params.add(engine.Param('embedding_mat',
-                   np.random.uniform(-0.2, 0.2, (params['vocab_size'],
-                                                 params['embedding_dim']))))
+        params.add(engine.Param('embedding_mat', None))
         return params
 
     def _conv_pool_block(self, input: typing.Any, kernel_count: int,
@@ -52,12 +50,28 @@ class ArcIModel(engine.BaseModel):
         output = MaxPooling1D(pool_size=pool_size)(output)
         return output
 
+    def set_embedding_mat(self, embedding_mat: np.ndarray):
+        """
+        Set pretrained embedding for ArcI model.
+
+        :param embedding_mat: pretrained embedding in numpy format.
+        """
+        self._params['embedding_mat'] = embedding_mat
+        self._params['vocab_size'], self._params['embedding_dim'] = \
+            embedding_mat.shape
+
     def build(self):
         """
         Build model structure.
 
         ArcI use Siamese arthitecture.
         """
+        # Check if provided embedding matrix
+        if self._params['embedding_mat'] is None:
+            self._params['embedding_mat'] = \
+               np.random.uniform(-0.2, 0.2, (self._params['vocab_size'],
+                                             self._params['embedding_dim']))
+
         # Left input and right input.
         input_left = Input(name='text_left',
                            shape=self._params['input_shapes'][0])
