@@ -2,6 +2,7 @@ from . import engine
 from . import models
 from . import tasks
 from . import utils
+from . import preprocessor
 from . import datapack
 from . import losses
 from .version import __version__

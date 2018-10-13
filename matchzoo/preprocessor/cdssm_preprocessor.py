@@ -1,6 +1,4 @@
-"""ArcI Preprocessor."""
-import os
-import errno
+"""CDSSM Preprocessor."""
 
 import typing
 import logging
@@ -9,14 +7,12 @@ from tqdm import tqdm
 from matchzoo import engine
 from matchzoo import preprocessor
 from matchzoo import datapack
-from matchzoo.embedding import Embedding
 
 logger = logging.getLogger(__name__)
 
 
-class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
-    """
-    ArcI preprocessor helper.
+class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
+    """CDSSM preprocessor helper.
 
     Example:
         >>> train_inputs = [
@@ -24,8 +20,8 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         ...     ("id0", "id2", "beijing", "China is in east Asia", 0),
         ...     ("id0", "id3", "beijing", "Summer in Beijing is hot.", 1)
         ... ]
-        >>> arci_preprocessor = ArcIPreprocessor()
-        >>> rv_train = arci_preprocessor.fit_transform(
+        >>> cdssm_preprocessor = CDSSMPreprocessor()
+        >>> rv_train = cdssm_preprocessor.fit_transform(
         ...     train_inputs,
         ...     stage='train')
         >>> type(rv_train)
@@ -34,49 +30,50 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         ...                 "id4",
         ...                 "beijing",
         ...                 "I visted beijing yesterday.")]
-        >>> rv_test = arci_preprocessor.fit_transform(
+        >>> rv_test = cdssm_preprocessor.fit_transform(
         ...     test_inputs,
         ...     stage='test')
         >>> type(rv_test)
         <class 'matchzoo.datapack.DataPack'>
-
     """
 
-    def __init__(self, embedding_file: str=''):
-        """Initialization."""
+    def __init__(self, sliding_window: int=3):
+        """Initialization.
+
+        :param sliding_window: sliding window length.
+        :param remove: user-defined removed tokens.
+        """
         self._datapack = None
         self._context = {}
-        self._embedding_file = embedding_file
-        self._vocab_unit = preprocessor.VocabularyUnit()
+        self._sliding_window = sliding_window
 
-    def _prepare_stateless_units(self) -> list:
+    def _prepare_process_units(self) -> list:
         """Prepare needed process units."""
         return [
             preprocessor.TokenizeUnit(),
             preprocessor.LowercaseUnit(),
             preprocessor.PuncRemovalUnit(),
-            preprocessor.StopRemovalUnit()
+            preprocessor.StopRemovalUnit(),
         ]
 
     def fit(self, inputs: typing.List[tuple]):
         """
         Fit pre-processing context for transformation.
 
+        Can be simplified by compute vocabulary term and index.
+
         :param inputs: Inputs to be preprocessed.
-        :return: class:`ArcIPreprocessor` instance.
+        :return: class:`CDSSMPreprocessor` instance.
         """
         vocab = []
-        units = self._prepare_stateless_units()
+        units = self._prepare_process_units()
+        units.append(preprocessor.NgramLetterUnit())
 
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
         self._datapack = self.segment(inputs, stage='train')
 
-        # Loop through user input to generate words.
-        # 1. Used for build vocabulary of words (get dimension).
-        # 2. Cached words can be further used to perform input
-        #    transformation.
         for idx, row in tqdm(self._datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
@@ -85,29 +82,20 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             vocab.extend(text)
 
         for idx, row in tqdm(self._datapack.right.iterrows()):
-            # For each piece of text, apply process unit sequentially.
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
-        # Initialize a vocabulary process unit to build words vocab.
-        self._vocab_unit.fit(vocab)
-
-        if len(self._embedding_file) == 0:
-            pass
-        elif os.path.isfile(self._embedding_file):
-            embed_module = Embedding(embedding_file=self._embedding_file)
-            embed_module.build(self._vocab_unit.state['term_index'])
-            self._context['embedding_mat'] = embed_module.embedding_mat
-        else:
-            logger.error("Embedding file [{}] not found."
-                         .format(self._embedding_file))
-            raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT),
-                                    self._embedding_file)
+        # Initialize a vocabulary process unit to build letter-ngram vocab.
+        vocab_unit = preprocessor.VocabularyUnit()
+        vocab_unit.fit(vocab)
 
         # Store the fitted parameters in context.
-        self._context['term_index'] = self._vocab_unit.state['term_index']
+        self._context['term_index'] = vocab_unit.state['term_index']
+        dim = len(vocab_unit.state['term_index']) + 1
+        self._context['input_shapes'] = [(None, dim * self._sliding_window),
+                                         (None, dim * self._sliding_window)]
         self._datapack.context = self._context
         return self
 
@@ -117,7 +105,7 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         stage: str
     ) -> datapack.DataPack:
         """
-        Apply transformation on data, create word ids.
+        Apply transformation on data, create `letter-trigram` representation.
 
         :param inputs: Inputs to be preprocessed.
         :param stage: Pre-processing stage, `train` or `test`.
@@ -132,21 +120,34 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         if stage == 'test':
             self._datapack = self.segment(inputs, stage=stage)
 
-        logger.info(f"Start processing input data for {stage} stage.")
+        # prepare pipeline unit.
+        units = self._prepare_process_units()
+        # can not merge into units
+        ngram_unit = preprocessor.NgramLetterUnit()
+        hash_unit = preprocessor.WordHashingUnit(self._context['term_index'])
+        slide_unit = preprocessor.SlidingWindowUnit(self._sliding_window)
 
-        # do preprocessing from scrach.
-        units = self._prepare_stateless_units()
-        units.append(self._vocab_unit)
+        logger.info(f"Start processing input data for {stage} stage.")
 
         for idx, row in tqdm(self._datapack.left.iterrows()):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
+            # apply ngram unit to each token
+            text = [ngram_unit.transform([term]) for term in text]
+            # apply word hashing to each token ngram.
+            text = [hash_unit.transform(term) for term in text]
+            # sliding text to user-defined window
+            text = slide_unit.transform(text)
             self._datapack.left.at[idx, 'text_left'] = text
+
         for idx, row in tqdm(self._datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
+            text = [ngram_unit.transform([term]) for term in text]
+            text = [hash_unit.transform(term) for term in text]
+            text = slide_unit.transform(text)
             self._datapack.right.at[idx, 'text_right'] = text
 
         return self._datapack
