@@ -50,7 +50,18 @@ class ArcIModel(engine.BaseModel):
         output = MaxPooling1D(pool_size=pool_size)(output)
         return output
 
-    def set_embedding_mat(self, embedding_mat: np.ndarray):
+    @property
+    def embedding_mat(self):
+        # Check if provided embedding matrix
+        if self._params['embedding_mat'] is None:
+            self._params['embedding_mat'] = \
+               np.random.uniform(-0.2, 0.2, (self._params['vocab_size'],
+                                             self._params['embedding_dim']))
+        
+        return self._params['embedding_mat']
+
+    @embedding_mat.setter
+    def embedding_mat(self, embedding_mat: np.ndarray):
         """
         Set pretrained embedding for ArcI model.
 
@@ -66,11 +77,6 @@ class ArcIModel(engine.BaseModel):
 
         ArcI use Siamese arthitecture.
         """
-        # Check if provided embedding matrix
-        if self._params['embedding_mat'] is None:
-            self._params['embedding_mat'] = \
-               np.random.uniform(-0.2, 0.2, (self._params['vocab_size'],
-                                             self._params['embedding_dim']))
 
         # Left input and right input.
         input_left = Input(name='text_left',
@@ -80,7 +86,7 @@ class ArcIModel(engine.BaseModel):
         # Process left & right input.
         embedding = Embedding(self._params['vocab_size'],
                               self._params['embedding_dim'],
-                              weights=[self._params['embedding_mat']],
+                              weights=[self.embedding_mat],
                               trainable=self._params['trainable_embedding'])
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)

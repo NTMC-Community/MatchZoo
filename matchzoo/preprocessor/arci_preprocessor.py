@@ -42,17 +42,17 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
     """
 
-    def __init__(self, fixed_len: list=[32, 32], embedding_file: str=''):
+    def __init__(self, fixed_length: list=[32, 32], embedding_file: str=''):
         """Initialization."""
         self._datapack = None
         self._context = {}
         self._embedding_file = embedding_file
-        self._fixed_len = fixed_len
+        self._fixed_length = fixed_length
         self._vocab_unit = preprocessor.VocabularyUnit()
         self._left_fixedlen_unit = preprocessor.FixedLengthUnit(
-                                       self._fixed_len[0])
+                                       self._fixed_length[0])
         self._right_fixedlen_unit = preprocessor.FixedLengthUnit(
-                                        self._fixed_len[1])
+                                        self._fixed_length[1])
 
     def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""
@@ -113,8 +113,8 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         # Store the fitted parameters in context.
         self._context['term_index'] = self._vocab_unit.state['term_index']
-        self._context['input_shapes'] = [(self._fixed_len[0],),
-                                         (self._fixed_len[1],)]
+        self._context['input_shapes'] = [(self._fixed_length[0],),
+                                         (self._fixed_length[1],)]
         self._datapack.context = self._context
         return self
 
