@@ -5,6 +5,7 @@ import logging
 
 from tqdm import tqdm
 
+from matchzoo import utils
 from matchzoo import engine
 from matchzoo import preprocessor
 from matchzoo import datapack
@@ -45,7 +46,7 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
     def __init__(self):
         """Initialization."""
         self._datapack = None
-        self._context = {}
+        self.context = {}
 
     def _prepare_process_unit(self) -> list:
         """Prepare needed process units."""
@@ -93,12 +94,13 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         vocab_unit.fit(vocab)
 
         # Store the fitted parameters in context.
-        self._context['term_index'] = vocab_unit.state['term_index']
+        self.context['term_index'] = vocab_unit.state['term_index']
         dim_triletter = len(vocab_unit.state['term_index']) + 1
-        self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
-        self._datapack.context = self._context
+        self.context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
+        self._datapack.context = self.context
         return self
 
+    @utils.validate_context
     def transform(
         self,
         inputs: typing.List[tuple],
@@ -112,11 +114,6 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage not in ['train', 'test']:
-            raise ValueError(f'{stage} is not a valid stage name.')
-        if not self._context.get('term_index'):
-            raise ValueError(
-                "Please fit term_index before apply transofm function.")
         if stage == 'test':
             self._datapack = self.segment(inputs, stage='test')
 
@@ -126,7 +123,7 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         units = self._prepare_process_unit()
         # prepare word hashing unit.
         hashing = preprocessor.WordHashingUnit(
-            self._context['term_index'])
+            self.context['term_index'])
         units.append(hashing)
 
         for idx, row in tqdm(self._datapack.left.iterrows()):
