@@ -4,6 +4,7 @@ import typing
 import logging
 from tqdm import tqdm
 
+from matchzoo import utils
 from matchzoo import engine
 from matchzoo import preprocessor
 from matchzoo import datapack
@@ -44,7 +45,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         :param remove: user-defined removed tokens.
         """
         self._datapack = None
-        self._context = {}
+        self.context = {}
         self._sliding_window = sliding_window
 
     def _prepare_process_units(self) -> list:
@@ -92,13 +93,14 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         vocab_unit.fit(vocab)
 
         # Store the fitted parameters in context.
-        self._context['term_index'] = vocab_unit.state['term_index']
+        self.context['term_index'] = vocab_unit.state['term_index']
         dim = len(vocab_unit.state['term_index']) + 1
-        self._context['input_shapes'] = [(None, dim * self._sliding_window),
-                                         (None, dim * self._sliding_window)]
-        self._datapack.context = self._context
+        self.context['input_shapes'] = [(None, dim * self._sliding_window),
+                                        (None, dim * self._sliding_window)]
+        self._datapack.context = self.context
         return self
 
+    @utils.validate_context
     def transform(
         self,
         inputs: typing.List[tuple],
@@ -112,19 +114,13 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage not in ['train', 'test']:
-            raise ValueError(f'{stage} is not a valid stage name.')
-        if not self._context.get('term_index'):
-            raise ValueError(
-                "Please fit term_index before apply transofm function.")
         if stage == 'test':
             self._datapack = self.segment(inputs, stage=stage)
 
         # prepare pipeline unit.
         units = self._prepare_process_units()
-        # can not merge into units
         ngram_unit = preprocessor.NgramLetterUnit()
-        hash_unit = preprocessor.WordHashingUnit(self._context['term_index'])
+        hash_unit = preprocessor.WordHashingUnit(self.context['term_index'])
         slide_unit = preprocessor.SlidingWindowUnit(self._sliding_window)
 
         logger.info(f"Start processing input data for {stage} stage.")
@@ -133,11 +129,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
-            # apply ngram unit to each token
             text = [ngram_unit.transform([term]) for term in text]
-            # apply word hashing to each token ngram.
             text = [hash_unit.transform(term) for term in text]
-            # sliding text to user-defined window
             text = slide_unit.transform(text)
             self._datapack.left.at[idx, 'text_left'] = text
 
