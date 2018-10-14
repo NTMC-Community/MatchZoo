@@ -28,7 +28,7 @@ def test_cdssm_preprocessor(train_inputs, validation_inputs):
     assert len(value) == 1
     # each window is 198-dims
     assert len(value[0]) == 198
-    assert sorted(cdssm_preprocessor._context.keys()) == ['input_shapes', 'term_index']
+    assert sorted(cdssm_preprocessor.context.keys()) == ['input_shapes', 'term_index']
     rv_valid = cdssm_preprocessor.fit_transform(
         validation_inputs,
         stage='test')
