@@ -6,9 +6,10 @@ import typing
 import logging
 from tqdm import tqdm
 
+from matchzoo import utils
 from matchzoo import engine
-from matchzoo import preprocessor
 from matchzoo import datapack
+from matchzoo import preprocessor
 from matchzoo.embedding import Embedding
 
 logger = logging.getLogger(__name__)
@@ -45,14 +46,14 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
     def __init__(self, fixed_length: list=[32, 32], embedding_file: str=''):
         """Initialization."""
         self._datapack = None
-        self._context = {}
+        self.context = {}
         self._embedding_file = embedding_file
         self._fixed_length = fixed_length
         self._vocab_unit = preprocessor.VocabularyUnit()
         self._left_fixedlen_unit = preprocessor.FixedLengthUnit(
-                                       self._fixed_length[0])
+            self._fixed_length[0])
         self._right_fixedlen_unit = preprocessor.FixedLengthUnit(
-                                        self._fixed_length[1])
+            self._fixed_length[1])
 
     def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""
@@ -104,7 +105,7 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         elif os.path.isfile(self._embedding_file):
             embed_module = Embedding(embedding_file=self._embedding_file)
             embed_module.build(self._vocab_unit.state['term_index'])
-            self._context['embedding_mat'] = embed_module.embedding_mat
+            self.context['embedding_mat'] = embed_module.embedding_mat
         else:
             logger.error("Embedding file [{}] not found."
                          .format(self._embedding_file))
@@ -112,12 +113,13 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
                                     self._embedding_file)
 
         # Store the fitted parameters in context.
-        self._context['term_index'] = self._vocab_unit.state['term_index']
-        self._context['input_shapes'] = [(self._fixed_length[0],),
-                                         (self._fixed_length[1],)]
-        self._datapack.context = self._context
+        self.context['term_index'] = self._vocab_unit.state['term_index']
+        self.context['input_shapes'] = [(self._fixed_length[0],),
+                                        (self._fixed_length[1],)]
+        self._datapack.context = self.context
         return self
 
+    @utils.validate_context
     def transform(
         self,
         inputs: typing.List[tuple],
@@ -131,11 +133,6 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage not in ['train', 'test']:
-            raise ValueError(f'{stage} is not a valid stage name.')
-        if not self._context.get('term_index'):
-            raise ValueError(
-                "Please fit term_index before apply transofm function.")
         if stage == 'test':
             self._datapack = self.segment(inputs, stage=stage)
 
