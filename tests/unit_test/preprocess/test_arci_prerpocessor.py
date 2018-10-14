@@ -20,7 +20,7 @@ def test_arci_preprocessor_noembed(train_inputs, validation_inputs):
     assert len(rv_train.left) == 1
     assert len(rv_train.right) == 3
     assert len(rv_train.relation) == 3
-    assert sorted(arci_preprocessor._context.keys()) == ['input_shapes',
+    assert sorted(arci_preprocessor.context.keys()) == ['input_shapes',
                                                          'term_index']
     rv_valid = arci_preprocessor.fit_transform(
         validation_inputs,
@@ -40,7 +40,7 @@ def test_arci_preprocessor_embed(train_inputs, validation_inputs):
     assert len(rv_train.left) == 1
     assert len(rv_train.right) == 3
     assert len(rv_train.relation) == 3
-    assert sorted(arci_preprocessor._context.keys()) == ['embedding_mat', 
+    assert sorted(arci_preprocessor.context.keys()) == ['embedding_mat', 
                                                          'input_shapes',
                                                          'term_index']
     rv_valid = arci_preprocessor.fit_transform(
