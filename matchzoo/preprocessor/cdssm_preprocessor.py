@@ -44,9 +44,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         :param sliding_window: sliding window length.
         :param remove: user-defined removed tokens.
         """
-        self._datapack = None
-        self.context = {}
-        self._sliding_window = sliding_window
+        self.datapack = None
+        self._window = sliding_window
 
     def _prepare_process_units(self) -> list:
         """Prepare needed process units."""
@@ -73,16 +72,16 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
-        self._datapack = self.segment(inputs, stage='train')
+        self.datapack = self.segment(inputs, stage='train')
 
-        for idx, row in tqdm(self._datapack.left.iterrows()):
+        for idx, row in tqdm(self.datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
-        for idx, row in tqdm(self._datapack.right.iterrows()):
+        for idx, row in tqdm(self.datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
@@ -93,11 +92,10 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         vocab_unit.fit(vocab)
 
         # Store the fitted parameters in context.
-        self.context['term_index'] = vocab_unit.state['term_index']
+        self.datapack.context['term_index'] = vocab_unit.state['term_index']
         dim = len(vocab_unit.state['term_index']) + 1
-        self.context['input_shapes'] = [(None, dim * self._sliding_window),
-                                        (None, dim * self._sliding_window)]
-        self._datapack.context = self.context
+        self.datapack.context['input_shapes'] = [(None, dim * self._window),
+                                                 (None, dim * self._window)]
         return self
 
     @utils.validate_context
@@ -115,32 +113,33 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         :return: Transformed data as :class:`DataPack` object.
         """
         if stage == 'test':
-            self._datapack = self.segment(inputs, stage=stage)
+            self.datapack = self.segment(inputs, stage=stage)
 
         # prepare pipeline unit.
         units = self._prepare_process_units()
         ngram_unit = preprocessor.NgramLetterUnit()
-        hash_unit = preprocessor.WordHashingUnit(self.context['term_index'])
-        slide_unit = preprocessor.SlidingWindowUnit(self._sliding_window)
+        hash_unit = preprocessor.WordHashingUnit(
+            self.datapack.context['term_index'])
+        slide_unit = preprocessor.SlidingWindowUnit(self._window)
 
         logger.info(f"Start processing input data for {stage} stage.")
 
-        for idx, row in tqdm(self._datapack.left.iterrows()):
+        for idx, row in tqdm(self.datapack.left.iterrows()):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             text = [ngram_unit.transform([term]) for term in text]
             text = [hash_unit.transform(term) for term in text]
             text = slide_unit.transform(text)
-            self._datapack.left.at[idx, 'text_left'] = text
+            self.datapack.left.at[idx, 'text_left'] = text
 
-        for idx, row in tqdm(self._datapack.right.iterrows()):
+        for idx, row in tqdm(self.datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
             text = [ngram_unit.transform([term]) for term in text]
             text = [hash_unit.transform(term) for term in text]
             text = slide_unit.transform(text)
-            self._datapack.right.at[idx, 'text_right'] = text
+            self.datapack.right.at[idx, 'text_right'] = text
 
-        return self._datapack
+        return self.datapack
