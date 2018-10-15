@@ -9,10 +9,10 @@
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Documentation Status](http://readthedocs.org/projects/matchzoo/badge/?version=2.0)](https://matchzoo.readthedocs.io/en/2.0/?badge=2.0)
-[![Build Status](https://travis-ci.org/NTSC-Community/MatchZoo.svg?branch=2.0)](https://travis-ci.org/NTSC-Community/MatchZoo/)
-[![codecov](https://codecov.io/gh/NTSC-Community/MatchZoo/branch/2.0/graph/badge.svg)](https://codecov.io/gh/NTSC-Community/MatchZoo)
+[![Build Status](https://travis-ci.org/NTMC-Community/MatchZoo.svg?branch=2.0)](https://travis-ci.org/NTMC-Community/MatchZoo/)
+[![codecov](https://codecov.io/gh/NTMC-Community/MatchZoo/branch/2.0/graph/badge.svg)](https://codecov.io/gh/NTMC-Community/MatchZoo)
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Requirements Status](https://requires.io/github/NTSC-Community/MatchZoo/requirements.svg?branch=2.0)](https://requires.io/github/NTSC-Community/MatchZoo/requirements/?branch=2.0)
+[![Requirements Status](https://requires.io/github/NTMC-Community/MatchZoo/requirements.svg?branch=2.0)](https://requires.io/github/NTMC-Community/MatchZoo/requirements/?branch=2.0)
 ---
 
 ## Get Started in 60 Seconds
@@ -69,7 +69,7 @@ predictions = dssm_model.predict([X_te.text_left, X_te.text_right])
 
 For detailed usage, such as hyper-parameters, model persistence, evaluation, please check our documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
 
-If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match).
+If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match).
 
 ## Install
 
@@ -84,7 +84,7 @@ pip install matchzoo
 **Install MatchZoo from the Github source:**
 
 ```python
-git clone https://github.com/NTSC-Community/MatchZoo.git
+git clone https://github.com/NTMC-Community/MatchZoo.git
 cd MatchZoo
 python setup.py install
 ```
