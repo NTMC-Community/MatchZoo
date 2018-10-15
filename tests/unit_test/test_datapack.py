@@ -42,6 +42,8 @@ def test_setter(data_pack):
     right.set_index('id_right', inplace=True)
     data_pack.right = right
     assert data_pack.right.loc['id0', 'text_right'] == [1]
+    data_pack.context = {'a': b}
+    assert datapack.context
 
 def test_save_load(data_pack):
     dirpath = '.tmpdir'
