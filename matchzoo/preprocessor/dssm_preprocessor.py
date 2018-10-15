@@ -45,8 +45,7 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
     def __init__(self):
         """Initialization."""
-        self._datapack = None
-        self.context = {}
+        self.datapack = None
 
     def _prepare_process_unit(self) -> list:
         """Prepare needed process units."""
@@ -71,18 +70,18 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
-        self._datapack = self.segment(inputs, stage='train')
+        self.datapack = self.segment(inputs, stage='train')
 
         # Loop through user input to generate tri-letters.
         # Used for build vocabulary of tri-letters (get dimension).
-        for idx, row in tqdm(self._datapack.left.iterrows()):
+        for idx, row in tqdm(self.datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
-        for idx, row in tqdm(self._datapack.right.iterrows()):
+        for idx, row in tqdm(self.datapack.right.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_right
             for unit in units:
@@ -94,10 +93,10 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         vocab_unit.fit(vocab)
 
         # Store the fitted parameters in context.
-        self.context['term_index'] = vocab_unit.state['term_index']
+        self.datapack.context['term_index'] = vocab_unit.state['term_index']
         dim_triletter = len(vocab_unit.state['term_index']) + 1
-        self.context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
-        self._datapack.context = self.context
+        self.datapack.context['input_shapes'] = [(dim_triletter,),
+                                                 (dim_triletter,)]
         return self
 
     @utils.validate_context
@@ -115,26 +114,25 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         :return: Transformed data as :class:`DataPack` object.
         """
         if stage == 'test':
-            self._datapack = self.segment(inputs, stage='test')
+            self.datapack = self.segment(inputs, stage='test')
 
         logger.info(f"Start processing input data for {stage} stage.")
 
         # do preprocessing from scrach.
         units = self._prepare_process_unit()
         # prepare word hashing unit.
-        hashing = preprocessor.WordHashingUnit(
-            self.context['term_index'])
-        units.append(hashing)
+        units.append(
+            preprocessor.WordHashingUnit(self.datapack.context['term_index']))
 
-        for idx, row in tqdm(self._datapack.left.iterrows()):
+        for idx, row in tqdm(self.datapack.left.iterrows()):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
-            self._datapack.left.at[idx, 'text_left'] = text
-        for idx, row in tqdm(self._datapack.right.iterrows()):
+            self.datapack.left.at[idx, 'text_left'] = text
+        for idx, row in tqdm(self.datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
-            self._datapack.right.at[idx, 'text_right'] = text
+            self.datapack.right.at[idx, 'text_right'] = text
 
-        return self._datapack
+        return self.datapack
