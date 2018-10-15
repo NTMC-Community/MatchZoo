@@ -2,8 +2,8 @@
 <img src="./docs/_static/images/matchzoo-logo.png" width = "400"  alt="图片名称" align=center />
 </div>
 
-[![Build Status](https://travis-ci.org/faneshion/MatchZoo.svg?branch=master)](https://travis-ci.org/faneshion/MatchZoo/)
-[![MatchZoo 2.0](https://img.shields.io/badge/marchzoo%202.0-WIP-blue.svg)](https://github.com/faneshion/MatchZoo/tree/2.0)
+[![Build Status](https://travis-ci.org/NTMC-Community/MatchZoo.svg?branch=master)](https://travis-ci.org/NTMC-Community/MatchZoo/)
+[![MatchZoo 2.0](https://img.shields.io/badge/marchzoo%202.0-WIP-blue.svg)](https://github.com/NTMC-Community/MatchZoo/tree/2.0)
 ---
 MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface (collection of papers: [awesome-neural-models-for-semantic-match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match)). Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users.
 
@@ -49,7 +49,7 @@ MatchZoo is a toolkit for text matching. It was developed with a focus on facili
 ## Installation
 MatchZoo is still under development. Before the first stable release (1.0), please clone the repository and run
 ```
-git clone https://github.com/faneshion/MatchZoo.git
+git clone https://github.com/NTMC-Community/MatchZoo.git
 cd MatchZoo
 python setup.py install
 ```
@@ -75,7 +75,7 @@ The data preparation module aims to convert dataset of different text matching t
 +	**Word Dictionary**: records the mapping from each word to a unique identifier called *wid*. Words that are too frequent (e.g. stopwords), too rare or noisy (e.g. fax numbers) can be  filtered out by predefined rules.
 +	**Corpus File**: records the mapping from each text to a unique identifier called *tid*, along with a sequence of word identifiers contained in that text. Note here each text is truncated or padded to a fixed length customized by users.
 +	**Relation File**: is used to store the relationship between two texts, each line containing a pair of *tids* and the corresponding label.
-+   **Detailed Input Data Format**: a detailed explaination of input data format can be found in [MatchZoo/data/toy_example/readme.md](https://github.com/faneshion/MatchZoo/blob/master/data/toy_example/readme.md).
++   **Detailed Input Data Format**: a detailed explaination of input data format can be found in [MatchZoo/data/toy_example/readme.md](https://github.com/NTMC-Community/MatchZoo/blob/master/data/toy_example/readme.md).
 
 ### Model Construction
 In the model construction module, we employ Keras library to help users build the deep matching model layer by layer conveniently. The Keras libarary provides a set of common layers widely used in neural models, such as convolutional layer, pooling layer, dense layer and so on. To further facilitate the construction of deep text matching models, we extend the Keras library to provide some layer interfaces specifically designed for text matching.
@@ -350,7 +350,7 @@ We would like to express our appreciation to the following people for contributi
 
 Feedback and Join Us
 =====
-Feel free to post any questions or suggestions on [GitHub Issues](https://github.com/faneshion/MatchZoo/issues) and we will reply to your questions there. You can also suggest adding new deep text maching models into MatchZoo and apply for joining us to develop MatchZoo together.
+Feel free to post any questions or suggestions on [GitHub Issues](https://github.com/NTMC-Community/MatchZoo/issues) and we will reply to your questions there. You can also suggest adding new deep text maching models into MatchZoo and apply for joining us to develop MatchZoo together.
 
 Update in 12/10/2017: We have applied another WeChat ID: CLJ_Keep. Anyone who want to join the WeChat group can add this WeChat id as a friend. Please tell us your name, company or school, city when you send such requests. After you added "CLJ_Keep" as one of your WeChat friends, she will invite you to join the MatchZoo WeChat group. "CLJ_Keep" is one member of the MatchZoo team.
 
