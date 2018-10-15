@@ -3,6 +3,7 @@
 import typing
 import logging
 from tqdm import tqdm
+import numpy as np
 
 from matchzoo import utils
 from matchzoo import engine
@@ -38,14 +39,28 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         <class 'matchzoo.datapack.DataPack'>
     """
 
-    def __init__(self, sliding_window: int=3):
+    def __init__(self, sliding_window: int=3, window_nb: int=5,
+                 pad_value: int=0, pad_mode: str='pre',
+                 truncate_mode: str='pre'):
         """Initialization.
 
         :param sliding_window: sliding window length.
-        :param remove: user-defined removed tokens.
+        :param window_nb: sliding window number.
+        :param pad_value: filling text with :attr:`pad_value` if
+         text length is smaller than assumed.
+        :param pad_mode: String, `pre` or `post`:
+            pad either before or after each sequence.
+        :param truncate_mode: String, `pre` or `post`:
+            remove values from sequences larger than assumed,
+            either at the beginning or at the end of the sequences.
         """
         self.datapack = None
         self._window = sliding_window
+        self._window_nb = window_nb
+        self._pad_value = pad_value
+        self._pad_mode = pad_mode
+        self._truncate_mode = truncate_mode
+        self._text_length = window_nb + sliding_window - 1
 
     def _prepare_process_units(self) -> list:
         """Prepare needed process units."""
@@ -93,9 +108,12 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         # Store the fitted parameters in context.
         self.datapack.context['term_index'] = vocab_unit.state['term_index']
-        dim = len(vocab_unit.state['term_index']) + 1
-        self.datapack.context['input_shapes'] = [(None, dim * self._window),
-                                                 (None, dim * self._window)]
+        dim = (len(vocab_unit.state['term_index']) + 1)
+        self.datapack.context['dims'] = dim
+        self.datapack.context['input_shapes'] = [(self._window_nb,
+                                                  dim * self._window),
+                                                 (self._window_nb,
+                                                  dim * self._window)]
         return self
 
     @utils.validate_context
@@ -120,6 +138,9 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         ngram_unit = preprocessor.NgramLetterUnit()
         hash_unit = preprocessor.WordHashingUnit(
             self.datapack.context['term_index'])
+        text_length = self._text_length * self.datapack.context['dims']
+        fix_unit = preprocessor.FixedLengthUnit(
+            text_length, self._pad_value, self._pad_mode, self._truncate_mode)
         slide_unit = preprocessor.SlidingWindowUnit(self._window)
 
         logger.info(f"Start processing input data for {stage} stage.")
@@ -130,7 +151,10 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
                 text = unit.transform(text)
             text = [ngram_unit.transform([term]) for term in text]
             text = [hash_unit.transform(term) for term in text]
-            text = slide_unit.transform(text)
+            text = np.array(text).flatten()
+            text = fix_unit.transform(text.tolist())
+            text = np.reshape(text, (self._text_length, -1))
+            text = slide_unit.transform(text.tolist())
             self.datapack.left.at[idx, 'text_left'] = text
 
         for idx, row in tqdm(self.datapack.right.iterrows()):
@@ -139,7 +163,10 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
                 text = unit.transform(text)
             text = [ngram_unit.transform([term]) for term in text]
             text = [hash_unit.transform(term) for term in text]
-            text = slide_unit.transform(text)
+            text = np.array(text).flatten()
+            text = fix_unit.transform(text.tolist())
+            text = np.reshape(text, (self._text_length, -1))
+            text = slide_unit.transform(text.tolist())
             self.datapack.right.at[idx, 'text_right'] = text
 
         return self.datapack
