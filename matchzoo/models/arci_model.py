@@ -33,13 +33,12 @@ class ArcIModel(engine.BaseModel):
         params.add(engine.Param('right_kernel_count', [32]))
         params.add(engine.Param('right_kernel_size', [3]))
         params.add(engine.Param('activation', 'relu'))
-        params.add(engine.Param('left_pool_size', [16]))
-        params.add(engine.Param('right_pool_size', [16]))
+        params.add(engine.Param('left_pool_size', [2]))
+        params.add(engine.Param('right_pool_size', [2]))
         params.add(engine.Param('padding', 'same'))
         params.add(engine.Param('dropout_rate', 0.0))
-        params.add(engine.Param('embedding_mat',
-                   np.random.uniform(-0.2, 0.2, (params['vocab_size'],
-                                                 params['embedding_dim']))))
+        params.add(engine.Param('embedding_mat', None))
+        params.add(engine.Param('embedding_random_scale', 0.2))
         return params
 
     def _conv_pool_block(self, input: typing.Any, kernel_count: int,
@@ -51,6 +50,28 @@ class ArcIModel(engine.BaseModel):
                         activation=activation)(input)
         output = MaxPooling1D(pool_size=pool_size)(output)
         return output
+
+    @property
+    def embedding_mat(self) -> np.ndarray:
+        """Get pretrained embedding for ArcI model."""
+        # Check if provided embedding matrix
+        if self._params['embedding_mat'] is None:
+            s = self._params['embedding_random_scale']
+            self._params['embedding_mat'] = \
+                np.random.uniform(-s, s, (self._params['vocab_size'],
+                                          self._params['embedding_dim']))
+        return self._params['embedding_mat']
+
+    @embedding_mat.setter
+    def embedding_mat(self, embedding_mat: np.ndarray):
+        """
+        Set pretrained embedding for ArcI model.
+
+        :param embedding_mat: pretrained embedding in numpy format.
+        """
+        self._params['embedding_mat'] = embedding_mat
+        self._params['vocab_size'], self._params['embedding_dim'] = \
+            embedding_mat.shape
 
     def build(self):
         """
@@ -66,7 +87,7 @@ class ArcIModel(engine.BaseModel):
         # Process left & right input.
         embedding = Embedding(self._params['vocab_size'],
                               self._params['embedding_dim'],
-                              weights=[self._params['embedding_mat']],
+                              weights=[self.embedding_mat],
                               trainable=self._params['trainable_embedding'])
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
