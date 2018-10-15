@@ -17,12 +17,12 @@ def train():
         train = [tuple(map(str, i.strip().split('\t'))) for i in f]
     return train
 
-# @pytest.fixture
-# def test():
-#     path = os.path.dirname(__file__)
-#     with open(os.path.join(path, '../sample/test_rank.txt')) as f:
-#         test = [tuple(map(str, i.strip().split('\t'))) for i in f]
-#     return test
+@pytest.fixture
+def test():
+    path = os.path.dirname(__file__)
+    with open(os.path.join(path, '../sample/test_rank.txt')) as f:
+        test = [tuple(map(str, i.strip().split('\t'))) for i in f]
+    return test
 
 @pytest.fixture
 def task() -> engine.BaseTask:
@@ -35,13 +35,13 @@ def cdssm_preprocessor():
 @pytest.fixture
 def processed_train(train, cdssm_preprocessor) -> datapack.DataPack:
     preprocessed_train = cdssm_preprocessor.fit_transform(train, stage='train')
-    # cdssm_preprocessor.save('.tmpdir')
+    cdssm_preprocessor.save('.tmpdir')
     return preprocessed_train
 
-# @pytest.fixture
-# def processed_test(test) -> datapack.DataPack:
-#     cdssm_preprocessor = engine.load_preprocessor('.tmpdir')
-#     return cdssm_preprocessor.fit_transform(test, stage='test')
+@pytest.fixture
+def processed_test(test) -> datapack.DataPack:
+    cdssm_preprocessor = engine.load_preprocessor('.tmpdir')
+    return cdssm_preprocessor.fit_transform(test, stage='test')
 
 @pytest.fixture(params=['point', 'pair'])
 def train_generator(request, processed_train, task) -> engine.BaseGenerator:
@@ -52,42 +52,17 @@ def train_generator(request, processed_train, task) -> engine.BaseGenerator:
     elif request.param == 'pair':
         return generators.PairGenerator(processed_train, stage='train')
 
-# @pytest.fixture(params=['point', 'list'])
-# def test_generator(request, processed_test, task) -> engine.BaseGenerator:
-#     if request.param == 'point':
-#         return generators.PointGenerator(processed_test, task=task, stage='test')
-#     elif request.param == 'list':
-#         return generators.ListGenerator(processed_test, stage='test')
+@pytest.fixture(params=['point', 'list'])
+def test_generator(request, processed_test, task) -> engine.BaseGenerator:
+    if request.param == 'point':
+        return generators.PointGenerator(processed_test, task=task, stage='test')
+    elif request.param == 'list':
+        return generators.ListGenerator(processed_test, stage='test')
 
-# def test_cdssm(processed_train, task, train_generator, test_generator):
-#     """Test CDSSM model."""
-#     # Create a dssm model
-#     cdssm_model = models.CDSSMModel()
-#     cdssm_model.params['input_shapes'] = processed_train.context['input_shapes']
-#     cdssm_model.params['task'] = task
-#     cdssm_model.guess_and_fill_missing_params()
-#     cdssm_model.build()
-#     cdssm_model.compile()
-#     cdssm_model.fit_generator(train_generator)
-#     # save
-#     cdssm_model.save('.tmpdir')
-#
-#     # testing
-#     X, y = test_generator[0]
-#     dssm_model = engine.load_model('.tmpdir')
-#     predictions = dssm_model.predict([X.text_left, X.text_right])
-#     assert len(predictions) > 0
-#     assert type(predictions[0][0]) == np.float32
-#     shutil.rmtree('.tmpdir')
-
-def test_cdssm(processed_train, task, train_generator):
+def test_cdssm(processed_train, task, train_generator, test_generator):
     """Test CDSSM model."""
     # Create a dssm model
     cdssm_model = models.CDSSMModel()
-    value = processed_train.left['text_left'][0]
-    print(np.array(value).shape)
-    value = processed_train.left['text_left'][1]
-    print(np.array(value).shape)
     cdssm_model.params['input_shapes'] = processed_train.context['input_shapes']
     cdssm_model.params['task'] = task
     cdssm_model.guess_and_fill_missing_params()
@@ -95,12 +70,12 @@ def test_cdssm(processed_train, task, train_generator):
     cdssm_model.compile()
     cdssm_model.fit_generator(train_generator)
     # save
-    # cdssm_model.save('.tmpdir')
+    cdssm_model.save('.tmpdir')
 
-    # # testing
-    # X, y = test_generator[0]
-    # dssm_model = engine.load_model('.tmpdir')
-    # predictions = dssm_model.predict([X.text_left, X.text_right])
-    # assert len(predictions) > 0
-    # assert type(predictions[0][0]) == np.float32
-    # shutil.rmtree('.tmpdir')
+    # testing
+    X, y = test_generator[0]
+    dssm_model = engine.load_model('.tmpdir')
+    predictions = dssm_model.predict([X.text_left, X.text_right])
+    assert len(predictions) > 0
+    assert type(predictions[0][0]) == np.float32
+    shutil.rmtree('.tmpdir')
