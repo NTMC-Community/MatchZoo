@@ -110,12 +110,11 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         # Store the fitted parameters in context.
         self.datapack.context['term_index'] = vocab_unit.state['term_index']
-        dim = len(vocab_unit.state['term_index']) + 1
-        self._dim_ngram = dim
-        self.datapack.context['input_shapes'] = [(self._num_windows,
-                                                  dim * self._window_len),
-                                                 (self._num_windows,
-                                                  dim * self._window_len)]
+        self._dim_ngram = len(vocab_unit.state['term_index']) + 1
+        self.datapack.context['input_shapes'] = [
+            (self._num_windows, self._dim_ngram * self._window_len),
+            (self._num_windows, self._dim_ngram * self._window_len)
+        ]
         return self
 
     @utils.validate_context
@@ -140,9 +139,9 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         ngram_unit = preprocessor.NgramLetterUnit()
         hash_unit = preprocessor.WordHashingUnit(
             self.datapack.context['term_index'])
-        text_length = self._text_length * self._dim_ngram
         fix_unit = preprocessor.FixedLengthUnit(
-            text_length, self._pad_value, self._pad_mode, self._truncate_mode)
+            self._text_length * self._dim_ngram, self._pad_value,
+            self._pad_mode, self._truncate_mode)
         slide_unit = preprocessor.SlidingWindowUnit(self._window_len)
 
         logger.info(f"Start processing input data for {stage} stage.")
