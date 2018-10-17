@@ -74,8 +74,8 @@ def test_cdssm(processed_train, task, train_generator, test_generator):
 
     # testing
     X, y = test_generator[0]
-    dssm_model = engine.load_model('.tmpdir')
-    predictions = dssm_model.predict([X.text_left, X.text_right])
+    cdssm_model = engine.load_model('.tmpdir')
+    predictions = cdssm_model.predict([X.text_left, X.text_right])
     assert len(predictions) > 0
     assert type(predictions[0][0]) == np.float32
     shutil.rmtree('.tmpdir')
