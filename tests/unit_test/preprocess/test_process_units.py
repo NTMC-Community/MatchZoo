@@ -74,6 +74,8 @@ def test_sliding_unit(vec_input):
 
 def test_fixedlength_unit(list_input):
     fixedlength = FixedLengthUnit(3)
+    out = fixedlength.transform([])
+    assert list(out) == [0] * 3
     out = fixedlength.transform(list_input)
     assert list(out) == ['36', '!', 'input'] 
     fixedlength = FixedLengthUnit(3, truncate_mode='post')
