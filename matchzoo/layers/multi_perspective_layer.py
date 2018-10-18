@@ -16,7 +16,7 @@ class MultiPerspectiveLayer(Layer):
     def __init__(
         self,
         output_dim: int,
-        strategies: dict={'full': True,
+        strategy: dict={'full': True,
                           'maxpooling': True,
                           'attentive': True,
                           'max-attentive': True},
@@ -28,39 +28,39 @@ class MultiPerspectiveLayer(Layer):
         :param output_dim: dimensionality of output space.
         """
         self._output_dim = output_dim
-        self._strategies = strategies
+        self._strategy = strategy
         super(MultiPerspectiveLayer, self).__init__(**kwargs)
 
         @classmethod
-        def list_available_strategies(cls) -> list:
-            """List available strategies for multi-perspective matching."""
+        def list_available_strategy(cls) -> list:
+            """List available strategy for multi-perspective matching."""
             return ['full', 'maxpooling', 'attentive', 'max-attentive']
 
         @property
         def num_perspectives(self):
-            return sum(self._strategies.values())
+            return sum(self._strategy.values())
 
         def build(self, input_shape: list):
             """Input shape."""
-            if self._strategies.get('full'):
+            if self._strategy.get('full'):
                 self.full = self.add_weight(name='pool',
                                             shape=(
                                                 input_shape[0][1], self.output_dim),
                                             initializer='uniform',
                                             trainable=True)
-            if self._strategies.get('maxpooling'):
+            if self._strategy.get('maxpooling'):
                 self.maxp = self.add_weight(name='maxpooling',
                                             shape=(
                                                 input_shape[0][1], self._output_dim),
                                             initializer='uniform',
                                             trainable=True)
-            if self._strategies.get('attentive'):
+            if self._strategy.get('attentive'):
                 self.atte = self.add_weight(name='attentive',
                                             shape=(
                                                 input_shape[0][1], self._output_dim),
                                             initializer='uniform',
                                             trainable=True)
-            if self._strategies.get('max-attentive'):
+            if self._strategy.get('max-attentive'):
                 self.maxa = self.add_weight(name='max-attentive',
                                             shape=(
                                                 input_shape[0][1], self._output_dim),
@@ -74,19 +74,19 @@ class MultiPerspectiveLayer(Layer):
         # seq_left is the sequence of vectors of current sentence at all time steps.
         # seq_right is the sequence of vectors of the other sentence at all time steps.
         seq_left, seq_right = x
-        if self._strategies.get('full'):
+        if self._strategy.get('full'):
             # each forward & backward contextual embedding compare
             # with the last step of the last time step of the other sentence.
             pass
-        if self._strategies.get('maxpooling'):
+        if self._strategy.get('maxpooling'):
             # each contextual embedding compare with each contextual embedding.
             # retain the maximum of each dimension.
             pass
-        if self._strategies.get('attentive'):
+        if self._strategy.get('attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain sum of weighted mean of each dimension.
             pass
-        if self._strategies.get('max-attentive'):
+        if self._strategy.get('max-attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain max of weighted mean of each dimension.
             pass 
