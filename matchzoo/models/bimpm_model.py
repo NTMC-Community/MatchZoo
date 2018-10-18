@@ -40,11 +40,13 @@ class BimpmModel(engine.BaseModel):
         # Context represntation layer.
         x_lt = Bidirectional(LSTM(input_shape_lt[0],
                                   return_sequences=True,
+                                  return_state=True,
                                   kernel_initializer=self._params['w_initializer'],
                                   bias_initializer=self._params['b_initializer']),
                              merge_mode=None)(input_lt)
         x_rt = Bidirectional(LSTM(input_shape_rt[0],
                                   return_sequences=True,
+                                  return_state=True,
                                   kernel_initializer=self._params['w_initializer'],
                                   bias_initializer=self._params['b_initializer']),
                              merge_mode=None)(input_rt)
@@ -56,11 +58,13 @@ class BimpmModel(engine.BaseModel):
         # Aggregation layer.
         x_lt = Bidirectional(LSTM(self._params['dim_hidden'],
                                   return_sequences=False,
+                                  return_state=False,
                                   kernel_initializer=self._params['w_initializer'],
                                   bias_initializer=self._params['b_initializer']),
                              merge_mode='concat')(x_lt)
         x_rt = Bidirectional(LSTM(self._params['dim_hidden'],
                                   return_sequences=False,
+                                  return_state=False,
                                   kernel_initializer=self._params['w_initializer'],
                                   bias_initializer=self._params['b_initializer']),
                              merge_mode='concat')(x_lt)
