@@ -16,11 +16,11 @@ from matchzoo import tasks
 # with no kwargs: (models.DenseBaselineModel, None)
 # with kwargs: (models.DenseBaselineModel, {"num_dense_units": 512})
 model_setups = [
-    (models.NaiveModel, None, [np.float32, np.float32]),
-    (models.DenseBaselineModel, None, [np.float32, np.float32]),
-    (models.DSSMModel, None, [np.float32, np.float32]),
-    (models.CDSSMModel, None, [np.float32, np.float32]),
-    (models.ArcIModel, None, [np.int32, np.int32])
+#    (models.NaiveModel, None, [np.float32, np.float32]),
+#    (models.DenseBaselineModel, None, [np.float32, np.float32]),
+#    (models.DSSMModel, None, [np.float32, np.float32]),
+#    (models.CDSSMModel, None, [np.float32, np.float32]),
+#    (models.ArcIModel, None, [np.int32, np.int32])
 ]
 
 
@@ -61,9 +61,9 @@ def compiled_model(raw_model, task):
 @pytest.fixture
 def x(compiled_model, num_samples):
     model, input_dtypes = compiled_model
-    rand_func = {np.float32: 
-                    lambda x: np.random.uniform(low=-1, high=1, size=x), 
-                 np.int32: 
+    rand_func = {np.float32:
+                    lambda x: np.random.uniform(low=-1, high=1, size=x),
+                 np.int32:
                     lambda x: np.random.randint(low=0, high=100, size=x)
                 }
     input_shapes = model.params['input_shapes']
