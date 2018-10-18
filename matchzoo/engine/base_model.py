@@ -189,6 +189,38 @@ class BaseModel(abc.ABC):
         return self._backend.evaluate(x=x, y=y,
                                       batch_size=batch_size, verbose=verbose)
 
+    def evaluate_with_metrics(
+            self,
+            x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+            y: np.ndarray,
+            metrics: typing.List[str],
+            batch_size: int = 128,
+            verbose: int = 1
+    ) -> typing.Union[float, typing.List[float]]:
+        """
+        Evaluate the model with metrics on.
+
+        See :meth:`keras.models.Model.evaluate` for more details.
+
+        :param x: input data
+        :param y: labels
+        :param metrics: metrics used on evaluation.
+        :param batch_size: number of samples per gradient update
+        :param verbose: verbosity mode, 0 or 1
+        :return: list of scalars (losses as well as metrics). The
+            attribute `model.backend.metrics_names` will give you
+            the display labels for the scalar outputs.
+
+        """
+        stateful_metric_indices = []
+        for i, name in enumerate(metrics):
+            if str(name) in model.stateful_metric_names:
+                stateful_metric_names.append(i)
+        outs = []
+        y_pred = self._backend.evaluate(x=x, batch_size=batch_size,
+                                        verbose=verbose)
+        return outs
+
     def predict(
             self,
             x: typing.Union[np.ndarray, typing.List[np.ndarray]],
