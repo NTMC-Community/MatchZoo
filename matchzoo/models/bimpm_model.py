@@ -20,6 +20,7 @@ class BimpmModel(engine.BaseModel):
         params.add(engine.Param('w_initializer', 'glorot_uniform'))
         params.add(engine.Param('b_initializer', 'zeros'))
         params.add(engine.Param('activation_hidden', 'linear'))
+        params.add(engine.Param('dim_hidden', 128))
         params.add(engine.Param('strategy', {'full': True,
                                              'max-pooling': True,
                                              'attentive': True,
@@ -62,8 +63,10 @@ class BimpmModel(engine.BaseModel):
         # Concatenate the concatenated vector of left and right.
         x = Concatenate()([x_lt, x_rt])
         # prediction layer.
-        x = Dense(10, activation=self._params['activation_hidden'])(x)
-        x = Dense(10, activation=self._params['activation_hidden'])(x)
+        x = Dense(self._params['dim_hidden'],
+                  activation=self._params['activation_hidden'])(x)
+        x = Dense(self._params['dim_hidden'],
+                  activation=self._params['activation_hidden'])(x)
         x_out = self._make_output_layer()(x)
         self._backend = Model(
             inputs=[input_lt, input_rt],
