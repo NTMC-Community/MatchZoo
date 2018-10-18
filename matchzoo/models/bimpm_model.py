@@ -50,15 +50,20 @@ class BimpmModel(engine.BaseModel):
                              merge_mode=None)(input_rt)
         # Multiperspective Matching layer.
         # Output is two sequence of vectors.
-        # TODO CHANGE OUTPUT DIM
+        # TODO Finalize MultiPerspectiveMatching
         x_lt, x_rt = MultiPerspectiveLayer(output_dim=10,
                                            strategy=self._params['strategy'])([x_lt, x_rt])
         # Aggregation layer.
-        # TODO CHANGE INPUT SHAPE, OUTPUT DIM
-        x_lt = Bidirectional(LSTM(10, return_sequences=False),
-                             input_shape=(1, 10), merge_mode='concat')(x_lt)
-        x_rt = Bidirectional(LSTM(10, return_sequences=False),
-                             input_shape=(1, 10), merge_mode='concat')(x_rt)
+        x_lt = Bidirectional(LSTM(self._params['dim_hidden'],
+                                  return_sequences=False,
+                                  kernel_initializer=self._params['w_initializer'],
+                                  bias_initializer=self._params['b_initializer']),
+                             merge_mode='concat')(x_lt)
+        x_rt = Bidirectional(LSTM(self._params['dim_hidden'],
+                                  return_sequences=False,
+                                  kernel_initializer=self._params['w_initializer'],
+                                  bias_initializer=self._params['b_initializer']),
+                             merge_mode='concat')(x_lt)
         # catenate the forward-backward vector of left & right (only last step).
         # Concatenate the concatenated vector of left and right.
         x = Concatenate()([x_lt, x_rt])
