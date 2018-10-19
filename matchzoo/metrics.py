@@ -25,7 +25,7 @@ def sort_couple(labels: list, scores: list) -> list:
 
 def mean_reciprocal_rank(y_true: list,
                          y_pred: list,
-                         rel_threshold: int=0) -> float:
+                         threshold: int=0) -> float:
     """
     Calculate reciprocal of the rank of the first relevant item.
 
@@ -37,20 +37,20 @@ def mean_reciprocal_rank(y_true: list,
 
     :param y_true: The ground true label of each document.
     :param y_pred: The predicted scores of each document.
-    :param rel_threshold: the label threshold of relevance degree.
+    :param threshold: the label threshold of relevance degree.
     :return: Mean reciprocal rank.
     """
-    c = sort_couple(y_true, y_pred)
-    for j, (label, pred) in enumerate(c):
-        if label > rel_threshold:
-            return 1. / (j + 1)
+    coupled_pair = sort_couple(y_true, y_pred)
+    for idx, (label, pred) in enumerate(coupled_pair):
+        if label > threshold:
+            return 1. / (idx + 1)
     return 0.
 
 
 def precision_at_k(y_true: list,
                    y_pred: list,
                    k: int,
-                   rel_threshold: int=0) -> float:
+                   threshold: int=0) -> float:
     """
     Calculate precision@k.
 
@@ -68,25 +68,25 @@ def precision_at_k(y_true: list,
 
     :param y_true: The ground true label of each document.
     :param y_pred: The predicted scores of each document.
-    :param rel_threshold: the label threshold of relevance degree.
+    :param threshold: the label threshold of relevance degree.
     :return: Precision @ k
     :raises: ValueError: len(r) must be >= k.
     """
     if k <= 0:
         raise ValueError('k must be larger than 0.')
-    c = sort_couple(y_true, y_pred)
+    coupled_pair = sort_couple(y_true, y_pred)
     precision = 0.0
-    for i, (label, score) in enumerate(c):
-        if i >= k:
+    for idx, (label, score) in enumerate(coupled_pair):
+        if idx >= k:
             break
-        if label > rel_threshold:
+        if label > threshold:
             precision += 1.
     return precision / k
 
 
 def average_precision(y_true: list,
                       y_pred: list,
-                      rel_threshold: int=0) -> float:
+                      threshold: int=0) -> float:
     """
     Calculate average precision (area under PR curve).
 
@@ -98,7 +98,7 @@ def average_precision(y_true: list,
 
     :param y_true: The ground true label of each document.
     :param y_pred: The predicted scores of each document.
-    :param rel_threshold: the label threshold of relevance degree.
+    :param threshold: the label threshold of relevance degree.
     :return: Average precision.
     """
     out = [precision_at_k(y_true, y_pred, k + 1) for k in range(len(y_pred))]
@@ -109,7 +109,7 @@ def average_precision(y_true: list,
 
 def mean_average_precision(y_true: list,
                            y_pred: list,
-                           rel_threshold: int=0) -> float:
+                           threshold: int=0) -> float:
     """
     Calculate mean average precision.
 
@@ -121,26 +121,26 @@ def mean_average_precision(y_true: list,
 
     :param y_true: The ground true label of each document.
     :param y_pred: The predicted scores of each document.
-    :param rel_threshold: the label threshold of relevance degree.
+    :param threshold: the label threshold of relevance degree.
     :return: Mean average precision.
     """
-    s = 0.
-    ipos = 0
-    c = sort_couple(y_true, y_pred)
-    for j, (label, score) in enumerate(c):
-        if label > rel_threshold:
-            ipos += 1.
-            s += ipos / (j + 1.)
-    if ipos == 0:
+    result = 0.
+    pos = 0
+    coupled_pair = sort_couple(y_true, y_pred)
+    for idx, (label, score) in enumerate(coupled_pair):
+        if label > threshold:
+            pos += 1.
+            result += pos / (idx + 1.)
+    if pos == 0:
         return 0.
     else:
-        return s/ipos
+        return result/pos
 
 
 def dcg_at_k(y_true: list,
              y_pred: list,
              k: int,
-             rel_threshold: int=0) -> float:
+             threshold: int=0) -> float:
     """
     Calculate discounted cumulative gain (dcg).
 
@@ -161,26 +161,26 @@ def dcg_at_k(y_true: list,
     :param y_true: The ground true label of each document.
     :param y_pred: The predicted scores of each document.
     :param k: Number of results to consider
-    :param rel_threshold: the label threshold of relevance degree.
+    :param threshold: the label threshold of relevance degree.
 
     :return: Discounted cumulative gain.
     """
     if k <= 0.:
         return 0.
     c = sort_couple(y_true, y_pred)
-    s = 0.
+    result = 0.
     for i, (label, score) in enumerate(c):
         if i >= k:
             break
-        if label > rel_threshold:
-            s += (math.pow(2., label) - 1.) / math.log(2. + i)
-    return s
+        if label > threshold:
+            result += (math.pow(2., label) - 1.) / math.log(2. + i)
+    return result
 
 
 def ndcg_at_k(y_true: list,
               y_pred: list,
               k: int,
-              rel_threshold: int=0) -> float:
+              threshold: int=0) -> float:
     """
     Calculate normalized discounted cumulative gain (ndcg).
 
@@ -201,10 +201,10 @@ def ndcg_at_k(y_true: list,
     :param y_true: The ground true label of each document.
     :param y_pred: The predicted scores of each document.
     :param k: Number of results to consider
-    :param rel_threshold: the label threshold of relevance degree.
+    :param threshold: the label threshold of relevance degree.
 
     :return: Normalized discounted cumulative gain.
     """
-    idcg = dcg_at_k(y_true, y_true, k, rel_threshold)
-    dcg = dcg_at_k(y_true, y_pred, k, rel_threshold)
+    idcg = dcg_at_k(y_true, y_true, k, threshold)
+    dcg = dcg_at_k(y_true, y_pred, k, threshold)
     return dcg / idcg
