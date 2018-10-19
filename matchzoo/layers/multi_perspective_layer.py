@@ -94,8 +94,8 @@ class MultiPerspectiveLayer(Layer):
             # with the last step of the last time step of the other sentence.
             # v1 use w_k (d vector) multiply all hidden states `lstm_lt`.
             # v2 & v3 use w_k (d vector) multiply forward_h_rt and backward_h_rt.
-            v1 = utils.tensor_mul_tensors(tensor=self.full,
-                                          tensors=lstm_lt) # tensor.
+            v1 = utils.tensor_mul_tensors_reduce_dim(tensor=self.full,
+                                                     tensors=lstm_lt) # tensor.
             v2 = layers.multiply([self.full, forward_h_rt])
             v3 = layers.multiply([self.full, backward_h_rt])
             # cosine similarity
@@ -104,7 +104,14 @@ class MultiPerspectiveLayer(Layer):
         if self._perspective.get('maxpooling'):
             # each contextual embedding compare with each contextual embedding.
             # retain the maximum of each dimension.
-            pass
+            # v1 & v2 use weight * list of hidden states, reain max value
+            # across each dimension, and result in tensor.
+            # forward ans backward compute at the same time.
+            v1 = utils.tensor_mul_tensors_with_max_pooling(tensor=self.maxp,
+                                                           tensors=lstm_lt)
+            v2 = utils.tensor_mul_tensors_with_max_pooling(tensor=self.maxp,
+                                                           tensors=lstm_rt)
+            maxpooling_matching = layers.dot([v1, v2], normalize=True)
         if self._perspective.get('attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain sum of weighted mean of each dimension.
