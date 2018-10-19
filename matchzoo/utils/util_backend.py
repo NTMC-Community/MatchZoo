@@ -25,6 +25,3 @@ def tensor_mul_tensors_with_max_pooling(tensor, tensors):
 	return K.max(tensor_mul_tensors(tensor, tensors),
 	             axis=-1,
 	             keepdims=True)
-	
-
-
