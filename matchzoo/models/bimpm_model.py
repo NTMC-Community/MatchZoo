@@ -61,7 +61,7 @@ class BimpmModel(engine.BaseModel):
         x_rt = MultiPerspectiveLayer(dim_output=(MultiPerspectiveLayer.num_perspective,
                                                  self._params['dim_embedding']),
                                      dim_embedding=self._params['dim_embedding'],
-                                     perspective=self._params['perspective'])([x_rt, x_rlt])
+                                     perspective=self._params['perspective'])([x_rt, x_lt])
         # Aggregation layer.
         x_lt = Bidirectional(LSTM(self._params['dim_hidden'],
                                   return_sequences=False,
