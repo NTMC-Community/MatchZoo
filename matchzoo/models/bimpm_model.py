@@ -84,6 +84,5 @@ class BimpmModel(engine.BaseModel):
         x = Dense(self._params['dim_hidden'],
                   activation=self._params['activation_hidden'])(x)
         x_out = self._make_output_layer()(x)
-        self._backend = Model(
-            inputs=[input_lt, input_rt],
-            outputs=x_out)
+        self._backend = Model(inputs=[input_lt, input_rt],
+                              outputs=x_out)

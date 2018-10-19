@@ -125,7 +125,7 @@ class MultiPerspectiveLayer(Layer):
             # retain max of weighted mean of each dimension.
             pass
 
-        return out
+        return rv
 
     def compute_output_shape(self, input_shape: list):
         shape_a, shape_b = input_shape
