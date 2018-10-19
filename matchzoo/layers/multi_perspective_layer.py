@@ -19,10 +19,10 @@ class MultiPerspectiveLayer(Layer):
         self,
         dim_output: int,
         dim_embedding: int,
-        strategy: dict={'full': True,
-                        'maxpooling': True,
-                        'attentive': True,
-                        'max-attentive': True},
+        perspective: dict={'full': True,
+                           'maxpooling': True,
+                           'attentive': True,
+                           'max-attentive': True},
         **kwargs
     ):
         """
@@ -32,40 +32,47 @@ class MultiPerspectiveLayer(Layer):
         """
         self._dim_output = dim_output
         self._dim_embedding = dim_embedding
-        self._strategy = strategy
+        self._perspective = perspective
         super(MultiPerspectiveLayer, self).__init__(**kwargs)
 
         @classmethod
-        def list_available_strategy(cls) -> list:
+        def list_available_perspectives(cls) -> list:
             """List available strategy for multi-perspective matching."""
             return ['full', 'maxpooling', 'attentive', 'max-attentive']
 
-        def _num_perspectives(self):
-            return sum(self._strategy.values())
+        @property
+        def num_perspective(self):
+            """Get the number of perspectives that is True."""
+            return sum(self._perspective.values())
+        
+        @property
+        def perspective(self):
+            """Get the perspective status."""
+            return self._perspective
 
         def build(self, input_shape: list):
             """Input shape."""
             # The shape of the weights is l * d
             # l is number of perspectives, d is the dimensionality of embedding.
-            if self._strategy.get('full'):
+            if self._perspective.get('full'):
                 self.full = self.add_weight(name='pool',
                                             shape=(1,
                                                    self._dim_embedding),
                                             initializer='uniform',
                                             trainable=True)
-            if self._strategy.get('maxpooling'):
+            if self._perspective.get('maxpooling'):
                 self.maxp = self.add_weight(name='maxpooling',
                                             shape=(1,
                                                    self._dim_embedding),
                                             initializer='uniform',
                                             trainable=True)
-            if self._strategy.get('attentive'):
+            if self._perspective.get('attentive'):
                 self.atte = self.add_weight(name='attentive',
                                             shape=(1,
                                                    self._dim_embedding),
                                             initializer='uniform',
                                             trainable=True)
-            if self._strategy.get('max-attentive'):
+            if self._perspective.get('max-attentive'):
                 self.maxa = self.add_weight(name='max-attentive',
                                             shape=(1,
                                                    self._dim_embedding),
@@ -82,7 +89,7 @@ class MultiPerspectiveLayer(Layer):
         lstm_lt, forward_h_lt, _, backward_h_lt, _ = seq_lt
         lstm_rt, forward_h_rt, _, backward_h_rt, _ = seq_rt
 
-        if self._strategy.get('full'):
+        if self._perspective.get('full'):
             # each forward & backward contextual embedding compare
             # with the last step of the last time step of the other sentence.
             # v1 use w_k (d vector) multiply all hidden states `lstm_lt`.
@@ -94,15 +101,15 @@ class MultiPerspectiveLayer(Layer):
             # cosine similarity
             full_matching_fwd = layers.dot([v1, v2], normalize=True)
             full_matching_bwd = layers.dot([v1, v3], normalize=True)
-        if self._strategy.get('maxpooling'):
+        if self._perspective.get('maxpooling'):
             # each contextual embedding compare with each contextual embedding.
             # retain the maximum of each dimension.
             pass
-        if self._strategy.get('attentive'):
+        if self._perspective.get('attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain sum of weighted mean of each dimension.
             pass
-        if self._strategy.get('max-attentive'):
+        if self._perspective.get('max-attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain max of weighted mean of each dimension.
             pass

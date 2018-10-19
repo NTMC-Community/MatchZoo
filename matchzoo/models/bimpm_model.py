@@ -21,10 +21,10 @@ class BimpmModel(engine.BaseModel):
         params.add(engine.Param('b_initializer', 'zeros'))
         params.add(engine.Param('activation_hidden', 'linear'))
         params.add(engine.Param('dim_hidden', 128))
-        params.add(engine.Param('strategy', {'full': True,
-                                             'max-pooling': True,
-                                             'attentive': True,
-                                             'max-attentive': True}))
+        params.add(engine.Param('perspective', {'full': True,
+                                                'max-pooling': True,
+                                                'attentive': True,
+                                                'max-attentive': True}))
         return params
 
     def build(self):
@@ -55,10 +55,10 @@ class BimpmModel(engine.BaseModel):
         # TODO Finalize MultiPerspectiveMatching
         x_lt = MultiPerspectiveLayer(dim_output=10,
                                      dim_embedding=50,
-                                     strategy=self._params['strategy'])([x_lt, x_rt])
+                                     perspective=self._params['perspective'])([x_lt, x_rt])
         x_rt = MultiPerspectiveLayer(dim_output=10,
                                      dim_embedding=50,
-                                     strategy=self._params['strategy'])([x_rt, x_rlt])
+                                     perspective=self._params['perspective'])([x_rt, x_rlt])
         # Aggregation layer.
         x_lt = Bidirectional(LSTM(self._params['dim_hidden'],
                                   return_sequences=False,
