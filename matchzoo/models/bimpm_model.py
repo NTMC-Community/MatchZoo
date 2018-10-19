@@ -17,6 +17,7 @@ class BimpmModel(engine.BaseModel):
         params = super().get_default_params()
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(32,), (32,)]
+        params.add(engine.Param('dim_embedding', 300))
         params.add(engine.Param('w_initializer', 'glorot_uniform'))
         params.add(engine.Param('b_initializer', 'zeros'))
         params.add(engine.Param('activation_hidden', 'linear'))
@@ -54,10 +55,10 @@ class BimpmModel(engine.BaseModel):
         # Output is two sequence of vectors.
         # TODO Finalize MultiPerspectiveMatching
         x_lt = MultiPerspectiveLayer(dim_output=10,
-                                     dim_embedding=50,
+                                     dim_embedding=self._params['dim_embedding'],
                                      perspective=self._params['perspective'])([x_lt, x_rt])
         x_rt = MultiPerspectiveLayer(dim_output=10,
-                                     dim_embedding=50,
+                                     dim_embedding=self._params['dim_embedding'],
                                      perspective=self._params['perspective'])([x_rt, x_rlt])
         # Aggregation layer.
         x_lt = Bidirectional(LSTM(self._params['dim_hidden'],
