@@ -4,6 +4,8 @@ from keras import layers
 from keras import backend as K
 from keras.engine.topology import Layer
 
+from matchzoo import utils
+
 
 class MultiPerspectiveLayer(Layer):
     """
@@ -47,25 +49,25 @@ class MultiPerspectiveLayer(Layer):
             # l is number of perspectives, d is the dimensionality of embedding.
             if self._strategy.get('full'):
                 self.full = self.add_weight(name='pool',
-                                            shape=(self._num_perspectives,
+                                            shape=(1,
                                                    self._dim_embedding),
                                             initializer='uniform',
                                             trainable=True)
             if self._strategy.get('maxpooling'):
                 self.maxp = self.add_weight(name='maxpooling',
-                                            shape=(self._num_perspectives,
+                                            shape=(1,
                                                    self._dim_embedding),
                                             initializer='uniform',
                                             trainable=True)
             if self._strategy.get('attentive'):
                 self.atte = self.add_weight(name='attentive',
-                                            shape=(self._num_perspectives,
+                                            shape=(1,
                                                    self._dim_embedding),
                                             initializer='uniform',
                                             trainable=True)
             if self._strategy.get('max-attentive'):
                 self.maxa = self.add_weight(name='max-attentive',
-                                            shape=(self._num_perspectives,
+                                            shape=(1,
                                                    self._dim_embedding),
                                             initializer='uniform',
                                             trainable=True)
@@ -73,18 +75,25 @@ class MultiPerspectiveLayer(Layer):
 
     def call(self, x: list):
         """Call."""
-        # seq_xt is the sequence of vectors of current sentence at all time steps.
         seq_lt, seq_rt = x
         # unpack seq_left and seq_right
         # all hidden states, last hidden state of forward pass, last cell state of
         # forward pass, last hidden state of backward pass, last cell state of backward pass.
-        lstm_lt, forward_h_lt, forward_c_lt, backward_h_lt, backward_c_lt = seq_lt
-        lstm_rt, forward_h_rt, forward_c_rt, backward_h_rt, backward_c_rt = seq_rt
+        lstm_lt, forward_h_lt, _, backward_h_lt, _ = seq_lt
+        lstm_rt, forward_h_rt, _, backward_h_rt, _ = seq_rt
 
         if self._strategy.get('full'):
             # each forward & backward contextual embedding compare
             # with the last step of the last time step of the other sentence.
-            pass
+            # v1 use w_k (d vector) multiply all hidden states `lstm_lt`.
+            # v2 & v3 use w_k (d vector) multiply forward_h_rt and backward_h_rt.
+            v1 = utils.tensor_mul_tensors(tensor=self.full,
+                                          tensors=lstm_lt) # tensor.
+            v2 = layers.multiply([self.full, forward_h_rt])
+            v3 = layers.multiply([self.full, backward_h_rt])
+            # cosine similarity
+            full_matching_fwd = layers.dot([v1, v2], normalize=True)
+            full_matching_bwd = layers.dot([v1, v3], normalize=True)
         if self._strategy.get('maxpooling'):
             # each contextual embedding compare with each contextual embedding.
             # retain the maximum of each dimension.
