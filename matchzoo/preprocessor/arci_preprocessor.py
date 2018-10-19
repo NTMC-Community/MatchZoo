@@ -6,9 +6,10 @@ import typing
 import logging
 from tqdm import tqdm
 
+from matchzoo import utils
 from matchzoo import engine
-from matchzoo import preprocessor
 from matchzoo import datapack
+from matchzoo import preprocessor
 from matchzoo.embedding import Embedding
 
 logger = logging.getLogger(__name__)
@@ -44,15 +45,14 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
     def __init__(self, fixed_length: list=[32, 32], embedding_file: str=''):
         """Initialization."""
-        self._datapack = None
-        self._context = {}
+        self.datapack = None
         self._embedding_file = embedding_file
         self._fixed_length = fixed_length
         self._vocab_unit = preprocessor.VocabularyUnit()
         self._left_fixedlen_unit = preprocessor.FixedLengthUnit(
-                                       self._fixed_length[0])
+            self._fixed_length[0])
         self._right_fixedlen_unit = preprocessor.FixedLengthUnit(
-                                        self._fixed_length[1])
+            self._fixed_length[1])
 
     def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""
@@ -76,20 +76,20 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
-        self._datapack = self.segment(inputs, stage='train')
+        self.datapack = self.segment(inputs, stage='train')
 
         # Loop through user input to generate words.
         # 1. Used for build vocabulary of words (get dimension).
         # 2. Cached words can be further used to perform input
         #    transformation.
-        for idx, row in tqdm(self._datapack.left.iterrows()):
+        for idx, row in tqdm(self.datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
-        for idx, row in tqdm(self._datapack.right.iterrows()):
+        for idx, row in tqdm(self.datapack.right.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_right
             for unit in units:
@@ -104,7 +104,7 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         elif os.path.isfile(self._embedding_file):
             embed_module = Embedding(embedding_file=self._embedding_file)
             embed_module.build(self._vocab_unit.state['term_index'])
-            self._context['embedding_mat'] = embed_module.embedding_mat
+            self.datapack.context['embedding_mat'] = embed_module.embedding_mat
         else:
             logger.error("Embedding file [{}] not found."
                          .format(self._embedding_file))
@@ -112,12 +112,13 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
                                     self._embedding_file)
 
         # Store the fitted parameters in context.
-        self._context['term_index'] = self._vocab_unit.state['term_index']
-        self._context['input_shapes'] = [(self._fixed_length[0],),
-                                         (self._fixed_length[1],)]
-        self._datapack.context = self._context
+        self.datapack.context['term_index'] = self._vocab_unit.state[
+            'term_index']
+        self.datapack.context['input_shapes'] = [(self._fixed_length[0],),
+                                                 (self._fixed_length[1],)]
         return self
 
+    @utils.validate_context
     def transform(
         self,
         inputs: typing.List[tuple],
@@ -131,13 +132,8 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage not in ['train', 'test']:
-            raise ValueError(f'{stage} is not a valid stage name.')
-        if not self._context.get('term_index'):
-            raise ValueError(
-                "Please fit term_index before apply transofm function.")
         if stage == 'test':
-            self._datapack = self.segment(inputs, stage=stage)
+            self.datapack = self.segment(inputs, stage=stage)
 
         logger.info(f"Start processing input data for {stage} stage.")
 
@@ -145,17 +141,17 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         units = self._prepare_stateless_units()
         units.append(self._vocab_unit)
 
-        for idx, row in tqdm(self._datapack.left.iterrows()):
+        for idx, row in tqdm(self.datapack.left.iterrows()):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             text = self._left_fixedlen_unit.transform(text)
-            self._datapack.left.at[idx, 'text_left'] = text
-        for idx, row in tqdm(self._datapack.right.iterrows()):
+            self.datapack.left.at[idx, 'text_left'] = text
+        for idx, row in tqdm(self.datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
             text = self._right_fixedlen_unit.transform(text)
-            self._datapack.right.at[idx, 'text_right'] = text
+            self.datapack.right.at[idx, 'text_right'] = text
 
-        return self._datapack
+        return self.datapack
