@@ -436,6 +436,9 @@ class FixedLengthUnit(ProcessorUnit):
 
         :return tokens: list of tokenized tokens in fixed length.
         """
+        # padding process can not handle empty list as input
+        if len(tokens) == 0:
+            tokens = [self._pad_value]
         np_tokens = np.array(tokens)
         fixed_tokens = np.full([self._text_length], self._pad_value,
                                dtype=np_tokens.dtype)

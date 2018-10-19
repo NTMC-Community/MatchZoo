@@ -6,7 +6,8 @@ import numpy as np
 @pytest.fixture
 def train_inputs():
     return [("id0", "id1", "how are glacier caves formed ?", "The ice facade is approximately 60 m high", 0),
-            ("id0", "id2", "how are glacier caves formed ?", "Ice formations in the Titlis glacier cave", 0),
+            ("id0", "id2", "how are glacier caves formed ?",
+             "Ice formations in the Titlis glacier cave", 0),
             ("id0", "id3", "how are glacier caves formed ?", "A glacier cave is a cave formed within the ice of a glacier", 1)]
 
 
@@ -24,11 +25,7 @@ def test_cdssm_preprocessor(train_inputs, validation_inputs):
     assert len(rv_train.right) == 3
     assert len(rv_train.relation) == 3
     value = rv_train.left.at['id0', 'text_left']
-    # just one window out
-    assert len(value) == 1
-    # each window is 198-dims
-    assert len(value[0]) == 198
-    assert sorted(cdssm_preprocessor._context.keys()) == ['input_shapes', 'term_index']
+    assert np.array(value).shape == (5, 198)
     rv_valid = cdssm_preprocessor.fit_transform(
         validation_inputs,
         stage='test')
