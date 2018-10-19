@@ -54,10 +54,12 @@ class BimpmModel(engine.BaseModel):
         # Multiperspective Matching layer.
         # Output is two sequence of vectors.
         # TODO Finalize MultiPerspectiveMatching
-        x_lt = MultiPerspectiveLayer(dim_output=10,
+        x_lt = MultiPerspectiveLayer(dim_output=(MultiPerspectiveLayer.num_perspective,
+                                                 self._params['dim_embedding']),
                                      dim_embedding=self._params['dim_embedding'],
                                      perspective=self._params['perspective'])([x_lt, x_rt])
-        x_rt = MultiPerspectiveLayer(dim_output=10,
+        x_rt = MultiPerspectiveLayer(dim_output=(MultiPerspectiveLayer.num_perspective,
+                                                 self._params['dim_embedding']),
                                      dim_embedding=self._params['dim_embedding'],
                                      perspective=self._params['perspective'])([x_rt, x_rlt])
         # Aggregation layer.
