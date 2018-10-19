@@ -82,6 +82,7 @@ class MultiPerspectiveLayer(Layer):
 
     def call(self, x: list):
         """Call."""
+        rv = []
         seq_lt, seq_rt = x
         # unpack seq_left and seq_right
         # all hidden states, last hidden state of forward pass, last cell state of
@@ -101,6 +102,8 @@ class MultiPerspectiveLayer(Layer):
             # cosine similarity
             full_matching_fwd = layers.dot([v1, v2], normalize=True)
             full_matching_bwd = layers.dot([v1, v3], normalize=True)
+            full_matching = layers.concatenate([full_matching_fwd, full_matching_bwd])
+            rv.append(full_matching)
         if self._perspective.get('maxpooling'):
             # each contextual embedding compare with each contextual embedding.
             # retain the maximum of each dimension.
@@ -112,6 +115,7 @@ class MultiPerspectiveLayer(Layer):
             v2 = utils.tensor_mul_tensors_with_max_pooling(tensor=self.maxp,
                                                            tensors=lstm_rt)
             maxpooling_matching = layers.dot([v1, v2], normalize=True)
+            rv.append(maxpooling_matching)
         if self._perspective.get('attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain sum of weighted mean of each dimension.
