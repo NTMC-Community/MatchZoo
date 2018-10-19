@@ -15,7 +15,7 @@ def tensor_mul_tensors(tensor, tensors):
 
 
 def tensor_mul_tensors_reduce_dim(tensor, tensors):
-    """Element wise multiply tensor with list of tensors, reduce the dimensionality."""
+    """Element wise multiply tensor with list of tensors."""
     tensors = K.stack(tensors)
 
     def element_wise_multiply(current_tensor):

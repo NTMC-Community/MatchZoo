@@ -1,7 +1,6 @@
 """An implementation of MultiPerspectiveLayer for Bimpm model."""
 
 from keras import layers
-from keras import backend as K
 from keras.engine.topology import Layer
 
 from matchzoo import utils
@@ -44,7 +43,7 @@ class MultiPerspectiveLayer(Layer):
         def num_perspective(self):
             """Get the number of perspectives that is True."""
             return sum(self._perspective.values())
-        
+
         @property
         def perspective(self):
             """Get the perspective status."""
@@ -52,8 +51,7 @@ class MultiPerspectiveLayer(Layer):
 
         def build(self, input_shape: list):
             """Input shape."""
-            # The shape of the weights is l * d
-            # l is number of perspectives, d is the dimensionality of embedding.
+            # The shape of the weights is l * d.
             if self._perspective.get('full'):
                 self.full = self.add_weight(name='pool',
                                             shape=(1,
@@ -85,8 +83,9 @@ class MultiPerspectiveLayer(Layer):
         rv = []
         seq_lt, seq_rt = x
         # unpack seq_left and seq_right
-        # all hidden states, last hidden state of forward pass, last cell state of
-        # forward pass, last hidden state of backward pass, last cell state of backward pass.
+        # all hidden states, last hidden state of forward pass,
+        # last cell state of forward pass, last hidden state of
+        # backward pass, last cell state of backward pass.
         lstm_lt, forward_h_lt, _, backward_h_lt, _ = seq_lt
         lstm_rt, forward_h_rt, _, backward_h_rt, _ = seq_rt
 
@@ -96,13 +95,14 @@ class MultiPerspectiveLayer(Layer):
             # v1 use w_k (d vector) multiply all hidden states `lstm_lt`.
             # v2 & v3 use w_k (d vector) multiply forward_h_rt and backward_h_rt.
             v1 = utils.tensor_mul_tensors_reduce_dim(tensor=self.full,
-                                                     tensors=lstm_lt) # tensor.
+                                                     tensors=lstm_lt)
             v2 = layers.multiply([self.full, forward_h_rt])
             v3 = layers.multiply([self.full, backward_h_rt])
             # cosine similarity
             full_matching_fwd = layers.dot([v1, v2], normalize=True)
             full_matching_bwd = layers.dot([v1, v3], normalize=True)
-            full_matching = layers.concatenate([full_matching_fwd, full_matching_bwd])
+            full_matching = layers.concatenate([full_matching_fwd,
+                                                full_matching_bwd])
             rv.append(full_matching)
         if self._perspective.get('maxpooling'):
             # each contextual embedding compare with each contextual embedding.
@@ -128,5 +128,6 @@ class MultiPerspectiveLayer(Layer):
         return rv
 
     def compute_output_shape(self, input_shape: list):
+        """Compute output shape."""
         shape_a, shape_b = input_shape
         return [(shape_a[0], self._dim_output), shape_b[:-1]]

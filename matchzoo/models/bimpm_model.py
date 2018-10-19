@@ -39,42 +39,48 @@ class BimpmModel(engine.BaseModel):
         input_lt = Input(shape=input_shape_lt)
         input_rt = Input(shape=input_shape_rt)
         # Context represntation layer.
-        x_lt = Bidirectional(LSTM(input_shape_lt[0],
-                                  return_sequences=True,
-                                  return_state=True,
-                                  kernel_initializer=self._params['w_initializer'],
-                                  bias_initializer=self._params['b_initializer']),
-                             merge_mode=None)(input_lt)
-        x_rt = Bidirectional(LSTM(input_shape_rt[0],
-                                  return_sequences=True,
-                                  return_state=True,
-                                  kernel_initializer=self._params['w_initializer'],
-                                  bias_initializer=self._params['b_initializer']),
-                             merge_mode=None)(input_rt)
+        x_lt = Bidirectional(
+            LSTM(input_shape_lt[0],
+                 return_sequences=True,
+                 return_state=True,
+                 kernel_initializer=self._params['w_initializer'],
+                 bias_initializer=self._params['b_initializer']),
+            merge_mode=None)(input_lt)
+        x_rt = Bidirectional(
+            LSTM(input_shape_rt[0],
+                 return_sequences=True,
+                 return_state=True,
+                 kernel_initializer=self._params['w_initializer'],
+                 bias_initializer=self._params['b_initializer']),
+            merge_mode=None)(input_rt)
         # Multiperspective Matching layer.
         # Output is two sequence of vectors.
         # TODO Finalize MultiPerspectiveMatching
-        x_lt = MultiPerspectiveLayer(dim_output=(MultiPerspectiveLayer.num_perspective,
-                                                 self._params['dim_embedding']),
-                                     dim_embedding=self._params['dim_embedding'],
-                                     perspective=self._params['perspective'])([x_lt, x_rt])
-        x_rt = MultiPerspectiveLayer(dim_output=(MultiPerspectiveLayer.num_perspective,
-                                                 self._params['dim_embedding']),
-                                     dim_embedding=self._params['dim_embedding'],
-                                     perspective=self._params['perspective'])([x_rt, x_lt])
+        x_lt = MultiPerspectiveLayer(
+            dim_output=(MultiPerspectiveLayer.num_perspective,
+                        self._params['dim_embedding']),
+            dim_embedding=self._params['dim_embedding'],
+            perspective=self._params['perspective'])([x_lt, x_rt])
+        x_rt = MultiPerspectiveLayer(
+            dim_output=(MultiPerspectiveLayer.num_perspective,
+                        self._params['dim_embedding']),
+            dim_embedding=self._params['dim_embedding'],
+            perspective=self._params['perspective'])([x_rt, x_lt])
         # Aggregation layer.
-        x_lt = Bidirectional(LSTM(self._params['dim_hidden'],
-                                  return_sequences=False,
-                                  return_state=False,
-                                  kernel_initializer=self._params['w_initializer'],
-                                  bias_initializer=self._params['b_initializer']),
-                             merge_mode='concat')(x_lt)
-        x_rt = Bidirectional(LSTM(self._params['dim_hidden'],
-                                  return_sequences=False,
-                                  return_state=False,
-                                  kernel_initializer=self._params['w_initializer'],
-                                  bias_initializer=self._params['b_initializer']),
-                             merge_mode='concat')(x_lt)
+        x_lt = Bidirectional(
+            LSTM(self._params['dim_hidden'],
+                 return_sequences=False,
+                 return_state=False,
+                 kernel_initializer=self._params['w_initializer'],
+                 bias_initializer=self._params['b_initializer']),
+            merge_mode='concat')(x_lt)
+        x_rt = Bidirectional(
+            LSTM(self._params['dim_hidden'],
+                 return_sequences=False,
+                 return_state=False,
+                 kernel_initializer=self._params['w_initializer'],
+                 bias_initializer=self._params['b_initializer']),
+            merge_mode='concat')(x_lt)
         # catenate the forward-backward vector of left & right (only last step).
         # Concatenate the concatenated vector of left and right.
         x = Concatenate()([x_lt, x_rt])
