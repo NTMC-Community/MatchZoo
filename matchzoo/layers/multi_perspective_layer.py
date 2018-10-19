@@ -93,7 +93,7 @@ class MultiPerspectiveLayer(Layer):
             # each forward & backward contextual embedding compare
             # with the last step of the last time step of the other sentence.
             # v1 use w_k (d vector) multiply all hidden states `lstm_lt`.
-            # v2 & v3 use w_k (d vector) multiply forward_h_rt and backward_h_rt.
+            # v2 & v3 use w_k (d vector) multiply forward and backward.
             v1 = utils.tensor_mul_tensors_reduce_dim(tensor=self.full,
                                                      tensors=lstm_lt)
             v2 = layers.multiply([self.full, forward_h_rt])

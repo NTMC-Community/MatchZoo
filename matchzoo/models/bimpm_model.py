@@ -81,7 +81,7 @@ class BimpmModel(engine.BaseModel):
                  kernel_initializer=self._params['w_initializer'],
                  bias_initializer=self._params['b_initializer']),
             merge_mode='concat')(x_lt)
-        # catenate the forward-backward vector of left & right (only last step).
+        # catenate the forward-backward vector of left & right.
         # Concatenate the concatenated vector of left and right.
         x = Concatenate()([x_lt, x_rt])
         # prediction layer.
