@@ -26,13 +26,15 @@ class BaseGenerator(keras.utils.Sequence):
 
         :param batch_size: number of instances for each batch
         :param num_instances: total number of instances
+        :param stage: String indicate the pre-processing stage, `train`,
+            `test`, or `predict` expected.
         :param shuffle: a bool variable to determine whether choose samples
         randomly
         """
         self.batch_size = batch_size
         self.shuffle = shuffle
         self.num_instances = num_instances
-        if stage not in ['train', 'test']:
+        if stage not in ['train', 'test', 'predict']:
             raise ValueError(f'{stage} is not a valid stage name.')
         self.stage = stage
         self.index_array = None

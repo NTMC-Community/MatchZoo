@@ -25,7 +25,7 @@ def x():
                     context=ctx
                     )
 
-@pytest.fixture(scope='module', params=['train', 'test'])
+@pytest.fixture(scope='module', params=['train', 'test', 'predict'])
 def stage(request):
     return request.param
 
@@ -45,9 +45,9 @@ def test_list_generator(x, stage):
     assert x1['id_right'].tolist() == ['did1', 'did0']
     assert x1['text_left'].tolist() == [[2, 3], [2, 3]]
     assert x1['text_right'].tolist() == [[3, 4, 5], [2, 3, 4]]
-    if stage == 'test':
+    if stage == 'predict':
         assert y0 is None
         assert y1 is None
-    elif stage == 'train':
+    elif stage in ['train', 'test']:
         assert y0.tolist() == [0.0]
         assert y1.tolist() == [1.0, 2.0]

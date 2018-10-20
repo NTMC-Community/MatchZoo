@@ -20,7 +20,7 @@ class SegmentMixin(object):
         Convert user input into :class:`DataPack` consist of two tables.
 
         :param inputs: Raw user inputs, list of tuples.
-        :param stage: `train` or `test`.
+        :param stage: `train`, `test`, or `predict`.
 
         :return: User input into a :class:`DataPack` with left, right and
             relation..
@@ -28,7 +28,7 @@ class SegmentMixin(object):
         col_all = ['id_left', 'id_right', 'text_left', 'text_right']
         col_relation = ['id_left', 'id_right']
 
-        if stage == 'train':
+        if stage in ['train', 'test']:
             col_relation.append('label')
             col_all.append('label')
 

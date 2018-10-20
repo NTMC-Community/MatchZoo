@@ -28,7 +28,7 @@ def test_cdssm_preprocessor(train_inputs, validation_inputs):
     assert np.array(value).shape == (5, 198)
     rv_valid = cdssm_preprocessor.fit_transform(
         validation_inputs,
-        stage='test')
+        stage='predict')
     assert len(rv_valid.left) == 1
     assert len(rv_valid.right) == 1
     assert len(rv_valid.relation) == 1

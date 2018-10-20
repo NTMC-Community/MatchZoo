@@ -32,7 +32,7 @@ def x():
 def task(request):
     return request.param
 
-@pytest.fixture(scope='module', params=['train', 'test'])
+@pytest.fixture(scope='module', params=['train', 'test', 'predict'])
 def stage(request):
     return request.param
 
@@ -46,9 +46,9 @@ def test_point_generator(x, task, stage):
         assert x['id_right'].tolist() == ['did0', 'did1', 'did0']
         assert x['text_left'].tolist() == [[1, 2], [2, 3], [2, 3]]
         assert x['text_right'].tolist() == [[2, 3, 4], [3, 4, 5], [2, 3, 4]]
-        if stage == 'test':
+        if stage == 'predict':
             assert y is None
-        elif stage == 'train' and task == tasks.Classification(num_classes=3):
+        elif stage in ['train', 'predict'] and task == tasks.Classification(num_classes=3):
             assert y.tolist() == [
                 [1, 0, 0],
                 [0, 1, 0],
