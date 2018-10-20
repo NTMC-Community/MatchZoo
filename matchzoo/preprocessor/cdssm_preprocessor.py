@@ -127,11 +127,11 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         Apply transformation on data, create `letter-trigram` representation.
 
         :param inputs: Inputs to be preprocessed.
-        :param stage: Pre-processing stage, `train` or `test`.
+        :param stage: Pre-processing stage, `train`, `dev` or `test`.
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage == 'test':
+        if stage in ['dev', 'test']:
             self.datapack = self.segment(inputs, stage=stage)
 
         # prepare pipeline unit.
