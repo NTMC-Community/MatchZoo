@@ -3,10 +3,6 @@ import pytest
 from matchzoo import metrics
 
 
-def test_to_list():
-    x = [1, 2, 3]
-    assert metrics._to_list(x) == [1, 2, 3]
-
 def test_sort_couple():
     l = [0, 1, 2]
     s = [0.1, 0.4, 0.2]

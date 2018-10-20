@@ -6,14 +6,8 @@ import numpy as np
 import typing
 
 
-def _to_list(x: typing.Any) -> list:
-    """Transfer the inputs to list."""
-    if isinstance(x, list):
-        return x
-    return [x]
 
-
-def sort_couple(labels: list, scores: list) -> list:
+def sort_couple(labels: list, scores: np.array) -> list:
     """Zip the `labels` with `scores` into a single list."""
     labels = _to_list(np.squeeze(labels).tolist())
     scores = _to_list(np.squeeze(scores).tolist())
@@ -91,10 +85,10 @@ def average_precision(y_true: list,
     Calculate average precision (area under PR curve).
 
     Example:
-        >>> y_true = [0, 1, 0, 0]
-        >>> y_pred = [0.1, 0.6, 0.2, 0.3]
+        >>> y_true = [0, 1]
+        >>> y_pred = [0.1, 0.6]
         >>> round(average_precision(y_true, y_pred), 2)
-        0.52
+        0.75
 
     :param y_true: The ground true label of each document.
     :param y_pred: The predicted scores of each document.

@@ -209,21 +209,21 @@ class BaseModel(abc.ABC):
             the display labels for the scalar outputs.
 
         """
-        qinfo = {}
-        for (x, y) in generator:
-            y_pred = self._backend.predict(x=x, batch_size=batch_size)
+        query_lists = {}
+        for (batch_x, batch_y) in generator:
+            y_pred = self._backend.predict(x=batch_x, batch_size=batch_size)
             scores = zip(y, y_pred)
             for idx, qid in enumerate(x['id_left']):
-                if qid not in qinfo:
-                    qinfo[qid] = []
-                qinfo[qid].append(scores[idx])
+                if qid not in query_lists:
+                    query_lists[qid] = []
+                query_lists[qid].append(scores[idx])
         outs = {}
         for metric in metrics:
             outs[metric] = 0.
-            for qid, scores in qinfo.items():
+            for qid, scores in query_lists.items():
                 s = zip(*scores)
                 outs[metric] += locals()[metric](s[0], s[1])
-        outs /= len(qinfo)
+        outs /= len(query_lists)
         return outs
 
     def predict(
