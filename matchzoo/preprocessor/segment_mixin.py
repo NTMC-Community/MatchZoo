@@ -28,7 +28,7 @@ class SegmentMixin(object):
         col_all = ['id_left', 'id_right', 'text_left', 'text_right']
         col_relation = ['id_left', 'id_right']
 
-        if stage == 'train':
+        if stage in ['train', 'dev']:
             col_relation.append('label')
             col_all.append('label')
 

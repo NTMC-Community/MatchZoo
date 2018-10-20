@@ -47,8 +47,8 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         Call fit-transform.
 
         :param inputs: List of text-left, text-right, label triples.
-        :param stage: String indicate the pre-processing stage, `train` or
-            `test` expected.
+        :param stage: String indicate the pre-processing stage, `train`,
+            `dev` or `test` expected.
         """
         if stage == 'train':
             return self.fit(inputs).transform(inputs, stage)
