@@ -114,6 +114,10 @@ class MultiPerspectiveLayer(Layer):
         if self._perspective.get('attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain sum of weighted mean of each dimension.
+            # 1. Multiplication between hidden states.
+            a = utils.tensors_dot_tensors(lstm_lt, lstm_rt)
+            # 2. weighted sum.
+            # 3, match with attentive vector.
             pass
         if self._perspective.get('max-attentive'):
             # each contextual embedding compare with each contextual embedding.
