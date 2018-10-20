@@ -80,7 +80,7 @@ class BimpmModel(engine.BaseModel):
                  return_state=False,
                  kernel_initializer=self._params['w_initializer'],
                  bias_initializer=self._params['b_initializer']),
-            merge_mode='concat')(x_lt)
+            merge_mode='concat')(x_rt)
         # catenate the forward-backward vector of left & right.
         # Concatenate the concatenated vector of left and right.
         x = Concatenate()([x_lt, x_rt])
