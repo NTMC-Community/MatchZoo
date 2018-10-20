@@ -39,15 +39,10 @@ class MultiPerspectiveLayer(Layer):
             """List available strategy for multi-perspective matching."""
             return ['full', 'maxpooling', 'attentive', 'max-attentive']
 
-        @property
-        def num_perspective(self):
+        @classmethod
+        def num_perspective(cls):
             """Get the number of perspectives that is True."""
             return sum(self._perspective.values())
-
-        @property
-        def perspective(self):
-            """Get the perspective status."""
-            return self._perspective
 
         def build(self, input_shape: list):
             """Input shape."""
