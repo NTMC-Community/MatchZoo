@@ -25,7 +25,7 @@ def test_arci_preprocessor_noembed(train_inputs, validation_inputs):
     assert len(rv_train.relation) == 3
     rv_valid = arci_preprocessor.fit_transform(
         validation_inputs,
-        stage='test')
+        stage='predict')
     assert len(rv_valid.left) == 1
     assert len(rv_valid.right) == 1
     assert len(rv_valid.relation) == 1
@@ -44,7 +44,7 @@ def test_arci_preprocessor_embed(train_inputs, validation_inputs):
     assert len(rv_train.relation) == 3
     rv_valid = arci_preprocessor.fit_transform(
         validation_inputs,
-        stage='test')
+        stage='predict')
     assert len(rv_valid.left) == 1
     assert len(rv_valid.right) == 1
     assert len(rv_valid.relation) == 1

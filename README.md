@@ -39,7 +39,7 @@ Preprocess your input data in three lines of code, keep track parameters to be p
 ```python
 dssm_preprocessor = preprocessor.DSSMPreprocessor()
 processed_tr = dssm_preprocessor.fit_transform(train, stage='train')
-processed_te = dssm_preprocessor.fit_transform(test, stage='test')
+processed_te = dssm_preprocessor.fit_transform(test, stage='predict')
 # DSSM expect dimensionality of letter-trigrams as input shape.
 # The fitted parameters has been stored in `context` during preprocessing on training data.
 input_shapes = processed_tr.context['input_shapes']

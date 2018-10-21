@@ -20,7 +20,7 @@ def x():
                     right=right,
                     context=ctx)
 
-@pytest.fixture(scope='module', params=['train', 'test'])
+@pytest.fixture(scope='module', params=['train', 'evaluate', 'predict'])
 def stage(request):
     return request.param
 

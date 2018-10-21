@@ -34,7 +34,7 @@ def task(request) -> engine.BaseTask:
     preprocessor.ArcIPreprocessor(),
     preprocessor.ArcIPreprocessor(fixed_length=[10, 10],
                                   embedding_file=os.path.join(
-                                                    os.path.dirname(__file__), 
+                                                    os.path.dirname(__file__),
                                                     '../sample/embed_rank.txt'
                                                     )
                                  )
@@ -51,7 +51,7 @@ def processed_train(train, arci_preprocessor) -> datapack.DataPack:
 @pytest.fixture
 def processed_test(test) -> datapack.DataPack:
     arci_proprecessor = engine.load_preprocessor('.tmpdir')
-    return arci_proprecessor.fit_transform(test, stage='test')
+    return arci_proprecessor.fit_transform(test, stage='predict')
 
 @pytest.fixture(params=['point', 'pair'])
 def train_generator(request, processed_train, task) -> engine.BaseGenerator:
@@ -66,9 +66,9 @@ def train_generator(request, processed_train, task) -> engine.BaseGenerator:
 @pytest.fixture(params=['point', 'list'])
 def test_generator(request, processed_test, task) -> engine.BaseGenerator:
     if request.param == 'point':
-        return generators.PointGenerator(processed_test, task=task, stage='test')
+        return generators.PointGenerator(processed_test, task=task, stage='predict')
     elif request.param == 'list':
-        return generators.ListGenerator(processed_test, stage='test')
+        return generators.ListGenerator(processed_test, stage='predict')
 
 def test_arci(processed_train,
               task,

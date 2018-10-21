@@ -36,7 +36,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         ...                 "I visted beijing yesterday.")]
         >>> rv_test = cdssm_preprocessor.fit_transform(
         ...     test_inputs,
-        ...     stage='test')
+        ...     stage='predict')
         >>> type(rv_test)
         <class 'matchzoo.datapack.DataPack'>
     """
@@ -127,11 +127,11 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         Apply transformation on data, create `letter-trigram` representation.
 
         :param inputs: Inputs to be preprocessed.
-        :param stage: Pre-processing stage, `train` or `test`.
+        :param stage: Pre-processing stage, `train`, `evaluate`, or `predict`.
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage == 'test':
+        if stage in ['evaluate', 'predict']:
             self.datapack = self.segment(inputs, stage=stage)
 
         # prepare pipeline unit.
