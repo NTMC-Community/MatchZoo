@@ -87,6 +87,7 @@ class Embedding(object):
 
         with open(self._embedding_file, 'rb') as embedding_file_ptr:
             # Detect embedding_dim from first line
+            # TODO when embedding dim equals one, this will not work.
             last_pos = embedding_file_ptr.tell()
             first_line = embedding_file_ptr.readline()
             if len(first_line.split(b" ")) == 2:
