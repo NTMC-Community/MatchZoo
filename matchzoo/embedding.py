@@ -86,9 +86,16 @@ class Embedding(object):
         num_shared_words = 0
 
         with open(self._embedding_file, 'rb') as embedding_file_ptr:
-            # Read the header of the embed file
-            num_embed_words, self._embedding_dim = \
-                map(int, embedding_file_ptr.readline().rstrip().split(b" "))
+            # Detect embedding_dim from first line
+            last_pos = embedding_file_ptr.tell()
+            first_line = embedding_file_ptr.readline()
+            if len(first_line.split(b" ")) == 2:
+                _, self._embedding_dim = map(int, first_line.split(b" "))
+            else:
+                entries = first_line.rstrip().split(b" ")
+                vec = entries[1:]
+                self._embedding_dim = len(vec)
+                embedding_file_ptr.seek(last_pos)
 
             self._embedding_mat = np.random.uniform(-0.25, 0.25,
                                                     (num_dict_words,
