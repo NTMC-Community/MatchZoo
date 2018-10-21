@@ -37,7 +37,7 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         ...                 "I visted beijing yesterday.")]
         >>> rv_test = arci_preprocessor.fit_transform(
         ...     test_inputs,
-        ...     stage='test')
+        ...     stage='predict')
         >>> type(rv_test)
         <class 'matchzoo.datapack.DataPack'>
 
@@ -128,11 +128,11 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         Apply transformation on data, create word ids.
 
         :param inputs: Inputs to be preprocessed.
-        :param stage: Pre-processing stage, `train` or `test`.
+        :param stage: Pre-processing stage, `train`, `evaluate`, or `predict`.
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage == 'test':
+        if stage in ['evaluate', 'predict']:
             self.datapack = self.segment(inputs, stage=stage)
 
         logger.info(f"Start processing input data for {stage} stage.")

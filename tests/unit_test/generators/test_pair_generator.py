@@ -49,7 +49,7 @@ def test_pair_generator_multi(x):
     np.random.seed(111)
     shuffle = False
     batch_size = 1
-    generator = PairGenerator(x, 2, 2, batch_size, 'test', shuffle)
+    generator = PairGenerator(x, 2, 2, batch_size, 'predict', shuffle)
     assert len(generator) == 2
     x0, y0 = generator[0]
     assert x0['text_left'].tolist() == [[1, 2], [1, 2], [1, 2]]

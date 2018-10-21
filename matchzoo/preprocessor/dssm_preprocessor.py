@@ -37,7 +37,7 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         ...                 "I visted beijing yesterday.")]
         >>> rv_test = dssm_preprocessor.fit_transform(
         ...     test_inputs,
-        ...     stage='test')
+        ...     stage='predict')
         >>> type(rv_test)
         <class 'matchzoo.datapack.DataPack'>
 
@@ -109,12 +109,12 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         Apply transformation on data, create `tri-letter` representation.
 
         :param inputs: Inputs to be preprocessed.
-        :param stage: Pre-processing stage, `train` or `test`.
+        :param stage: Pre-processing stage, `train`, `evaluate`, `predict`.
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage == 'test':
-            self.datapack = self.segment(inputs, stage='test')
+        if stage in ['evaluate', 'predict']:
+            self.datapack = self.segment(inputs, stage=stage)
 
         logger.info(f"Start processing input data for {stage} stage.")
 
