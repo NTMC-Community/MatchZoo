@@ -59,7 +59,7 @@ class PointGenerator(engine.BaseGenerator):
         :param task: the task is a instance of :class:`engine.BaseTask`.
         :param batch_size: number of instances in a batch.
         :param stage: String indicate the pre-processing stage, `train`,
-            `test`, or `predict` expected.
+            `evaluate`, or `predict` expected.
         :param shuffle: whether to shuffle the instances while generating a
             batch.
         """
@@ -87,7 +87,7 @@ class PointGenerator(engine.BaseGenerator):
             batch_x[column] = []
 
         # Create label field.
-        if self.stage in ['train', 'test']:
+        if self.stage in ['train', 'evaluate']:
             if isinstance(self._task, tasks.Ranking):
                 self._relation['label'] = self._relation['label'].astype(
                     self._task.output_dtype)

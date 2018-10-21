@@ -109,11 +109,11 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         Apply transformation on data, create `tri-letter` representation.
 
         :param inputs: Inputs to be preprocessed.
-        :param stage: Pre-processing stage, `train`, `test`, `predict`.
+        :param stage: Pre-processing stage, `train`, `evaluate`, `predict`.
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage in ['test', 'predict']:
+        if stage in ['evaluate', 'predict']:
             self.datapack = self.segment(inputs, stage=stage)
 
         logger.info(f"Start processing input data for {stage} stage.")

@@ -128,11 +128,11 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         Apply transformation on data, create word ids.
 
         :param inputs: Inputs to be preprocessed.
-        :param stage: Pre-processing stage, `train`, `test`, or `predict`.
+        :param stage: Pre-processing stage, `train`, `evaluate`, or `predict`.
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage in ['test', 'predict']:
+        if stage in ['evaluate', 'predict']:
             self.datapack = self.segment(inputs, stage=stage)
 
         logger.info(f"Start processing input data for {stage} stage.")

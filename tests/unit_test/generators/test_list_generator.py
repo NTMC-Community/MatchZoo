@@ -25,7 +25,7 @@ def x():
                     context=ctx
                     )
 
-@pytest.fixture(scope='module', params=['train', 'test', 'predict'])
+@pytest.fixture(scope='module', params=['train', 'evaluate', 'predict'])
 def stage(request):
     return request.param
 
