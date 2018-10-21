@@ -43,6 +43,7 @@ def processed_test(test) -> datapack.DataPack:
     cdssm_preprocessor = engine.load_preprocessor('.tmpdir')
     return cdssm_preprocessor.fit_transform(test, stage='predict')
 
+
 @pytest.fixture(params=['point', 'pair'])
 def train_generator(request, processed_train, task) -> engine.BaseGenerator:
     if request.param == 'point':

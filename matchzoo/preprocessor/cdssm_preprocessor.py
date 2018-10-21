@@ -131,7 +131,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage == ['test', 'predict']:
+        if stage in ['test', 'predict']:
             self.datapack = self.segment(inputs, stage=stage)
 
         # prepare pipeline unit.
