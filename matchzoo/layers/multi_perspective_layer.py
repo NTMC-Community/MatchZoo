@@ -89,15 +89,19 @@ class MultiPerspectiveLayer(Layer):
             # with the last step of the last time step of the other sentence.
             # v1 use w_k (d vector) multiply all hidden states `lstm_lt`.
             # v2 & v3 use w_k (d vector) multiply forward and backward.
-            v1 = utils.tensor_mul_tensors_reduce_dim(tensor=self.full,
-                                                     tensors=lstm_lt)
+            # self.full -> 1 * d, lstm_lt -> time_steps * d
+            # v1 -> time_steps * d
+            v1 = utils.tensor_mul_tensors(tensor=self.full,
+                                          tensors=lstm_lt)
+            # v2 & v3 -> 1 * d
             v2 = layers.multiply([self.full, forward_h_rt])
             v3 = layers.multiply([self.full, backward_h_rt])
-            # cosine similarity
-            full_matching_fwd = layers.dot([v1, v2], normalize=True)
-            full_matching_bwd = layers.dot([v1, v3], normalize=True)
-            full_matching = layers.concatenate([full_matching_fwd,
-                                                full_matching_bwd])
+            # cosine similarity -> 1 * d
+            full_matching_fwd = K.sum(v1 * v2, axis=0, keepdims=True)
+            full_matching_bwd = k.sum(v1 * v3, axis=0, keepdims=True)
+            # full matching -> 1 * d
+            full_matching = layers.averarge([full_matching_fwd,
+                                             full_matching_bwd])
             rv.append(full_matching)
         if self._perspective.get('maxpooling'):
             # each contextual embedding compare with each contextual embedding.
@@ -105,10 +109,12 @@ class MultiPerspectiveLayer(Layer):
             # v1 & v2 use weight * list of hidden states, reain max value
             # across each dimension, and result in tensor.
             # forward ans backward compute at the same time.
+            # self.maxp -> 1 * d, lstm_lt -> time_steps * d, v1 & v2 -> n * 1
             v1 = utils.tensor_mul_tensors_with_max_pooling(tensor=self.maxp,
                                                            tensors=lstm_lt)
             v2 = utils.tensor_mul_tensors_with_max_pooling(tensor=self.maxp,
                                                            tensors=lstm_rt)
+            
             maxpooling_matching = layers.dot([v1, v2], normalize=True)
             rv.append(maxpooling_matching)
         if self._perspective.get('attentive'):

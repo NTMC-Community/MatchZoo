@@ -14,21 +14,10 @@ def tensor_mul_tensors(tensor, tensors):
     return K.map_fn(element_wise_multiply, tensors)
 
 
-def tensor_mul_tensors_reduce_dim(tensor, tensors):
-    """Element wise multiply tensor with list of tensors."""
-    tensors = K.stack(tensors)
-
-    def element_wise_multiply(current_tensor):
-        """Do element-wise multiplication."""
-        return K.sum(layers.multiply([tensor, current_tensor]),
-                     keepdims=True)
-    return K.map_fn(element_wise_multiply, tensors)
-
-
 def tensor_mul_tensors_with_max_pooling(tensor, tensors):
     """Multiply tensor with list of tensors and retain the maximum value."""
     return K.max(tensor_mul_tensors(tensor, tensors),
-                 axis=0,
+                 axis=-1,
                  keepdims=True)
 
 
@@ -38,9 +27,9 @@ def tensor_dot_tensors(tensor, tensors):
 
     def cosine_similarity(current_tensor):
         """Compute cosine similarity between tensor and tensor."""
-        return layers.dot([tensor, current_tensor],
-                          axes=-1,
-                          normalize=True)
+        return K.sum(tensor * current_tensor,
+                     axis=-1,
+                     keepdims=True)
     return K.map_fn(cosine_similarity, tensors)
 
 
