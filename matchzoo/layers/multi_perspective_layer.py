@@ -1,6 +1,7 @@
 """An implementation of MultiPerspectiveLayer for Bimpm model."""
 
 from keras import layers
+from keras import backend as K
 from keras.engine.topology import Layer
 
 from matchzoo import utils
@@ -39,7 +40,7 @@ class MultiPerspectiveLayer(Layer):
             """List available strategy for multi-perspective matching."""
             return ['full', 'maxpooling', 'attentive', 'max-attentive']
 
-        @classmethod
+        @property
         def num_perspective(cls):
             """Get the number of perspectives that is True."""
             return sum(self._perspective.values())
@@ -109,19 +110,20 @@ class MultiPerspectiveLayer(Layer):
             # v1 & v2 use weight * list of hidden states, reain max value
             # across each dimension, and result in tensor.
             # forward ans backward compute at the same time.
-            # self.maxp -> 1 * d, lstm_lt -> time_steps * d, v1 & v2 -> n * 1
+            # self.maxp -> 1 * d, lstm_lt -> time_steps * d, v1 & v2 -> 1 * d
             v1 = utils.tensor_mul_tensors_with_max_pooling(tensor=self.maxp,
                                                            tensors=lstm_lt)
             v2 = utils.tensor_mul_tensors_with_max_pooling(tensor=self.maxp,
                                                            tensors=lstm_rt)
-            
-            maxpooling_matching = layers.dot([v1, v2], normalize=True)
+            # maxpooling-matching (cosine similarity) -> 1 * d
+            maxpooling_matching = K.sum(v1 * v2, axis=0, keepdims=True)
             rv.append(maxpooling_matching)
         if self._perspective.get('attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain sum of weighted mean of each dimension.
-            # 1. Multiplication between hidden states.
+            # 1. Multiplication between hidden states, each state is 1 * d
             a = utils.tensors_dot_tensors(lstm_lt, lstm_rt)
+            print(a)
             # 2. weighted sum.
             # 3, match with attentive vector.
             pass

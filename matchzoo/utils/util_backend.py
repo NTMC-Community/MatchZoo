@@ -17,7 +17,7 @@ def tensor_mul_tensors(tensor, tensors):
 def tensor_mul_tensors_with_max_pooling(tensor, tensors):
     """Multiply tensor with list of tensors and retain the maximum value."""
     return K.max(tensor_mul_tensors(tensor, tensors),
-                 axis=-1,
+                 axis=0,
                  keepdims=True)
 
 
