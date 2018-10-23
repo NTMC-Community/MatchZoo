@@ -99,7 +99,7 @@ class MultiPerspectiveLayer(Layer):
             v3 = layers.multiply([self.full, backward_h_rt])
             # cosine similarity -> 1 * d
             full_matching_fwd = K.sum(v1 * v2, axis=0, keepdims=True)
-            full_matching_bwd = k.sum(v1 * v3, axis=0, keepdims=True)
+            full_matching_bwd = K.sum(v1 * v3, axis=0, keepdims=True)
             # full matching -> 1 * d
             full_matching = layers.averarge([full_matching_fwd,
                                              full_matching_bwd])
@@ -121,12 +121,23 @@ class MultiPerspectiveLayer(Layer):
         if self._perspective.get('attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain sum of weighted mean of each dimension.
-            # 1. Multiplication between hidden states, each state is 1 * d
+            # 1. Cosine similarity between hidden states, each state is 1 * d
+            # a -> (num_time_steps_lt, num_time_steps_rt)
             a = utils.tensors_dot_tensors(lstm_lt, lstm_rt)
-            print(a)
-            # 2. weighted sum.
+            # 2. weighted sum. (num_time_steps_lt * d)
+            weighted_sum = K.sum(a*lstm_rt, axis=0, keepdims=True)
+            # h_mean. (num_time_steps_lt * d).
+            attentive_vector = weighted_sum/K.sum(a, axis=0, keepdims=True)
+            # attentive vector multiply weight. (1 * d)
+            attentive_vector = utils.tensor_mul_tensors(self.atte,
+                                                        attentive_vector)
+            # lstm_lt multiply weight
+            v1 = utils.tensor_mul_tensors(self.atte, lstm_lt)
             # 3, match with attentive vector.
-            pass
+            attentive_matching = K.sum(v1 * attentive_vector,
+                                       axis=0,
+                                       keepdims=True)
+            rv.append(attentive_matching)
         if self._perspective.get('max-attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain max of weighted mean of each dimension.

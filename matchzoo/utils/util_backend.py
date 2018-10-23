@@ -28,7 +28,7 @@ def tensor_dot_tensors(tensor, tensors):
     def cosine_similarity(current_tensor):
         """Compute cosine similarity between tensor and tensor."""
         return K.sum(tensor * current_tensor,
-                     axis=-1,
+                     axis=0,
                      keepdims=True)
     return K.map_fn(cosine_similarity, tensors)
 
