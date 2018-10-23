@@ -72,7 +72,8 @@ class PairGenerator(engine.BaseGenerator):
         more negative sample than positive sample, thus, we use num_dup to
         duplicate those positive samples.
         :param batch_size: number of instances in a batch.
-        :param stage: the current phase, the value can be 'train' or 'test'.
+        :param stage: String indicate the pre-processing stage, `train`,
+            `evaluate`, or `predict` expected.
         :param shuffle: whether to shuffle the instances while generating a
             batch.
         """

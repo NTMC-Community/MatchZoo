@@ -38,8 +38,8 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
         :param inputs: List of text-left, text-right, label triples,
             or list of text-left, text-right tuples (test stage).
-        :param stage: String indicate the pre-processing stage, `train` or
-            `test` expected.
+        :param stage: String indicate the pre-processing stage, `train`,
+            `evaluate`, or `predict` expected.
         """
 
     def fit_transform(self, inputs: list, stage: str) -> datapack.DataPack:
@@ -47,8 +47,8 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         Call fit-transform.
 
         :param inputs: List of text-left, text-right, label triples.
-        :param stage: String indicate the pre-processing stage, `train` or
-            `test` expected.
+        :param stage: String indicate the pre-processing stage, `train`,
+            `evaluate`, or `predict` expected.
         """
         if stage == 'train':
             return self.fit(inputs).transform(inputs, stage)
