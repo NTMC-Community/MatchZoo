@@ -1,193 +1,204 @@
 """Evaluation metrics for information retrieval."""
-from matchzoo.engine import BaseMetric
 
+import math
+import random
 import numpy as np
+import typing
 
-class
 
 
-def mean_reciprocal_rank(rs: list) -> float:
+def sort_couple(labels: list, scores: np.array) -> list:
+    """Zip the `labels` with `scores` into a single list."""
+    labels = _to_list(np.squeeze(labels).tolist())
+    scores = _to_list(np.squeeze(scores).tolist())
+    couple = list(zip(labels, scores))
+    random.shuffle(couple)
+    sorted_couple = sorted(couple, key=lambda x: x[1], reverse=True)
+    return sorted_couple
+
+
+def mean_reciprocal_rank(y_true: list,
+                         y_pred: list,
+                         threshold: int=0) -> float:
     """
     Calculate reciprocal of the rank of the first relevant item.
 
-    First element is 'rank 1'. Relevance is binary (nonzero is relevant).
-
     Example:
-        >>> rs = [[0, 0, 0, 1], [1, 0, 0], [1, 0, 0]]
-        >>> mean_reciprocal_rank(rs)
-        0.75
+        >>> y_pred = [0.2, 0.3, 0.7, 1.0]
+        >>> y_true = [1, 0, 0, 0]
+        >>> mean_reciprocal_rank(y_true, y_pred)
+        0.25
 
-    :param rs: Iterator of relevance scores (list or numpy) in rank order
-            (first element is the first item).
+    :param y_true: The ground true label of each document.
+    :param y_pred: The predicted scores of each document.
+    :param threshold: the label threshold of relevance degree.
     :return: Mean reciprocal rank.
     """
-    rs = (np.asarray(r).nonzero()[0] for r in rs)
-    return np.mean([1. / (r[0] + 1) if r.size else 0. for r in rs])
+    coupled_pair = sort_couple(y_true, y_pred)
+    for idx, (label, pred) in enumerate(coupled_pair):
+        if label > threshold:
+            return 1. / (idx + 1)
+    return 0.
 
 
-def r_precision(r: list) -> float:
-    """
-    Calculate precision after all relevant documents have been retrieved.
-
-    Relevance is binary (nonzero is relevant).
-
-    Example:
-        >>> r = [0, 1, 0]
-        >>> r_precision(r)
-        0.5
-        >>> r = [1, 0, 0]
-        >>> r_precision(r)
-        1.0
-        >>> r = [0, 0, 0]
-        >>> r_precision(r)
-        0.0
-
-    :param r: Relevance scores (list or numpy) in rank order
-              (first element is the first item).
-    :return: Precision score.
-    """
-    r = np.asarray(r) != 0
-    z = r.nonzero()[0]
-    if not z.size:
-        return 0.
-    return np.mean(r[:z[-1] + 1])
-
-
-def precision_at_k(r: list, k: int) -> float:
+def precision_at_k(y_true: list,
+                   y_pred: list,
+                   k: int,
+                   threshold: int=0) -> float:
     """
     Calculate precision@k.
 
-    Relevance is binary (nonzero is relevant).
-
     Example:
-        >>> r = [0, 0, 1]
-        >>> precision_at_k(r, 1)
+        >>> y_true = [0, 0, 0, 1]
+        >>> y_pred = [0.2, 0.4, 0.3, 0.1]
+        >>> precision_at_k(y_true, y_pred, 1)
         0.0
-        >>> precision_at_k(r, 2)
+        >>> precision_at_k(y_true, y_pred, 2)
         0.0
-        >>> precision_at_k(r, 4)
-        Traceback (most recent call last):
-            File "<stdin>", line 1, in ?
-        ValueError: Relevance score length < k
+        >>> precision_at_k(y_true, y_pred, 4)
+        0.25
+        >>> precision_at_k(y_true, y_pred, 5)
+        0.2
 
-
-    :param r: Relevance scores (list or numpy) in rank order
-              (first element is the first item)
+    :param y_true: The ground true label of each document.
+    :param y_pred: The predicted scores of each document.
+    :param threshold: the label threshold of relevance degree.
     :return: Precision @ k
     :raises: ValueError: len(r) must be >= k.
     """
-    assert k >= 1
-    r = np.asarray(r)[:k] != 0
-    if r.size != k:
-        raise ValueError('Relevance score length < k')
-    return np.mean(r)
+    if k <= 0:
+        raise ValueError('k must be larger than 0.')
+    coupled_pair = sort_couple(y_true, y_pred)
+    precision = 0.0
+    for idx, (label, score) in enumerate(coupled_pair):
+        if idx >= k:
+            break
+        if label > threshold:
+            precision += 1.
+    return precision / k
 
 
-def average_precision(r: list):
+def average_precision(y_true: list,
+                      y_pred: list,
+                      threshold: int=0) -> float:
     """
     Calculate average precision (area under PR curve).
 
-    Relevance is binary (nonzero is relevant).
-
     Example:
-        >>> r = [0, 1, 0, 0]
-        >>> average_precision(r)
-        0.5
-        >>> r = []
-        >>> average_precision(r)
-        0.0
+        >>> y_true = [0, 1]
+        >>> y_pred = [0.1, 0.6]
+        >>> round(average_precision(y_true, y_pred), 2)
+        0.75
 
-    :param r: Relevance scores (list or numpy) in rank order
-              (first element is the first item).
+    :param y_true: The ground true label of each document.
+    :param y_pred: The predicted scores of each document.
+    :param threshold: the label threshold of relevance degree.
     :return: Average precision.
     """
-    r = np.asarray(r) != 0
-    out = [precision_at_k(r, k + 1) for k in range(r.size) if r[k]]
+    out = [precision_at_k(y_true, y_pred, k + 1) for k in range(len(y_pred))]
     if not out:
         return 0.
     return np.mean(out)
 
 
-def mean_average_precision(rs: list) -> float:
+def mean_average_precision(y_true: list,
+                           y_pred: list,
+                           threshold: int=0) -> float:
     """
     Calculate mean average precision.
 
-    Relevance is binary (nonzero is relevant).
-
     Example:
-        >>> rs = [[1, 1, 0, 1, 1]]
-        >>> type(mean_average_precision(rs))
-        <class 'numpy.float64'>
+        >>> y_true = [0, 1, 0, 0]
+        >>> y_pred = [0.1, 0.6, 0.2, 0.3]
+        >>> mean_average_precision(y_true, y_pred)
+        1.0
 
-    :param rs: Iterator of relevance scores (list or numpy) in rank order
-               (first element is the first item).
+    :param y_true: The ground true label of each document.
+    :param y_pred: The predicted scores of each document.
+    :param threshold: the label threshold of relevance degree.
     :return: Mean average precision.
     """
-    return np.mean([average_precision(r) for r in rs])
+    result = 0.
+    pos = 0
+    coupled_pair = sort_couple(y_true, y_pred)
+    for idx, (label, score) in enumerate(coupled_pair):
+        if label > threshold:
+            pos += 1.
+            result += pos / (idx + 1.)
+    if pos == 0:
+        return 0.
+    else:
+        return result/pos
 
 
-def dcg_at_k(r: list, k: int, method: int = 0) -> float:
+def dcg_at_k(y_true: list,
+             y_pred: list,
+             k: int,
+             threshold: int=0) -> float:
     """
     Calculate discounted cumulative gain (dcg).
 
     Relevance is positive real values or binary values.
 
     Example:
-        >>> r = [3, 2, 3, 0, 0, 1, 2, 2, 3, 0]
-        >>> dcg_at_k(r, 1)
-        3.0
-        >>> dcg_at_k(r, 1, method=1)
-        3.0
-        >>> dcg_at_k(r, 2)
-        5.0
-        >>> type(dcg_at_k(r, 2, method=2))
-        <class 'numpy.float64'>
-        >>> dcg_at_k([], 0, method=2)
+        >>> y_true = [0, 1, 2, 0]
+        >>> y_pred = [0.4, 0.2, 0.5, 0.7]
+        >>> dcg_at_k(y_true, y_pred, 1)
         0.0
+        >>> round(dcg_at_k(y_true, y_pred, 2), 2)
+        2.73
+        >>> round(dcg_at_k(y_true, y_pred, 3), 2)
+        2.73
+        >>> type(dcg_at_k(y_true, y_pred, 1))
+        <class 'float'>
 
-    :param r: Relevance scores (list or numpy) in rank order
-              (first element is the first item).
+    :param y_true: The ground true label of each document.
+    :param y_pred: The predicted scores of each document.
     :param k: Number of results to consider
-
-    :param method: If 0 then weights are [1.0, 1.0, 0.6309, 0.5, 0.4307, ...]
-                   If 1 then weights are [1.0, 0.6309, 0.5, 0.4307, ...].
+    :param threshold: the label threshold of relevance degree.
 
     :return: Discounted cumulative gain.
     """
-    r = np.asfarray(r)[:k]
-    if r.size:
-        if method == 0:
-            return r[0] + np.sum(r[1:] / np.log2(np.arange(2, r.size + 1)))
-        else:
-            return np.sum(r / np.log2(np.arange(2, r.size + 2)))
-    return 0.
+    if k <= 0.:
+        return 0.
+    c = sort_couple(y_true, y_pred)
+    result = 0.
+    for i, (label, score) in enumerate(c):
+        if i >= k:
+            break
+        if label > threshold:
+            result += (math.pow(2., label) - 1.) / math.log(2. + i)
+    return result
 
 
-def ndcg_at_k(r: list, k: int, method: int = 0) -> float:
+def ndcg_at_k(y_true: list,
+              y_pred: list,
+              k: int,
+              threshold: int=0) -> float:
     """
     Calculate normalized discounted cumulative gain (ndcg).
 
     Relevance is positive real values or binary values.
 
     Example:
-        >>> r = [3, 2, 3, 0, 0, 1, 2, 2, 3, 0]
-        >>> ndcg_at_k(r, 1)
-        1.0
-        >>> ndcg_at_k([0], 1)
+        >>> y_true = [0, 1, 2, 0]
+        >>> y_pred = [0.4, 0.2, 0.5, 0.7]
+        >>> ndcg_at_k(y_true, y_pred, 1)
         0.0
-        >>> ndcg_at_k([1], 2)
-        1.0
+        >>> round(ndcg_at_k(y_true, y_pred, 2), 2)
+        0.52
+        >>> round(ndcg_at_k(y_true, y_pred, 3), 2)
+        0.52
+        >>> type(ndcg_at_k(y_true, y_pred, 1))
+        <class 'float'>
 
-    :param r: Relevance scores (list or numpy) in rank order
-              (first element is the first item).
+    :param y_true: The ground true label of each document.
+    :param y_pred: The predicted scores of each document.
     :param k: Number of results to consider
-
-    :param method: If 0 then weights are [1.0, 1.0, 0.6309, 0.5, 0.4307, ...]
-                   If 1 then weights are [1.0, 0.6309, 0.5, 0.4307, ...].
+    :param threshold: the label threshold of relevance degree.
 
     :return: Normalized discounted cumulative gain.
     """
-    dcg_max = dcg_at_k(sorted(r, reverse=True), k, method)
-    if not dcg_max:
-        return 0.
-    return dcg_at_k(r, k, method) / dcg_max
+    idcg = dcg_at_k(y_true, y_true, k, threshold)
+    dcg = dcg_at_k(y_true, y_pred, k, threshold)
+    return dcg / idcg
