@@ -189,43 +189,6 @@ class BaseModel(abc.ABC):
         return self._backend.evaluate(x=x, y=y,
                                       batch_size=batch_size, verbose=verbose)
 
-    def evaluate_with_metrics(
-            self,
-            generator: 'engine.BaseGenerator',
-            metrics: typing.List[str],
-            batch_size: int = 128
-    ) -> typing.Union[float, typing.List[float]]:
-        """
-        Evaluate the model with metrics on.
-
-        See :meth:`keras.models.Model.evaluate` for more details.
-
-        :param generator: A generator, an instance of
-            :class:`engine.BaseGenerator`.
-        :param metrics: metrics used on evaluation.
-        :param batch_size: number of samples per gradient update
-        :return: list of scalars (losses as well as metrics). The
-            attribute `model.backend.metrics_names` will give you
-            the display labels for the scalar outputs.
-
-        """
-        query_lists = {}
-        for (batch_x, batch_y) in generator:
-            y_pred = self._backend.predict(x=batch_x, batch_size=batch_size)
-            scores = zip(y, y_pred)
-            for idx, qid in enumerate(x['id_left']):
-                if qid not in query_lists:
-                    query_lists[qid] = []
-                query_lists[qid].append(scores[idx])
-        outs = {}
-        for metric in metrics:
-            outs[metric] = 0.
-            for qid, scores in query_lists.items():
-                s = zip(*scores)
-                outs[metric] += locals()[metric](s[0], s[1])
-        outs /= len(query_lists)
-        return outs
-
     def predict(
             self,
             x: typing.Union[np.ndarray, typing.List[np.ndarray]],

@@ -1,16 +1,13 @@
 """Evaluation metrics for information retrieval."""
-
 import math
 import random
 import numpy as np
-import typing
 
 
-
-def sort_couple(labels: list, scores: np.array) -> list:
+def sort_and_couple(labels: list, scores: np.array) -> list:
     """Zip the `labels` with `scores` into a single list."""
-    labels = _to_list(np.squeeze(labels).tolist())
-    scores = _to_list(np.squeeze(scores).tolist())
+    labels = np.squeeze(labels).tolist()
+    scores = np.squeeze(scores).tolist()
     couple = list(zip(labels, scores))
     random.shuffle(couple)
     sorted_couple = sorted(couple, key=lambda x: x[1], reverse=True)
@@ -34,7 +31,7 @@ def mean_reciprocal_rank(y_true: list,
     :param threshold: the label threshold of relevance degree.
     :return: Mean reciprocal rank.
     """
-    coupled_pair = sort_couple(y_true, y_pred)
+    coupled_pair = sort_and_couple(y_true, y_pred)
     for idx, (label, pred) in enumerate(coupled_pair):
         if label > threshold:
             return 1. / (idx + 1)
@@ -68,7 +65,7 @@ def precision_at_k(y_true: list,
     """
     if k <= 0:
         raise ValueError('k must be larger than 0.')
-    coupled_pair = sort_couple(y_true, y_pred)
+    coupled_pair = sort_and_couple(y_true, y_pred)
     precision = 0.0
     for idx, (label, score) in enumerate(coupled_pair):
         if idx >= k:
@@ -120,7 +117,7 @@ def mean_average_precision(y_true: list,
     """
     result = 0.
     pos = 0
-    coupled_pair = sort_couple(y_true, y_pred)
+    coupled_pair = sort_and_couple(y_true, y_pred)
     for idx, (label, score) in enumerate(coupled_pair):
         if label > threshold:
             pos += 1.
@@ -161,9 +158,9 @@ def dcg_at_k(y_true: list,
     """
     if k <= 0.:
         return 0.
-    c = sort_couple(y_true, y_pred)
+    coupled_pair = sort_and_couple(y_true, y_pred)
     result = 0.
-    for i, (label, score) in enumerate(c):
+    for i, (label, score) in enumerate(coupled_pair):
         if i >= k:
             break
         if label > threshold:
