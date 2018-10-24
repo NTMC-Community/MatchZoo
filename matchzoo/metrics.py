@@ -6,7 +6,6 @@ import numpy as np
 import typing
 
 
-
 def sort_couple(labels: list, scores: np.array) -> list:
     """Zip the `labels` with `scores` into a single list."""
     labels = _to_list(np.squeeze(labels).tolist())
@@ -19,7 +18,7 @@ def sort_couple(labels: list, scores: np.array) -> list:
 
 def mean_reciprocal_rank(y_true: list,
                          y_pred: list,
-                         threshold: int=0) -> float:
+                         threshold: int = 0) -> float:
     """
     Calculate reciprocal of the rank of the first relevant item.
 
@@ -44,7 +43,7 @@ def mean_reciprocal_rank(y_true: list,
 def precision_at_k(y_true: list,
                    y_pred: list,
                    k: int,
-                   threshold: int=0) -> float:
+                   threshold: int = 0) -> float:
     """
     Calculate precision@k.
 
@@ -80,7 +79,7 @@ def precision_at_k(y_true: list,
 
 def average_precision(y_true: list,
                       y_pred: list,
-                      threshold: int=0) -> float:
+                      threshold: int = 0) -> float:
     """
     Calculate average precision (area under PR curve).
 
@@ -103,7 +102,7 @@ def average_precision(y_true: list,
 
 def mean_average_precision(y_true: list,
                            y_pred: list,
-                           threshold: int=0) -> float:
+                           threshold: int = 0) -> float:
     """
     Calculate mean average precision.
 
@@ -128,13 +127,13 @@ def mean_average_precision(y_true: list,
     if pos == 0:
         return 0.
     else:
-        return result/pos
+        return result / pos
 
 
 def dcg_at_k(y_true: list,
              y_pred: list,
              k: int,
-             threshold: int=0) -> float:
+             threshold: int = 0) -> float:
     """
     Calculate discounted cumulative gain (dcg).
 
@@ -174,7 +173,7 @@ def dcg_at_k(y_true: list,
 def ndcg_at_k(y_true: list,
               y_pred: list,
               k: int,
-              threshold: int=0) -> float:
+              threshold: int = 0) -> float:
     """
     Calculate normalized discounted cumulative gain (ndcg).
 
