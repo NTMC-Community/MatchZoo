@@ -70,8 +70,6 @@ class BaseModel(abc.ABC):
         params.add(engine.Param('model_class', cls))
         params.add(engine.Param('input_shapes'))
         params.add(engine.Param('task'))
-        params.add(engine.Param('metrics'))
-        params.add(engine.Param('loss'))
         params.add(engine.Param('optimizer'))
         return params
 
@@ -106,8 +104,8 @@ class BaseModel(abc.ABC):
     def compile(self):
         """Compile model for training."""
         self._backend.compile(optimizer=self._params['optimizer'],
-                              loss=self._params['loss'],
-                              metrics=self._params['metrics'])
+                              loss=self._params['task'].loss,
+                              metrics=self._params['task'].metrics)
 
     def fit(
             self,
@@ -137,11 +135,11 @@ class BaseModel(abc.ABC):
                                  verbose=verbose)
 
     def fit_generator(
-        self,
-        generator: 'engine.BaseGenerator',
-        steps_per_epoch: int = None,
-        epochs: int = 1,
-        verbose: int = 1
+            self,
+            generator: 'engine.BaseGenerator',
+            steps_per_epoch: int = None,
+            epochs: int = 1,
+            verbose: int = 1
     ) -> keras.callbacks.History:
         """
         Fit the model with matchzoo `generator`.
@@ -243,15 +241,6 @@ class BaseModel(abc.ABC):
 
         if self._params['input_shapes'] is None:
             self._params['input_shapes'] = [(30,), (30,)]
-
-        if self._params['metrics'] is None:
-            task = self._params['task']
-            available_metrics = task.list_available_metrics()
-            self._params['metrics'] = available_metrics
-
-        if self._params['loss'] is None:
-            available_losses = self._params['task'].list_available_losses()
-            self._params['loss'] = available_losses[0]
 
         if self._params['optimizer'] is None:
             self._params['optimizer'] = 'adam'

@@ -7,6 +7,33 @@ import abc
 class BaseTask(abc.ABC):
     """Base Task, shouldn't be used directly."""
 
+    def __init__(self, loss=None, metrics=None):
+        self._loss = loss
+        if not metrics:
+            metrics = []
+        elif not isinstance(metrics, list):
+            metrics = [metrics]
+        self._metrics = metrics
+
+        self.assure_loss()
+        self.assure_metrics()
+
+    def assure_loss(self):
+        if not self._loss:
+            self._loss = self.list_available_losses()[0]
+
+    def assure_metrics(self):
+        if not self._metrics:
+            self._metrics = [self.list_available_metrics()[0]]
+
+    @property
+    def loss(self):
+        return self._loss
+
+    @property
+    def metrics(self):
+        return self._metrics
+
     @classmethod
     @abc.abstractmethod
     def list_available_losses(cls) -> list:

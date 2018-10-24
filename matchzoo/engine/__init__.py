@@ -1,4 +1,5 @@
 from . import hyper_spaces
+from .base_metric import BaseMetric
 from .param import Param
 from .param_table import ParamTable
 from .base_task import BaseTask, list_available_tasks
