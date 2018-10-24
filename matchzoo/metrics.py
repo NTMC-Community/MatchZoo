@@ -5,6 +5,8 @@ import random
 import numpy as np
 import typing
 
+from matchzoo.engine import BaseMetric
+
 
 def sort_couple(labels: list, scores: np.array) -> list:
     """Zip the `labels` with `scores` into a single list."""

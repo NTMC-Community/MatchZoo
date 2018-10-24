@@ -3,20 +3,30 @@
 import typing
 import abc
 
+from matchzoo import engine
+
 
 class BaseTask(abc.ABC):
     """Base Task, shouldn't be used directly."""
 
-    def __init__(self, loss=None, metrics=None):
-        self._loss = loss
+    @classmethod
+    def convert_metrics(cls, metrics):
         if not metrics:
             metrics = []
         elif not isinstance(metrics, list):
             metrics = [metrics]
-        self._metrics = metrics
+        for i, metric in enumerate(metrics):
+            if issubclass(metric, engine.BaseMetric):
+                metrics[i] = metric()
+        return metrics
+
+    def __init__(self, loss=None, metrics=None):
+        self._loss = loss
 
         self.assure_loss()
         self.assure_metrics()
+
+        self._metrics = self.convert_metrics(metrics)
 
     def assure_loss(self):
         if not self._loss:
@@ -33,6 +43,10 @@ class BaseTask(abc.ABC):
     @property
     def metrics(self):
         return self._metrics
+
+    @metrics.setter
+    def metrics(self, new_metrics):
+        self._metrics = self.convert_metrics(new_metrics)
 
     @classmethod
     @abc.abstractmethod

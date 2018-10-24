@@ -103,9 +103,11 @@ class BaseModel(abc.ABC):
 
     def compile(self):
         """Compile model for training."""
+        keras_metrics = [m for m in self._params['task'].metrics
+                         if not isinstance(m, engine.BaseMetric)]
         self._backend.compile(optimizer=self._params['optimizer'],
                               loss=self._params['task'].loss,
-                              metrics=self._params['task'].metrics)
+                              metrics=keras_metrics)
 
     def fit(
             self,
@@ -168,7 +170,7 @@ class BaseModel(abc.ABC):
             y: np.ndarray,
             batch_size: int = 128,
             verbose: int = 1
-    ) -> typing.Union[float, typing.List[float]]:
+    ) -> typing.Dict[str, float]:
         """
         Evaluate the model.
 
@@ -184,45 +186,15 @@ class BaseModel(abc.ABC):
             give you the display labels for the scalar outputs.
 
         """
-        return self._backend.evaluate(x=x, y=y,
-                                      batch_size=batch_size, verbose=verbose)
-
-    def evaluate_with_metrics(
-            self,
-            generator: 'engine.BaseGenerator',
-            metrics: typing.List[str],
-            batch_size: int = 128
-    ) -> typing.Union[float, typing.List[float]]:
-        """
-        Evaluate the model with metrics on.
-
-        See :meth:`keras.models.Model.evaluate` for more details.
-
-        :param generator: A generator, an instance of
-            :class:`engine.BaseGenerator`.
-        :param metrics: metrics used on evaluation.
-        :param batch_size: number of samples per gradient update
-        :return: list of scalars (losses as well as metrics). The
-            attribute `model.backend.metrics_names` will give you
-            the display labels for the scalar outputs.
-
-        """
-        query_lists = {}
-        for (batch_x, batch_y) in generator:
-            y_pred = self._backend.predict(x=batch_x, batch_size=batch_size)
-            scores = zip(y, y_pred)
-            for idx, qid in enumerate(x['id_left']):
-                if qid not in query_lists:
-                    query_lists[qid] = []
-                query_lists[qid].append(scores[idx])
-        outs = {}
-        for metric in metrics:
-            outs[metric] = 0.
-            for qid, scores in query_lists.items():
-                s = zip(*scores)
-                outs[metric] += locals()[metric](s[0], s[1])
-        outs /= len(query_lists)
-        return outs
+        backend_evals = self._backend.evaluate(x=x, y=y,
+                                               batch_size=batch_size,
+                                               verbose=verbose)
+        metrics_lookup = {name: val for name, val in
+                          zip(self._backend.metrics_names, backend_evals)}
+        for metric in self._params['task'].metrics:
+            if isinstance(metric, engine.BaseMetric):
+                metrics_lookup[metric.ALIAS] = metric(x, y)
+        return metrics_lookup
 
     def predict(
             self,
