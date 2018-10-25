@@ -108,7 +108,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 ## Development Team
 
 ​ ​ ​ ​ ​
-<table>
+<table border="0">
   <tbody>
     <tr align="center">
       <td>
