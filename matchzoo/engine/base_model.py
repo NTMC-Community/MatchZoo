@@ -186,9 +186,11 @@ class BaseModel(abc.ABC):
             give you the display labels for the scalar outputs.
 
         """
-        backend_evals = list(self._backend.evaluate(x=x, y=y,
-                                                    batch_size=batch_size,
-                                                    verbose=verbose))
+        backend_evals = self._backend.evaluate(x=x, y=y,
+                                               batch_size=batch_size,
+                                               verbose=verbose)
+        if not isinstance(backend_evals, list):
+            backend_evals = [backend_evals]
         metrics_lookup = {name: val for name, val in
                           zip(self._backend.metrics_names, backend_evals)}
         y_pred = None
