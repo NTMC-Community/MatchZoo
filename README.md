@@ -107,7 +107,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 
 ## Development Team
 
-<table>
+<table align="center">
 ​	<tbody>
 ​		<tr>
 ​		  <td align="center" valign="top">
@@ -132,7 +132,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 ​       <a href="https://github.com/bwanglzu"><img width="40" height="40" src="https://github.com/bwanglzu.png?s=40"></a><br>
 ​       <a href="https://github.com/bwanglzu">Wang Bo</a>
 ​       <p> Core Dev</p>
-       <p> M.S. TU Delft </p>
+       <p> M.S. TU Delft</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/uduse"><img width="36" height="36" src="https://github.com/uduse.png?s=36"></a><br>
@@ -145,7 +145,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 ​       <a href="https://github.com/wqh17101"><img width="40" height="40" src="https://github.com/wqh17101.png?s=40"></a><br>
 ​       <a href="https://github.com/wqh17101">Wang Qinghua</a>
 ​       <p> Documentation </p>
-       <p> B.S. Shandong Univ.</p>
+       <p> B.S. SDU</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/ZizhenWang"><img width="40" height="40" src="https://github.com/ZizhenWang.png?s=40"></a><br>
@@ -157,7 +157,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 ​       <a href="https://github.com/lixinsu"><img width="40" height="40" src="https://github.com/lixinsu.png?s=40"></a><br>
 ​       <a href="https://github.com/lixinsu">Su Lixin</a>
        <p> Dev</p>
-​       <p> PhD. UCAS</p><br>
+​       <p> PhD. UCAS</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/zhouzhouyang520"><img width="40" height="40" src="https://github.com/zhouzhouyang520.png?s=40"></a><br>
