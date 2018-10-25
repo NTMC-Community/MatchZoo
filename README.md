@@ -67,7 +67,7 @@ dssm_model.fit_generator(generator_tr)
 predictions = dssm_model.predict([X_te.text_left, X_te.text_right])
 ```
 
-For detailed usage, such as hyper-parameters, model persistence, evaluation, please check our documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
+For detailed usage, such as hyper-parameters, model persistence, evaluation, please check out our [Tutorials](https://github.com/NTMC-Community/MatchZoo/tree/2.0/notebooks) or documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
 
 If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match).
 
@@ -105,11 +105,6 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 ```
 
 
-
-## Contribution
-
-Please make sure to read the [Contributing Guide](./CONTRIBUTING.md) before making a pull request. If you have a MatchZoo-related paper/project/compnent/tool, add it with a pull request to [this awesome list](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match)!
-
 ## Development Team
 
 <table>
@@ -118,7 +113,7 @@ Please make sure to read the [Contributing Guide](./CONTRIBUTING.md) before maki
 ​		  <td align="center" valign="top">
 ​			  <a href="https://github.com/faneshion"><img width="40" height="40" src="https://github.com/faneshion.png?s=40"></a><br>
 ​			  <a href="http://www.bigdatalab.ac.cn/~fanyixing/">Fan Yixing</a>
-​			  <p> Founder of MatchZoo </p><br>
+​			  <p> Founder </p><br>
         <p> Assistant Professor, ICT</p>
 ​		  </td>
       <td align="center" valign="top">
@@ -168,13 +163,13 @@ Please make sure to read the [Contributing Guide](./CONTRIBUTING.md) before maki
 ​       <a href="https://github.com/zhouzhouyang520"><img width="40" height="40" src="https://github.com/zhouzhouyang520.png?s=40"></a><br>
 ​       <a href="https://github.com/zhouzhouyang520">Yang Zhou</a>
 ​       <p> Dev</p><br>
-       <p> M.S. Chongqing University of Technology</p>
+       <p> M.S. CQUT</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/rgtjf"><img width="36" height="36" src="https://github.com/rgtjf.png?s=36"></a><br>
 ​       <a href="https://github.com/rgtjf">Tian Junfeng</a>
 ​       <p> Dev</p><br>
-       <p> M.S. East China Normal University</p>
+       <p> M.S. ECNU</p>
 ​      </td>
 ​		</tr>
 ​	</tbody>
@@ -195,6 +190,9 @@ Please make sure to read the [Contributing Guide](./CONTRIBUTING.md) before maki
   * [Homepage](http://www.bigdatalab.ac.cn/~cxq/)
 
 
+## Contribution
+
+Please make sure to read the [Contributing Guide](./CONTRIBUTING.md) before creating a pull request. If you have a MatchZoo-related paper/project/compnent/tool, send a pull request to [this awesome list](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match)!
 
 
 ## License
