@@ -9,10 +9,12 @@ def test_sort_and_couple():
     c = metrics.sort_and_couple(l, s)
     assert c == [(1, 0.4), (2, 0.2), (0, 0.1)]
 
+
 def test_mean_reciprocal_rank():
     label = [0, 1, 2]
     score = [0.1, 0.4, 0.2]
-    assert metrics.mean_reciprocal_rank(label, score) == 1
+    assert metrics.MeanReciprocalRank()(label, score) == 1
+
 
 def test_precision_at_k():
     label = [0, 1, 2]
@@ -21,15 +23,18 @@ def test_precision_at_k():
     assert metrics.precision_at_k(label, score, 2) == 1.
     assert round(metrics.precision_at_k(label, score, 3), 2) == 0.67
 
+
 def test_average_precision():
     label = [0, 1, 2]
     score = [0.1, 0.4, 0.2]
     assert round(metrics.average_precision(label, score), 2) == 0.89
 
+
 def test_mean_average_precision():
     label = [0, 1, 2]
     score = [0.1, 0.4, 0.2]
     assert metrics.mean_average_precision(label, score) == 1.
+
 
 def test_dcg_at_k():
     label = [0, 1, 2]
@@ -37,6 +42,7 @@ def test_dcg_at_k():
     assert round(metrics.dcg_at_k(label, score, 1), 2) == 1.44
     assert round(metrics.dcg_at_k(label, score, 2), 2) == 4.17
     assert round(metrics.dcg_at_k(label, score, 3), 2) == 4.17
+
 
 def test_ndcg_at_k():
     label = [0, 1, 2]
