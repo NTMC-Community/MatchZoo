@@ -11,17 +11,24 @@ class BaseTask(abc.ABC):
 
     @classmethod
     def convert_metrics(cls, metrics):
+        # assure in list form
         if not metrics:
             metrics = []
         elif not isinstance(metrics, list):
             metrics = [metrics]
+
         for i, metric in enumerate(metrics):
-            if issubclass(metric, engine.BaseMetric):
+            if isinstance(metric, str):
+                for subclass in engine.BaseMetric.__subclasses__():
+                    if subclass.ALIAS == metric:
+                        metrics[i] = subclass()
+            elif issubclass(metric, engine.BaseMetric):
                 metrics[i] = metric()
         return metrics
 
     def __init__(self, loss=None, metrics=None):
         self._loss = loss
+        self._metrics = metrics
 
         self.assure_loss()
         self.assure_metrics()

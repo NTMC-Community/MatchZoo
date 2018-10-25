@@ -8,5 +8,5 @@ class BaseMetric(abc.ABC):
     def __call__(self, y_true, y_pred):
         """"""
 
-    def __str__(self):
+    def __repr__(self):
         return self.ALIAS

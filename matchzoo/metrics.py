@@ -3,6 +3,8 @@ import math
 import random
 import numpy as np
 
+from matchzoo import engine
+
 
 def sort_and_couple(labels: list, scores: np.array) -> list:
     """Zip the `labels` with `scores` into a single list."""
@@ -14,34 +16,43 @@ def sort_and_couple(labels: list, scores: np.array) -> list:
     return sorted_couple
 
 
-def mean_reciprocal_rank(y_true: list,
-                         y_pred: list,
-                         threshold: int=0) -> float:
-    """
-    Calculate reciprocal of the rank of the first relevant item.
+class MeanReciprocalRank(engine.BaseMetric):
+    ALIAS = 'mean_reciprocal_rank'
 
-    Example:
-        >>> y_pred = [0.2, 0.3, 0.7, 1.0]
-        >>> y_true = [1, 0, 0, 0]
-        >>> mean_reciprocal_rank(y_true, y_pred)
-        0.25
+    def __init__(self, threshold=0):
+        """
+        :param threshold: the label threshold of relevance degree.
+        """
+        self._threshold = threshold
 
-    :param y_true: The ground true label of each document.
-    :param y_pred: The predicted scores of each document.
-    :param threshold: the label threshold of relevance degree.
-    :return: Mean reciprocal rank.
-    """
-    coupled_pair = sort_and_couple(y_true, y_pred)
-    for idx, (label, pred) in enumerate(coupled_pair):
-        if label > threshold:
-            return 1. / (idx + 1)
-    return 0.
+    def __repr__(self):
+        return self.ALIAS + '(' + str(self._threshold) + ')'
+
+    def __call__(self, y_true, y_pred):
+        """
+        Calculate reciprocal of the rank of the first relevant item.
+
+        Example:
+            >>> y_pred = np.asarray([0.2, 0.3, 0.7, 1.0])
+            >>> y_true = np.asarray([1, 0, 0, 0])
+            >>> MeanReciprocalRank()(y_true, y_pred)
+            0.25
+
+        :param y_true: The ground true label of each document.
+        :param y_pred: The predicted scores of each document.
+        :return: Mean reciprocal rank.
+        """
+        coupled_pair = sort_and_couple(y_true, y_pred)
+        for idx, (label, pred) in enumerate(coupled_pair):
+            if label > self._threshold:
+                return 1. / (idx + 1)
+        return 0.
 
 
 def precision_at_k(y_true: list,
                    y_pred: list,
                    k: int,
-                   threshold: int=0) -> float:
+                   threshold: int = 0) -> float:
     """
     Calculate precision@k.
 
@@ -77,7 +88,7 @@ def precision_at_k(y_true: list,
 
 def average_precision(y_true: list,
                       y_pred: list,
-                      threshold: int=0) -> float:
+                      threshold: int = 0) -> float:
     """
     Calculate average precision (area under PR curve).
 
@@ -100,7 +111,7 @@ def average_precision(y_true: list,
 
 def mean_average_precision(y_true: list,
                            y_pred: list,
-                           threshold: int=0) -> float:
+                           threshold: int = 0) -> float:
     """
     Calculate mean average precision.
 
@@ -125,13 +136,13 @@ def mean_average_precision(y_true: list,
     if pos == 0:
         return 0.
     else:
-        return result/pos
+        return result / pos
 
 
 def dcg_at_k(y_true: list,
              y_pred: list,
              k: int,
-             threshold: int=0) -> float:
+             threshold: int = 0) -> float:
     """
     Calculate discounted cumulative gain (dcg).
 
@@ -171,7 +182,7 @@ def dcg_at_k(y_true: list,
 def ndcg_at_k(y_true: list,
               y_pred: list,
               k: int,
-              threshold: int=0) -> float:
+              threshold: int = 0) -> float:
     """
     Calculate normalized discounted cumulative gain (ndcg).
 
