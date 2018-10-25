@@ -110,34 +110,74 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 
 Please make sure to read the [Contributing Guide](./CONTRIBUTING.md) before making a pull request. If you have a MatchZoo-related paper/project/compnent/tool, add it with a pull request to [this awesome list](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match)!
 
-### Core Team
+## Development Team
 
 <table>
-
 ​	<tbody>
-
 ​		<tr>
-
-​		<td align="center" valign="top">
-
-​			<img width="32" height="32" src="https://github.com/faneshion.png?s=32">
-
-​			<br>
-
-​			<a href="">faneshion</a>
-
-​			<p> Core</p>
-
-​			<br>
-
-​			<p> Founder of MatchZoo </p>
-
-​			</td>
-
-​			</tr>
-
+​		  <td align="center" valign="top">
+​			  <a href="https://github.com/faneshion"><img width="40" height="40" src="https://github.com/faneshion.png?s=40"></a><br>
+​			  <a href="http://www.bigdatalab.ac.cn/~fanyixing/">Fan Yixing</a>
+​			  <p> Founder of MatchZoo </p><br>
+        <p> Assistant Professor, ICT</p>
+​		  </td>
+      <td align="center" valign="top">
+​       <a href="https://github.com/pl8787"><img width="40" height="40" src="https://github.com/pl8787.png?s=40"></a><br>
+​       <a href="https://github.com/pl8787">Pang Liang</a>
+​       <p> Core dev</p><br>
+       <p> Assistant Professor, ICT</p>
+​      </td>
+      <td align="center" valign="top">
+​       <a href="https://github.com/yangliuy"><img width="40" height="40" src="https://github.com/yangliuy.png?s=40"></a><br>
+​       <a href="https://github.com/yangliuy">Yang Liu</a>
+       <p> Core dev</p><br>
+​       <p> PhD. UMASS</p>
+​      </td>
+      <td align="center" valign="top">
+​       <a href="https://github.com/bwanglzu"><img width="40" height="40" src="https://github.com/bwanglzu.png?s=40"></a><br>
+​       <a href="https://github.com/bwanglzu">Wang Bo</a>
+​       <p> Core dev</p><br>
+       <p> M.S. TU Delft </p>
+​      </td>
+      <td align="center" valign="top">
+​       <a href="https://github.com/uduse"><img width="36" height="36" src="https://github.com/uduse.png?s=36"></a><br>
+​       <a href="https://github.com/uduse">Wang Zeyi</a>
+       <p> Core dev</p><br>
+​       <p> B.S. UC Davis</p>
+​      </td>
+    </tr><tr>
+      <td align="center" valign="top">
+​       <a href="https://github.com/wqh17101"><img width="40" height="40" src="https://github.com/wqh17101.png?s=40"></a><br>
+​       <a href="https://github.com/wqh17101">Wang Qinghua</a>
+​       <p> Documentation & Website</p><br>
+       <p> B.S. Shandong Univ.</p>
+​      </td>
+      <td align="center" valign="top">
+​       <a href="https://github.com/ZizhenWang"><img width="40" height="40" src="https://github.com/ZizhenWang.png?s=40"></a><br>
+​       <a href="https://github.com/ZizhenWang">Wang Zizhen</a>
+​       <p> Dev</p><br>
+       <p> M.S. UCAS</p>
+​      </td>
+      <td align="center" valign="top">
+​       <a href="https://github.com/lixinsu"><img width="40" height="40" src="https://github.com/lixinsu.png?s=40"></a><br>
+​       <a href="https://github.com/lixinsu">Su Lixin</a>
+       <p> Dev</p><br>
+​       <p> PhD. UCAS</p><br>
+​      </td>
+      <td align="center" valign="top">
+​       <a href="https://github.com/zhouzhouyang520"><img width="40" height="40" src="https://github.com/zhouzhouyang520.png?s=40"></a><br>
+​       <a href="https://github.com/zhouzhouyang520">Yang Zhou</a>
+​       <p> Dev</p><br>
+       <p> M.S. Chongqing University of Technology</p>
+​      </td>
+      <td align="center" valign="top">
+​       <a href="https://github.com/rgtjf"><img width="36" height="36" src="https://github.com/rgtjf.png?s=36"></a><br>
+​       <a href="https://github.com/rgtjf">Tian Junfeng</a>
+​       <p> Dev</p><br>
+       <p> M.S. East China Normal University</p>
+​      </td>
+​		</tr>
 ​	</tbody>
-
 </table>
 
 
