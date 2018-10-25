@@ -88,3 +88,77 @@ git clone https://github.com/NTMC-Community/MatchZoo.git
 cd MatchZoo
 python setup.py install
 ```
+
+
+
+## Citing MatchZoo
+
+If you use MatchZoo in your research, please use the following BibTex entry.
+
+```
+@article{fan2017matchzoo,
+  title={Matchzoo: A toolkit for deep text matching},
+  author={Fan, Yixing and Pang, Liang and Hou, JianPeng and Guo, Jiafeng and Lan, Yanyan and Cheng, Xueqi},
+  journal={arXiv preprint arXiv:1707.07270},
+  year={2017}
+}
+```
+
+
+
+## Contribution
+
+Please make sure to read the [Contributing Guide](./CONTRIBUTING.md) before making a pull request. If you have a MatchZoo-related paper/project/compnent/tool, add it with a pull request to [this awesome list](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match)!
+
+### Core Team
+
+<table>
+
+​	<tbody>
+
+​		<tr>
+
+​		<td align="center" valign="top">
+
+​			<img width="32" height="32" src="https://github.com/faneshion.png?s=32">
+
+​			<br>
+
+​			<a href="">faneshion</a>
+
+​			<p> Core</p>
+
+​			<br>
+
+​			<p> Founder of MatchZoo </p>
+
+​			</td>
+
+​			</tr>
+
+​	</tbody>
+
+</table>
+
+
+
+## Project Organizers
+
+- Jiafeng Guo
+  * Institute of Computing Technology, Chinese Academy of Sciences
+  * [Homepage](http://www.bigdatalab.ac.cn/~gjf/)
+- Yanyan Lan
+  * Institute of Computing Technology, Chinese Academy of Sciences
+  * [Homepage](http://www.bigdatalab.ac.cn/~lanyanyan/)
+- Xueqi Cheng
+  * Institute of Computing Technology, Chinese Academy of Sciences
+  * [Homepage](http://www.bigdatalab.ac.cn/~cxq/)
+
+
+
+
+## License
+
+[Apache-2.0](https://opensource.org/licenses/Apache-2.0)
+
+Copyright (c) 2015-present, Yixing Fan (faneshion)
