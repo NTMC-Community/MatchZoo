@@ -135,7 +135,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
        <p> M.S. TU Delft</p>
 ​      </td>
       <td align="center" valign="top">
-​       <a href="https://github.com/uduse"><img width="36" height="36" src="https://github.com/uduse.png?s=36"></a><br>
+​       <a href="https://github.com/uduse"><img width="40" height="40" src="https://github.com/uduse.png?s=36"></a><br>
 ​       <a href="https://github.com/uduse">Wang Zeyi</a>
        <p> Core Dev</p>
 ​       <p> B.S. UC Davis</p>
@@ -166,7 +166,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
        <p> M.S. CQUT</p>
 ​      </td>
       <td align="center" valign="top">
-​       <a href="https://github.com/rgtjf"><img width="36" height="36" src="https://github.com/rgtjf.png?s=36"></a><br>
+​       <a href="https://github.com/rgtjf"><img width="40" height="40" src="https://github.com/rgtjf.png?s=36"></a><br>
 ​       <a href="https://github.com/rgtjf">Tian Junfeng</a>
 ​       <p> Dev</p>
        <p> M.S. ECNU</p>
