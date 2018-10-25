@@ -29,7 +29,7 @@ train = [
     ("id0", "id2", "beijing", "China is in east Asia", 0),
     ("id0", "id3", "beijing", "Summer in Beijing is hot.", 1)
 ]
-test = [
+predict = [
     ("id0", "id4", "beijing", "I visted beijing yesterday.")
 ]
 ```
@@ -39,7 +39,7 @@ Preprocess your input data in three lines of code, keep track parameters to be p
 ```python
 dssm_preprocessor = preprocessor.DSSMPreprocessor()
 processed_tr = dssm_preprocessor.fit_transform(train, stage='train')
-processed_te = dssm_preprocessor.fit_transform(test, stage='predict')
+processed_pr = dssm_preprocessor.fit_transform(predict, stage='predict')
 # DSSM expect dimensionality of letter-trigrams as input shape.
 # The fitted parameters has been stored in `context` during preprocessing on training data.
 input_shapes = processed_tr.context['input_shapes']
@@ -67,7 +67,7 @@ dssm_model.fit_generator(generator_tr)
 predictions = dssm_model.predict([X_te.text_left, X_te.text_right])
 ```
 
-For detailed usage, such as hyper-parameters, model persistence, evaluation, please check out our [Tutorials](https://github.com/NTMC-Community/MatchZoo/tree/2.0/notebooks) or documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
+For detailed usage, such as hyper-parameters, model persistence, evaluation, please check out our [tutorials](https://github.com/NTMC-Community/MatchZoo/tree/2.0/notebooks) and documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
 
 If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match).
 
@@ -91,7 +91,7 @@ python setup.py install
 
 
 
-## Citing MatchZoo
+## Citation
 
 If you use MatchZoo in your research, please use the following BibTex entry.
 
@@ -113,22 +113,22 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 ​		  <td align="center" valign="top">
 ​			  <a href="https://github.com/faneshion"><img width="40" height="40" src="https://github.com/faneshion.png?s=40"></a><br>
 ​			  <a href="http://www.bigdatalab.ac.cn/~fanyixing/">Fan Yixing</a>
-​			  <p> Founder,</br> ASST PROF, ICT </p>
+​			  <p> Founder</br> ASST PROF, ICT </p>
 ​		  </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/pl8787"><img width="40" height="40" src="https://github.com/pl8787.png?s=40"></a><br>
 ​       <a href="https://github.com/pl8787">Pang Liang</a>
-       <p> Core Dev,</br> ASST PROF, ICT </p>
+       <p> Core Dev</br> ASST PROF, ICT </p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/yangliuy"><img width="40" height="40" src="https://github.com/yangliuy.png?s=40"></a><br>
 ​       <a href="https://github.com/yangliuy">Yang Liu</a>
-       <p> Core Dev,</br> PhD. UMASS</p>
+       <p> Core Dev</br> PhD. UMASS</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/bwanglzu"><img width="40" height="40" src="https://github.com/bwanglzu.png?s=40"></a><br>
 ​       <a href="https://github.com/bwanglzu">Wang Bo</a>
-​       <p> Core Dev,</br> M.S. TU Delft</p>
+​       <p> Core Dev</br> M.S. TU Delft</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/uduse"><img width="40" height="40" src="https://github.com/uduse.png?s=36"></a><br>
