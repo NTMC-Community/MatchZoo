@@ -110,7 +110,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 ​ ​ ​ ​ ​
 <table>
   <tbody>
-    <tr>
+    <tr align="center">
       <td>
         ​ <a href="https://github.com/faneshion"><img width="40" height="40" src="https://github.com/faneshion.png?s=40" alt="faneshion"></a><br>
         ​ <a href="http://www.bigdatalab.ac.cn/~fanyixing/">Fan Yixing</a> ​
@@ -142,7 +142,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
         B.S. UC Davis</p>​
       </td>
     </tr>
-    <tr>
+    <tr align="center">
       <td>
         ​ <a href="https://github.com/wqh17101"><img width="40" height="40" src="https://github.com/wqh17101.png?s=40" alt="wqh17101"></a><br>
         ​ <a href="https://github.com/wqh17101">Wang Qinghua</a> ​
