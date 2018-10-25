@@ -60,9 +60,9 @@ class ListGenerator(engine.BaseGenerator):
     def __init__(
         self,
         inputs: datapack.DataPack,
-        batch_size: int=1,
-        stage: str='train',
-        shuffle: bool=True
+        batch_size: int = 1,
+        stage: str = 'train',
+        shuffle: bool = True
     ):
         """Construct the list generator.
 
