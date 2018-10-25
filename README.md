@@ -113,62 +113,62 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 ​		  <td align="center" valign="top">
 ​			  <a href="https://github.com/faneshion"><img width="40" height="40" src="https://github.com/faneshion.png?s=40"></a><br>
 ​			  <a href="http://www.bigdatalab.ac.cn/~fanyixing/">Fan Yixing</a>
-​			  <p> Founder </p><br>
+​			  <p> Founder </p>
         <p> ASST PROF, ICT</p>
 ​		  </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/pl8787"><img width="40" height="40" src="https://github.com/pl8787.png?s=40"></a><br>
 ​       <a href="https://github.com/pl8787">Pang Liang</a>
-​       <p> Core Dev</p><br>
+​       <p> Core Dev</p>
        <p> ASST PROF, ICT</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/yangliuy"><img width="40" height="40" src="https://github.com/yangliuy.png?s=40"></a><br>
 ​       <a href="https://github.com/yangliuy">Yang Liu</a>
-       <p> Core Dev</p><br>
+       <p> Core Dev</p>
 ​       <p> PhD. UMASS</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/bwanglzu"><img width="40" height="40" src="https://github.com/bwanglzu.png?s=40"></a><br>
 ​       <a href="https://github.com/bwanglzu">Wang Bo</a>
-​       <p> Core Dev</p><br>
+​       <p> Core Dev</p>
        <p> M.S. TU Delft </p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/uduse"><img width="36" height="36" src="https://github.com/uduse.png?s=36"></a><br>
 ​       <a href="https://github.com/uduse">Wang Zeyi</a>
-       <p> Core Dev</p><br>
+       <p> Core Dev</p>
 ​       <p> B.S. UC Davis</p>
 ​      </td>
     </tr><tr>
       <td align="center" valign="top">
 ​       <a href="https://github.com/wqh17101"><img width="40" height="40" src="https://github.com/wqh17101.png?s=40"></a><br>
 ​       <a href="https://github.com/wqh17101">Wang Qinghua</a>
-​       <p> Documentation </p><br>
+​       <p> Documentation </p>
        <p> B.S. Shandong Univ.</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/ZizhenWang"><img width="40" height="40" src="https://github.com/ZizhenWang.png?s=40"></a><br>
 ​       <a href="https://github.com/ZizhenWang">Wang Zizhen</a>
-​       <p> Dev</p><br>
+​       <p> Dev</p>
        <p> M.S. UCAS</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/lixinsu"><img width="40" height="40" src="https://github.com/lixinsu.png?s=40"></a><br>
 ​       <a href="https://github.com/lixinsu">Su Lixin</a>
-       <p> Dev</p><br>
+       <p> Dev</p>
 ​       <p> PhD. UCAS</p><br>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/zhouzhouyang520"><img width="40" height="40" src="https://github.com/zhouzhouyang520.png?s=40"></a><br>
 ​       <a href="https://github.com/zhouzhouyang520">Yang Zhou</a>
-​       <p> Dev</p><br>
+​       <p> Dev</p>
        <p> M.S. CQUT</p>
 ​      </td>
       <td align="center" valign="top">
 ​       <a href="https://github.com/rgtjf"><img width="36" height="36" src="https://github.com/rgtjf.png?s=36"></a><br>
 ​       <a href="https://github.com/rgtjf">Tian Junfeng</a>
-​       <p> Dev</p><br>
+​       <p> Dev</p>
        <p> M.S. ECNU</p>
 ​      </td>
 ​		</tr>
