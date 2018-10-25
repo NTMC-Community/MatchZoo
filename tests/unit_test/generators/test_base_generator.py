@@ -20,17 +20,21 @@ def x():
                     right=right,
                     context=ctx)
 
+
 @pytest.fixture(scope='module', params=['train', 'evaluate', 'predict'])
 def stage(request):
     return request.param
+
 
 @pytest.fixture(scope='module', params=[1, 2, 3, 4])
 def batch_size(request):
     return request.param
 
+
 @pytest.fixture(scope='module', params=[True, False])
 def shuffle(request):
     return request.param
+
 
 @pytest.fixture
 def generator(x, stage, batch_size, shuffle):
@@ -44,7 +48,9 @@ def generator(x, stage, batch_size, shuffle):
             batch_x = [0]
             batch_y = [1]
             return (batch_x, batch_y)
+
     return MyBaseGenerator()
+
 
 def test_base_generator_train(generator):
     assert len(generator) == 2
@@ -54,6 +60,7 @@ def test_base_generator_train(generator):
         assert y == [1]
         if idx > len(generator):
             break
+
 
 def test_base_generator_except(generator):
     generator.on_epoch_end()
