@@ -10,3 +10,15 @@ class BaseMetric(abc.ABC):
 
     def __repr__(self):
         return self.ALIAS
+
+
+def parse_metric(metric):
+    if isinstance(metric, BaseMetric):
+        return metric
+    elif isinstance(metric, str):
+        for subclass in BaseMetric.__subclasses__():
+            if metric == subclass.ALIAS or metric in subclass.ALIAS:
+                return subclass()
+        return metric  # keras native metrics
+    elif issubclass(metric, BaseMetric):
+        return metric()
