@@ -7,6 +7,7 @@ from pathlib import Path
 import dill
 import numpy as np
 import keras
+import pandas as pd
 
 from matchzoo import engine
 from matchzoo import tasks
@@ -195,12 +196,23 @@ class BaseModel(abc.ABC):
             backend_evals = [backend_evals]
         metrics_lookup = {name: val for name, val in
                           zip(self._backend.metrics_names, backend_evals)}
-        y_pred = None
+        list_wise_df = None
         for metric in self._params['task'].metrics:
             if isinstance(metric, engine.BaseMetric):
-                if y_pred is None:
+                if list_wise_df is None:
                     y_pred = self.predict(x, batch_size)
-                metrics_lookup[str(metric)] = metric(y, y_pred)
+                    data = {
+                        'id_right'  : x['id_right'],
+                        'id_left'   : x['id_left'],
+                        'text_left' : list(x['text_left']),
+                        'text_right': list(x['text_right']),
+                        'y_true'    : y,
+                        'y_pred'    : list(y_pred)
+                    }
+                    list_wise_df = pd.DataFrame(data=data)
+                metric_val = engine.compute_metric_list_wise(
+                        list_wise_df, metric)
+                metrics_lookup[str(metric)] = metric_val
         return metrics_lookup
 
     def predict(

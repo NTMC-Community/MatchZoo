@@ -1,6 +1,7 @@
 """Evaluation metrics for information retrieval."""
 import math
 import random
+
 import numpy as np
 
 from matchzoo import engine

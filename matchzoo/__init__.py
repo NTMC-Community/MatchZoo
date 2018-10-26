@@ -6,5 +6,6 @@ from . import preprocessor
 from . import datapack
 from . import losses
 from . import metrics
+from . import generators
 from .version import __version__
 from .logger import logger

@@ -22,3 +22,8 @@ def parse_metric(metric):
         return metric  # keras native metrics
     elif issubclass(metric, BaseMetric):
         return metric()
+
+
+def compute_metric_list_wise(list_wise_df, metric):
+    return list_wise_df.groupby(by='id_left').apply(
+            lambda l: metric(l['y_true'], l['y_pred'])).mean()
