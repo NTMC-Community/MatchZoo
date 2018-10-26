@@ -104,7 +104,7 @@ class StopRemovalUnit(ProcessorUnit):
         <class 'list'>
     """
 
-    def __init__(self, lang: str='english'):
+    def __init__(self, lang: str = 'english'):
         """Initialization."""
         self._lang = lang
         self._stop = nltk.corpus.stopwords.words(self._lang)
@@ -197,7 +197,7 @@ class NgramLetterUnit(ProcessorUnit):
 
     """
 
-    def transform(self, tokens: list, ngram: int=3) -> list:
+    def transform(self, tokens: list, ngram: int = 3) -> list:
         """
         Transform token into tri-letter.
 
@@ -364,7 +364,7 @@ class SlidingWindowUnit(ProcessorUnit):
 
     """
 
-    def __init__(self, sliding_window: int=3):
+    def __init__(self, sliding_window: int = 3):
         """
         Class initialization.
 
@@ -409,8 +409,8 @@ class FixedLengthUnit(ProcessorUnit):
 
     """
 
-    def __init__(self, text_length: int, pad_value: int=0,
-                 pad_mode: str='pre', truncate_mode: str='pre'):
+    def __init__(self, text_length: int, pad_value: int = 0,
+                 pad_mode: str = 'pre', truncate_mode: str = 'pre'):
         """
         Class initialization.
 

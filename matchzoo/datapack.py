@@ -44,7 +44,7 @@ class DataPack(object):
                  relation: pd.DataFrame,
                  left: pd.DataFrame,
                  right: pd.DataFrame,
-                 context: dict={}):
+                 context: dict = {}):
         """
         Initialize :class:`DataPack`.
 

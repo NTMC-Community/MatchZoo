@@ -56,11 +56,11 @@ class PairGenerator(engine.BaseGenerator):
     def __init__(
         self,
         inputs: datapack.DataPack,
-        num_neg: int=1,
-        num_dup: int=4,
-        batch_size: int=32,
-        stage: str='train',
-        shuffle: bool=True
+        num_neg: int = 1,
+        num_dup: int = 4,
+        batch_size: int = 32,
+        stage: str = 'train',
+        shuffle: bool = True
     ):
         """Construct the pair generator.
 
