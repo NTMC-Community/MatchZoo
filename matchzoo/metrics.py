@@ -66,13 +66,13 @@ class Precision(engine.BaseMetric):
         Example:
             >>> y_true = [0, 0, 0, 1]
             >>> y_pred = [0.2, 0.4, 0.3, 0.1]
-            >>> Precision(y_true, y_pred, 1)
+            >>> Precision(k=1)(y_true, y_pred)
             0.0
-            >>> Precision(y_true, y_pred, 2)
+            >>> Precision(k=2)(y_true, y_pred)
             0.0
-            >>> Precision(y_true, y_pred, 4)
+            >>> Precision(k=4)(y_true, y_pred)
             0.25
-            >>> Precision(y_true, y_pred, 5)
+            >>> Precision(k=5)(y_true, y_pred)
             0.2
 
         :param y_true: The ground true label of each document.
@@ -109,7 +109,7 @@ class AveragePrecision(engine.BaseMetric):
         Example:
             >>> y_true = [0, 1]
             >>> y_pred = [0.1, 0.6]
-            >>> round(AveragePrecision(2)(y_true, y_pred)
+            >>> round(AveragePrecision()(y_true, y_pred), 2)
             0.75
 
         :param y_true: The ground true label of each document.
@@ -139,7 +139,7 @@ class MeanAveragePrecision(engine.BaseMetric):
         Example:
             >>> y_true = [0, 1, 0, 0]
             >>> y_pred = [0.1, 0.6, 0.2, 0.3]
-            >>> MeanAveragePrecision(y_true, y_pred)
+            >>> MeanAveragePrecision()(y_true, y_pred)
             1.0
 
         :param y_true: The ground true label of each document.
@@ -234,11 +234,11 @@ class NormalizedDiscountedCumulativeGain(engine.BaseMetric):
             >>> ndcg = NormalizedDiscountedCumulativeGain
             >>> ndcg(k=1)(y_true, y_pred)
             0.0
-            >>> round(ndcg(2)(y_true, y_pred, 2), 2)
+            >>> round(ndcg(k=2)(y_true, y_pred), 2)
             0.52
-            >>> round(ndcg(3)(y_true, y_pred, 3), 2)
+            >>> round(ndcg(k=3)(y_true, y_pred), 2)
             0.52
-            >>> type(ndcg(y_true, y_pred, 1))
+            >>> type(ndcg()(y_true, y_pred))
             <class 'float'>
 
         :param y_true: The ground true label of each document.
