@@ -103,8 +103,10 @@ class BaseModel(abc.ABC):
 
     def compile(self):
         """Compile model for training."""
-        keras_metrics = [m for m in self._params['task'].metrics
-                         if not isinstance(m, engine.BaseMetric)]
+        keras_metrics = []
+        for metric in self._params['task'].metrics:
+            if not isinstance(engine.parse_metric(metric), engine.BaseMetric):
+                keras_metrics.append(metric)
         self._backend.compile(optimizer=self._params['optimizer'],
                               loss=self._params['task'].loss,
                               metrics=keras_metrics)

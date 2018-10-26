@@ -11,20 +11,11 @@ class BaseTask(abc.ABC):
 
     @classmethod
     def convert_metrics(cls, metrics):
-        # assure in list form
         if not metrics:
             metrics = []
         elif not isinstance(metrics, list):
             metrics = [metrics]
-
-        for i, metric in enumerate(metrics):
-            if isinstance(metric, str):
-                for subclass in engine.BaseMetric.__subclasses__():
-                    if subclass.ALIAS == metric:
-                        metrics[i] = subclass()
-            elif issubclass(metric, engine.BaseMetric):
-                metrics[i] = metric()
-        return metrics
+        return [engine.parse_metric(metric) for metric in metrics]
 
     def __init__(self, loss=None, metrics=None):
         self._loss = loss
