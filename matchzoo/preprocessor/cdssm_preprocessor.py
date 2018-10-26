@@ -41,9 +41,12 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         <class 'matchzoo.datapack.DataPack'>
     """
 
-    def __init__(self, window_len: int=3, num_windows: int=5,
-                 pad_value: int=0, pad_mode: str='pre',
-                 truncate_mode: str='pre'):
+    def __init__(self,
+                 window_len: int = 3,
+                 num_windows: int = 5,
+                 pad_value: int = 0,
+                 pad_mode: str = 'pre',
+                 truncate_mode: str = 'pre'):
         """Initialization.
 
         :param window_len: sliding window length.
