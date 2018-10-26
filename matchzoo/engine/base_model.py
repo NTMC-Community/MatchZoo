@@ -169,7 +169,8 @@ class BaseModel(abc.ABC):
 
     def evaluate(
             self,
-            x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+            x: typing.Union[np.ndarray, typing.List[np.ndarray],
+                            typing.Dict[str, np.ndarray]],
             y: np.ndarray,
             batch_size: int = 128,
             verbose: int = 1
@@ -202,12 +203,9 @@ class BaseModel(abc.ABC):
                 if list_wise_df is None:
                     y_pred = self.predict(x, batch_size)
                     data = {
-                        'id_right'  : x['id_right'],
-                        'id_left'   : x['id_left'],
-                        'text_left' : list(x['text_left']),
-                        'text_right': list(x['text_right']),
-                        'y_true'    : y,
-                        'y_pred'    : list(y_pred)
+                        **{k: list(v) for k, v in x.items()},
+                        'y_true': list(y),
+                        'y_pred': list(y_pred)
                     }
                     list_wise_df = pd.DataFrame(data=data)
                 metric_val = engine.compute_metric_list_wise(
