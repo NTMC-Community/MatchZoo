@@ -179,6 +179,17 @@ If you use MatchZoo in your research, please use the following BibTex entry.
 
 
 
+## Contribution
+
+Please make sure to read the [Contributing Guide](./CONTRIBUTING.md) before creating a pull request. If you have a MatchZoo-related paper/project/compnent/tool, send a pull request to [this awesome list](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match)!
+
+Thank you to all the people who already contributed to MatchZoo!
+
+[Jianpeng Hou](https://github.com/HouJP), [Lijuan Chen](https://github.com/githubclj), [Yukun Zheng](https://github.com/zhengyk11), [Niuguo Cheng](https://github.com/niuox), [Dai Zhuyun](https://github.com/AdeDZY), [Aneesh Joshi](https://github.com/aneesh-joshi), [Zeno Gantner](https://github.com/zenogantner), [Kai Huang](https://github.com/hkvision), [stanpcf](https://github.com/stanpcf), [ChangQF](https://github.com/ChangQF), [Mike Kellogg
+](https://github.com/wordreference)
+
+
+
 
 ## Project Organizers
 
@@ -193,9 +204,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
   * [Homepage](http://www.bigdatalab.ac.cn/~cxq/)
 
 
-## Contribution
 
-Please make sure to read the [Contributing Guide](./CONTRIBUTING.md) before creating a pull request. If you have a MatchZoo-related paper/project/compnent/tool, send a pull request to [this awesome list](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match)!
 
 
 ## License
