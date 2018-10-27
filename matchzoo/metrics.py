@@ -123,7 +123,7 @@ def mean_average_precision(rs: list) -> float:
     return np.mean([average_precision(r) for r in rs])
 
 
-def dcg_at_k(r: list, k: int, method: int=0) -> float:
+def dcg_at_k(r: list, k: int, method: int = 0) -> float:
     """
     Calculate discounted cumulative gain (dcg).
 
@@ -160,7 +160,7 @@ def dcg_at_k(r: list, k: int, method: int=0) -> float:
     return 0.
 
 
-def ndcg_at_k(r: list, k: int, method: int=0) -> float:
+def ndcg_at_k(r: list, k: int, method: int = 0) -> float:
     """
     Calculate normalized discounted cumulative gain (ndcg).
 

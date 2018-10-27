@@ -48,10 +48,10 @@ class PointGenerator(engine.BaseGenerator):
     def __init__(
         self,
         inputs: datapack.DataPack,
-        task: engine.BaseTask=tasks.Classification(2),
-        batch_size: int=32,
-        stage: str='train',
-        shuffle: bool=True
+        task: engine.BaseTask = tasks.Classification(2),
+        batch_size: int = 32,
+        stage: str = 'train',
+        shuffle: bool = True
     ):
         """Construct the point generator.
 

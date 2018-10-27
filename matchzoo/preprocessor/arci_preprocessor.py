@@ -43,7 +43,9 @@ class ArcIPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
     """
 
-    def __init__(self, fixed_length: list=[32, 32], embedding_file: str=''):
+    def __init__(self,
+                 fixed_length: list = [32, 32],
+                 embedding_file: str = ''):
         """Initialization."""
         self.datapack = None
         self._embedding_file = embedding_file

@@ -121,7 +121,7 @@ class Embedding(object):
                 try:
                     if isinstance(word, bytes):
                         word = word.decode('utf-8')
-                except Exception as e:
+                except Exception:
                     logger.warning(
                         "Skipping non-UTF8 token {}".format(repr(word)))
                     continue

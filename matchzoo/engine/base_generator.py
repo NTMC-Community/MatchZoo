@@ -16,10 +16,10 @@ class BaseGenerator(keras.utils.Sequence):
 
     def __init__(
         self,
-        batch_size: int=32,
-        num_instances: int=0,
-        stage: str='train',
-        shuffle: bool=True
+        batch_size: int = 32,
+        num_instances: int = 0,
+        stage: str = 'train',
+        shuffle: bool = True
     ):
         """
         :class:`BaseGenerator` constructor.
