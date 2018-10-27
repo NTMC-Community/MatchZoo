@@ -19,10 +19,10 @@ class MultiPerspectiveLayer(Layer):
         self,
         dim_output: int,
         dim_embedding: int,
-        perspective: dict={'full': True,
-                           'maxpooling': True,
-                           'attentive': True,
-                           'max-attentive': True},
+        perspective: dict = {'full': True,
+                             'maxpooling': True,
+                             'attentive': True,
+                             'max-attentive': True},
         **kwargs
     ):
         """
