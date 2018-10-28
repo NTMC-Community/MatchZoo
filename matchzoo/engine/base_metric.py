@@ -16,8 +16,9 @@ def parse_metric(metric):
     if isinstance(metric, BaseMetric):
         return metric
     elif isinstance(metric, str):
+        metric = metric.lower()  # ignore case
         for subclass in BaseMetric.__subclasses__():
-            if metric.lower() == subclass.ALIAS or metric in subclass.ALIAS:
+            if metric == subclass.ALIAS or metric in subclass.ALIAS:
                 return subclass()
         return metric  # keras native metrics
     elif issubclass(metric, BaseMetric):
@@ -25,5 +26,4 @@ def parse_metric(metric):
 
 
 def compute_metric_on_groups(groups, metric):
-    return groups.apply(
-            lambda l: metric(l['y_true'], l['y_pred'])).mean()
+    return groups.apply(lambda y: metric(y['true'], y['pred'])).mean()

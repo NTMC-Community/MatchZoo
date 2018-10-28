@@ -101,7 +101,7 @@ class AveragePrecision(engine.BaseMetric):
         self._threshold = threshold
 
     def __repr__(self):
-        return f"{self.ALIAS}({self._threshold})"
+        return f"{self.ALIAS[0]}({self._threshold})"
 
     def __call__(self, y_true, y_pred):
         """
