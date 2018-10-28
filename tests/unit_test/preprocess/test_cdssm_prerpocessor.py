@@ -25,7 +25,7 @@ def test_cdssm_preprocessor(train_inputs, validation_inputs):
     assert len(rv_train.right) == 3
     assert len(rv_train.relation) == 3
     value = rv_train.left.at['id0', 'text_left']
-    assert np.array(value).shape == (5, 198)
+    assert np.array(value).shape == (10, 66)
     rv_valid = cdssm_preprocessor.fit_transform(
         validation_inputs,
         stage='predict')
