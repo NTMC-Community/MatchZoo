@@ -11,11 +11,12 @@ from matchzoo import utils
 from matchzoo import engine
 from matchzoo import preprocessor
 from matchzoo import datapack
+from . import segment
 
 logger = logging.getLogger(__name__)
 
 
-class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
+class CDSSMPreprocessor(engine.BasePreprocessor):
     """CDSSM preprocessor helper.
 
     Example:
@@ -92,7 +93,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
-        self.datapack = self.segment(inputs, stage='train')
+        self.datapack = segment(inputs, stage='train')
 
         for idx, row in tqdm(self.datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
@@ -135,7 +136,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         :return: Transformed data as :class:`DataPack` object.
         """
         if stage in ['evaluate', 'predict']:
-            self.datapack = self.segment(inputs, stage=stage)
+            self.datapack = segment(inputs, stage=stage)
 
         # prepare pipeline unit.
         units = self._prepare_process_units()
