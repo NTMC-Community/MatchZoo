@@ -346,53 +346,6 @@ class WordHashingUnit(ProcessorUnit):
         return hashing
 
 
-class SlidingWindowUnit(ProcessorUnit):
-    """
-    SlidingWindowUnit class.
-
-    Used to get information from a window sliding
-    through the input data.
-
-    Examples:
-        >>> data = [[0,0,0],[1,1,1],[2,2,2],[3,3,3]]
-        >>> sliding = SlidingWindowUnit()
-        >>> output = sliding.transform(data)
-        >>> len(output)
-        2
-        >>> output[0]
-        [0, 0, 0, 1, 1, 1, 2, 2, 2]
-
-    """
-
-    def __init__(self, sliding_window: int = 3):
-        """
-        Class initialization.
-
-        :param sliding_window: sliding window length.
-        """
-        self._sliding_window = sliding_window
-
-    def transform(self, inputs: list) -> list:
-        """
-        Compute the result of a window sliding through input data.
-
-        For short inputs that can not fill :attr:`sliding_window`, the
-        unit return an empty array.
-
-        :param inputs: sequential input data.
-        :return: window sliding result.
-        """
-        output = []
-        inputs = np.array(inputs)
-        if len(inputs.shape) == 1:
-            inputs = np.expand_dims(inputs, -1)
-        while len(inputs) >= self._sliding_window:
-            output.append(np.concatenate(
-                inputs[:self._sliding_window], axis=-1).tolist())
-            inputs = inputs[1:]
-        return output
-
-
 class FixedLengthUnit(ProcessorUnit):
     """
     FixedLengthUnit Class.
