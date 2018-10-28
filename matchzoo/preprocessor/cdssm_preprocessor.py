@@ -42,7 +42,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
     """
 
     def __init__(self,
-                 text_length: int=10,
+                 text_length: int = 10,
                  pad_value: int = 0,
                  pad_mode: str = 'pre',
                  truncate_mode: str = 'pre'):
