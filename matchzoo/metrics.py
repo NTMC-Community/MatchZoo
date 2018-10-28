@@ -18,7 +18,7 @@ def sort_and_couple(labels: list, scores: np.array) -> list:
 
 
 class MeanReciprocalRank(engine.BaseMetric):
-    ALIAS = ['mean_reciprocal_rank', 'mrr', 'MRR']
+    ALIAS = ['mean_reciprocal_rank', 'mrr']
 
     def __init__(self, threshold=0):
         """
@@ -95,7 +95,7 @@ class Precision(engine.BaseMetric):
 
 
 class AveragePrecision(engine.BaseMetric):
-    ALIAS = 'average_precision'
+    ALIAS = ['average_precision', 'ap']
 
     def __init__(self, threshold=0):
         self._threshold = threshold
@@ -125,7 +125,7 @@ class AveragePrecision(engine.BaseMetric):
 
 
 class MeanAveragePrecision(engine.BaseMetric):
-    ALIAS = ['mean_average_precision', 'map', 'MAP']
+    ALIAS = ['mean_average_precision', 'map']
 
     def __init__(self, threshold=0):
         self._threshold = threshold
@@ -161,7 +161,7 @@ class MeanAveragePrecision(engine.BaseMetric):
 
 
 class DiscountedCumulativeGain(engine.BaseMetric):
-    ALIAS = ['discounted_cumulative_gain', 'dcg', 'DCG']
+    ALIAS = ['discounted_cumulative_gain', 'dcg']
 
     def __init__(self, k=1, threshold=0):
         """
@@ -210,7 +210,7 @@ class DiscountedCumulativeGain(engine.BaseMetric):
 
 
 class NormalizedDiscountedCumulativeGain(engine.BaseMetric):
-    ALIAS = ['normalized_discounted_cumulative_gain', 'ndcg', 'NDCG']
+    ALIAS = ['normalized_discounted_cumulative_gain', 'ndcg']
 
     def __init__(self, k=1, threshold=0):
         """
