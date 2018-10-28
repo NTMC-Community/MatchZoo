@@ -17,7 +17,7 @@ def parse_metric(metric):
         return metric
     elif isinstance(metric, str):
         for subclass in BaseMetric.__subclasses__():
-            if metric == subclass.ALIAS or metric in subclass.ALIAS:
+            if metric.lower() == subclass.ALIAS or metric in subclass.ALIAS:
                 return subclass()
         return metric  # keras native metrics
     elif issubclass(metric, BaseMetric):
