@@ -10,10 +10,12 @@ from matchzoo import engine
 from matchzoo import preprocessor
 from matchzoo import datapack
 
+from . import segment
+
 logger = logging.getLogger(__name__)
 
 
-class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
+class DSSMPreprocessor(engine.BasePreprocessor):
     """
     DSSM preprocessor helper.
 
@@ -70,7 +72,7 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
-        self.datapack = self.segment(inputs, stage='train')
+        self.datapack = segment(inputs, stage='train')
 
         # Loop through user input to generate tri-letters.
         # Used for build vocabulary of tri-letters (get dimension).
@@ -114,7 +116,7 @@ class DSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         :return: Transformed data as :class:`DataPack` object.
         """
         if stage in ['evaluate', 'predict']:
-            self.datapack = self.segment(inputs, stage=stage)
+            self.datapack = segment(inputs, stage=stage)
 
         logger.info(f"Start processing input data for {stage} stage.")
 

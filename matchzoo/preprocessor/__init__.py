@@ -12,7 +12,7 @@ from .process_units import (
     WordHashingUnit,
     FixedLengthUnit
 )
-from .segment_mixin import SegmentMixin
+from .segment import segment
 from .dssm_preprocessor import DSSMPreprocessor
 from .arci_preprocessor import ArcIPreprocessor
 from .cdssm_preprocessor import CDSSMPreprocessor

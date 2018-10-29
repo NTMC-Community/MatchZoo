@@ -11,11 +11,12 @@ from matchzoo import utils
 from matchzoo import engine
 from matchzoo import preprocessor
 from matchzoo import datapack
+from . import segment
 
 logger = logging.getLogger(__name__)
 
 
-class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
+class CDSSMPreprocessor(engine.BasePreprocessor):
     """CDSSM preprocessor helper.
 
     Example:
@@ -88,7 +89,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
-        self.datapack = self.segment(inputs, stage='train')
+        self.datapack = segment(inputs, stage='train')
 
         for idx, row in tqdm(self.datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
@@ -118,9 +119,9 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
 
     @utils.validate_context
     def transform(
-        self,
-        inputs: typing.List[tuple],
-        stage: str
+            self,
+            inputs: typing.List[tuple],
+            stage: str
     ) -> datapack.DataPack:
         """
         Apply transformation on data, create `letter-trigram` representation.
@@ -131,13 +132,13 @@ class CDSSMPreprocessor(engine.BasePreprocessor, preprocessor.SegmentMixin):
         :return: Transformed data as :class:`DataPack` object.
         """
         if stage in ['evaluate', 'predict']:
-            self.datapack = self.segment(inputs, stage=stage)
+            self.datapack = segment(inputs, stage=stage)
 
         # prepare pipeline unit.
         units = self._prepare_process_units()
         ngram_unit = preprocessor.NgramLetterUnit()
         hash_unit = preprocessor.WordHashingUnit(
-            self.datapack.context['term_index'])
+                self.datapack.context['term_index'])
         fix_unit = preprocessor.FixedLengthUnit(
             self._text_length * self._dim_ngram, self._pad_value,
             self._pad_mode, self._truncate_mode)
