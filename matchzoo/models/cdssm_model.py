@@ -28,8 +28,8 @@ class CDSSMModel(engine.BaseModel):
         params = super().get_default_params()
         params['optimizer'] = 'adam'
         # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
-        # Dimension: (NUM_TRI_LETTERS, DIM-TRILETTER )
-        params['input_shapes'] = [(None, 900), (None, 900)]
+        # Dimension: (TEXT_LENGTH, DIM_WORD_N_GRAM)
+        params['input_shapes'] = [(10, 900), (10, 900)]
         params.add(engine.Param('w_initializer', 'glorot_normal'))
         params.add(engine.Param('b_initializer', 'zeros'))
         params.add(engine.Param('dim_fan_out', 128))

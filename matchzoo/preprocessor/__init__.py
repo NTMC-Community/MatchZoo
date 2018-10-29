@@ -10,7 +10,6 @@ from .process_units import (
     NgramLetterUnit,
     VocabularyUnit,
     WordHashingUnit,
-    SlidingWindowUnit,
     FixedLengthUnit
 )
 from .segment import segment

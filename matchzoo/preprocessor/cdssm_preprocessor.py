@@ -43,15 +43,13 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
     """
 
     def __init__(self,
-                 window_len: int = 3,
-                 num_windows: int = 5,
+                 text_length: int = 10,
                  pad_value: int = 0,
                  pad_mode: str = 'pre',
                  truncate_mode: str = 'pre'):
         """Initialization.
 
-        :param window_len: sliding window length.
-        :param num_windows: sliding window number.
+        :param text_length: fixed length of the text.
         :param pad_value: filling text with :attr:`pad_value` if
          text length is smaller than assumed.
         :param pad_mode: String, `pre` or `post`:
@@ -61,12 +59,10 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             either at the beginning or at the end of the sequences.
         """
         self.datapack = None
-        self._window_len = window_len
-        self._num_windows = num_windows
+        self._text_length = text_length
         self._pad_value = pad_value
         self._pad_mode = pad_mode
         self._truncate_mode = truncate_mode
-        self._text_length = num_windows + window_len - 1
 
     def _prepare_process_units(self) -> list:
         """Prepare needed process units."""
@@ -116,8 +112,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         self.datapack.context['term_index'] = vocab_unit.state['term_index']
         self._dim_ngram = len(vocab_unit.state['term_index']) + 1
         self.datapack.context['input_shapes'] = [
-            (self._num_windows, self._dim_ngram * self._window_len),
-            (self._num_windows, self._dim_ngram * self._window_len)
+            (self._text_length, self._dim_ngram),
+            (self._text_length, self._dim_ngram)
         ]
         return self
 
@@ -144,9 +140,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         hash_unit = preprocessor.WordHashingUnit(
                 self.datapack.context['term_index'])
         fix_unit = preprocessor.FixedLengthUnit(
-                self._text_length * self._dim_ngram, self._pad_value,
-                self._pad_mode, self._truncate_mode)
-        slide_unit = preprocessor.SlidingWindowUnit(self._window_len)
+            self._text_length * self._dim_ngram, self._pad_value,
+            self._pad_mode, self._truncate_mode)
 
         logger.info(f"Start processing input data for {stage} stage.")
 
@@ -160,8 +155,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             text = list(itertools.chain(*text))
             text = fix_unit.transform(text)
             text = np.reshape(text, (self._text_length, -1))
-            text = slide_unit.transform(text.tolist())
-            self.datapack.left.at[idx, 'text_left'] = text
+            self.datapack.left.at[idx, 'text_left'] = text.tolist()
 
         for idx, row in tqdm(self.datapack.right.iterrows()):
             text = row.text_right
@@ -172,7 +166,6 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             text = list(itertools.chain(*text))
             text = fix_unit.transform(text)
             text = np.reshape(text, (self._text_length, -1))
-            text = slide_unit.transform(text.tolist())
-            self.datapack.right.at[idx, 'text_right'] = text
+            self.datapack.right.at[idx, 'text_right'] = text.tolist()
 
         return self.datapack
