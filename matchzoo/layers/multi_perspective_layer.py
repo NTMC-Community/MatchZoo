@@ -131,8 +131,6 @@ class MultiPerspectiveLayer(Layer):
         cosine_matrix = self._cosine_distance(lstm_lt, lstm_rt, cosine_norm=True)
         cosine_matrix = K.expand_dims(cosine_matrix, axis=-1)
 
-        # cosine_matrix: [batch, steps_lt, steps_rt, 1]
-        # lstm_rt: [batch, 1, steps_rt, d]
         # att_lt: [batch, steps_lt, d]
         att_lt = K.sum(cosine_matrix * lstm_rt, axis=2)
         return att_lt
@@ -191,11 +189,11 @@ class MultiPerspectiveLayer(Layer):
         lstm_rt = K.expand_dims(lstm_rt, axis=2)
         lstm_rt = K.expand_dims(lstm_rt, axis=1)
 
-        # lstm_lt: [batch, steps_lt, 1, num_perspective, d]
-        # lstm_rt: [batch, 1, steps_rt, 1, num_perspective, d]
+        # [batch, steps_lt, steps_rt, num_perspective]
+        # lstm_lt * W: [batch, steps_lt, 1, num_perspective, d]
+        # lstm_rt * W: [batch, 1, steps_rt, 1, num_perspective, d]
         matching = self._cosine_distance(lstm_rt * W, lstm_lt * W, cosine_norm=False)
 
-        # [batch, steps_lt, steps_rt, num_perspective]
         return matching
 
     def _cosine_distance(self, v1, v2, cosine_norm=True, eps=1e-6):
