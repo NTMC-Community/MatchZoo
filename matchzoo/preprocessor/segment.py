@@ -24,6 +24,7 @@ def segment(inputs: list, stage: str) -> datapack.DataPack:
 
     # prepare data pack.
     inputs = pd.DataFrame(inputs, columns=col_all)
+    inputs.fillna('missing') # avoid tokenization exception.
 
     # Segment input into 3 dataframes.
     relation = inputs[col_relation]
