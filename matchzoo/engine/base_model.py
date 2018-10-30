@@ -203,12 +203,14 @@ class BaseModel(abc.ABC):
                 if groups is None:
                     y_pred = self.predict(x, batch_size)
                     data = {
-                        'id'  : list(x['id_left']),
+                        'id': list(x['id_left']),
                         'true': list(y),
                         'pred': list(y_pred)
                     }
                     groups = pd.DataFrame(data=data).groupby(by='id')
-                metric_val = engine.compute_metric_on_groups(groups, metric)
+
+                metric_val = groups.apply(
+                        lambda df: metric(df['true'], df['pred'])).mean()
                 metrics_lookup[str(metric)] = metric_val
         return metrics_lookup
 

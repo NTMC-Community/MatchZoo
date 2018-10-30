@@ -1,3 +1,4 @@
+import typing
 import abc
 
 
@@ -12,7 +13,13 @@ class BaseMetric(abc.ABC):
         return self.ALIAS
 
 
-def parse_metric(metric):
+def parse_metric(metric: typing.Union[str, BaseMetric]):
+    """
+    Parse input metric in any form into a :class:`BaseMetric` instance.
+
+    :param metric: Input metric in any form.
+    :return: A :class:`BaseMetric` instance
+    """
     if isinstance(metric, BaseMetric):
         return metric
     elif isinstance(metric, str):
@@ -23,7 +30,3 @@ def parse_metric(metric):
         return metric  # keras native metrics
     elif issubclass(metric, BaseMetric):
         return metric()
-
-
-def compute_metric_on_groups(groups, metric):
-    return groups.apply(lambda y: metric(y['true'], y['pred'])).mean()
