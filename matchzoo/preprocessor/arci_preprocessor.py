@@ -53,9 +53,9 @@ class ArcIPreprocessor(engine.BasePreprocessor):
         self._fixed_length = fixed_length
         self._vocab_unit = preprocessor.VocabularyUnit()
         self._left_fixedlen_unit = preprocessor.FixedLengthUnit(
-                self._fixed_length[0])
+            self._fixed_length[0])
         self._right_fixedlen_unit = preprocessor.FixedLengthUnit(
-                self._fixed_length[1])
+            self._fixed_length[1])
 
     def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""
@@ -123,9 +123,9 @@ class ArcIPreprocessor(engine.BasePreprocessor):
 
     @utils.validate_context
     def transform(
-            self,
-            inputs: typing.List[tuple],
-            stage: str
+        self,
+        inputs: typing.List[tuple],
+        stage: str
     ) -> datapack.DataPack:
         """
         Apply transformation on data, create word ids.

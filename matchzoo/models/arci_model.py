@@ -4,7 +4,7 @@ import typing
 import numpy as np
 from keras.models import Model
 from keras.layers import Input, Embedding, Conv1D, MaxPooling1D, Dropout, \
-                         Concatenate, Flatten
+    Concatenate, Flatten
 
 
 class ArcIModel(engine.BaseModel):
@@ -94,19 +94,21 @@ class ArcIModel(engine.BaseModel):
 
         for i in range(self._params['num_blocks']):
             embed_left = self._conv_pool_block(
-                                     embed_left,
-                                     self._params['left_kernel_count'][i],
-                                     self._params['left_kernel_size'][i],
-                                     self._params['padding'],
-                                     self._params['activation'],
-                                     self._params['left_pool_size'][i])
+                embed_left,
+                self._params['left_kernel_count'][i],
+                self._params['left_kernel_size'][i],
+                self._params['padding'],
+                self._params['activation'],
+                self._params['left_pool_size'][i]
+            )
             embed_right = self._conv_pool_block(
-                                     embed_right,
-                                     self._params['right_kernel_count'][i],
-                                     self._params['right_kernel_size'][i],
-                                     self._params['padding'],
-                                     self._params['activation'],
-                                     self._params['right_pool_size'][i])
+                embed_right,
+                self._params['right_kernel_count'][i],
+                self._params['right_kernel_size'][i],
+                self._params['padding'],
+                self._params['activation'],
+                self._params['right_pool_size'][i]
+            )
 
         embed_flat = Flatten()(Concatenate(axis=1)([embed_left, embed_right]))
         x = Dropout(rate=self._params['dropout_rate'])(embed_flat)

@@ -1,0 +1,3 @@
+[flake8]
+# D401 First line should be in imperative mood
+ignore = D401

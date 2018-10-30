@@ -119,9 +119,9 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
 
     @utils.validate_context
     def transform(
-            self,
-            inputs: typing.List[tuple],
-            stage: str
+        self,
+        inputs: typing.List[tuple],
+        stage: str
     ) -> datapack.DataPack:
         """
         Apply transformation on data, create `letter-trigram` representation.
@@ -138,7 +138,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         units = self._prepare_process_units()
         ngram_unit = preprocessor.NgramLetterUnit()
         hash_unit = preprocessor.WordHashingUnit(
-                self.datapack.context['term_index'])
+            self.datapack.context['term_index'])
         fix_unit = preprocessor.FixedLengthUnit(
             self._text_length * self._dim_ngram, self._pad_value,
             self._pad_mode, self._truncate_mode)

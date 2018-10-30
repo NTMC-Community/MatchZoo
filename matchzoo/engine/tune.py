@@ -37,14 +37,14 @@ def tune(model: engine.BaseModel, max_evals: int = 32) -> list:
         model.guess_and_fill_missing_params()
         model.build()
         # the random loss is for demostration purpose without actual meaning
-        return {'loss':   random.random(), 'space': space,
+        return {'loss': random.random(), 'space': space,
                 'status': hyperopt.STATUS_OK}
 
     hyperopt.fmin(
-            fn=_test_wrapper,
-            space=model.params.hyper_space,
-            algo=hyperopt.tpe.suggest,
-            max_evals=max_evals,
-            trials=trials
+        fn=_test_wrapper,
+        space=model.params.hyper_space,
+        algo=hyperopt.tpe.suggest,
+        max_evals=max_evals,
+        trials=trials
     )
     return trials.trials
