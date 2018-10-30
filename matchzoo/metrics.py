@@ -18,15 +18,16 @@ def sort_and_couple(labels: list, scores: np.array) -> list:
 
 
 class MeanReciprocalRank(engine.BaseMetric):
+    """Mean reciprocal rank metric."""
+
     ALIAS = ['mean_reciprocal_rank', 'mrr']
 
     def __init__(self, threshold=0):
-        """
-        :param threshold: the label threshold of relevance degree.
-        """
+        """:param threshold: The label threshold of relevance degree."""
         self._threshold = threshold
 
     def __repr__(self):
+        """:return: Formated string representation of the metric."""
         return f'{self.ALIAS[0]}({self._threshold})'
 
     def __call__(self, y_true, y_pred):
@@ -51,13 +52,22 @@ class MeanReciprocalRank(engine.BaseMetric):
 
 
 class Precision(engine.BaseMetric):
+    """Precision metric."""
+
     ALIAS = 'precision'
 
     def __init__(self, k=1, threshold=0):
+        """
+        Precision metric.
+
+        :param k: Number of results to consider.
+        :param threshold: the label threshold of relevance degree.
+        """
         self._k = k
         self._threshold = threshold
 
     def __repr__(self):
+        """:return: Formated string representation of the metric."""
         return f"{self.ALIAS}@{self._k}({self._threshold})"
 
     def __call__(self, y_true, y_pred):
@@ -81,7 +91,6 @@ class Precision(engine.BaseMetric):
         :return: Precision @ k
         :raises: ValueError: len(r) must be >= k.
         """
-
         if self._k <= 0:
             raise ValueError('self._k must be larger than 0.')
         coupled_pair = sort_and_couple(y_true, y_pred)
@@ -95,12 +104,16 @@ class Precision(engine.BaseMetric):
 
 
 class AveragePrecision(engine.BaseMetric):
+    """Average precision metric."""
+
     ALIAS = ['average_precision', 'ap']
 
     def __init__(self, threshold=0):
+        """:param threshold: The label threshold of relevance degree."""
         self._threshold = threshold
 
     def __repr__(self):
+        """:return: Formated string representation of the metric."""
         return f"{self.ALIAS[0]}({self._threshold})"
 
     def __call__(self, y_true, y_pred):
@@ -125,12 +138,16 @@ class AveragePrecision(engine.BaseMetric):
 
 
 class MeanAveragePrecision(engine.BaseMetric):
+    """Mean average precision metric."""
+
     ALIAS = ['mean_average_precision', 'map']
 
     def __init__(self, threshold=0):
+        """:param threshold: The label threshold of relevance degree."""
         self._threshold = threshold
 
     def __repr__(self):
+        """:return: Formated string representation of the metric."""
         return f"{self.ALIAS[0]}({self._threshold})"
 
     def __call__(self, y_true, y_pred):
@@ -161,17 +178,22 @@ class MeanAveragePrecision(engine.BaseMetric):
 
 
 class DiscountedCumulativeGain(engine.BaseMetric):
+    """Disconunted cumulative gain metric."""
+
     ALIAS = ['discounted_cumulative_gain', 'dcg']
 
     def __init__(self, k=1, threshold=0):
         """
-        :param k: Number of results to consider
+        Disconunted cumulative gain metric.
+
+        :param k: Number of results to consider.
         :param threshold: the label threshold of relevance degree.
         """
         self._k = k
         self._threshold = threshold
 
     def __repr__(self):
+        """:return: Formated string representation of the metric."""
         return f"{self.ALIAS[0]}@{self._k}({self._threshold})"
 
     def __call__(self, y_true, y_pred):
@@ -210,10 +232,14 @@ class DiscountedCumulativeGain(engine.BaseMetric):
 
 
 class NormalizedDiscountedCumulativeGain(engine.BaseMetric):
+    """Normalized discounted cumulative gain metric."""
+
     ALIAS = ['normalized_discounted_cumulative_gain', 'ndcg']
 
     def __init__(self, k=1, threshold=0):
         """
+        Normalized discounted cumulative gain metric.
+
         :param k: Number of results to consider
         :param threshold: the label threshold of relevance degree.
         """
@@ -221,6 +247,7 @@ class NormalizedDiscountedCumulativeGain(engine.BaseMetric):
         self._threshold = threshold
 
     def __repr__(self):
+        """:return: Formated string representation of the metric."""
         return f"{self.ALIAS[0]}@{self._k}({self._threshold})"
 
     def __call__(self, y_true, y_pred):
