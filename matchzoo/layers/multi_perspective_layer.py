@@ -108,73 +108,72 @@ class MultiPerspectiveLayer(Layer):
         if self._perspective.get('attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain sum of weighted mean of each dimension.
-            att_lt = self.attention(lstm_lt, lstm_rt)
-            attentive_matching = self._match_tensors_with_attention(lstm_lt, att_lt, self.attentive)
+
+            # TODO(tjf): add mask
+            att_lt = self.attention(lstm_lt, lstm_rt, pooling='max')
+            attentive_matching = self._match_tensors_with_attentive_tensor(lstm_lt, att_lt, self.attentive)
             rv.append(attentive_matching)
 
         if self._perspective.get('max-attentive'):
             # each contextual embedding compare with each contextual embedding.
             # retain max of weighted mean of each dimension.
-            max_rt = K.max(lstm_rt, axis=1)
-            max_attentive_matching = self._match_tensors_with_tensor(lstm_lt, max_rt, self.max_attentive)
+
+            # TODO(tjf): add mask
+            att_lt = self.attention(lstm_lt, lstm_rt, pooling='max')
+            max_attentive_matching = self._match_tensors_with_attentive_tensor(lstm_lt, att_lt, self.max_attentive)
             rv.append(max_attentive_matching)
         return rv
 
-    def attention(self, lstm_lt, lstm_rt):
-        # lstm_lt: [batch, steps_lt, 1, d]
-        lstm_lt = K.expand_dims(lstm_lt, axis=2)
-
-        # lstm_rt: [batch, 1, steps_rt, d]
-        lstm_rt = K.expand_dims(lstm_rt, axis=1)
-
-        # [batch, steps_lt, steps_rt, 1]
-        cosine_matrix = self._cosine_distance(lstm_lt, lstm_rt, cosine_norm=True)
-        cosine_matrix = K.expand_dims(cosine_matrix, axis=-1)
-
-        # att_lt: [batch, steps_lt, d]
-        att_lt = K.sum(cosine_matrix * lstm_rt, axis=2)
-        return att_lt
+    def attention(self, lstm_lt, lstm_rt, pooling='sum'):
+        """
+        TODO(tjf) add bilinear attention or mlp attention
+        calculate attention
+        :param lstm_lt: [batch, steps_lt, d]
+        :param lstm_rt: [batch, steps_rt, d]
+        :param pooling: sum / max
+        :return: [batch, steps_lt, d]
+        """
+        pass
 
     def _match_tensors_with_tensor(self, lstm_lt, h_rt, W):
         """
+        TODO(tjf): add mask
         """
-        # lstm_lt: [batch, steps_lt, l, d]
+        # W: -> [1, 1, l, d]
         W = K.expand_dims(W, 0)
         W = K.expand_dims(W, 0)
+        # lstm_lt: -> [batch, steps_lt, l, d]
         lstm_lt = W * K.expand_dims(lstm_lt, 2)
 
-        # h_rt: [batch, 1, l, d]
+        # h_rt: -> [batch, 1, 1, d]
         h_rt = K.expand_dims(h_rt, 1)
         h_rt = K.expand_dims(h_rt, 1)
-        h_rt = W * h_rt
+        h_rt = h_rt
 
-        # matching: [batch, steps_lt, l]
-        # TODO(tjf): add mask
+        # matching: -> [batch, steps_lt, l]
         matching = self._cosine_distance(lstm_lt, h_rt, cosine_norm=False)
         return matching
 
-    def _match_tensors_with_attention(self, lstm_lt, att_lt, W):
-        # lstm_lt: [batch, steps_lt, l, d]
+    def _match_tensors_with_attentive_tensor(self, lstm_lt, att_lt, W):
+        # TODO(tjf): add mask
+
+        # W: -> [1, 1, l, d]
         W = K.expand_dims(W, 0)
         W = K.expand_dims(W, 0)
 
+        # lstm_lt: -> [batch, steps_lt, l, d]
         lstm_lt = W * K.expand_dims(lstm_lt, 2)
 
-        # att_lt: [batch, steps_lt, l, d]
-        att_lt = W * K.expand_dims(att_lt, 2)
+        # att_lt: -> [batch, steps_lt, 1, d]
+        att_lt = K.expand_dims(att_lt, 2)
 
-        # matching: [batch, steps_lt, l]
-        # TODO(tjf): add mask
+        # matching: -> [batch, steps_lt, l]
         matching = self._cosine_distance(lstm_lt, att_lt, cosine_norm=False)
         return matching
 
     def _match_tensors(self, lstm_lt, lstm_rt, W):
         """
-
-        :param lstm_lt: [steps_lt, d]
-        :param lstm_rt: [steps_rt, d]
-        :param W: [num_perspective, d]
-        :return:
+        TODO(tjf): add mask
         """
         # W: [1, 1, 1, num_perspective, d]
         W = K.expand_dims(W, axis=0)
@@ -189,11 +188,10 @@ class MultiPerspectiveLayer(Layer):
         lstm_rt = K.expand_dims(lstm_rt, axis=2)
         lstm_rt = K.expand_dims(lstm_rt, axis=1)
 
-        # [batch, steps_lt, steps_rt, num_perspective]
         # lstm_lt * W: [batch, steps_lt, 1, num_perspective, d]
-        # lstm_rt * W: [batch, 1, steps_rt, 1, num_perspective, d]
-        matching = self._cosine_distance(lstm_rt * W, lstm_lt * W, cosine_norm=False)
-
+        # lstm_rt: [batch, 1, steps_rt, 1, 1, d]
+        # matching -> [batch, steps_lt, steps_rt, num_perspective]
+        matching = self._cosine_distance(lstm_lt * W, lstm_rt, cosine_norm=False)
         return matching
 
     def _cosine_distance(self, v1, v2, cosine_norm=True, eps=1e-6):
@@ -210,7 +208,6 @@ class MultiPerspectiveLayer(Layer):
         v1_norm = K.sqrt(K.maximum(K.sum(K.square(v1), axis=-1), eps))
         v2_norm = K.sqrt(K.maximum(K.sum(K.square(v2), axis=-1), eps))
         return cosine_numerator / v1_norm / v2_norm
-
 
     def compute_output_shape(self, input_shape: list):
         """Compute output shape."""
