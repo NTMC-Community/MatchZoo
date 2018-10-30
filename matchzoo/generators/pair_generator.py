@@ -136,9 +136,9 @@ class PairGenerator(engine.BaseGenerator):
         batch_x = {}
         batch_y = self._relation.iloc[trans_index, 2].values
 
-        left_vals = self._left.columns.values.tolist()
-        right_vals = self._right.columns.values.tolist()
-        columns = left_vals + right_vals + ['id_left', 'id_right']
+        left_column = self._left.columns.values.tolist()
+        right_column = self._right.columns.values.tolist()
+        columns = left_column + right_column + ['id_left', 'id_right']
         for column in columns:
             batch_x[column] = []
 
