@@ -10,6 +10,7 @@ from matchzoo import models
 from matchzoo import engine
 from matchzoo import tasks
 
+
 @pytest.fixture
 def train():
     train = []
@@ -17,6 +18,7 @@ def train():
     with open(os.path.join(path, '../sample/train_rank.txt')) as f:
         train = [tuple(map(str, i.strip().split('\t'))) for i in f]
     return train
+
 
 @pytest.fixture
 def test():
@@ -26,21 +28,24 @@ def test():
         test = [tuple(map(str, i.strip().split('\t'))) for i in f]
     return test
 
+
 @pytest.fixture
 def task(request) -> engine.BaseTask:
     return tasks.Ranking()
+
 
 @pytest.fixture(scope='module', params=[
     preprocessor.ArcIPreprocessor(),
     preprocessor.ArcIPreprocessor(fixed_length=[10, 10],
                                   embedding_file=os.path.join(
-                                                    os.path.dirname(__file__),
-                                                    '../sample/embed_rank.txt'
-                                                    )
-                                 )
+                                          os.path.dirname(__file__),
+                                          '../sample/embed_rank.txt'
+                                  )
+                                  )
 ])
 def arci_preprocessor(request):
     return request.param
+
 
 @pytest.fixture
 def processed_train(train, arci_preprocessor) -> datapack.DataPack:
@@ -48,10 +53,12 @@ def processed_train(train, arci_preprocessor) -> datapack.DataPack:
     arci_preprocessor.save('.tmpdir')
     return preprocessed_train
 
+
 @pytest.fixture
 def processed_test(test) -> datapack.DataPack:
     arci_proprecessor = engine.load_preprocessor('.tmpdir')
     return arci_proprecessor.fit_transform(test, stage='predict')
+
 
 @pytest.fixture(params=['point', 'pair'])
 def train_generator(request, processed_train, task) -> engine.BaseGenerator:
@@ -61,12 +68,14 @@ def train_generator(request, processed_train, task) -> engine.BaseGenerator:
                                          stage='train')
     elif request.param == 'pair':
         return generators.PairGenerator(processed_train,
-                                         stage='train')
+                                        stage='train')
+
 
 @pytest.fixture(params=['point', 'list'])
 def test_generator(request, processed_test, task) -> engine.BaseGenerator:
     if request.param == 'point':
-        return generators.PointGenerator(processed_test, task=task, stage='predict')
+        return generators.PointGenerator(processed_test, task=task,
+                                         stage='predict')
     elif request.param == 'list':
         return generators.ListGenerator(processed_test, stage='predict')
 
