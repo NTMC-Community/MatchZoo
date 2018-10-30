@@ -104,8 +104,9 @@ class PairGenerator(engine.BaseGenerator):
             self._task.output_dtype)
         # Note here the main id is set to be the id_left
         pairs = []
-        for idx, group in relations.sort_values('label', ascending=False).\
-                groupby('id_left'):
+        groups = relations.sort_values('label',
+                                       ascending=False).groupby('id_left')
+        for idx, group in groups:
             labels = group.label.unique()
             for label in labels:
                 pos_samples = group[group.label == label]
@@ -131,12 +132,13 @@ class PairGenerator(engine.BaseGenerator):
         trans_index = []
         steps = self._num_neg + 1
         for item in index_array:
-            trans_index.extend(list(range(item*steps, (item+1)*steps)))
+            trans_index.extend(list(range(item * steps, (item + 1) * steps)))
         batch_x = {}
         batch_y = self._relation.iloc[trans_index, 2].values
 
-        columns = self._left.columns.values.tolist() + \
-            self._right.columns.values.tolist() + ['id_left', 'id_right']
+        left_column = self._left.columns.values.tolist()
+        right_column = self._right.columns.values.tolist()
+        columns = left_column + right_column + ['id_left', 'id_right']
         for column in columns:
             batch_x[column] = []
 
@@ -155,4 +157,4 @@ class PairGenerator(engine.BaseGenerator):
             batch_x[key] = np.array(val)
 
         batch_x = utils.dotdict(batch_x)
-        return (batch_x, batch_y)
+        return batch_x, batch_y

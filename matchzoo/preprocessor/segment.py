@@ -29,12 +29,10 @@ def segment(inputs: list, stage: str) -> datapack.DataPack:
     # Segment input into 3 dataframes.
     relation = inputs[col_relation]
 
-    left = inputs[['id_left', 'text_left']].drop_duplicates(
-            ['id_left'])
+    left = inputs[['id_left', 'text_left']].drop_duplicates(['id_left'])
     left.set_index('id_left', inplace=True)
 
-    right = inputs[['id_right', 'text_right']].drop_duplicates(
-            ['id_right'])
+    right = inputs[['id_right', 'text_right']].drop_duplicates(['id_right'])
     right.set_index('id_right', inplace=True)
 
     return datapack.DataPack(relation=relation,
