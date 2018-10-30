@@ -62,6 +62,8 @@ def test_generator(request, processed_test, task) -> engine.BaseGenerator:
     elif request.param == 'list':
         return generators.ListGenerator(processed_test, stage='predict')
 
+
+@pytest.mark.slow
 def test_dssm(processed_train,
               task,
               train_generator,

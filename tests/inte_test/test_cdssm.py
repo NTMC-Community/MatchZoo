@@ -60,6 +60,7 @@ def test_generator(request, processed_test, task) -> engine.BaseGenerator:
     elif request.param == 'list':
         return generators.ListGenerator(processed_test, stage='predict')
 
+@pytest.mark.slow
 def test_cdssm(processed_train, task, train_generator, test_generator):
     """Test CDSSM model."""
     # Create a dssm model
