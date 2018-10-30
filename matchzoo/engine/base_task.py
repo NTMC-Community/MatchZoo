@@ -10,7 +10,10 @@ class BaseTask(abc.ABC):
     """Base Task, shouldn't be used directly."""
 
     @classmethod
-    def convert_metrics(cls, metrics):
+    def convert_metrics(cls, metrics: typing.Union[list,
+                                                   str,
+                                                   engine.BaseMetric]):
+        """Convert `metrics` into properly formed list of metrics."""
         if not metrics:
             metrics = []
         elif not isinstance(metrics, list):
@@ -18,28 +21,36 @@ class BaseTask(abc.ABC):
         return [engine.parse_metric(metric) for metric in metrics]
 
     def __init__(self, loss=None, metrics=None):
+        """
+        Base task constructor.
+
+        :param loss: By default the first loss in available losses.
+        :param metrics:
+        """
         self._loss = loss
         self._metrics = metrics
 
-        self.assure_loss()
-        self.assure_metrics()
+        self._assure_loss()
+        self._assure_metrics()
 
         self._metrics = self.convert_metrics(metrics)
 
-    def assure_loss(self):
+    def _assure_loss(self):
         if not self._loss:
             self._loss = self.list_available_losses()[0]
 
-    def assure_metrics(self):
+    def _assure_metrics(self):
         if not self._metrics:
             self._metrics = [self.list_available_metrics()[0]]
 
     @property
     def loss(self):
+        """:return: Loss used in the task."""
         return self._loss
 
     @property
     def metrics(self):
+        """:return: Metrics used in the task."""
         return self._metrics
 
     @metrics.setter

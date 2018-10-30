@@ -274,8 +274,8 @@ class NormalizedDiscountedCumulativeGain(engine.BaseMetric):
 
         :return: Normalized discounted cumulative gain.
         """
-        dcg_metric = DiscountedCumulativeGain(
-                k=self._k, threshold=self._threshold)
+        dcg_metric = DiscountedCumulativeGain(k=self._k,
+                                              threshold=self._threshold)
         idcg_val = dcg_metric(y_true, y_true)
         dcg_val = dcg_metric(y_true, y_pred)
         return dcg_val / idcg_val

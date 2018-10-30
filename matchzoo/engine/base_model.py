@@ -209,8 +209,10 @@ class BaseModel(abc.ABC):
                     }
                     groups = pd.DataFrame(data=data).groupby(by='id')
 
-                metric_val = groups.apply(
-                        lambda df: metric(df['true'], df['pred'])).mean()
+                def evaluate_df_fn(df):
+                    return metric(df['true'], df['pred'])
+                metric_val = groups.apply(evaluate_df_fn).mean()
+
                 metrics_lookup[str(metric)] = metric_val
         return metrics_lookup
 

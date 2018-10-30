@@ -1,5 +1,5 @@
 from . import hyper_spaces
-from .base_metric import BaseMetric, parse_metric, compute_metric_on_groups
+from .base_metric import BaseMetric, parse_metric
 from .param import Param
 from .param_table import ParamTable
 from .base_task import BaseTask, list_available_tasks
