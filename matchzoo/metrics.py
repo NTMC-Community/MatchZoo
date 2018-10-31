@@ -129,6 +129,8 @@ class AveragePrecision(engine.BaseMetric):
             >>> y_pred = [0.1, 0.6]
             >>> round(AveragePrecision()(y_true, y_pred), 2)
             0.75
+            >>> round(AveragePrecision()([], []), 2)
+            0.0
 
         :param y_true: The ground true label of each document.
         :param y_pred: The predicted scores of each document.
@@ -211,11 +213,13 @@ class DiscountedCumulativeGain(engine.BaseMetric):
             >>> y_pred = [0.4, 0.2, 0.5, 0.7]
             >>> DiscountedCumulativeGain(1)(y_true, y_pred)
             0.0
-            >>> round(DiscountedCumulativeGain(2)(y_true, y_pred), 2)
+            >>> round(DiscountedCumulativeGain(k=-1)(y_true, y_pred), 2)
+            0.0
+            >>> round(DiscountedCumulativeGain(k=2)(y_true, y_pred), 2)
             2.73
-            >>> round(DiscountedCumulativeGain(3)(y_true, y_pred), 2)
+            >>> round(DiscountedCumulativeGain(k=3)(y_true, y_pred), 2)
             2.73
-            >>> type(DiscountedCumulativeGain(1)(y_true, y_pred))
+            >>> type(DiscountedCumulativeGain(k=1)(y_true, y_pred))
             <class 'float'>
 
         :param y_true: The ground true label of each document.

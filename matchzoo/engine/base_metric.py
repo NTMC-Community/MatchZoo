@@ -21,17 +21,39 @@ class BaseMetric(abc.ABC):
         :return: Evaluation of the metric.
         """
 
+    @abc.abstractmethod
     def __repr__(self):
         """:return: Formated string representation of the metric."""
-        return self.ALIAS
 
 
-def parse_metric(metric: typing.Union[str, BaseMetric]):
+def parse_metric(metric: typing.Union[str,
+                                      typing.Type[BaseMetric],
+                                      BaseMetric]):
     """
     Parse input metric in any form into a :class:`BaseMetric` instance.
 
     :param metric: Input metric in any form.
     :return: A :class:`BaseMetric` instance
+
+    Examples::
+        >>> from matchzoo import engine, metrics
+
+    Use `str` as keras native metrics:
+        >>> engine.parse_metric('mse')
+        'mse'
+
+    Use `str` as MatchZoo metrics:
+        >>> mz_metric = engine.parse_metric('map')
+        >>> type(mz_metric)
+        <class 'matchzoo.metrics.MeanAveragePrecision'>
+
+    Use :class:`matchzoo.engine.BaseMetric` subclasses as MatchZoo metrics:
+        >>> type(engine.parse_metric(metrics.AveragePrecision))
+        <class 'matchzoo.metrics.AveragePrecision'>
+
+    Use :class:`matchzoo.engine.BaseMetric` instances as MatchZoo metrics:
+        >>> type(engine.parse_metric(metrics.AveragePrecision()))
+        <class 'matchzoo.metrics.AveragePrecision'>
     """
     if isinstance(metric, BaseMetric):
         return metric

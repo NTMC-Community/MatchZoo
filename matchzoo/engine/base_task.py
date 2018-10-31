@@ -13,7 +13,15 @@ class BaseTask(abc.ABC):
     def convert_metrics(cls, metrics: typing.Union[list,
                                                    str,
                                                    engine.BaseMetric]):
-        """Convert `metrics` into properly formed list of metrics."""
+        """
+        Convert `metrics` into properly formed list of metrics.
+
+        Examples:
+            >>> BaseTask.convert_metrics(['mse'])
+            ['mse']
+            >>> BaseTask.convert_metrics('map')
+            [mean_average_precision(0)]
+        """
         if not metrics:
             metrics = []
         elif not isinstance(metrics, list):

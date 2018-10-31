@@ -20,9 +20,9 @@ class BaseModel(abc.ABC):
     PARAMS_FILENAME = 'params.dill'
 
     def __init__(
-            self,
-            params: engine.ParamTable = None,
-            backend: keras.models.Model = None
+        self,
+        params: engine.ParamTable = None,
+        backend: keras.models.Model = None
     ):
         """
         :class:`BaseModel` constructor.
@@ -103,7 +103,26 @@ class BaseModel(abc.ABC):
         """
 
     def compile(self):
-        """Compile model for training."""
+        """
+        Compile model for training.
+
+        Only `keras` native metrics are compiled together with backend.
+        MatchZoo metrics are evaluated only through :method:`evaluate`.
+        Notice that `keras` count `loss` as one of the metrics while MatchZoo
+        :class:`matchzoo.engine.BaseTask` does not.
+
+        Examples:
+            >>> from matchzoo import models
+            >>> model = models.NaiveModel()
+            >>> model.guess_and_fill_missing_params()
+            >>> model.params['task'].metrics = ['mse', 'map']
+            >>> model.params['task'].metrics
+            ['mse', mean_average_precision(0)]
+            >>> model.build()
+            >>> model.compile()
+            >>> model.backend.metrics_names
+            ['loss', 'mean_squared_error']
+        """
         keras_metrics = []
         for metric in self._params['task'].metrics:
             if not isinstance(engine.parse_metric(metric), engine.BaseMetric):
@@ -113,12 +132,12 @@ class BaseModel(abc.ABC):
                               metrics=keras_metrics)
 
     def fit(
-            self,
-            x: typing.Union[np.ndarray, typing.List[np.ndarray]],
-            y: np.ndarray,
-            batch_size: int = 128,
-            epochs: int = 1,
-            verbose: int = 1
+        self,
+        x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+        y: np.ndarray,
+        batch_size: int = 128,
+        epochs: int = 1,
+        verbose: int = 1
     ) -> keras.callbacks.History:
         """
         Fit the model.
@@ -140,11 +159,11 @@ class BaseModel(abc.ABC):
                                  verbose=verbose)
 
     def fit_generator(
-            self,
-            generator: 'engine.BaseGenerator',
-            steps_per_epoch: int = None,
-            epochs: int = 1,
-            verbose: int = 1
+        self,
+        generator: 'engine.BaseGenerator',
+        steps_per_epoch: int = None,
+        epochs: int = 1,
+        verbose: int = 1
     ) -> keras.callbacks.History:
         """
         Fit the model with matchzoo `generator`.
@@ -168,12 +187,12 @@ class BaseModel(abc.ABC):
                                            verbose=verbose)
 
     def evaluate(
-            self,
-            x: typing.Union[np.ndarray, typing.List[np.ndarray],
-                            typing.Dict[str, np.ndarray]],
-            y: np.ndarray,
-            batch_size: int = 128,
-            verbose: int = 1
+        self,
+        x: typing.Union[np.ndarray, typing.List[np.ndarray],
+                        typing.Dict[str, np.ndarray]],
+        y: np.ndarray,
+        batch_size: int = 128,
+        verbose: int = 1
     ) -> typing.Dict[str, float]:
         """
         Evaluate the model.
@@ -189,6 +208,49 @@ class BaseModel(abc.ABC):
             and/or metrics). The attribute `model.backend.metrics_names` will
             give you the display labels for the scalar outputs.
 
+        Examples::
+            >>> import matchzoo as mz
+            >>> np.random.seed(111)
+            >>> relation = [['qid0', 'did0', 0],
+            ...             ['qid0', 'did1', 1],
+            ...             ['qid0', 'did2', 2]]
+            >>> left = [['qid0', (np.random.rand(30) * 10).astype(int)]]
+            >>> right = [['did0', (np.random.rand(30) * 10).astype(int)],
+            ...          ['did1', (np.random.rand(30) * 10).astype(int)],
+            ...          ['did2', (np.random.rand(30) * 10).astype(int)], ]
+            >>> relation = pd.DataFrame(
+            ...     relation, columns=['id_left', 'id_right', 'label'])
+            >>> left = pd.DataFrame(left, columns=['id_left', 'text_left'])
+            >>> left.set_index('id_left', inplace=True)
+            >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
+            >>> right.set_index('id_right', inplace=True)
+            >>> generator = mz.generators.ListGenerator(
+            ...     mz.datapack.DataPack(relation=relation,
+            ...                          left=left,
+            ...                          right=right)
+            ... )
+            >>> x, y = generator[0]
+            >>> m = mz.models.DenseBaselineModel()
+            >>> m.params['task'] = mz.tasks.Ranking()
+            >>> m.params['task'].metrics = [
+            ...     'acc', 'mse', 'mae',
+            ...     'average_precision', 'precision', 'dcg', 'ndcg',
+            ...     'mean_reciprocal_rank', 'mean_average_precision', 'mrr',
+            ...     'map', 'MAP',
+            ...     mz.metrics.AveragePrecision(threshold=1),
+            ...     mz.metrics.Precision(k=2, threshold=2),
+            ...     mz.metrics.DiscountedCumulativeGain(k=2),
+            ...     mz.metrics.NormalizedDiscountedCumulativeGain(
+            ...         k=3,threshold=-1),
+            ...     mz.metrics.MeanReciprocalRank(threshold=2),
+            ...     mz.metrics.MeanAveragePrecision(threshold=3)
+            ... ]
+            >>> m.guess_and_fill_missing_params()
+            >>> m.build()
+            >>> m.compile()
+            >>> evals = m.evaluate(x, y, verbose=0)
+            >>> type(evals)
+            <class 'dict'>
         """
         backend_evals = self._backend.evaluate(x=x, y=y,
                                                batch_size=batch_size,
@@ -211,15 +273,16 @@ class BaseModel(abc.ABC):
 
                 def evaluate_df_fn(df):
                     return metric(df['true'], df['pred'])
+
                 metric_val = groups.apply(evaluate_df_fn).mean()
 
                 metrics_lookup[str(metric)] = metric_val
         return metrics_lookup
 
     def predict(
-            self,
-            x: typing.Union[np.ndarray, typing.List[np.ndarray]],
-            batch_size=128
+        self,
+        x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+        batch_size=128
     ) -> np.ndarray:
         """
         Generate output predictions for the input samples.
