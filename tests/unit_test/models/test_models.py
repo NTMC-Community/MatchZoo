@@ -80,21 +80,25 @@ def y(compiled_model, num_samples):
     return np.random.randn(num_samples, *task.output_shape)
 
 
+@pytest.mark.slow
 def test_model_fit(compiled_model, x, y):
     model, input_dtypes = compiled_model
     assert model.fit(x, y, verbose=0)
 
 
+@pytest.mark.slow
 def test_model_evaluate(compiled_model, x, y):
     model, input_dtypes = compiled_model
     assert model.evaluate(x, y, verbose=0)
 
 
+@pytest.mark.slow
 def test_model_predict(compiled_model, x):
     model, input_dtypes = compiled_model
     assert model.predict(x) is not None
 
 
+@pytest.mark.slow
 def test_save_load_model(compiled_model):
     model, input_dtypes = compiled_model
     tmpdir = '.tmpdir'

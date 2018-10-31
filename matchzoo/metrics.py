@@ -23,7 +23,11 @@ class MeanReciprocalRank(engine.BaseMetric):
     ALIAS = ['mean_reciprocal_rank', 'mrr']
 
     def __init__(self, threshold=0):
-        """:param threshold: The label threshold of relevance degree."""
+        """
+        Mean reciprocal rank metric.
+
+        :param threshold: The label threshold of relevance degree.
+        """
         self._threshold = threshold
 
     def __repr__(self):

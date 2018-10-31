@@ -10,6 +10,7 @@ from matchzoo import models
 from matchzoo import engine
 from matchzoo import tasks
 
+
 @pytest.fixture
 def train():
     train = []
@@ -17,6 +18,7 @@ def train():
     with open(os.path.join(path, '../sample/train_rank.txt')) as f:
         train = [tuple(map(str, i.strip().split('\t'))) for i in f]
     return train
+
 
 @pytest.fixture
 def test():
@@ -26,13 +28,16 @@ def test():
         test = [tuple(map(str, i.strip().split('\t'))) for i in f]
     return test
 
+
 @pytest.fixture
 def task(request) -> engine.BaseTask:
     return tasks.Ranking()
 
+
 @pytest.fixture
 def dssm_preprocessor():
     return preprocessor.DSSMPreprocessor()
+
 
 @pytest.fixture
 def processed_train(train, dssm_preprocessor) -> datapack.DataPack:
@@ -40,10 +45,12 @@ def processed_train(train, dssm_preprocessor) -> datapack.DataPack:
     dssm_preprocessor.save('.tmpdir')
     return preprocessed_train
 
+
 @pytest.fixture
 def processed_test(test) -> datapack.DataPack:
     dssm_proprecessor = engine.load_preprocessor('.tmpdir')
     return dssm_proprecessor.fit_transform(test, stage='predict')
+
 
 @pytest.fixture(params=['point', 'pair'])
 def train_generator(request, processed_train, task) -> engine.BaseGenerator:
@@ -53,15 +60,19 @@ def train_generator(request, processed_train, task) -> engine.BaseGenerator:
                                          stage='train')
     elif request.param == 'pair':
         return generators.PairGenerator(processed_train,
-                                         stage='train')
+                                        stage='train')
+
 
 @pytest.fixture(params=['point', 'list'])
 def test_generator(request, processed_test, task) -> engine.BaseGenerator:
     if request.param == 'point':
-        return generators.PointGenerator(processed_test, task=task, stage='predict')
+        return generators.PointGenerator(processed_test, task=task,
+                                         stage='predict')
     elif request.param == 'list':
         return generators.ListGenerator(processed_test, stage='predict')
 
+
+@pytest.mark.slow
 def test_dssm(processed_train,
               task,
               train_generator,

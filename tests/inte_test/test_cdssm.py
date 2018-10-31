@@ -10,12 +10,14 @@ from matchzoo import models
 from matchzoo import engine
 from matchzoo import tasks
 
+
 @pytest.fixture
 def train():
     path = os.path.dirname(__file__)
     with open(os.path.join(path, '../sample/train_rank.txt')) as f:
         train = [tuple(map(str, i.strip().split('\t'))) for i in f]
     return train
+
 
 @pytest.fixture
 def test():
@@ -24,19 +26,23 @@ def test():
         test = [tuple(map(str, i.strip().split('\t'))) for i in f]
     return test
 
+
 @pytest.fixture
 def task() -> engine.BaseTask:
     return tasks.Ranking()
 
+
 @pytest.fixture
 def cdssm_preprocessor():
     return preprocessor.CDSSMPreprocessor()
+
 
 @pytest.fixture
 def processed_train(train, cdssm_preprocessor) -> datapack.DataPack:
     preprocessed_train = cdssm_preprocessor.fit_transform(train, stage='train')
     cdssm_preprocessor.save('.tmpdir')
     return preprocessed_train
+
 
 @pytest.fixture
 def processed_test(test) -> datapack.DataPack:
@@ -53,18 +59,23 @@ def train_generator(request, processed_train, task) -> engine.BaseGenerator:
     elif request.param == 'pair':
         return generators.PairGenerator(processed_train, stage='train')
 
+
 @pytest.fixture(params=['point', 'list'])
 def test_generator(request, processed_test, task) -> engine.BaseGenerator:
     if request.param == 'point':
-        return generators.PointGenerator(processed_test, task=task, stage='predict')
+        return generators.PointGenerator(processed_test, task=task,
+                                         stage='predict')
     elif request.param == 'list':
         return generators.ListGenerator(processed_test, stage='predict')
 
+
+@pytest.mark.slow
 def test_cdssm(processed_train, task, train_generator, test_generator):
     """Test CDSSM model."""
     # Create a dssm model
     cdssm_model = models.CDSSMModel()
-    cdssm_model.params['input_shapes'] = processed_train.context['input_shapes']
+    cdssm_model.params['input_shapes'] = processed_train.context[
+        'input_shapes']
     cdssm_model.params['task'] = task
     cdssm_model.guess_and_fill_missing_params()
     cdssm_model.build()
