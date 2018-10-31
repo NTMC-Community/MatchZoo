@@ -1,190 +1,289 @@
 """Evaluation metrics for information retrieval."""
+import math
+import random
 
 import numpy as np
 
-
-def mean_reciprocal_rank(rs: list) -> float:
-    """
-    Calculate reciprocal of the rank of the first relevant item.
-
-    First element is 'rank 1'. Relevance is binary (nonzero is relevant).
-
-    Example:
-        >>> rs = [[0, 0, 0, 1], [1, 0, 0], [1, 0, 0]]
-        >>> mean_reciprocal_rank(rs)
-        0.75
-
-    :param rs: Iterator of relevance scores (list or numpy) in rank order
-            (first element is the first item).
-    :return: Mean reciprocal rank.
-    """
-    rs = (np.asarray(r).nonzero()[0] for r in rs)
-    return np.mean([1. / (r[0] + 1) if r.size else 0. for r in rs])
+from matchzoo import engine
 
 
-def r_precision(r: list) -> float:
-    """
-    Calculate precision after all relevant documents have been retrieved.
+def sort_and_couple(labels: list, scores: np.array) -> list:
+    """Zip the `labels` with `scores` into a single list."""
+    labels = np.squeeze(labels).tolist()
+    scores = np.squeeze(scores).tolist()
+    couple = list(zip(labels, scores))
+    random.shuffle(couple)
+    sorted_couple = sorted(couple, key=lambda x: x[1], reverse=True)
+    return sorted_couple
 
-    Relevance is binary (nonzero is relevant).
 
-    Example:
-        >>> r = [0, 1, 0]
-        >>> r_precision(r)
-        0.5
-        >>> r = [1, 0, 0]
-        >>> r_precision(r)
-        1.0
-        >>> r = [0, 0, 0]
-        >>> r_precision(r)
-        0.0
+class MeanReciprocalRank(engine.BaseMetric):
+    """Mean reciprocal rank metric."""
 
-    :param r: Relevance scores (list or numpy) in rank order
-              (first element is the first item).
-    :return: Precision score.
-    """
-    r = np.asarray(r) != 0
-    z = r.nonzero()[0]
-    if not z.size:
+    ALIAS = ['mean_reciprocal_rank', 'mrr']
+
+    def __init__(self, threshold=0):
+        """
+        Mean reciprocal rank metric.
+
+        :param threshold: The label threshold of relevance degree.
+        """
+        self._threshold = threshold
+
+    def __repr__(self):
+        """:return: Formated string representation of the metric."""
+        return f'{self.ALIAS[0]}({self._threshold})'
+
+    def __call__(self, y_true, y_pred):
+        """
+        Calculate reciprocal of the rank of the first relevant item.
+
+        Example:
+            >>> y_pred = np.asarray([0.2, 0.3, 0.7, 1.0])
+            >>> y_true = np.asarray([1, 0, 0, 0])
+            >>> MeanReciprocalRank()(y_true, y_pred)
+            0.25
+
+        :param y_true: The ground true label of each document.
+        :param y_pred: The predicted scores of each document.
+        :return: Mean reciprocal rank.
+        """
+        coupled_pair = sort_and_couple(y_true, y_pred)
+        for idx, (label, pred) in enumerate(coupled_pair):
+            if label > self._threshold:
+                return 1. / (idx + 1)
         return 0.
-    return np.mean(r[:z[-1] + 1])
 
 
-def precision_at_k(r: list, k: int) -> float:
-    """
-    Calculate precision@k.
+class Precision(engine.BaseMetric):
+    """Precision metric."""
 
-    Relevance is binary (nonzero is relevant).
+    ALIAS = 'precision'
 
-    Example:
-        >>> r = [0, 0, 1]
-        >>> precision_at_k(r, 1)
-        0.0
-        >>> precision_at_k(r, 2)
-        0.0
-        >>> precision_at_k(r, 4)
-        Traceback (most recent call last):
-            File "<stdin>", line 1, in ?
-        ValueError: Relevance score length < k
+    def __init__(self, k=1, threshold=0):
+        """
+        Precision metric.
 
+        :param k: Number of results to consider.
+        :param threshold: the label threshold of relevance degree.
+        """
+        self._k = k
+        self._threshold = threshold
 
-    :param r: Relevance scores (list or numpy) in rank order
-              (first element is the first item)
-    :return: Precision @ k
-    :raises: ValueError: len(r) must be >= k.
-    """
-    assert k >= 1
-    r = np.asarray(r)[:k] != 0
-    if r.size != k:
-        raise ValueError('Relevance score length < k')
-    return np.mean(r)
+    def __repr__(self):
+        """:return: Formated string representation of the metric."""
+        return f"{self.ALIAS}@{self._k}({self._threshold})"
 
+    def __call__(self, y_true, y_pred):
+        """
+        Calculate precision@k.
 
-def average_precision(r: list):
-    """
-    Calculate average precision (area under PR curve).
+        Example:
+            >>> y_true = [0, 0, 0, 1]
+            >>> y_pred = [0.2, 0.4, 0.3, 0.1]
+            >>> Precision(k=1)(y_true, y_pred)
+            0.0
+            >>> Precision(k=2)(y_true, y_pred)
+            0.0
+            >>> Precision(k=4)(y_true, y_pred)
+            0.25
+            >>> Precision(k=5)(y_true, y_pred)
+            0.2
 
-    Relevance is binary (nonzero is relevant).
-
-    Example:
-        >>> r = [0, 1, 0, 0]
-        >>> average_precision(r)
-        0.5
-        >>> r = []
-        >>> average_precision(r)
-        0.0
-
-    :param r: Relevance scores (list or numpy) in rank order
-              (first element is the first item).
-    :return: Average precision.
-    """
-    r = np.asarray(r) != 0
-    out = [precision_at_k(r, k + 1) for k in range(r.size) if r[k]]
-    if not out:
-        return 0.
-    return np.mean(out)
+        :param y_true: The ground true label of each document.
+        :param y_pred: The predicted scores of each document.
+        :return: Precision @ k
+        :raises: ValueError: len(r) must be >= k.
+        """
+        if self._k <= 0:
+            raise ValueError('self._k must be larger than 0.')
+        coupled_pair = sort_and_couple(y_true, y_pred)
+        precision = 0.0
+        for idx, (label, score) in enumerate(coupled_pair):
+            if idx >= self._k:
+                break
+            if label > self._threshold:
+                precision += 1.
+        return precision / self._k
 
 
-def mean_average_precision(rs: list) -> float:
-    """
-    Calculate mean average precision.
+class AveragePrecision(engine.BaseMetric):
+    """Average precision metric."""
 
-    Relevance is binary (nonzero is relevant).
+    ALIAS = ['average_precision', 'ap']
 
-    Example:
-        >>> rs = [[1, 1, 0, 1, 1]]
-        >>> type(mean_average_precision(rs))
-        <class 'numpy.float64'>
+    def __init__(self, threshold=0):
+        """:param threshold: The label threshold of relevance degree."""
+        self._threshold = threshold
 
-    :param rs: Iterator of relevance scores (list or numpy) in rank order
-               (first element is the first item).
-    :return: Mean average precision.
-    """
-    return np.mean([average_precision(r) for r in rs])
+    def __repr__(self):
+        """:return: Formated string representation of the metric."""
+        return f"{self.ALIAS[0]}({self._threshold})"
+
+    def __call__(self, y_true, y_pred):
+        """
+        Calculate average precision (area under PR curve).
+
+        Example:
+            >>> y_true = [0, 1]
+            >>> y_pred = [0.1, 0.6]
+            >>> round(AveragePrecision()(y_true, y_pred), 2)
+            0.75
+            >>> round(AveragePrecision()([], []), 2)
+            0.0
+
+        :param y_true: The ground true label of each document.
+        :param y_pred: The predicted scores of each document.
+        :return: Average precision.
+        """
+        precision_metrics = [Precision(k + 1) for k in range(len(y_pred))]
+        out = [metric(y_true, y_pred) for metric in precision_metrics]
+        if not out:
+            return 0.
+        return np.mean(out)
 
 
-def dcg_at_k(r: list, k: int, method: int = 0) -> float:
-    """
-    Calculate discounted cumulative gain (dcg).
+class MeanAveragePrecision(engine.BaseMetric):
+    """Mean average precision metric."""
 
-    Relevance is positive real values or binary values.
+    ALIAS = ['mean_average_precision', 'map']
 
-    Example:
-        >>> r = [3, 2, 3, 0, 0, 1, 2, 2, 3, 0]
-        >>> dcg_at_k(r, 1)
-        3.0
-        >>> dcg_at_k(r, 1, method=1)
-        3.0
-        >>> dcg_at_k(r, 2)
-        5.0
-        >>> type(dcg_at_k(r, 2, method=2))
-        <class 'numpy.float64'>
-        >>> dcg_at_k([], 0, method=2)
-        0.0
+    def __init__(self, threshold=0):
+        """:param threshold: The label threshold of relevance degree."""
+        self._threshold = threshold
 
-    :param r: Relevance scores (list or numpy) in rank order
-              (first element is the first item).
-    :param k: Number of results to consider
+    def __repr__(self):
+        """:return: Formated string representation of the metric."""
+        return f"{self.ALIAS[0]}({self._threshold})"
 
-    :param method: If 0 then weights are [1.0, 1.0, 0.6309, 0.5, 0.4307, ...]
-                   If 1 then weights are [1.0, 0.6309, 0.5, 0.4307, ...].
+    def __call__(self, y_true, y_pred):
+        """
+        Calculate mean average precision.
 
-    :return: Discounted cumulative gain.
-    """
-    r = np.asfarray(r)[:k]
-    if r.size:
-        if method == 0:
-            return r[0] + np.sum(r[1:] / np.log2(np.arange(2, r.size + 1)))
+        Example:
+            >>> y_true = [0, 1, 0, 0]
+            >>> y_pred = [0.1, 0.6, 0.2, 0.3]
+            >>> MeanAveragePrecision()(y_true, y_pred)
+            1.0
+
+        :param y_true: The ground true label of each document.
+        :param y_pred: The predicted scores of each document.
+        :return: Mean average precision.
+        """
+        result = 0.
+        pos = 0
+        coupled_pair = sort_and_couple(y_true, y_pred)
+        for idx, (label, score) in enumerate(coupled_pair):
+            if label > self._threshold:
+                pos += 1.
+                result += pos / (idx + 1.)
+        if pos == 0:
+            return 0.
         else:
-            return np.sum(r / np.log2(np.arange(2, r.size + 2)))
-    return 0.
+            return result / pos
 
 
-def ndcg_at_k(r: list, k: int, method: int = 0) -> float:
-    """
-    Calculate normalized discounted cumulative gain (ndcg).
+class DiscountedCumulativeGain(engine.BaseMetric):
+    """Disconunted cumulative gain metric."""
 
-    Relevance is positive real values or binary values.
+    ALIAS = ['discounted_cumulative_gain', 'dcg']
 
-    Example:
-        >>> r = [3, 2, 3, 0, 0, 1, 2, 2, 3, 0]
-        >>> ndcg_at_k(r, 1)
-        1.0
-        >>> ndcg_at_k([0], 1)
-        0.0
-        >>> ndcg_at_k([1], 2)
-        1.0
+    def __init__(self, k=1, threshold=0):
+        """
+        Disconunted cumulative gain metric.
 
-    :param r: Relevance scores (list or numpy) in rank order
-              (first element is the first item).
-    :param k: Number of results to consider
+        :param k: Number of results to consider.
+        :param threshold: the label threshold of relevance degree.
+        """
+        self._k = k
+        self._threshold = threshold
 
-    :param method: If 0 then weights are [1.0, 1.0, 0.6309, 0.5, 0.4307, ...]
-                   If 1 then weights are [1.0, 0.6309, 0.5, 0.4307, ...].
+    def __repr__(self):
+        """:return: Formated string representation of the metric."""
+        return f"{self.ALIAS[0]}@{self._k}({self._threshold})"
 
-    :return: Normalized discounted cumulative gain.
-    """
-    dcg_max = dcg_at_k(sorted(r, reverse=True), k, method)
-    if not dcg_max:
-        return 0.
-    return dcg_at_k(r, k, method) / dcg_max
+    def __call__(self, y_true, y_pred):
+        """
+        Calculate discounted cumulative gain (dcg).
+
+        Relevance is positive real values or binary values.
+
+        Example:
+            >>> y_true = [0, 1, 2, 0]
+            >>> y_pred = [0.4, 0.2, 0.5, 0.7]
+            >>> DiscountedCumulativeGain(1)(y_true, y_pred)
+            0.0
+            >>> round(DiscountedCumulativeGain(k=-1)(y_true, y_pred), 2)
+            0.0
+            >>> round(DiscountedCumulativeGain(k=2)(y_true, y_pred), 2)
+            2.73
+            >>> round(DiscountedCumulativeGain(k=3)(y_true, y_pred), 2)
+            2.73
+            >>> type(DiscountedCumulativeGain(k=1)(y_true, y_pred))
+            <class 'float'>
+
+        :param y_true: The ground true label of each document.
+        :param y_pred: The predicted scores of each document.
+
+        :return: Discounted cumulative gain.
+        """
+        if self._k <= 0:
+            return 0.
+        coupled_pair = sort_and_couple(y_true, y_pred)
+        result = 0.
+        for i, (label, score) in enumerate(coupled_pair):
+            if i >= self._k:
+                break
+            if label > self._threshold:
+                result += (math.pow(2., label) - 1.) / math.log(2. + i)
+        return result
+
+
+class NormalizedDiscountedCumulativeGain(engine.BaseMetric):
+    """Normalized discounted cumulative gain metric."""
+
+    ALIAS = ['normalized_discounted_cumulative_gain', 'ndcg']
+
+    def __init__(self, k=1, threshold=0):
+        """
+        Normalized discounted cumulative gain metric.
+
+        :param k: Number of results to consider
+        :param threshold: the label threshold of relevance degree.
+        """
+        self._k = k
+        self._threshold = threshold
+
+    def __repr__(self):
+        """:return: Formated string representation of the metric."""
+        return f"{self.ALIAS[0]}@{self._k}({self._threshold})"
+
+    def __call__(self, y_true, y_pred):
+        """
+        Calculate normalized discounted cumulative gain (ndcg).
+
+        Relevance is positive real values or binary values.
+
+        Example:
+            >>> y_true = [0, 1, 2, 0]
+            >>> y_pred = [0.4, 0.2, 0.5, 0.7]
+            >>> ndcg = NormalizedDiscountedCumulativeGain
+            >>> ndcg(k=1)(y_true, y_pred)
+            0.0
+            >>> round(ndcg(k=2)(y_true, y_pred), 2)
+            0.52
+            >>> round(ndcg(k=3)(y_true, y_pred), 2)
+            0.52
+            >>> type(ndcg()(y_true, y_pred))
+            <class 'float'>
+
+        :param y_true: The ground true label of each document.
+        :param y_pred: The predicted scores of each document.
+
+        :return: Normalized discounted cumulative gain.
+        """
+        dcg_metric = DiscountedCumulativeGain(k=self._k,
+                                              threshold=self._threshold)
+        idcg_val = dcg_metric(y_true, y_true)
+        dcg_val = dcg_metric(y_true, y_pred)
+        return dcg_val / idcg_val
