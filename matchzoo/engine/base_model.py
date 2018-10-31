@@ -122,6 +122,7 @@ class BaseModel(abc.ABC):
             >>> model.compile()
             >>> model.backend.metrics_names
             ['loss', 'mean_squared_error']
+
         """
         keras_metrics = []
         for metric in self._params['task'].metrics:
@@ -251,6 +252,7 @@ class BaseModel(abc.ABC):
             >>> evals = m.evaluate(x, y, verbose=0)
             >>> type(evals)
             <class 'dict'>
+
         """
         backend_evals = self._backend.evaluate(x=x, y=y,
                                                batch_size=batch_size,

@@ -54,6 +54,7 @@ def parse_metric(metric: typing.Union[str,
     Use :class:`matchzoo.engine.BaseMetric` instances as MatchZoo metrics:
         >>> type(engine.parse_metric(metrics.AveragePrecision()))
         <class 'matchzoo.metrics.AveragePrecision'>
+
     """
     if isinstance(metric, BaseMetric):
         return metric
