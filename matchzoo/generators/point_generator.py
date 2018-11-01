@@ -4,6 +4,7 @@ from matchzoo import engine
 from matchzoo import tasks
 from matchzoo import datapack
 from matchzoo import utils
+from matchzoo import preprocessor
 
 import numpy as np
 import typing
@@ -49,9 +50,10 @@ class PointGenerator(engine.BaseGenerator):
         self,
         inputs: datapack.DataPack,
         task: engine.BaseTask = tasks.Classification(2),
-        batch_size: int = 32,
+        batch_size: int = 3,
         stage: str = 'train',
-        shuffle: bool = True
+        shuffle: bool = True,
+        use_word_hashing: bool = False
     ):
         """Construct the point generator.
 
@@ -67,6 +69,9 @@ class PointGenerator(engine.BaseGenerator):
         self._task = task
         self._left = inputs.left
         self._right = inputs.right
+        self._context = inputs.context
+        self._hash_unit = None
+        self._use_word_hashing = use_word_hashing
         super().__init__(batch_size, len(inputs.relation), stage, shuffle)
 
     def _get_batch_of_transformed_samples(
@@ -110,13 +115,22 @@ class PointGenerator(engine.BaseGenerator):
         batch_x['id_left'] = id_left
         batch_x['id_right'] = id_right
 
+        if self._use_word_hashing:
+            self._hash_unit = preprocessor.WordHashingUnit(self._context['term_index'])
+
         for column in self._left.columns:
+            if column == 'text_left':
+                batch_x[column] = [self._hash_unit.transform(item) for item in self._left.loc[id_left, column].tolist()]
+                continue
             batch_x[column] = self._left.loc[id_left, column].tolist()
         for column in self._right.columns:
+            if column == 'text_right':
+                batch_x[column] = [self._hash_unit.transform(item) for item in self._right.loc[id_right, column].tolist()]
+                continue
             batch_x[column] = self._right.loc[id_right, column].tolist()
 
         for key, val in batch_x.items():
             batch_x[key] = np.array(val)
-        batch_x = utils.dotdict(batch_x)
 
+        batch_x = utils.dotdict(batch_x)
         return (batch_x, batch_y)

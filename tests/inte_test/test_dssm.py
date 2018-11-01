@@ -52,22 +52,24 @@ def processed_test(test) -> datapack.DataPack:
     return dssm_proprecessor.fit_transform(test, stage='predict')
 
 
-@pytest.fixture(params=['point', 'pair'])
+@pytest.fixture(params=['point'])
 def train_generator(request, processed_train, task) -> engine.BaseGenerator:
     if request.param == 'point':
         return generators.PointGenerator(processed_train,
                                          task=task,
-                                         stage='train')
+                                         stage='train',
+                                         use_word_hashing=True)
     elif request.param == 'pair':
         return generators.PairGenerator(processed_train,
                                         stage='train')
 
 
-@pytest.fixture(params=['point', 'list'])
+@pytest.fixture(params=['point'])
 def test_generator(request, processed_test, task) -> engine.BaseGenerator:
     if request.param == 'point':
         return generators.PointGenerator(processed_test, task=task,
-                                         stage='predict')
+                                         stage='predict',
+                                         use_word_hashing=True)
     elif request.param == 'list':
         return generators.ListGenerator(processed_test, stage='predict')
 

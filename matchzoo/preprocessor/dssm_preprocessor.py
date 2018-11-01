@@ -122,9 +122,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         # do preprocessing from scrach.
         units = self._prepare_process_unit()
-        # prepare word hashing unit.
-        units.append(
-            preprocessor.WordHashingUnit(self.datapack.context['term_index']))
 
         for idx, row in tqdm(self.datapack.left.iterrows()):
             text = row.text_left
