@@ -31,9 +31,11 @@ def segment(inputs: list, stage: str) -> datapack.DataPack:
 
     left = inputs[['id_left', 'text_left']].drop_duplicates(['id_left'])
     left.set_index('id_left', inplace=True)
+    left['length_left'] = left.apply(lambda r: len(r['text_left']), axis=1)
 
     right = inputs[['id_right', 'text_right']].drop_duplicates(['id_right'])
     right.set_index('id_right', inplace=True)
+    right['length_right'] = right.apply(lambda r: len(r['text_right']), axis=1)
 
     return datapack.DataPack(relation=relation,
                              left=left,
