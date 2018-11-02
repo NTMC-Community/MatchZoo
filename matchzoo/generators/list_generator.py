@@ -127,7 +127,8 @@ class ListGenerator(engine.BaseGenerator):
         batch_x['id_right'] = id_right
 
         if self._use_word_hashing:
-            self._hash_unit = preprocessor.WordHashingUnit(self._context['term_index'])
+            self._hash_unit = preprocessor.WordHashingUnit(
+                self._context['term_index'])
 
         for column in self._left.columns:
             if column == 'text_left' and self._use_word_hashing:
