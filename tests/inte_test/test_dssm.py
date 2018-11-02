@@ -61,17 +61,21 @@ def train_generator(request, processed_train, task) -> engine.BaseGenerator:
                                          use_word_hashing=True)
     elif request.param == 'pair':
         return generators.PairGenerator(processed_train,
-                                        stage='train')
+                                        stage='train',
+                                        use_word_hashing=True)
 
 
 @pytest.fixture(params=['point', 'list'])
 def test_generator(request, processed_test, task) -> engine.BaseGenerator:
     if request.param == 'point':
-        return generators.PointGenerator(processed_test, task=task,
+        return generators.PointGenerator(processed_test,
+                                         task=task,
                                          stage='predict',
                                          use_word_hashing=True)
     elif request.param == 'list':
-        return generators.ListGenerator(processed_test, stage='predict')
+        return generators.ListGenerator(processed_test,
+                                        stage='predict',
+                                        use_word_hashing=True)
 
 
 @pytest.mark.slow
