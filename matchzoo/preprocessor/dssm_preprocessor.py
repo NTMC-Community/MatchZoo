@@ -84,7 +84,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             vocab.extend(text)
 
         for idx, row in tqdm(self.datapack.right.iterrows()):
-            # For each piece of text, apply process unit sequentially.
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)

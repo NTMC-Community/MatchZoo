@@ -120,12 +120,20 @@ class PointGenerator(engine.BaseGenerator):
 
         for column in self._left.columns:
             if column == 'text_left' and self._use_word_hashing:
-                batch_x[column] = [self._hash_unit.transform(item) for item in self._left.loc[id_left, column].tolist()]
+                batch_x[column] = [self._hash_unit.transform(item)
+                                   for
+                                   item
+                                   in
+                                   self._left.loc[id_left, column].tolist()]
                 continue
             batch_x[column] = self._left.loc[id_left, column].tolist()
         for column in self._right.columns:
             if column == 'text_right' and self._use_word_hashing:
-                batch_x[column] = [self._hash_unit.transform(item) for item in self._right.loc[id_right, column].tolist()]
+                batch_x[column] = [self._hash_unit.transform(item)
+                                   for
+                                   item
+                                   in
+                                   self._right.loc[id_right, column].tolist()]
                 continue
             batch_x[column] = self._right.loc[id_right, column].tolist()
 

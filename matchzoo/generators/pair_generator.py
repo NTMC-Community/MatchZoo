@@ -60,7 +60,8 @@ class PairGenerator(engine.BaseGenerator):
         num_dup: int = 4,
         batch_size: int = 32,
         stage: str = 'train',
-        shuffle: bool = True
+        shuffle: bool = True,
+        use_word_hashing: bool = False
     ):
         """Construct the pair generator.
 
@@ -81,7 +82,9 @@ class PairGenerator(engine.BaseGenerator):
         self._num_dup = num_dup
         self._left = inputs.left
         self._right = inputs.right
+        self._context = inputs.context
         self._task = tasks.Ranking()
+        self._use_word_hashing = use_word_hashing
         self._relation = self.transform_relation(inputs.relation)
         num_pairs = len(self._relation) // (self._num_neg + 1)
         super().__init__(batch_size, num_pairs, stage, shuffle)
@@ -148,9 +151,26 @@ class PairGenerator(engine.BaseGenerator):
         batch_x['id_left'] = id_left
         batch_x['id_right'] = id_right
 
+        if self._use_word_hashing:
+            self._hash_unit = preprocessor.WordHashingUnit(self._context['term_index'])
+
         for column in self._left.columns:
+            if column == 'text_left' and self._use_word_hashing:
+                batch_x[column] = [self._hash_unit.transform(item)
+                                   for
+                                   item
+                                   in
+                                   self._left.loc[id_left, column].tolist()]
+                continue
             batch_x[column] = self._left.loc[id_left, column].tolist()
         for column in self._right.columns:
+            if column == 'text_right' and self._use_word_hashing:
+                batch_x[column] = [self._hash_unit.transform(item)
+                                   for
+                                   item
+                                   in
+                                   self._right.loc[id_right, column].tolist()]
+                continue
             batch_x[column] = self._right.loc[id_right, column].tolist()
 
         for key, val in batch_x.items():

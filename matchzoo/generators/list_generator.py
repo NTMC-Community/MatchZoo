@@ -62,7 +62,8 @@ class ListGenerator(engine.BaseGenerator):
         inputs: datapack.DataPack,
         batch_size: int = 1,
         stage: str = 'train',
-        shuffle: bool = True
+        shuffle: bool = True,
+        use_word_hashing: bool = False
     ):
         """Construct the list generator.
 
@@ -76,6 +77,8 @@ class ListGenerator(engine.BaseGenerator):
         self._left = inputs.left
         self._right = inputs.right
         self._relation = inputs.relation
+        self._context = inputs.context
+        self._use_word_hashing = use_word_hashing
         self._task = tasks.Ranking()
         self._id_lists = self.transform_relation(self._relation)
         super().__init__(batch_size, len(self._id_lists), stage, shuffle)
@@ -122,9 +125,26 @@ class ListGenerator(engine.BaseGenerator):
         batch_x['id_left'] = id_left
         batch_x['id_right'] = id_right
 
+        if self._use_word_hashing:
+            self._hash_unit = preprocessor.WordHashingUnit(self._context['term_index'])
+
         for column in self._left.columns:
+            if column == 'text_left' and self._use_word_hashing:
+                batch_x[column] = [self._hash_unit.transform(item)
+                                   for
+                                   item
+                                   in
+                                   self._right.loc[id_left, column].tolist()]
+                continue
             batch_x[column] = self._left.loc[id_left, column].tolist()
         for column in self._right.columns:
+            if column == 'text_right' and self._use_word_hashing:
+                batch_x[column] = [self._hash_unit.transform(item)
+                                   for
+                                   item
+                                   in
+                                   self._right.loc[id_right, column].tolist()]
+                continue
             batch_x[column] = self._right.loc[id_right, column].tolist()
 
         for key, val in batch_x.items():
