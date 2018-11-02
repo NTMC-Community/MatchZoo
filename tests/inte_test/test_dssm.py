@@ -52,7 +52,7 @@ def processed_test(test) -> datapack.DataPack:
     return dssm_proprecessor.fit_transform(test, stage='predict')
 
 
-@pytest.fixture(params=['point'])
+@pytest.fixture(params=['point', 'pair'])
 def train_generator(request, processed_train, task) -> engine.BaseGenerator:
     if request.param == 'point':
         return generators.PointGenerator(processed_train,
@@ -64,7 +64,7 @@ def train_generator(request, processed_train, task) -> engine.BaseGenerator:
                                         stage='train')
 
 
-@pytest.fixture(params=['point'])
+@pytest.fixture(params=['point', 'list'])
 def test_generator(request, processed_test, task) -> engine.BaseGenerator:
     if request.param == 'point':
         return generators.PointGenerator(processed_test, task=task,

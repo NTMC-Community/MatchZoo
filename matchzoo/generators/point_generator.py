@@ -70,7 +70,6 @@ class PointGenerator(engine.BaseGenerator):
         self._left = inputs.left
         self._right = inputs.right
         self._context = inputs.context
-        self._hash_unit = None
         self._use_word_hashing = use_word_hashing
         super().__init__(batch_size, len(inputs.relation), stage, shuffle)
 

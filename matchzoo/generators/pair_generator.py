@@ -4,6 +4,7 @@ from matchzoo import engine
 from matchzoo import datapack
 from matchzoo import utils
 from matchzoo import tasks
+from matchzoo import preprocessor
 
 import pandas as pd
 import numpy as np

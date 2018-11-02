@@ -4,6 +4,7 @@ from matchzoo import engine
 from matchzoo import datapack
 from matchzoo import utils
 from matchzoo import tasks
+from matchzoo import preprocessor
 
 import pandas as pd
 import numpy as np
@@ -134,7 +135,7 @@ class ListGenerator(engine.BaseGenerator):
                                    for
                                    item
                                    in
-                                   self._right.loc[id_left, column].tolist()]
+                                   self._left.loc[id_left, column].tolist()]
                 continue
             batch_x[column] = self._left.loc[id_left, column].tolist()
         for column in self._right.columns:
