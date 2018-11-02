@@ -50,7 +50,7 @@ class PointGenerator(engine.BaseGenerator):
         self,
         inputs: datapack.DataPack,
         task: engine.BaseTask = tasks.Classification(2),
-        batch_size: int = 3,
+        batch_size: int = 32,
         stage: str = 'train',
         shuffle: bool = True,
         use_word_hashing: bool = False
