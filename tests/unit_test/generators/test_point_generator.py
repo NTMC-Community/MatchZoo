@@ -4,15 +4,16 @@ from matchzoo import tasks
 from matchzoo.generators import PointGenerator
 from matchzoo.datapack import DataPack
 
+
 @pytest.fixture
 def x():
     relation = [['qid0', 'did0', 0],
-            ['qid1', 'did1', 1],
-            ['qid1', 'did0', 2]]
+                ['qid1', 'did1', 1],
+                ['qid1', 'did0', 2]]
     left = [['qid0', [1, 2]],
-                 ['qid1', [2, 3]]]
+            ['qid1', [2, 3]]]
     right = [['did0', [2, 3, 4]],
-                  ['did1', [3, 4, 5]]]
+             ['did1', [3, 4, 5]]]
     ctx = {'vocab_size': 6, 'fill_word': 6}
     relation = pd.DataFrame(relation, columns=['id_left', 'id_right', 'label'])
     left = pd.DataFrame(left, columns=['id_left', 'text_left'])
@@ -27,6 +28,7 @@ def x():
                     context=ctx
                     )
 
+
 @pytest.fixture(scope='module', params=[
     tasks.Classification(num_classes=3),
     tasks.Ranking(),
@@ -34,9 +36,11 @@ def x():
 def task(request):
     return request.param
 
+
 @pytest.fixture(scope='module', params=['train', 'evaluate', 'predict'])
 def stage(request):
     return request.param
+
 
 def test_point_generator(x, task, stage):
     shuffle = False
@@ -52,7 +56,8 @@ def test_point_generator(x, task, stage):
         assert x['length_right'].tolist() == [3, 3, 3]
         if stage == 'predict':
             assert y is None
-        elif stage in ['train', 'evaluate'] and task == tasks.Classification(num_classes=3):
+        elif stage in ['train', 'evaluate'] and task == tasks.Classification(
+            num_classes=3):
             assert y.tolist() == [
                 [1, 0, 0],
                 [0, 1, 0],
@@ -60,11 +65,13 @@ def test_point_generator(x, task, stage):
             ]
         break
 
+
 def test_task_mode_in_pointgenerator(x, task, stage):
     generator = PointGenerator(x, task, 1, stage, False)
     assert len(generator) == 3
     with pytest.raises(ValueError):
         x, y = generator[3]
+
 
 def test_stage_mode_in_pointgenerator(x, task):
     generator = PointGenerator(x, None, 1, 'train', False)

@@ -4,6 +4,7 @@ import numpy as np
 from matchzoo.generators import PairGenerator
 from matchzoo.datapack import DataPack
 
+
 @pytest.fixture
 def x():
     relation = [['qid0', 'did0', 0],
@@ -27,6 +28,7 @@ def x():
                     context=ctx
                     )
 
+
 def test_pair_generator_one(x):
     """Test pair generator with only one negative sample."""
     np.random.seed(111)
@@ -47,6 +49,7 @@ def test_pair_generator_one(x):
     assert x0['length_left'].tolist() == [2, 2]
     assert x0['length_right'].tolist() == [3, 3]
     assert y0.tolist() == [2, 0]
+
 
 def test_pair_generator_multi(x):
     """Test pair generator with multiple negative sample."""
