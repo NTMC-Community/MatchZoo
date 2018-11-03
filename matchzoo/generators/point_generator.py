@@ -91,7 +91,7 @@ class PointGenerator(engine.BaseGenerator):
         batch_y = None
 
         columns = self._left.columns.values.tolist() + \
-                  self._right.columns.values.tolist() + ['id_left', 'id_right']
+            self._right.columns.values.tolist() + ['id_left', 'id_right']
         for column in columns:
             batch_x[column] = []
 
@@ -106,7 +106,7 @@ class PointGenerator(engine.BaseGenerator):
                     self._task.output_dtype)
                 batch_y = np.zeros((len(index_array), self._task.num_classes))
                 for idx, label in enumerate(
-                    self._relation['label'][index_array]):
+                        self._relation['label'][index_array]):
                     batch_y[idx, label] = 1
             else:
                 msg = f"{self._task} is not a valid task type."
