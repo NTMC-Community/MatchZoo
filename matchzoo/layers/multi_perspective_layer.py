@@ -5,7 +5,7 @@ from keras import backend as K
 from keras.engine.topology import Layer
 
 from matchzoo import utils
-
+from matchzoo.layers.attention_layer import attention_func
 
 class MultiPerspectiveLayer(Layer):
     """
@@ -133,7 +133,14 @@ class MultiPerspectiveLayer(Layer):
         :param pooling: sum / max
         :return: [batch, steps_lt, d]
         """
-        pass
+        # [batch, steps_lt, steps_rt]
+        atten_score = attention_func([lstm_lt, lstm_rt])
+
+        atten_score = K.expand_dims(atten_score,axis=-1)  # [batch, steps_lt, steps_rt, -1]
+        lstm_rt = K.expand_dims(lstm_rt, axis=-1)  # [batch, 1, steps_rt, d]
+        att_lt = K.sum(atten_score * lstm_rt, axis=2)
+        return att_lt
+
 
     def _match_tensors_with_tensor(self, lstm_lt, h_rt, W):
         """
