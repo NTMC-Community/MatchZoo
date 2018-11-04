@@ -4,6 +4,9 @@
 
 [![Build Status](https://travis-ci.org/NTMC-Community/MatchZoo.svg?branch=master)](https://travis-ci.org/NTMC-Community/MatchZoo/)
 [![MatchZoo 2.0](https://img.shields.io/badge/marchzoo%202.0-WIP-blue.svg)](https://github.com/NTMC-Community/MatchZoo/tree/2.0)
+[![Backers on Open Collective](https://opencollective.com/MatchZoo/backers/badge.svg)](#backers) 
+[![Sponsors on Open Collective](https://opencollective.com/MatchZoo/sponsors/badge.svg)](#sponsors) 
+
 ---
 MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models. There are a number of deep matching methods, such as DRMM, MatchPyramid, MV-LSTM, aNMM, DUET, ARC-I, ARC-II, DSSM, and CDSSM, designed with a unified interface (collection of papers: [awesome-neural-models-for-semantic-match](https://github.com/NTSC-Community/awaresome-neural-models-for-semantic-match)). Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users.
 
@@ -348,6 +351,34 @@ Acknowledgements
 =====
 We would like to express our appreciation to the following people for contributing source code to MatchZoo, including [Yixing Fan](https://scholar.google.com/citations?user=w5kGcUsAAAAJ&hl=en), [Liang Pang](https://scholar.google.com/citations?user=1dgQHBkAAAAJ&hl=zh-CN), [Liu Yang](https://sites.google.com/site/lyangwww/), [Wang Bo](www.wangbo.info), [Yukun Zheng](), [Lijuan Chen](), [Jianpeng Hou](https://github.com/HouJP), [Zhou Yang](https://github.com/zhouzhouyang520), [Niuguo cheng](https://github.com/niuox) etc..
 
+## Contributors
+
+This project exists thanks to all the people who contribute. 
+<a href="https://github.com/NTMC-Community/MatchZoo/contributors"><img src="https://opencollective.com/MatchZoo/contributors.svg?width=890&button=false" /></a>
+
+
+## Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/MatchZoo#backer)]
+
+<a href="https://opencollective.com/MatchZoo#backers" target="_blank"><img src="https://opencollective.com/MatchZoo/backers.svg?width=890"></a>
+
+
+## Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/MatchZoo#sponsor)]
+
+<a href="https://opencollective.com/MatchZoo/sponsor/0/website" target="_blank"><img src="https://opencollective.com/MatchZoo/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/MatchZoo/sponsor/1/website" target="_blank"><img src="https://opencollective.com/MatchZoo/sponsor/1/avatar.svg"></a>
+<a href="https://opencollective.com/MatchZoo/sponsor/2/website" target="_blank"><img src="https://opencollective.com/MatchZoo/sponsor/2/avatar.svg"></a>
+<a href="https://opencollective.com/MatchZoo/sponsor/3/website" target="_blank"><img src="https://opencollective.com/MatchZoo/sponsor/3/avatar.svg"></a>
+<a href="https://opencollective.com/MatchZoo/sponsor/4/website" target="_blank"><img src="https://opencollective.com/MatchZoo/sponsor/4/avatar.svg"></a>
+<a href="https://opencollective.com/MatchZoo/sponsor/5/website" target="_blank"><img src="https://opencollective.com/MatchZoo/sponsor/5/avatar.svg"></a>
+<a href="https://opencollective.com/MatchZoo/sponsor/6/website" target="_blank"><img src="https://opencollective.com/MatchZoo/sponsor/6/avatar.svg"></a>
+<a href="https://opencollective.com/MatchZoo/sponsor/7/website" target="_blank"><img src="https://opencollective.com/MatchZoo/sponsor/7/avatar.svg"></a>
+<a href="https://opencollective.com/MatchZoo/sponsor/8/website" target="_blank"><img src="https://opencollective.com/MatchZoo/sponsor/8/avatar.svg"></a>
+<a href="https://opencollective.com/MatchZoo/sponsor/9/website" target="_blank"><img src="https://opencollective.com/MatchZoo/sponsor/9/avatar.svg"></a>
+
 Feedback and Join Us
 =====
 Feel free to post any questions or suggestions on [GitHub Issues](https://github.com/NTMC-Community/MatchZoo/issues) and we will reply to your questions there. You can also suggest adding new deep text maching models into MatchZoo and apply for joining us to develop MatchZoo together.
@@ -355,3 +386,7 @@ Feel free to post any questions or suggestions on [GitHub Issues](https://github
 Update in 12/10/2017: We have applied another WeChat ID: CLJ_Keep. Anyone who want to join the WeChat group can add this WeChat id as a friend. Please tell us your name, company or school, city when you send such requests. After you added "CLJ_Keep" as one of your WeChat friends, she will invite you to join the MatchZoo WeChat group. "CLJ_Keep" is one member of the MatchZoo team.
 
 Update in 04/07/2018: We have created a Google discussion group [MatchZoo Discuss](https://groups.google.com/forum/#!forum/matchzoo-discuss) to better support Q&A discussions of our users. You can post any questions/suggestions on the MatchZoo toolkit here. The developers and other experienced users from our community will reply to your questions. 
+
+
+
+
