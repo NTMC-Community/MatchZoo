@@ -104,7 +104,6 @@ class ListGenerator(engine.BaseGenerator):
         :return: A batch of transformed samples.
         """
         trans_index = self._id_lists[index_array[0]]
-        batch_x = {}
 
         batch_y = None
         if self.stage in ['train', 'evaluate']:
@@ -113,7 +112,7 @@ class ListGenerator(engine.BaseGenerator):
             batch_y = self._relation.iloc[trans_index, 2].values
 
         columns = self._left.columns.values.tolist() + \
-            self._right.columns.values.tolist() + ['id_left', 'id_right']
+                  self._right.columns.values.tolist() + ['id_left', 'id_right']
         batch_x = dict([(column, []) for column in columns])
 
         id_left = self._relation.iloc[trans_index, 0]
@@ -131,4 +130,4 @@ class ListGenerator(engine.BaseGenerator):
             batch_x[key] = np.array(val)
 
         batch_x = utils.dotdict(batch_x)
-        return (batch_x, batch_y)
+        return batch_x, batch_y
