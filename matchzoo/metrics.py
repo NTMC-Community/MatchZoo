@@ -7,10 +7,8 @@ import numpy as np
 from matchzoo import engine
 
 
-def sort_and_couple(labels: list, scores: np.array) -> list:
+def sort_and_couple(labels: list, scores: list) -> list:
     """Zip the `labels` with `scores` into a single list."""
-    labels = np.squeeze(labels).tolist()
-    scores = np.squeeze(scores).tolist()
     couple = list(zip(labels, scores))
     random.shuffle(couple)
     sorted_couple = sorted(couple, key=lambda x: x[1], reverse=True)
