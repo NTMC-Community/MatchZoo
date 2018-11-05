@@ -42,7 +42,7 @@ class BaseTask(abc.ABC):
         self._assure_loss()
         self._assure_metrics()
 
-        self._metrics = self.convert_metrics(metrics)
+        self._metrics = self.convert_metrics(self._metrics)
 
     def _assure_loss(self):
         if not self._loss:
