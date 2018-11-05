@@ -131,10 +131,12 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             for unit in units:
                 text = unit.transform(text)
             self.datapack.left.at[idx, 'text_left'] = text
+            self.datapack.left.at[idx, 'length_left'] = len(text)
         for idx, row in tqdm(self.datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
             self.datapack.right.at[idx, 'text_right'] = text
+            self.datapack.right.at[idx, 'length_right'] = len(text)
 
         return self.datapack

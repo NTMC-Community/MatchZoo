@@ -34,8 +34,8 @@ class DataPack(object):
         >>> len(dp)
         2
         >>> relation, context = dp.relation, dp.context
-        >>> context
-        {'vocab_size': 2000}
+        >>> context['vocab_size']
+        2000
     """
 
     DATA_FILENAME = 'data.dill'

@@ -148,13 +148,19 @@ class ArcIPreprocessor(engine.BasePreprocessor):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
+            length = len(text)
             text = self._left_fixedlen_unit.transform(text)
+            length = min(length, self._fixed_length[0])
             self.datapack.left.at[idx, 'text_left'] = text
+            self.datapack.left.at[idx, 'length_left'] = length
         for idx, row in tqdm(self.datapack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
+            length = len(text)
             text = self._right_fixedlen_unit.transform(text)
+            length = min(length, self._fixed_length[1])
             self.datapack.right.at[idx, 'text_right'] = text
+            self.datapack.right.at[idx, 'length_right'] = length
 
         return self.datapack

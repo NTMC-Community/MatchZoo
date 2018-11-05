@@ -23,15 +23,19 @@ class PairGenerator(engine.BaseGenerator):
         ... ]
         >>> left = [['qid0', [1, 2]]]
         >>> right = [['did0', [2, 3]],
-        ...          ['did1', [3, 4]],
+        ...          ['did1', [3, 4, 5]],
         ...          ['did2', [4, 5]],
         ... ]
         >>> relation = pd.DataFrame(relation,
         ...                         columns=['id_left', 'id_right', 'label'])
         >>> left = pd.DataFrame(left, columns=['id_left', 'text_left'])
         >>> left.set_index('id_left', inplace=True)
+        >>> left['length_left'] = left.apply(lambda x: len(x['text_left']),
+        ...                                  axis=1)
         >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
         >>> right.set_index('id_right', inplace=True)
+        >>> right['length_right'] = right.apply(lambda x: len(x['text_right']),
+        ...                                     axis=1)
         >>> input = datapack.DataPack(relation=relation,
         ...                           left=left,
         ...                           right=right
@@ -43,11 +47,15 @@ class PairGenerator(engine.BaseGenerator):
         >>> x['text_left'].tolist()
         [[1, 2], [1, 2]]
         >>> x['text_right'].tolist()
-        [[3, 4], [2, 3]]
+        [[3, 4, 5], [2, 3]]
         >>> x['id_left'].tolist()
         ['qid0', 'qid0']
         >>> x['id_right'].tolist()
         ['did1', 'did0']
+        >>> x['length_left'].tolist()
+        [2, 2]
+        >>> x['length_right'].tolist()
+        [3, 2]
         >>> y.tolist()
         [1.0, 0.0]
 

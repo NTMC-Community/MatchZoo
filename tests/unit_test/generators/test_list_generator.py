@@ -4,30 +4,35 @@ import numpy as np
 from matchzoo.generators import ListGenerator
 from matchzoo.datapack import DataPack
 
+
 @pytest.fixture
 def x():
     relation = [['qid0', 'did0', 0],
-            ['qid1', 'did1', 1],
-            ['qid1', 'did0', 2]]
+                ['qid1', 'did1', 1],
+                ['qid1', 'did0', 2]]
     left = [['qid0', [1, 2]],
-                 ['qid1', [2, 3]]]
+            ['qid1', [2, 3]]]
     right = [['did0', [2, 3, 4]],
-                  ['did1', [3, 4, 5]]]
+             ['did1', [3, 4, 5]]]
     ctx = {'vocab_size': 6, 'fill_word': 6}
     relation = pd.DataFrame(relation, columns=['id_left', 'id_right', 'label'])
     left = pd.DataFrame(left, columns=['id_left', 'text_left'])
     left.set_index('id_left', inplace=True)
+    left['length_left'] = left.apply(lambda x: len(x['text_left']), axis=1)
     right = pd.DataFrame(right, columns=['id_right', 'text_right'])
     right.set_index('id_right', inplace=True)
+    right['length_right'] = right.apply(lambda x: len(x['text_right']), axis=1)
     return DataPack(relation=relation,
                     left=left,
                     right=right,
                     context=ctx
                     )
 
+
 @pytest.fixture(scope='module', params=['train', 'evaluate', 'predict'])
 def stage(request):
     return request.param
+
 
 def test_list_generator(x, stage):
     """Test list generator"""
@@ -41,10 +46,14 @@ def test_list_generator(x, stage):
     assert x0['id_right'].tolist() == ['did0']
     assert x0['text_left'].tolist() == [[1, 2]]
     assert x0['text_right'].tolist() == [[2, 3, 4]]
+    assert x0['length_left'].tolist() == [2]
+    assert x0['length_right'].tolist() == [3]
     assert x1['id_left'].tolist() == ['qid1', 'qid1']
     assert x1['id_right'].tolist() == ['did1', 'did0']
     assert x1['text_left'].tolist() == [[2, 3], [2, 3]]
     assert x1['text_right'].tolist() == [[3, 4, 5], [2, 3, 4]]
+    assert x1['length_left'].tolist() == [2, 2]
+    assert x1['length_right'].tolist() == [3, 3]
     if stage == 'predict':
         assert y0 is None
         assert y1 is None

@@ -153,9 +153,12 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             text = [hash_unit.transform(term) for term in text]
             # flatten the text vectors
             text = list(itertools.chain(*text))
+            length = len(text)
             text = fix_unit.transform(text)
+            length = min(length, self._text_length) * self._dim_ngram
             text = np.reshape(text, (self._text_length, -1))
             self.datapack.left.at[idx, 'text_left'] = text.tolist()
+            self.datapack.left.at[idx, 'length_left'] = length
 
         for idx, row in tqdm(self.datapack.right.iterrows()):
             text = row.text_right
@@ -164,8 +167,11 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             text = [ngram_unit.transform([term]) for term in text]
             text = [hash_unit.transform(term) for term in text]
             text = list(itertools.chain(*text))
+            length = len(text)
             text = fix_unit.transform(text)
+            length = min(length, self._text_length) * self._dim_ngram
             text = np.reshape(text, (self._text_length, -1))
             self.datapack.right.at[idx, 'text_right'] = text.tolist()
+            self.datapack.right.at[idx, 'length_right'] = length
 
         return self.datapack
