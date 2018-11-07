@@ -9,7 +9,8 @@ from keras.engine import Layer
 class MatchLayer(Layer):
     """Layer that computes a matching matrix between samples in two tensors."""
 
-    def __init__(self, normalize: bool = False, match_type: str = 'dot', **kwargs):
+    def __init__(self, normalize: bool = False,
+                 match_type: str = 'dot', **kwargs):
         """
         :class:`MatchLayer` constructor.
 
@@ -25,7 +26,7 @@ class MatchLayer(Layer):
         self.supports_masking = True
         if match_type not in ['dot', 'mul', 'plus', 'minus', 'concat']:
             raise ValueError('In `MatchLayer` layer, '
-                             'param match_type=%s is unknown.' % match_type)
+                             'match_type={} is unknown.'.format(match_type))
 
     def build(self, input_shape: list):
         """
@@ -43,13 +44,17 @@ class MatchLayer(Layer):
         if self.shape1[0] != self.shape2[0]:
             raise ValueError(
                 'Dimension incompatibility '
-                '%s != %s. ' % (self.shape1[0], self.shape2[0]) + \
-                'Layer shapes: %s, %s' % (self.shape1, self.shape2))
+                '{} != {}. Layer shapes: {}, {}.'.format(self.shape1[0],
+                                                         self.shape2[0],
+                                                         self.shape1,
+                                                         self.shape2))
         if self.shape1[2] != self.shape2[2]:
             raise ValueError(
                 'Dimension incompatibility '
-                '%s != %s. ' % (self.shape1[2], self.shape2[2]) + \
-                'Layer shapes: %s, %s' % (self.shape1, self.shape2))
+                '{} != {}. Layer shapes: {}, {}.'.format(self.shape1[2],
+                                                         self.shape2[2],
+                                                         self.shape1,
+                                                         self.shape2))
 
     def call(self, inputs: list) -> typing.Any:
         """
