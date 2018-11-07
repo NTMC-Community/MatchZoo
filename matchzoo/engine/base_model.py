@@ -11,6 +11,7 @@ import pandas as pd
 
 from matchzoo import engine
 from matchzoo import tasks
+from matchzoo import layers
 
 
 class BaseModel(abc.ABC):
@@ -360,7 +361,8 @@ def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
     dirpath = Path(dirpath)
 
     backend_file_path = dirpath.joinpath(BaseModel.BACKEND_FILENAME)
-    backend = keras.models.load_model(backend_file_path)
+    backend = keras.models.load_model(backend_file_path,
+                                      custom_objects=layers.layer_dict)
 
     params_file_path = dirpath.joinpath(BaseModel.PARAMS_FILENAME)
     params = dill.load(open(params_file_path, 'rb'))
