@@ -111,8 +111,9 @@ class ListGenerator(engine.BaseGenerator):
                 self._task.output_dtype)
             batch_y = self._relation.iloc[trans_index, 2].values
 
-        columns = self._left.columns.values.tolist() + \
-                  self._right.columns.values.tolist() + ['id_left', 'id_right']
+        left_columns = self._left.columns.values.tolist()
+        right_columns = self._right.columns.values.tolist()
+        columns = left_columns + right_columns + ['id_left', 'id_right']
         batch_x = dict([(column, []) for column in columns])
 
         id_left = self._relation.iloc[trans_index, 0]
