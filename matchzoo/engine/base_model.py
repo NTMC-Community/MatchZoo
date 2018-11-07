@@ -261,24 +261,23 @@ class BaseModel(abc.ABC):
             backend_evals = [backend_evals]
         metrics_lookup = {name: val for name, val in
                           zip(self._backend.metrics_names, backend_evals)}
-        groups = None
+        dataframe = None
         for metric in self._params['task'].metrics:
             if isinstance(metric, engine.BaseMetric):
-                if groups is None:
-                    y_pred = self.predict(x, batch_size)
+                if dataframe is None:
+                    y_pred = self.predict(x, batch_size).reshape((-1,))
                     data = {
-                        'id': list(x['id_left']),
-                        'true': list(y),
-                        'pred': list(y_pred)
+                        'id': x['id_left'].tolist(),
+                        'true': y.tolist(),
+                        'pred': y_pred.tolist()
                     }
-                    groups = pd.DataFrame(data=data).groupby(by='id')
+                    dataframe = pd.DataFrame(data=data)
 
-                def evaluate_df_fn(df):
-                    return metric(df['true'], df['pred'])
-
-                metric_val = groups.apply(evaluate_df_fn).mean()
-
+                metric_val = dataframe.groupby(by='id').apply(
+                    lambda df: metric(df['true'], df['pred'])
+                ).mean()
                 metrics_lookup[str(metric)] = metric_val
+
         return metrics_lookup
 
     def predict(

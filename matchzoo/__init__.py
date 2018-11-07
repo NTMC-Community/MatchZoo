@@ -9,3 +9,5 @@ from . import metrics
 from . import generators
 from .version import __version__
 from .logger import logger
+
+from .engine import load_model

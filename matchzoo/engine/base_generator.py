@@ -1,7 +1,9 @@
 """Base generator."""
 
+import math
 import abc
 import typing
+
 import keras
 import numpy as np
 
@@ -63,13 +65,14 @@ class BaseGenerator(keras.utils.Sequence):
         if idx == len(self) - 1:
             index_array = self.index_array[self.batch_size * idx:]
         else:
-            index_array = self.index_array[self.batch_size * idx:
-                                           self.batch_size * (idx + 1)]
+            lower = self.batch_size * idx
+            upper = self.batch_size * (idx + 1)
+            index_array = self.index_array[lower:upper]
         return self._get_batch_of_transformed_samples(index_array)
 
     def __len__(self) -> int:
         """Get the total number of batches."""
-        return (self.num_instances + self.batch_size - 1) // self.batch_size
+        return math.ceil(self.num_instances / self.batch_size)
 
     def __iter__(self) -> typing.Tuple[dict, list]:
         """Create an generator."""
@@ -90,7 +93,10 @@ class BaseGenerator(keras.utils.Sequence):
         self._set_index_array()
 
     @abc.abstractmethod
-    def _get_batch_of_transformed_samples(self, index_array: np.array):
+    def _get_batch_of_transformed_samples(
+        self,
+        index_array: np.array
+    ) -> typing.Tuple[dict, list]:
         """Get a batch of transformed samples.
 
         :param index_array: Arrray of sample indices to include in a batch.
