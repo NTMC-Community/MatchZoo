@@ -1,22 +1,24 @@
 """An implementation of Match Layer."""
 from __future__ import absolute_import
 
+import typing
 from keras import backend as K
 from keras.engine import Layer
 
 
 class MatchLayer(Layer):
-    """Layer that computes a matching matrix between samples in two tensors.
+    """Layer that computes a matching matrix between samples in two tensors."""
 
-    # Arguments
-        normalize: Whether to L2-normalize samples along the
+    def __init__(self, normalize: bool=False, match_type: str='dot', **kwargs):
+        """
+        :class:`MatchLayer` constructor.
+
+        :param normalize: Whether to L2-normalize samples along the
             dot product axis before taking the dot product.
             If set to True, then the output of the dot product
             is the cosine proximity between the two samples.
-        **kwargs: Standard layer keyword arguments.
-    """
-
-    def __init__(self, normalize=False, match_type='dot', **kwargs):
+        :param **kwargs: Standard layer keyword arguments.
+        """
         super(MatchLayer, self).__init__(**kwargs)
         self.normalize = normalize
         self.match_type = match_type
@@ -25,7 +27,13 @@ class MatchLayer(Layer):
             raise ValueError('In `MatchLayer` layer, '
                              'param match_type=%s is unknown.' % match_type)
 
-    def build(self, input_shape):
+    def build(self, input_shape: list):
+        """
+        Build the layer.
+
+        :param input_shape: the shapes of the input tensors, for MatchLayer we
+            need tow input tensors.
+        """
         # Used purely for shape validation.
         if not isinstance(input_shape, list) or len(input_shape) != 2:
             raise ValueError('A `MatchLayer` layer should be called '
@@ -43,7 +51,12 @@ class MatchLayer(Layer):
                 '%s != %s. ' % (self.shape1[2], self.shape2[2]) +
                 'Layer shapes: %s, %s' % (self.shape1, self.shape2))
 
-    def call(self, inputs):
+    def call(self, inputs: list) -> typing.Any:
+        """
+        The computation logic of MatchLayer.
+
+        :param inputs: two input tensors.
+        """
         x1 = inputs[0]
         x2 = inputs[1]
         if self.match_type in ['dot']:
@@ -68,7 +81,13 @@ class MatchLayer(Layer):
 
         return output
 
-    def compute_output_shape(self, input_shape):
+    def compute_output_shape(self, input_shape: list) -> tuple:
+        """
+        Calculate the layer output shape.
+
+        :param input_shape: the shapes of the input tensors, for MatchLayer we
+            need tow input tensors.
+        """
         if not isinstance(input_shape, list) or len(input_shape) != 2:
             raise ValueError('A `MatchLayer` layer should be called '
                              'on a list of 2 inputs.')
@@ -87,34 +106,19 @@ class MatchLayer(Layer):
             output_shape = [shape1[0], shape1[1], shape2[1], shape1[2]]
         elif self.match_type in ['concat']:
             output_shape = [shape1[0], shape1[1], shape2[1],
-                            shape1[2]+shape2[2]]
+                            shape1[2] + shape2[2]]
 
         return tuple(output_shape)
 
-    def compute_mask(self, inputs, mask=None):
+    def compute_mask(self, inputs: list, mask: list=None) -> typing.Any:
+        """Compute input mask. Undefine in this layer."""
         return None
 
-    def get_config(self):
+    def get_config(self) -> dict:
+        """Get the config dict of MatchLayer."""
         config = {
             'normalize': self.normalize,
             'match_type': self.match_type,
         }
         base_config = super(MatchLayer, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
-
-def match(inputs, axes, normalize=False, match_type='dot', **kwargs):
-    """Functional interface to the `MatchLayer` layer.
-    # Arguments
-        inputs: A list of input tensors (with exact 2 tensors).
-        normalize: Whether to L2-normalize samples along the
-            dot product axis before taking the dot product.
-            If set to True, then the output of the dot product
-            is the cosine proximity between the two samples.
-        **kwargs: Standard layer keyword arguments.
-    # Returns
-        A tensor, the dot product matching matrix of the samples 
-        from the inputs.
-    """
-    return MatchLayer(normalize=normalize,
-                      match_type=match_type,
-                      **kwargs)(inputs)
