@@ -20,7 +20,6 @@ class BaseGenerator(keras.utils.Sequence):
         self,
         batch_size: int = 32,
         num_instances: int = 0,
-        stage: str = 'train',
         shuffle: bool = True
     ):
         """
@@ -28,18 +27,13 @@ class BaseGenerator(keras.utils.Sequence):
 
         :param batch_size: number of instances for each batch
         :param num_instances: total number of instances
-        :param stage: String indicate the pre-processing stage, `train`,
-            `evaluate`, or `predict` expected.
         :param shuffle: a bool variable to determine whether choose samples
         randomly
         """
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-        self.num_instances = num_instances
-        if stage not in ['train', 'evaluate', 'predict']:
-            raise ValueError(f'{stage} is not a valid stage name.')
-        self.stage = stage
-        self.index_array = None
+        self._batch_size = batch_size
+        self._shuffle = shuffle
+        self._num_instances = num_instances
+        self._index_array = None
         self._set_index_array()
 
     def _set_index_array(self):
@@ -48,10 +42,10 @@ class BaseGenerator(keras.utils.Sequence):
 
         Here the :attr:`index_array` records the index of all the instances.
         """
-        if self.shuffle:
-            self.index_array = np.random.permutation(self.num_instances)
+        if self._shuffle:
+            self._index_array = np.random.permutation(self._num_instances)
         else:
-            self.index_array = np.arange(self.num_instances)
+            self._index_array = np.arange(self._num_instances)
 
     def __getitem__(self, idx: int) -> typing.Tuple[dict, list]:
         """Get a batch from index idx.
@@ -63,26 +57,16 @@ class BaseGenerator(keras.utils.Sequence):
             msg += f'but the Sequence has length {len(self)}'
             raise ValueError(msg)
         if idx == len(self) - 1:
-            index_array = self.index_array[self.batch_size * idx:]
+            index_array = self._index_array[self._batch_size * idx:]
         else:
-            lower = self.batch_size * idx
-            upper = self.batch_size * (idx + 1)
-            index_array = self.index_array[lower:upper]
+            lower = self._batch_size * idx
+            upper = self._batch_size * (idx + 1)
+            index_array = self._index_array[lower:upper]
         return self._get_batch_of_transformed_samples(index_array)
 
     def __len__(self) -> int:
         """Get the total number of batches."""
-        return math.ceil(self.num_instances / self.batch_size)
-
-    def __iter__(self) -> typing.Tuple[dict, list]:
-        """Create an generator."""
-        if self.stage == 'train':
-            while True:
-                for item in (self[i] for i in range(len(self))):
-                    yield item
-        else:
-            for item in (self[i] for i in range(len(self))):
-                yield item
+        return math.ceil(self._num_instances / self._batch_size)
 
     def on_epoch_end(self):
         """Reorganize the index array while epoch is ended."""

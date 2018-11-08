@@ -69,6 +69,20 @@ class DataPack(object):
         """Get numer of rows in the class:`DataPack` object."""
         return self._relation.shape[0]
 
+    def __getitem__(self, index):
+        if isinstance(index, int):
+            index = [index]
+        elif isinstance(index, slice):
+            index = list(range(*index.indices(len(self))))
+        left_ids = self._relation['id_left'][index]
+        right_ids = self._relation['id_right'][index]
+        left_df = self._left.loc[left_ids].reset_index().set_index([index])
+        right_df = self._right.loc[right_ids].reset_index().set_index([index])
+        ret = left_df.join(right_df)
+        if self.stage == 'train':
+            ret = ret.join(self._relation['label'][index].to_frame())
+        return ret
+
     @property
     def relation(self) -> pd.DataFrame:
         """Get :meth:`relation` of :class:`DataPack`."""

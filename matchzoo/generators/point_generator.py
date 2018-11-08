@@ -58,7 +58,8 @@ class PointGenerator(engine.BaseGenerator):
         datapack,
         task: engine.BaseTask = tasks.Classification(2),
         batch_size: int = 32,
-        shuffle: bool = True
+        shuffle: bool = True,
+        post_process=None
     ):
         """Construct the point generator.
 
@@ -71,7 +72,8 @@ class PointGenerator(engine.BaseGenerator):
         """
         self._datapack = datapack
         self._task = task
-        super().__init__(batch_size, len(datapack.relation), stage, shuffle)
+        self._post_process = post_process
+        super().__init__(batch_size, len(datapack.relation), shuffle)
 
     def _get_batch_of_transformed_samples(
         self,
@@ -82,42 +84,48 @@ class PointGenerator(engine.BaseGenerator):
         :param index_array: a list of instance ids.
         :return: A batch of transformed samples.
         """
-        batch_y = None
+        # batch_y = None
+        #
+        # left_columns = self._datapack.left.columns.values.tolist()
+        # right_columns = self._datapack.right.columns.values.tolist()
+        # columns = left_columns + right_columns + ['id_left', 'id_right']
+        #
+        # batch_x = dict.fromkeys(columns, [])
+        #
+        # relation = self._datapack.relation
+        #
+        # if self._datapack.stage == 'train':
+        #     type_ = self._task.output_dtype
+        #     relation['label'] = relation['label'].astype(type_)
+        #
+        #     if isinstance(self._task, tasks.Ranking):
+        #         batch_y = relation['label'][index_array].values
+        #     elif isinstance(self._task, tasks.Classification):
+        #         batch_y = np.zeros((len(index_array), self._task.num_classes))
+        #         for idx, label in enumerate(relation['label'][index_array]):
+        #             batch_y[idx, label] = 1
+        #     else:
+        #         msg = f"{self._task} is not a valid task type."
+        #         msg += ":class:`Ranking` and :class:`Classification` expected."
+        #         raise ValueError(msg)
+        #
+        # batch_x['id_left'] = relation.iloc[index_array, 0]
+        # for column in self._datapack.left.columns:
+        #     batch_x[column] = self._datapack.left.loc[
+        #         (relation.iloc[index_array, 0]), column].tolist()
+        #
+        # batch_x['id_right'] = relation.iloc[index_array, 1]
+        # for column in self._datapack.right.columns:
+        #     batch_x[column] = self._datapack.right.loc[
+        #         (relation.iloc[index_array, 1]), column].tolist()
+        #
+        # for key, val in batch_x.items():
+        #     batch_x[key] = np.array(val)
 
-        left_columns = self._datapack.left.columns.values.tolist()
-        right_columns = self._datapack.right.columns.values.tolist()
-        columns = left_columns + right_columns + ['id_left', 'id_right']
-
-        batch_x = dict.fromkeys(columns, [])
-
-        relation = self._datapack.relation
-
+        sliced_data = self._datapack[index_array]
         if self._datapack.stage == 'train':
-            type_ = self._task.output_dtype
-            relation['label'] = relation['label'].astype(type_)
-
-            if isinstance(self._task, tasks.Ranking):
-                batch_y = relation['label'][index_array].values
-            elif isinstance(self._task, tasks.Classification):
-                batch_y = np.zeros((len(index_array), self._task.num_classes))
-                for idx, label in enumerate(relation['label'][index_array]):
-                    batch_y[idx, label] = 1
-            else:
-                msg = f"{self._task} is not a valid task type."
-                msg += ":class:`Ranking` and :class:`Classification` expected."
-                raise ValueError(msg)
-
-        batch_x['id_left'] = relation.iloc[index_array, 0]
-        for column in self._datapack.left.columns:
-            batch_x[column] = self._datapack.left.loc[
-                (relation.iloc[index_array, 0]), column].tolist()
-
-        batch_x['id_right'] = relation.iloc[index_array, 1]
-        for column in self._datapack.right.columns:
-            batch_x[column] = self._datapack.right.loc[
-                (relation.iloc[index_array, 1]), column].tolist()
-
-        for key, val in batch_x.items():
-            batch_x[key] = np.array(val)
-
-        return batch_x, batch_y
+            columns = list(sliced_data.columns)
+            columns.remove('label')
+            x = sliced_data[columns].to_dict(orient='list')
+            y = list(sliced_data['label'])
+            return x, y

@@ -101,11 +101,11 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         :return: Transformed data as :class:`DataPack` object.
         """
+        datapack_copy = datapack.copy()
+
         units = self._default_preprocess_units()
         hashing = preprocessor.WordHashingUnit(self._context['term_index'])
         units.append(hashing)
-
-        datapack_copy = datapack.copy()
 
         for idx, row in tqdm(datapack_copy.left.iterrows()):
             text = row.text_left
