@@ -85,16 +85,16 @@ class PointGenerator(engine.BaseGenerator):
         :return: A batch of transformed samples.
         """
         sliced_data = self._datapack[index_array]
+        columns = list(sliced_data.columns)
+
         if self._datapack.stage == 'train':
-            columns = list(sliced_data.columns)
             columns.remove('label')
-            x = sliced_data[columns].to_dict(orient='list')
-            for key, val in x.items():
-                x[key] = np.array(val)
             y = np.array(sliced_data['label'])
-            return x, y
         else:
-            x = sliced_data.to_dict(orient='list')
-            for key, val in x.items():
-                x[key] = np.array(val)
-            return x, None
+            y = None
+
+        x = sliced_data[columns].to_dict(orient='list')
+        for key, val in x.items():
+            x[key] = np.array(val)
+
+        return x, y
