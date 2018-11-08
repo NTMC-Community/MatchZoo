@@ -11,6 +11,7 @@ from matchzoo import preprocessor
 from matchzoo.datapack import DataPack
 
 logger = logging.getLogger(__name__)
+tqdm.pandas()
 
 
 class DSSMPreprocessor(engine.BasePreprocessor):
@@ -43,15 +44,14 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
     """
 
-    @staticmethod
-    def _default_preprocess_units() -> list:
+    def _preprocess_units(self) -> list:
         """Prepare needed process units."""
         return [
             preprocessor.TokenizeUnit(),
             preprocessor.LowercaseUnit(),
             preprocessor.PuncRemovalUnit(),
             preprocessor.StopRemovalUnit(),
-            preprocessor.NgramLetterUnit()
+            preprocessor.NgramLetterUnit(),
         ]
 
     def fit(self, datapack: DataPack):
@@ -61,35 +61,27 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :param datapack: datapack to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
+
         vocab = []
-        units = self._default_preprocess_units()
+        units = self._preprocess_units()
 
-        logger.info("Start building vocabulary & fitting parameters.")
-
-        # Loop through user input to generate tri-letters.
-        # Used for build vocabulary of tri-letters (get dimension).
-        for idx, row in tqdm(datapack.left.iterrows()):
-            # For each piece of text, apply process unit sequentially.
-            text = row.text_left
+        def transform_and_extend_vocab(text):
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
-        for idx, row in tqdm(datapack.right.iterrows()):
-            # For each piece of text, apply process unit sequentially.
-            text = row.text_right
-            for unit in units:
-                text = unit.transform(text)
-            vocab.extend(text)
+        tqdm.pandas(desc="Preparing `text_left`.")
+        datapack.left['text_left'].progress_apply(transform_and_extend_vocab)
+        tqdm.pandas(desc="Preparing `text_right`.")
+        datapack.right['text_right'].progress_apply(transform_and_extend_vocab)
 
-        # Initialize a vocabulary process unit to build tri-letter vocab.
         vocab_unit = preprocessor.VocabularyUnit()
-        vocab_unit.fit(vocab)
+        vocab_unit.fit(tqdm(vocab, desc='Fitting vocabulary unit.'))
 
-        # Store the fitted parameters in context.
         self._context['term_index'] = vocab_unit.state['term_index']
         dim_triletter = len(vocab_unit.state['term_index']) + 1
         self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
+
         return self
 
     @utils.validate_context
@@ -103,19 +95,21 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         datapack_copy = datapack.copy()
 
-        units = self._default_preprocess_units()
-        hashing = preprocessor.WordHashingUnit(self._context['term_index'])
-        units.append(hashing)
+        term_index = self._context['term_index']
+        hashing_unit = preprocessor.WordHashingUnit(term_index)
+        units = self._preprocess_units() + [hashing_unit]
 
-        for idx, row in tqdm(datapack_copy.left.iterrows()):
-            text = row.text_left
-            for unit in units:
-                text = unit.transform(text)
-            datapack_copy.left.at[idx, 'text_left'] = text
-        for idx, row in tqdm(datapack_copy.right.iterrows()):
-            text = row.text_right
-            for unit in units:
-                text = unit.transform(text)
-            datapack_copy.right.at[idx, 'text_right'] = text
+        for unit in units:
+            unit_name = str(unit.__class__.__name__)
+
+            tqdm.pandas(desc="Processing `text_left` with " + unit_name)
+            left = datapack_copy.left['text_left'].progress_apply(
+                unit.transform)
+            datapack_copy.left['text_left'] = left
+
+            tqdm.pandas(desc="Processing `text_right` with " + unit_name)
+            right = datapack_copy.right['text_right'].progress_apply(
+                unit.transform)
+            datapack_copy.right['text_right'] = right
 
         return datapack_copy
