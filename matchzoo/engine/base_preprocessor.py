@@ -14,6 +14,14 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     DATA_FILENAME = 'preprocessor.dill'
 
+    def __init__(self):
+        """Initialization."""
+        self._context = {}
+
+    @property
+    def context(self):
+        return self._context
+
     @abc.abstractmethod
     def fit(self, inputs: list) -> 'BasePreprocessor':
         """
@@ -29,7 +37,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def transform(self, inputs: list, stage: str) -> datapack.DataPack:
+    def transform(self, inputs: list) -> datapack.DataPack:
         """
         Transform input data to expected manner.
 
@@ -37,23 +45,16 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         implemented in the child class.
 
         :param inputs: List of text-left, text-right, label triples,
-            or list of text-left, text-right tuples (test stage).
-        :param stage: String indicate the pre-processing stage, `train`,
-            `evaluate`, or `predict` expected.
+            or list of text-left, text-right tuples.
         """
 
-    def fit_transform(self, inputs: list, stage: str) -> datapack.DataPack:
+    def fit_transform(self, inputs: list) -> datapack.DataPack:
         """
         Call fit-transform.
 
         :param inputs: List of text-left, text-right, label triples.
-        :param stage: String indicate the pre-processing stage, `train`,
-            `evaluate`, or `predict` expected.
         """
-        if stage == 'train':
-            return self.fit(inputs).transform(inputs, stage)
-        else:
-            return self.transform(inputs, stage)
+        return self.fit(inputs).transform(inputs)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
@@ -86,6 +87,4 @@ def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:
     dirpath = Path(dirpath)
 
     data_file_path = dirpath.joinpath(BasePreprocessor.DATA_FILENAME)
-    dp = dill.load(open(data_file_path, 'rb'))
-
-    return dp
+    return dill.load(open(data_file_path, 'rb'))

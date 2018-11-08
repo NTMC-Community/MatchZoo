@@ -8,9 +8,7 @@ from tqdm import tqdm
 from matchzoo import utils
 from matchzoo import engine
 from matchzoo import preprocessor
-from matchzoo import datapack
-
-from . import segment
+from matchzoo.datapack import DataPack
 
 logger = logging.getLogger(__name__)
 
@@ -45,11 +43,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
     """
 
-    def __init__(self):
-        """Initialization."""
-        self.datapack = None
-
-    def _prepare_process_unit(self) -> list:
+    @staticmethod
+    def _default_preprocess_units() -> list:
         """Prepare needed process units."""
         return [
             preprocessor.TokenizeUnit(),
@@ -59,31 +54,28 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             preprocessor.NgramLetterUnit()
         ]
 
-    def fit(self, inputs: typing.List[tuple]):
+    def fit(self, datapack: DataPack):
         """
         Fit pre-processing context for transformation.
 
-        :param inputs: Inputs to be preprocessed.
+        :param datapack: datapack to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
         vocab = []
-        units = self._prepare_process_unit()
+        units = self._default_preprocess_units()
 
         logger.info("Start building vocabulary & fitting parameters.")
 
-        # Convert user input into a datapack object.
-        self.datapack = segment(inputs, stage='train')
-
         # Loop through user input to generate tri-letters.
         # Used for build vocabulary of tri-letters (get dimension).
-        for idx, row in tqdm(self.datapack.left.iterrows()):
+        for idx, row in tqdm(datapack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
-        for idx, row in tqdm(self.datapack.right.iterrows()):
+        for idx, row in tqdm(datapack.right.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_right
             for unit in units:
@@ -95,48 +87,35 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         vocab_unit.fit(vocab)
 
         # Store the fitted parameters in context.
-        self.datapack.context['term_index'] = vocab_unit.state['term_index']
+        self._context['term_index'] = vocab_unit.state['term_index']
         dim_triletter = len(vocab_unit.state['term_index']) + 1
-        self.datapack.context['input_shapes'] = [(dim_triletter,),
-                                                 (dim_triletter,)]
+        self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
         return self
 
     @utils.validate_context
-    def transform(
-        self,
-        inputs: typing.List[tuple],
-        stage: str
-    ) -> datapack.DataPack:
+    def transform(self, datapack: DataPack) -> DataPack:
         """
         Apply transformation on data, create `tri-letter` representation.
 
-        :param inputs: Inputs to be preprocessed.
-        :param stage: Pre-processing stage, `train`, `evaluate`, `predict`.
+        :param datapack: Inputs to be preprocessed.
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        if stage in ['evaluate', 'predict']:
-            self.datapack = segment(inputs, stage=stage)
+        units = self._default_preprocess_units()
+        hashing = preprocessor.WordHashingUnit(self._context['term_index'])
+        units.append(hashing)
 
-        logger.info(f"Start processing input data for {stage} stage.")
+        datapack_copy = datapack.copy()
 
-        # do preprocessing from scrach.
-        units = self._prepare_process_unit()
-        # prepare word hashing unit.
-        units.append(
-            preprocessor.WordHashingUnit(self.datapack.context['term_index']))
-
-        for idx, row in tqdm(self.datapack.left.iterrows()):
+        for idx, row in tqdm(datapack_copy.left.iterrows()):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
-            self.datapack.left.at[idx, 'text_left'] = text
-            self.datapack.left.at[idx, 'length_left'] = len(text)
-        for idx, row in tqdm(self.datapack.right.iterrows()):
+            datapack_copy.left.at[idx, 'text_left'] = text
+        for idx, row in tqdm(datapack_copy.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
-            self.datapack.right.at[idx, 'text_right'] = text
-            self.datapack.right.at[idx, 'length_right'] = len(text)
+            datapack_copy.right.at[idx, 'text_right'] = text
 
-        return self.datapack
+        return datapack_copy

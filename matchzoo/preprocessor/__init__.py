@@ -1,3 +1,6 @@
+from .arci_preprocessor import ArcIPreprocessor
+from .cdssm_preprocessor import CDSSMPreprocessor
+from .dssm_preprocessor import DSSMPreprocessor
 from .process_units import (
     ProcessorUnit,
     StatefulProcessorUnit,
@@ -12,7 +15,3 @@ from .process_units import (
     WordHashingUnit,
     FixedLengthUnit
 )
-from .segment import segment
-from .dssm_preprocessor import DSSMPreprocessor
-from .arci_preprocessor import ArcIPreprocessor
-from .cdssm_preprocessor import CDSSMPreprocessor

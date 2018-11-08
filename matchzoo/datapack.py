@@ -29,7 +29,6 @@ class DataPack(object):
         ...     relation=relation_df,
         ...     left=left,
         ...     right=right,
-        ...     context=context
         ... )
         >>> len(dp)
         2
@@ -40,11 +39,12 @@ class DataPack(object):
 
     DATA_FILENAME = 'data.dill'
 
-    def __init__(self,
-                 relation: pd.DataFrame,
-                 left: pd.DataFrame,
-                 right: pd.DataFrame,
-                 context: dict = {}):
+    def __init__(
+        self,
+        relation: pd.DataFrame,
+        left: pd.DataFrame,
+        right: pd.DataFrame
+    ):
         """
         Initialize :class:`DataPack`.
 
@@ -53,13 +53,17 @@ class DataPack(object):
         :param left: Store the content or features for id_left.
         :param right: Store the content or features for
             id_right.
-        :param context: Hyper-parameter fitted during
-            pre-processing stage.
         """
         self._relation = relation
         self._left = left
         self._right = right
-        self._context = context
+
+    @property
+    def stage(self):
+        if 'label' in self._relation.columns:
+            return 'train'
+        else:
+            return 'predict'
 
     def __len__(self) -> int:
         """Get numer of rows in the class:`DataPack` object."""
@@ -96,15 +100,10 @@ class DataPack(object):
         """
         self._right = value
 
-    @property
-    def context(self) -> dict:
-        """Get :meth:`context` of class:`DataPack`."""
-        return self._context
-
-    @context.setter
-    def context(self, value: dict):
-        """Set the value of :attr:`context`."""
-        self._context = value
+    def copy(self):
+        return DataPack(left=self._left.copy(),
+                        right=self._right.copy(),
+                        relation=self._relation.copy())
 
     def save(self, dirpath: typing.Union[str, Path]):
         """

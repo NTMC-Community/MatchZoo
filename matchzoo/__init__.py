@@ -10,4 +10,5 @@ from . import generators
 from .version import __version__
 from .logger import logger
 
+from .pack import pack
 from .engine import load_model

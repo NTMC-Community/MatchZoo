@@ -11,7 +11,6 @@ from matchzoo import engine
 from matchzoo import datapack
 from matchzoo import preprocessor
 from matchzoo.embedding import Embedding
-from . import segment
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +78,7 @@ class ArcIPreprocessor(engine.BasePreprocessor):
         logger.info("Start building vocabulary & fitting parameters.")
 
         # Convert user input into a datapack object.
-        self.datapack = segment(inputs, stage='train')
+        self.datapack = pack(inputs, stage='train')
 
         # Loop through user input to generate words.
         # 1. Used for build vocabulary of words (get dimension).
@@ -136,7 +135,7 @@ class ArcIPreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         if stage in ['evaluate', 'predict']:
-            self.datapack = segment(inputs, stage=stage)
+            self.datapack = pack(inputs, stage=stage)
 
         logger.info(f"Start processing input data for {stage} stage.")
 
