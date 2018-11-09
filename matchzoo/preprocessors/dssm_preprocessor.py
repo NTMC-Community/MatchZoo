@@ -1,14 +1,12 @@
 """DSSM Preprocessor."""
 
-import typing
 import logging
 
 from tqdm import tqdm
 
-from matchzoo import utils
+from matchzoo import DataPack
 from matchzoo import engine
-from matchzoo import preprocessor
-from matchzoo.datapack import DataPack
+from matchzoo import preprocessors
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
@@ -31,7 +29,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         ...     train_inputs,
         ...     stage='train')
         >>> type(rv_train)
-        <class 'matchzoo.datapack.DataPack'>
+        <class 'matchzoo.data_pack.DataPack'>
         >>> test_inputs = [("id0",
         ...                 "id4",
         ...                 "beijing",
@@ -40,25 +38,15 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         ...     test_inputs,
         ...     stage='predict')
         >>> type(rv_test)
-        <class 'matchzoo.datapack.DataPack'>
+        <class 'matchzoo.data_pack.DataPack'>
 
     """
 
-    def _preprocess_units(self) -> list:
-        """Prepare needed process units."""
-        return [
-            preprocessor.TokenizeUnit(),
-            preprocessor.LowercaseUnit(),
-            preprocessor.PuncRemovalUnit(),
-            preprocessor.StopRemovalUnit(),
-            preprocessor.NgramLetterUnit(),
-        ]
-
-    def fit(self, datapack: DataPack):
+    def fit(self, data_pack: DataPack):
         """
         Fit pre-processing context for transformation.
 
-        :param datapack: datapack to be preprocessed.
+        :param data_pack: data_pack to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
 
@@ -71,45 +59,57 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             vocab.extend(text)
 
         tqdm.pandas(desc="Preparing `text_left`.")
-        datapack.left['text_left'].progress_apply(transform_and_extend_vocab)
+        data_pack.left['text_left'].progress_apply(transform_and_extend_vocab)
         tqdm.pandas(desc="Preparing `text_right`.")
-        datapack.right['text_right'].progress_apply(transform_and_extend_vocab)
+        data_pack.right['text_right'].progress_apply(
+            transform_and_extend_vocab)
 
-        vocab_unit = preprocessor.VocabularyUnit()
+        vocab_unit = preprocessors.VocabularyUnit()
         vocab_unit.fit(tqdm(vocab, desc='Fitting vocabulary unit.'))
 
-        self._context['term_index'] = vocab_unit.state['term_index']
+        self._context.update(vocab_unit.state)
         dim_triletter = len(vocab_unit.state['term_index']) + 1
         self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
 
         return self
 
-    @utils.validate_context
-    def transform(self, datapack: DataPack) -> DataPack:
+    @engine.validate_context
+    def transform(self, data_pack: DataPack) -> DataPack:
         """
         Apply transformation on data, create `tri-letter` representation.
 
-        :param datapack: Inputs to be preprocessed.
+        :param data_pack: Inputs to be preprocessed.
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        datapack_copy = datapack.copy()
+        data_pack_copy = data_pack.copy()
 
         term_index = self._context['term_index']
-        hashing_unit = preprocessor.WordHashingUnit(term_index)
+        hashing_unit = preprocessors.WordHashingUnit(term_index)
         units = self._preprocess_units() + [hashing_unit]
 
         for unit in units:
             unit_name = str(unit.__class__.__name__)
 
             tqdm.pandas(desc="Processing `text_left` with " + unit_name)
-            left = datapack_copy.left['text_left'].progress_apply(
+            left = data_pack_copy.left['text_left'].progress_apply(
                 unit.transform)
-            datapack_copy.left['text_left'] = left
+            data_pack_copy.left['text_left'] = left
 
             tqdm.pandas(desc="Processing `text_right` with " + unit_name)
-            right = datapack_copy.right['text_right'].progress_apply(
+            right = data_pack_copy.right['text_right'].progress_apply(
                 unit.transform)
-            datapack_copy.right['text_right'] = right
+            data_pack_copy.right['text_right'] = right
 
-        return datapack_copy
+        return data_pack_copy
+
+    @classmethod
+    def _preprocess_units(cls) -> list:
+        """Prepare needed process units."""
+        return [
+            preprocessors.TokenizeUnit(),
+            preprocessors.LowercaseUnit(),
+            preprocessors.PuncRemovalUnit(),
+            preprocessors.StopRemovalUnit(),
+            preprocessors.NgramLetterUnit(),
+        ]

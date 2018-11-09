@@ -1,16 +1,15 @@
 """CDSSM Preprocessor."""
 
-import typing
-import logging
 import itertools
+import logging
+import typing
 
 import numpy as np
 from tqdm import tqdm
 
-from matchzoo import utils
+from matchzoo import DataPack, pack
 from matchzoo import engine
-from matchzoo import preprocessor
-from matchzoo import datapack
+from matchzoo import preprocessors
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +28,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         ...     train_inputs,
         ...     stage='train')
         >>> type(rv_train)
-        <class 'matchzoo.datapack.DataPack'>
+        <class 'matchzoo.data_pack.DataPack'>
         >>> test_inputs = [("id0",
         ...                 "id4",
         ...                 "beijing",
@@ -38,7 +37,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         ...     test_inputs,
         ...     stage='predict')
         >>> type(rv_test)
-        <class 'matchzoo.datapack.DataPack'>
+        <class 'matchzoo.data_pack.DataPack'>
     """
 
     def __init__(self,
@@ -57,7 +56,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             remove values from sequences larger than assumed,
             either at the beginning or at the end of the sequences.
         """
-        self.datapack = None
+        self.data_pack = None
         self._text_length = text_length
         self._pad_value = pad_value
         self._pad_mode = pad_mode
@@ -66,10 +65,10 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
     def _prepare_process_units(self) -> list:
         """Prepare needed process units."""
         return [
-            preprocessor.TokenizeUnit(),
-            preprocessor.LowercaseUnit(),
-            preprocessor.PuncRemovalUnit(),
-            preprocessor.StopRemovalUnit(),
+            preprocessors.TokenizeUnit(),
+            preprocessors.LowercaseUnit(),
+            preprocessors.PuncRemovalUnit(),
+            preprocessors.StopRemovalUnit(),
         ]
 
     def fit(self, inputs: typing.List[tuple]):
@@ -83,45 +82,45 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         """
         vocab = []
         units = self._prepare_process_units()
-        units.append(preprocessor.NgramLetterUnit())
+        units.append(preprocessors.NgramLetterUnit())
 
         logger.info("Start building vocabulary & fitting parameters.")
 
-        # Convert user input into a datapack object.
-        self.datapack = pack(inputs, stage='train')
+        # Convert user input into a data_pack object.
+        self.data_pack = pack(inputs, stage='train')
 
-        for idx, row in tqdm(self.datapack.left.iterrows()):
+        for idx, row in tqdm(self.data_pack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
-        for idx, row in tqdm(self.datapack.right.iterrows()):
+        for idx, row in tqdm(self.data_pack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
         # Initialize a vocabulary process unit to build letter-ngram vocab.
-        vocab_unit = preprocessor.VocabularyUnit()
+        vocab_unit = preprocessors.VocabularyUnit()
         vocab_unit.fit(vocab)
 
         # Store the fitted parameters in context.
-        self.datapack.context['term_index'] = vocab_unit.state['term_index']
+        self.data_pack.context['term_index'] = vocab_unit.state['term_index']
         self._dim_ngram = len(vocab_unit.state['term_index']) + 1
-        self.datapack.context['input_shapes'] = [
+        self.data_pack.context['input_shapes'] = [
             (self._text_length, self._dim_ngram),
             (self._text_length, self._dim_ngram)
         ]
         return self
 
-    @utils.validate_context
+    @engine.validate_context
     def transform(
         self,
         inputs: typing.List[tuple],
         stage: str
-    ) -> datapack.DataPack:
+    ) -> DataPack:
         """
         Apply transformation on data, create `letter-trigram` representation.
 
@@ -131,20 +130,20 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         if stage in ['evaluate', 'predict']:
-            self.datapack = pack(inputs, stage=stage)
+            self.data_pack = pack(inputs, stage=stage)
 
         # prepare pipeline unit.
         units = self._prepare_process_units()
-        ngram_unit = preprocessor.NgramLetterUnit()
-        hash_unit = preprocessor.WordHashingUnit(
-            self.datapack.context['term_index'])
-        fix_unit = preprocessor.FixedLengthUnit(
+        ngram_unit = preprocessors.NgramLetterUnit()
+        hash_unit = preprocessors.WordHashingUnit(
+            self.data_pack.context['term_index'])
+        fix_unit = preprocessors.FixedLengthUnit(
             self._text_length * self._dim_ngram, self._pad_value,
             self._pad_mode, self._truncate_mode)
 
         logger.info(f"Start processing input data for {stage} stage.")
 
-        for idx, row in tqdm(self.datapack.left.iterrows()):
+        for idx, row in tqdm(self.data_pack.left.iterrows()):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
@@ -156,10 +155,10 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             text = fix_unit.transform(text)
             length = min(length, self._text_length) * self._dim_ngram
             text = np.reshape(text, (self._text_length, -1))
-            self.datapack.left.at[idx, 'text_left'] = text.tolist()
-            self.datapack.left.at[idx, 'length_left'] = length
+            self.data_pack.left.at[idx, 'text_left'] = text.tolist()
+            self.data_pack.left.at[idx, 'length_left'] = length
 
-        for idx, row in tqdm(self.datapack.right.iterrows()):
+        for idx, row in tqdm(self.data_pack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
@@ -170,7 +169,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             text = fix_unit.transform(text)
             length = min(length, self._text_length) * self._dim_ngram
             text = np.reshape(text, (self._text_length, -1))
-            self.datapack.right.at[idx, 'text_right'] = text.tolist()
-            self.datapack.right.at[idx, 'length_right'] = length
+            self.data_pack.right.at[idx, 'text_right'] = text.tolist()
+            self.data_pack.right.at[idx, 'length_right'] = length
 
-        return self.datapack
+        return self.data_pack

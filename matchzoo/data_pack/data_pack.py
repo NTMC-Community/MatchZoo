@@ -160,27 +160,30 @@ class DataPack(object):
 
         dill.dump(self, open(data_file_path, mode='wb'))
 
+    def infer_length(self):
+        self.left['length_left'] = self.left['text_left'].apply(len)
+        self.right['length_right'] = self.right['text_right'].apply(len)
+
 
 class DataPackFrameView(object):
-    def __init__(self, datapack):
-        self._datapack = datapack
+    def __init__(self, data_pack):
+        self._data_pack = data_pack
 
     def __getitem__(self, index):
-        dp = self._datapack
+        dp = self._data_pack
         index = convert_to_list_index(index, len(dp))
-        left_ids = dp.relation['id_left'][index]
-        right_ids = dp.relation['id_right'][index]
-        left_df = dp.left.loc[left_ids].reset_index()
-        right_df = dp.right.loc[right_ids].reset_index()
+        left_df = dp.left.loc[dp.relation['id_left'][index]].reset_index()
+        right_df = dp.right.loc[dp.relation['id_right'][index]].reset_index()
         joined_table = left_df.join(right_df)
         if dp.has_label:
             labels = dp.relation['label'][index].to_frame()
             labels = labels.reset_index(drop=True)
-            joined_table = joined_table.join(labels)
-        return joined_table
+            return joined_table.join(labels)
+        else:
+            return joined_table
 
 
-def load_datapack(dirpath: typing.Union[str, Path]) -> DataPack:
+def load_data_pack(dirpath: typing.Union[str, Path]) -> DataPack:
     """
     Load a :class:`DataPack`. The reverse function of :meth:`save`.
 

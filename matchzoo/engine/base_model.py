@@ -161,7 +161,7 @@ class BaseModel(abc.ABC):
 
     def fit_generator(
         self,
-        generator: 'engine.BaseGenerator',
+        generator: 'engine.DataGenerator',
         steps_per_epoch: int = None,
         epochs: int = 1,
         verbose: int = 1
@@ -172,7 +172,7 @@ class BaseModel(abc.ABC):
         See :meth:`keras.models.Model.fit_generator` for more details.
 
         :param generator: A generator, an instance of
-            :class:`engine.BaseGenerator`.
+            :class:`engine.DataGenerator`.
         :param steps_per_epoch: Total number of steps (batches of samples)
             to yield from :attr:`generator` object.
         :param epochs: Number of epochs to train the model.
@@ -226,7 +226,7 @@ class BaseModel(abc.ABC):
             >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
             >>> right.set_index('id_right', inplace=True)
             >>> generator = mz.generators.ListGenerator(
-            ...     mz.datapack.DataPack(relation=relation,
+            ...     engine.data_pack.DataPack(relation=relation,
             ...                          left=left,
             ...                          right=right)
             ... )

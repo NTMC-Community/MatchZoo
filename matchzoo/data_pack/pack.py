@@ -2,7 +2,7 @@
 
 import pandas as pd
 
-from matchzoo import datapack
+from . import DataPack
 
 
 def has_label(data: list):
@@ -14,7 +14,7 @@ def has_label(data: list):
         raise ValueError('Invalid data format.')
 
 
-def pack(data: list) -> datapack.DataPack:
+def pack(data: list) -> DataPack:
     """
     Pack user input into :class:`DataPack`.
 
@@ -46,6 +46,6 @@ def pack(data: list) -> datapack.DataPack:
     right.set_index('id_right', inplace=True)
     # Infer the length of the text right
 
-    return datapack.DataPack(relation=relation,
-                             left=left,
-                             right=right)
+    return DataPack(relation=relation,
+                    left=left,
+                    right=right)

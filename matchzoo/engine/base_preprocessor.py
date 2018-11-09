@@ -2,11 +2,23 @@
 
 import abc
 import typing
-
-import dill
 from pathlib import Path
 
-from matchzoo import datapack
+import dill
+
+from matchzoo import DataPack
+
+
+def validate_context(func):
+    """Validate context in the preprocessor."""
+
+    def transform_wrapper(self, *args, **kwargs):
+        if not self.context:
+            raise ValueError(
+                'Please fit parameters before transformation.')
+        return func(self, *args, **kwargs)
+
+    return transform_wrapper
 
 
 class BasePreprocessor(metaclass=abc.ABCMeta):
@@ -37,7 +49,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def transform(self, inputs: list) -> datapack.DataPack:
+    def transform(self, inputs: list) -> DataPack:
         """
         Transform input data to expected manner.
 
@@ -48,7 +60,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             or list of text-left, text-right tuples.
         """
 
-    def fit_transform(self, inputs: list) -> datapack.DataPack:
+    def fit_transform(self, inputs: list) -> DataPack:
         """
         Call fit-transform.
 
@@ -77,7 +89,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         dill.dump(self, open(data_file_path, mode='wb'))
 
 
-def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:
+def load_preprocessor(dirpath: typing.Union[str, Path]) -> DataPack:
     """
     Load the fitted `context`. The reverse function of :meth:`save`.
 
