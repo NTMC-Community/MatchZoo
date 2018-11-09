@@ -87,7 +87,7 @@ class PointGenerator(engine.BaseGenerator):
         sliced_data = self._datapack[index_array]
         columns = list(sliced_data.columns)
 
-        if self._datapack.stage == 'train':
+        if self._datapack.has_label:
             columns.remove('label')
             y = np.array(sliced_data['label'])
         else:

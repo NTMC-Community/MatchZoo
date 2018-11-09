@@ -5,11 +5,11 @@ import pandas as pd
 from matchzoo import datapack
 
 
-def infer_stage(data: list):
+def has_label(data: list):
     if data and len(data[0]) == 5:
-        return 'train'
+        return True
     elif len(data[0]) == 4:
-        return 'predict'
+        return False
     else:
         raise ValueError('Invalid data format.')
 
@@ -26,7 +26,7 @@ def pack(data: list) -> datapack.DataPack:
     col_all = ['id_left', 'id_right', 'text_left', 'text_right']
     col_relation = ['id_left', 'id_right']
 
-    if infer_stage(data) == 'train':
+    if has_label(data):
         col_relation.append('label')
         col_all.append('label')
 

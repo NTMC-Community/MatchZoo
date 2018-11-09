@@ -7,6 +7,14 @@ import dill
 import pandas as pd
 
 
+def convert_to_list_index(index, length):
+    if isinstance(index, int):
+        index = [index]
+    elif isinstance(index, slice):
+        index = list(range(*index.indices(length)))
+    return index
+
+
 class DataPack(object):
     """
     Matchzoo :class:`DataPack` data structure, store dataframe and context.
@@ -59,29 +67,25 @@ class DataPack(object):
         self._right = right
 
     @property
-    def stage(self):
-        if 'label' in self._relation.columns:
-            return 'train'
-        else:
-            return 'predict'
+    def has_label(self):
+        return 'label' in self._relation.columns
 
     def __len__(self) -> int:
         """Get numer of rows in the class:`DataPack` object."""
         return self._relation.shape[0]
 
+    @property
+    def frame(self):
+        return DataPackFrameView(self)
+
     def __getitem__(self, index):
-        if isinstance(index, int):
-            index = [index]
-        elif isinstance(index, slice):
-            index = list(range(*index.indices(len(self))))
-        left_ids = self._relation['id_left'][index]
-        right_ids = self._relation['id_right'][index]
-        left_df = self._left.loc[left_ids].reset_index().set_index([index])
-        right_df = self._right.loc[right_ids].reset_index().set_index([index])
-        ret = left_df.join(right_df)
-        if self.stage == 'train':
-            ret = ret.join(self._relation['label'][index].to_frame())
-        return ret
+        index = convert_to_list_index(index, len(self))
+        relation = self._relation.loc[index].reset_index(drop=True)
+        left = self._left.loc[relation['id_left'].unique()]
+        right = self._right.loc[relation['id_right'].unique()]
+        return DataPack(left=left.copy(),
+                        right=right.copy(),
+                        relation=relation.copy())
 
     @property
     def relation(self) -> pd.DataFrame:
@@ -138,6 +142,24 @@ class DataPack(object):
             dirpath.mkdir()
 
         dill.dump(self, open(data_file_path, mode='wb'))
+
+
+class DataPackFrameView(object):
+    def __init__(self, datapack):
+        self._datapack = datapack
+
+    def __getitem__(self, index):
+        dp = self._datapack
+        index = convert_to_list_index(index, len(dp))
+        left_ids = dp.relation['id_left'][index]
+        right_ids = dp.relation['id_right'][index]
+        left_df = dp.left.loc[left_ids].reset_index().set_index([index])
+        right_df = dp.right.loc[right_ids].reset_index().set_index([index])
+        joined_table = left_df.join(right_df)
+        if dp.has_label:
+            labels = dp.relation['label'][index].to_frame()
+            joined_table = joined_table.join(labels)
+        return joined_table
 
 
 def load_datapack(dirpath: typing.Union[str, Path]) -> DataPack:
