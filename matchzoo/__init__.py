@@ -1,7 +1,9 @@
 from .logger import logger
 from .version import __version__
 
-from .data_pack import DataPack, upsample, pack
+from . import processor_units
+from .processor_units import chain_transform
+from .data_pack import DataPack, upsample, pack, build_vocab
 from .data_generator import DataGenerator
 
 from . import tasks

@@ -4,9 +4,9 @@ import logging
 
 from tqdm import tqdm
 
+from matchzoo import engine, preprocessors, processor_units
 from matchzoo import DataPack
-from matchzoo import engine
-from matchzoo import preprocessors
+from matchzoo import chain_transform, build_vocab
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
@@ -49,23 +49,13 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :param data_pack: data_pack to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
-
-        vocab = []
         units = self._preprocess_units()
-
-        def transform_and_extend_vocab(text):
-            for unit in units:
-                text = unit.transform(text)
-            vocab.extend(text)
-
-        data_pack.apply_on_text(transform_and_extend_vocab)
-
-        vocab_unit = preprocessors.VocabularyUnit()
-        vocab_unit.fit(tqdm(vocab, desc='Fitting vocabulary unit.'))
+        data_pack = data_pack.apply_on_text(chain_transform(units))
+        vocab_unit = build_vocab(data_pack)
 
         self._context.update(vocab_unit.state)
-        dim_triletter = len(vocab_unit.state['term_index']) + 1
-        self._context['input_shapes'] = [(dim_triletter,), (dim_triletter,)]
+        triletter_dim = len(vocab_unit.state['term_index']) + 1
+        self._context['input_shapes'] = [(triletter_dim,), (triletter_dim,)]
 
         return self
 
@@ -80,19 +70,18 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         """
         data_pack = data_pack.copy()
         term_index = self._context['term_index']
-        hashing_unit = preprocessors.WordHashingUnit(term_index)
+        hashing_unit = processor_units.WordHashingUnit(term_index)
         units = self._preprocess_units() + [hashing_unit]
-        for unit in units:
-            data_pack.apply_on_text(unit.transform, inplace=True)
+        data_pack.apply_on_text(chain_transform(units), inplace=True)
         return data_pack
 
     @classmethod
     def _preprocess_units(cls) -> list:
         """Prepare needed process units."""
         return [
-            preprocessors.TokenizeUnit(),
-            preprocessors.LowercaseUnit(),
-            preprocessors.PuncRemovalUnit(),
-            preprocessors.StopRemovalUnit(),
-            preprocessors.NgramLetterUnit(),
+            processor_units.TokenizeUnit(),
+            processor_units.LowercaseUnit(),
+            processor_units.PuncRemovalUnit(),
+            processor_units.StopRemovalUnit(),
+            processor_units.NgramLetterUnit(),
         ]
