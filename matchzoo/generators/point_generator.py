@@ -77,24 +77,11 @@ class PointGenerator(engine.BaseGenerator):
 
     def _get_batch_of_transformed_samples(
         self,
-        index_array: np.array
+        indices: np.array
     ) -> typing.Tuple[dict, typing.Any]:
         """Get a batch of samples based on their ids.
 
-        :param index_array: a list of instance ids.
+        :param indices: a list of instance ids.
         :return: A batch of transformed samples.
         """
-        sliced_data = self._datapack[index_array]
-        columns = list(sliced_data.columns)
-
-        if self._datapack.has_label:
-            columns.remove('label')
-            y = np.array(sliced_data['label'])
-        else:
-            y = None
-
-        x = sliced_data[columns].to_dict(orient='list')
-        for key, val in x.items():
-            x[key] = np.array(val)
-
-        return x, y
+        return self._datapack[indices].unpack()

@@ -45,7 +45,6 @@ def pack(data: list) -> datapack.DataPack:
     right = df[['id_right', 'text_right']].drop_duplicates(['id_right'])
     right.set_index('id_right', inplace=True)
     # Infer the length of the text right
-    # right['length_right'] = right.apply(lambda r: len(r['text_right']), axis=1)
 
     return datapack.DataPack(relation=relation,
                              left=left,

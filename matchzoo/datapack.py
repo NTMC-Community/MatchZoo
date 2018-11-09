@@ -4,6 +4,7 @@ import typing
 from pathlib import Path
 
 import dill
+import numpy as np
 import pandas as pd
 
 
@@ -77,6 +78,22 @@ class DataPack(object):
     @property
     def frame(self):
         return DataPackFrameView(self)
+
+    def unpack(self):
+        frame = self.frame[:]
+
+        columns = list(frame.columns)
+        if self.has_label:
+            columns.remove('label')
+            y = np.array(frame['label'])
+        else:
+            y = None
+
+        x = frame[columns].to_dict(orient='list')
+        for key, val in x.items():
+            x[key] = np.array(val)
+
+        return x, y
 
     def __getitem__(self, index):
         index = convert_to_list_index(index, len(self))
@@ -153,11 +170,12 @@ class DataPackFrameView(object):
         index = convert_to_list_index(index, len(dp))
         left_ids = dp.relation['id_left'][index]
         right_ids = dp.relation['id_right'][index]
-        left_df = dp.left.loc[left_ids].reset_index().set_index([index])
-        right_df = dp.right.loc[right_ids].reset_index().set_index([index])
+        left_df = dp.left.loc[left_ids].reset_index()
+        right_df = dp.right.loc[right_ids].reset_index()
         joined_table = left_df.join(right_df)
         if dp.has_label:
             labels = dp.relation['label'][index].to_frame()
+            labels = labels.reset_index(drop=True)
             joined_table = joined_table.join(labels)
         return joined_table
 
