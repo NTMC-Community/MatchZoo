@@ -49,4 +49,4 @@ class NormalizedDiscountedCumulativeGain(engine.BaseMetric):
                                               threshold=self._threshold)
         idcg_val = dcg_metric(y_true, y_true)
         dcg_val = dcg_metric(y_true, y_pred)
-        return dcg_val / idcg_val
+        return dcg_val / idcg_val if idcg_val != 0 else 0
