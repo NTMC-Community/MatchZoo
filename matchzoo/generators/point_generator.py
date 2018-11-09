@@ -15,42 +15,6 @@ class PointGenerator(engine.BaseGenerator):
     Ponit generator can be used for classification as well as ranking.
 
     Examples:
-        >>> import pandas as pd
-        >>> relation = [['qid0', 'did0', 1]]
-        >>> left = [['qid0', [1, 2]]]
-        >>> right = [['did0', [2, 3]]]
-        >>> relation = pd.DataFrame(relation,
-        ...                         columns=['id_left', 'id_right', 'label'])
-        >>> left = pd.DataFrame(left, columns=['id_left', 'text_left'])
-        >>> left.set_index('id_left', inplace=True)
-        >>> left['length_left'] = left.apply(lambda x: len(x['text_left']),
-        ...                                  axis=1)
-        >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
-        >>> right.set_index('id_right', inplace=True)
-        >>> right['length_right'] = right.apply(lambda x: len(x['text_right']),
-        ...                                     axis=1)
-        >>> input = datapack.DataPack(relation=relation,
-        ...                           left=left,
-        ...                           right=right
-        ... )
-        >>> task = tasks.Classification()
-        >>> generator = PointGenerator(input, task, 1, 'train', False)
-        >>> x, y = generator[0]
-        >>> x['text_left'].tolist()
-        [[1, 2]]
-        >>> x['text_right'].tolist()
-        [[2, 3]]
-        >>> x['id_left'].tolist()
-        ['qid0']
-        >>> x['id_right'].tolist()
-        ['did0']
-        >>> x['length_left'].tolist()
-        [2]
-        >>> x['length_right'].tolist()
-        [2]
-        >>> y.tolist()
-        [[0.0, 1.0]]
-
     """
 
     def __init__(
@@ -58,7 +22,6 @@ class PointGenerator(engine.BaseGenerator):
         datapack,
         batch_size: int = 32,
         shuffle: bool = True,
-        post_process=None
     ):
         """Construct the point generator.
 
@@ -69,7 +32,6 @@ class PointGenerator(engine.BaseGenerator):
             batch.
         """
         self._datapack = datapack
-        self._post_process = post_process
         super().__init__(batch_size, len(datapack.relation), shuffle)
 
     def _get_batch_of_transformed_samples(
