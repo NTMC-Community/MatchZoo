@@ -4,8 +4,11 @@ import typing
 from pathlib import Path
 
 import dill
+from tqdm import tqdm
 import numpy as np
 import pandas as pd
+
+tqdm.pandas()
 
 
 def convert_to_list_index(index, length):
@@ -160,9 +163,30 @@ class DataPack(object):
 
         dill.dump(self, open(data_file_path, mode='wb'))
 
-    def infer_length(self):
-        self.left['length_left'] = self.left['text_left'].apply(len)
-        self.right['length_right'] = self.right['text_right'].apply(len)
+    def append_text_length(self, inplace=False):
+        return self.apply_on_text(len, inplace=inplace,
+                                  names=('length_left', 'length_right'))
+
+    def apply_on_text(self, func, inplace=False,
+                      names=('text_left', 'text_right')):
+        if inplace:
+            pack = self
+        else:
+            pack = self.copy()
+
+        left_name, right_name = names
+        func_name = func.__name__
+
+        tqdm.pandas(desc="Processing `text_left` with " + func_name)
+        left = pack.left['text_left'].progress_apply(func)
+        pack.left[left_name] = left
+
+        tqdm.pandas(desc="Processing `text_right` with " + func_name)
+        right = pack.right['text_right'].progress_apply(func)
+        pack.right[right_name] = right
+
+        if not inplace:
+            return pack
 
 
 class DataPackFrameView(object):

@@ -58,11 +58,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                 text = unit.transform(text)
             vocab.extend(text)
 
-        tqdm.pandas(desc="Preparing `text_left`.")
-        data_pack.left['text_left'].progress_apply(transform_and_extend_vocab)
-        tqdm.pandas(desc="Preparing `text_right`.")
-        data_pack.right['text_right'].progress_apply(
-            transform_and_extend_vocab)
+        data_pack.apply_on_text(transform_and_extend_vocab)
 
         vocab_unit = preprocessors.VocabularyUnit()
         vocab_unit.fit(tqdm(vocab, desc='Fitting vocabulary unit.'))
@@ -82,26 +78,13 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        data_pack_copy = data_pack.copy()
-
+        data_pack = data_pack.copy()
         term_index = self._context['term_index']
         hashing_unit = preprocessors.WordHashingUnit(term_index)
         units = self._preprocess_units() + [hashing_unit]
-
         for unit in units:
-            unit_name = str(unit.__class__.__name__)
-
-            tqdm.pandas(desc="Processing `text_left` with " + unit_name)
-            left = data_pack_copy.left['text_left'].progress_apply(
-                unit.transform)
-            data_pack_copy.left['text_left'] = left
-
-            tqdm.pandas(desc="Processing `text_right` with " + unit_name)
-            right = data_pack_copy.right['text_right'].progress_apply(
-                unit.transform)
-            data_pack_copy.right['text_right'] = right
-
-        return data_pack_copy
+            data_pack.apply_on_text(unit.transform, inplace=True)
+        return data_pack
 
     @classmethod
     def _preprocess_units(cls) -> list:
