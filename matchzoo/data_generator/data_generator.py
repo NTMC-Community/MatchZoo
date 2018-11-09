@@ -83,7 +83,8 @@ class DataGenerator(keras.utils.Sequence):
             self._indices = np.arange(num_instances)
 
 
-class UnitPostProcessDataGenerator(DataGenerator):
+# Example: dynamic pre-processing with a unit
+class UnitDynamicDataGenerator(DataGenerator):
     def __init__(self, *args, unit=None, **kwargs):
         super().__init__(*args, **kwargs)
         self._unit = unit
@@ -96,7 +97,8 @@ class UnitPostProcessDataGenerator(DataGenerator):
         return dp.unpack()
 
 
-class PostProcessDataGenerator(DataGenerator):
+# Example: generalized dynamic pre-processing
+class DynamicDataGenerator(DataGenerator):
     def __init__(self, *args, func=None, **kwargs):
         super().__init__(*args, **kwargs)
         self._func = func
@@ -108,6 +110,7 @@ class PostProcessDataGenerator(DataGenerator):
         return dp.unpack()
 
 
+# Example: implement the good old pair-generator
 class OrigPairGeneratorUsingNewInterface(DataGenerator):
     def __init__(self, *args, num_neg=1, num_dup=4, **kwargs):
         super().__init__(*args, **kwargs)
@@ -120,6 +123,7 @@ class OrigPairGeneratorUsingNewInterface(DataGenerator):
                         num_neg=self._num_neg).unpack()
 
 
+# Example: doing upsampling and dynamic pre-processing at the same time
 class DataGeneratorFusion(DataGenerator):
     def __init__(self, *args, num_neg=1, num_dup=1, unit=None, **kwargs):
         super().__init__(*args, **kwargs)
