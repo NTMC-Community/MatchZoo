@@ -164,7 +164,8 @@ class BaseModel(abc.ABC):
         self,
         generator: DataGenerator,
         epochs: int = 1,
-        verbose: int = 1
+        verbose: int = 1,
+        **kwargs
     ) -> keras.callbacks.History:
         """
         Fit the model with matchzoo `generator`.
@@ -184,7 +185,7 @@ class BaseModel(abc.ABC):
             generator=generator,
             steps_per_epoch=len(generator),
             epochs=epochs,
-            verbose=verbose
+            verbose=verbose, **kwargs
         )
 
     def evaluate(
