@@ -34,17 +34,18 @@ class DataGenerator(keras.utils.Sequence):
         self._batch_size = batch_size
         self._shuffle = shuffle
 
-        self._indices = None
+        self._batch_indices = None
         self._set_indices()
 
-    def __getitem__(self, idx: int) -> typing.Tuple[dict, list]:
+    def __getitem__(self, item: int) -> typing.Tuple[dict, list]:
         """Get a batch from index idx.
 
-        :param idx: the index of the batch.
+        :param item: the index of the batch.
         """
-        lower = self._batch_size * idx
-        upper = self._batch_size * (idx + 1)
-        indices = self._indices[lower:upper]
+        if isinstance(item, slice):
+            indices = sum(self._batch_indices[item], [])
+        else:
+            indices = self._batch_indices[item]
         return self._get_batch_of_transformed_samples(indices)
 
     def _get_batch_of_transformed_samples(
@@ -78,9 +79,14 @@ class DataGenerator(keras.utils.Sequence):
         """
         num_instances = len(self._data_pack)
         if self._shuffle:
-            self._indices = np.random.permutation(num_instances)
+            index_pool = np.random.permutation(num_instances).tolist()
         else:
-            self._indices = np.arange(num_instances)
+            index_pool = list(range(num_instances))
+        self._batch_indices = []
+        for i in range(len(self)):
+            lower = self._batch_size * i
+            upper = self._batch_size * (i + 1)
+            self._batch_indices.append(index_pool[lower: upper])
 
 
 # Example: dynamic pre-processing with a unit
