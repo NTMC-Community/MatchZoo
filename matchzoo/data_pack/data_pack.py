@@ -199,6 +199,7 @@ class DataPackFrameView(object):
         left_df = dp.left.loc[dp.relation['id_left'][index]].reset_index()
         right_df = dp.right.loc[dp.relation['id_right'][index]].reset_index()
         joined_table = left_df.join(right_df)
+        # TODO: join other columns of relation
         if dp.has_label:
             labels = dp.relation['label'][index].to_frame()
             labels = labels.reset_index(drop=True)

@@ -71,17 +71,20 @@ class DataGenerator(keras.utils.Sequence):
         """Reset the generator from begin."""
         self._set_indices()
 
+    @property
+    def num_instance(self):
+        return len(self._data_pack)
+
     def _set_indices(self):
         """
         Set the :attr:`index_array`.
 
         Here the :attr:`index_array` records the index of all the instances.
         """
-        num_instances = len(self._data_pack)
         if self._shuffle:
-            index_pool = np.random.permutation(num_instances).tolist()
+            index_pool = np.random.permutation(self.num_instance).tolist()
         else:
-            index_pool = list(range(num_instances))
+            index_pool = list(range(self.num_instance))
         self._batch_indices = []
         for i in range(len(self)):
             lower = self._batch_size * i
@@ -96,37 +99,19 @@ class UnitDynamicDataGenerator(DataGenerator):
         self._unit = unit
 
     def _get_batch_of_transformed_samples(self, indices: np.array):
-        dp = self._data_pack[indices].copy()
-        func = self._unit.transform
-        dp.left['text_left'] = dp.left['text_left'].apply(func)
-        dp.right['text_right'] = dp.right['text_right'].apply(func)
-        return dp.unpack()
-
-
-# Example: generalized dynamic pre-processing
-class DynamicDataGenerator(DataGenerator):
-    def __init__(self, *args, func=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._func = func
-
-    def _get_batch_of_transformed_samples(self, indices: np.array):
-        dp = self._data_pack[indices].copy()
-        dp.left['text_left'] = dp.left['text_left'].apply(self._func)
-        dp.right['text_right'] = dp.right['text_right'].apply(self._func)
-        return dp.unpack()
+        return self._data_pack[indices].apply_on_text(
+            self._unit.transform).unpack()
 
 
 # Example: implement the good old pair-generator
 class OrigPairGeneratorUsingNewInterface(DataGenerator):
-    def __init__(self, *args, num_neg=1, num_dup=4, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._num_dup = num_dup
-        self._num_neg = num_neg
+    def __init__(self, data_pack, num_neg=1, num_dup=4, **kwargs):
+        super().__init__(data_pack, **kwargs)
+        self._data_pack = upsample(data_pack(num_neg, num_neg))
 
-    def _get_batch_of_transformed_samples(self, indices):
-        return upsample(self._data_pack[indices],
-                        num_dup=self._num_dup,
-                        num_neg=self._num_neg).unpack()
+    @property
+    def num_instances(self):
+        return 'blah'
 
 
 # Example: doing upsampling and dynamic pre-processing at the same time

@@ -7,6 +7,7 @@ from pathlib import Path
 import dill
 
 from matchzoo import DataPack
+from matchzoo import processor_units
 
 
 def validate_context(func):
@@ -87,6 +88,18 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             dirpath.mkdir()
 
         dill.dump(self, open(data_file_path, mode='wb'))
+
+    @classmethod
+    @abc.abstractmethod
+    def _default_processor_units(cls) -> list:
+        """Prepare needed process units."""
+        return [
+            processor_units.TokenizeUnit(),
+            processor_units.LowercaseUnit(),
+            processor_units.PuncRemovalUnit(),
+            processor_units.StopRemovalUnit(),
+            processor_units.NgramLetterUnit(),
+        ]
 
 
 def load_preprocessor(dirpath: typing.Union[str, Path]) -> DataPack:

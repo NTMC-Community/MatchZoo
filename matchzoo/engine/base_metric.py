@@ -30,9 +30,7 @@ class BaseMetric(abc.ABC):
 def sort_and_couple(labels: list, scores: list) -> list:
     """Zip the `labels` with `scores` into a single list."""
     couple = list(zip(labels, scores))
-    random.shuffle(couple)
-    sorted_couple = sorted(couple, key=lambda x: x[1], reverse=True)
-    return sorted_couple
+    return sorted(couple, key=lambda x: x[1], reverse=True)
 
 
 def parse_metric(metric: typing.Union[str,
