@@ -6,7 +6,7 @@ import typing
 import keras
 import numpy as np
 
-from matchzoo import upsample
+from matchzoo import reorganize_data_pack_pair_wise
 
 
 class DataGenerator(keras.utils.Sequence):
@@ -107,7 +107,7 @@ class UnitDynamicDataGenerator(DataGenerator):
 class OrigPairGeneratorUsingNewInterface(DataGenerator):
     def __init__(self, data_pack, num_neg=1, num_dup=4, **kwargs):
         super().__init__(data_pack, **kwargs)
-        self._data_pack = upsample(data_pack(num_neg, num_neg))
+        self._data_pack = reorganize_data_pack_pair_wise(data_pack(num_neg, num_neg))
 
     @property
     def num_instances(self):
@@ -127,5 +127,5 @@ class DataGeneratorFusion(DataGenerator):
         func = self._unit.transform
         dp.left['text_left'] = dp.left['text_left'].apply(func)
         dp.right['text_right'] = dp.right['text_right'].apply(func)
-        return upsample(dp, num_dup=self._num_dup,
-                        num_neg=self._num_neg).unpack()
+        return reorganize_data_pack_pair_wise(dp, num_dup=self._num_dup,
+                                              num_neg=self._num_neg).unpack()

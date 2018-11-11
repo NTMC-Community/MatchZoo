@@ -5,7 +5,7 @@ import pandas as pd
 from . import DataPack
 
 
-def upsample(data_pack, num_dup=1, num_neg=0):
+def reorganize_data_pack_pair_wise(data_pack, num_dup=1, num_neg=0):
     pairs = []
     groups = data_pack.relation.sort_values(
         'label', ascending=False).groupby('id_left')
