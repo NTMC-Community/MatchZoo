@@ -1,17 +1,19 @@
-"""An implementation of ArcI Model."""
+"""An implementation of MvLstm Model."""
 from matchzoo import engine
 import typing
 import numpy as np
+import keras.backend as K
 from keras.models import Model
+from keras.layers.wrappers import Bidirectional
 from keras.layers import Input, Embedding, Conv1D, MaxPooling1D, Dropout, \
-    Concatenate, Flatten
+    Concatenate, Flatten, LSTM, Dot, Reshape, Lambda, Flatten, Dense
 
 
-class ArcIModel(engine.BaseModel):
+class MvLstmModel(engine.BaseModel):
     """
-    ArcI Model.
+    MvLstm Model.
     Examples:
-        >>> model = ArcIModel()
+        >>> model = MvLstmModel()
         >>> model.guess_and_fill_missing_params()
         >>> model.build()
     """
@@ -25,33 +27,17 @@ class ArcIModel(engine.BaseModel):
         params.add(engine.Param('trainable_embedding', False))
         params.add(engine.Param('embedding_dim', 300))
         params.add(engine.Param('vocab_size', 100))
-        params.add(engine.Param('num_blocks', 1))
-        params.add(engine.Param('left_kernel_count', [32]))
-        params.add(engine.Param('left_kernel_size', [3]))
-        params.add(engine.Param('right_kernel_count', [32]))
-        params.add(engine.Param('right_kernel_size', [3]))
-        params.add(engine.Param('activation', 'relu'))
-        params.add(engine.Param('left_pool_size', [2]))
-        params.add(engine.Param('right_pool_size', [2]))
+        params.add(engine.Param('hidden_size', 32))
+        params.add(engine.Param('top_k', 10))
         params.add(engine.Param('padding', 'same'))
         params.add(engine.Param('dropout_rate', 0.0))
         params.add(engine.Param('embedding_mat', None))
-        params.add(engine.Param('embedding_random_scale', 0.2))
+        params.add(engine.Param('embedding_random_scale', 0.0))
         return params
-
-    def _conv_pool_block(self, input: typing.Any, kernel_count: int,
-                         kernel_size: int, padding: str, activation: str,
-                         pool_size: int) -> typing.Any:
-        output = Conv1D(kernel_count,
-                        kernel_size,
-                        padding=padding,
-                        activation=activation)(input)
-        output = MaxPooling1D(pool_size=pool_size)(output)
-        return output
 
     @property
     def embedding_mat(self) -> np.ndarray:
-        """Get pretrained embedding for ArcI model."""
+        """Get pretrained embedding for MvLstm model."""
         # Check if provided embedding matrix
         if self._params['embedding_mat'] is None:
             s = self._params['embedding_random_scale']
@@ -63,7 +49,7 @@ class ArcIModel(engine.BaseModel):
     @embedding_mat.setter
     def embedding_mat(self, embedding_mat: np.ndarray):
         """
-        Set pretrained embedding for ArcI model.
+        Set pretrained embedding for MvLstm model.
         :param embedding_mat: pretrained embedding in numpy format.
         """
         self._params['embedding_mat'] = embedding_mat
@@ -73,8 +59,13 @@ class ArcIModel(engine.BaseModel):
     def build(self):
         """
         Build model structure.
-        ArcI use Siamese arthitecture.
+        MvLstm use Siamese arthitecture.
         """
+
+        def _top_k(inputs: typing.Any, max_k: int) -> typing.Any:
+            x = K.tf.nn.top_k(inputs, k=max_k, sorted=True)[0]
+            return x
+
         # Left input and right input.
         input_left = Input(name='text_left',
                            shape=self._params['input_shapes'][0])
@@ -85,31 +76,21 @@ class ArcIModel(engine.BaseModel):
                               self._params['embedding_dim'],
                               weights=[self.embedding_mat],
                               trainable=self._params['trainable_embedding'])
+        bi_lstm = Bidirectional(LSTM(self._params['hidden_size'],
+                              return_sequences=True,
+                              dropout=self._params['dropout_rate']))
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
 
-        for i in range(self._params['num_blocks']):
-            embed_left = self._conv_pool_block(
-                embed_left,
-                self._params['left_kernel_count'][i],
-                self._params['left_kernel_size'][i],
-                self._params['padding'],
-                self._params['activation'],
-                self._params['left_pool_size'][i]
-            )
-            embed_right = self._conv_pool_block(
-                embed_right,
-                self._params['right_kernel_count'][i],
-                self._params['right_kernel_size'][i],
-                self._params['padding'],
-                self._params['activation'],
-                self._params['right_pool_size'][i]
-            )
+        rep_left = bi_lstm(embed_left)
+        rep_right = bi_lstm(embed_right)
+        cross = Dot(axes=[1, 1], normalize=False)([rep_left, rep_right])
+        cross = Reshape((-1, ))(cross)
 
-        embed_flat = Flatten()(Concatenate(axis=1)([embed_left, embed_right]))
-        x = Dropout(rate=self._params['dropout_rate'])(embed_flat)
+        mm_k = Lambda(_top_k, arguments={"max_k": self._params['top_k']})(cross)
+        mm_k = Dropout(rate=self._params['dropout_rate'])(mm_k)
 
-        x_out = self._make_output_layer()(x)
+        x_out = self._make_output_layer()(mm_k)
         self._backend = Model(
             inputs=[input_left, input_right],
             outputs=x_out)
