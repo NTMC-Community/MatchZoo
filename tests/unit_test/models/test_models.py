@@ -1,4 +1,5 @@
 import numpy as np
+from pathlib import Path
 import shutil
 
 import pytest
@@ -61,17 +62,18 @@ def compiled_model(raw_model, task):
 @pytest.fixture
 def x(compiled_model, num_samples):
     model, input_dtypes = compiled_model
-    rand_func = {np.float32: 
-                    lambda x: np.random.uniform(low=-1, high=1, size=x), 
-                 np.int32: 
-                    lambda x: np.random.randint(low=0, high=100, size=x)
-                }
+    rand_func = {np.float32:
+                     lambda x: np.random.uniform(low=-1, high=1, size=x),
+                 np.int32:
+                     lambda x: np.random.randint(low=0, high=100, size=x)
+                 }
     input_shapes = model.params['input_shapes']
-    return [rand_func[dtype]([num_samples]+list(shape))
+    return [rand_func[dtype]([num_samples] + list(shape))
             if None not in shape
-            else rand_func[dtype]([num_samples]+[10, 900])
+            else rand_func[dtype]([num_samples] + [10, 900])
             for shape, dtype
             in zip(input_shapes, input_dtypes)]
+
 
 @pytest.fixture
 def y(compiled_model, num_samples):
@@ -102,6 +104,8 @@ def test_model_predict(compiled_model, x):
 def test_save_load_model(compiled_model):
     model, input_dtypes = compiled_model
     tmpdir = '.tmpdir'
+    if Path(tmpdir).exists():
+        shutil.rmtree(tmpdir)
     model.save(tmpdir)
     assert engine.load_model(tmpdir)
     with pytest.raises(FileExistsError):

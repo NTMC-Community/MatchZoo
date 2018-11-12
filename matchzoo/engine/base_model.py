@@ -17,7 +17,7 @@ from matchzoo import tasks
 class BaseModel(abc.ABC):
     """Abstract base class of all matchzoo models."""
 
-    BACKEND_FILENAME = 'backend.h5'
+    BACKEND_WEIGHTS_FILENAME = 'backend_weights.h5'
     PARAMS_FILENAME = 'params.dill'
 
     def __init__(
@@ -308,17 +308,17 @@ class BaseModel(abc.ABC):
         :param dirpath: directory path of the saved model
         """
         dirpath = Path(dirpath)
-        backend_file_path = dirpath.joinpath(self.BACKEND_FILENAME)
-        params_file_path = dirpath.joinpath(self.PARAMS_FILENAME)
+        params_path = dirpath.joinpath(self.PARAMS_FILENAME)
+        weights_path = dirpath.joinpath(self.BACKEND_WEIGHTS_FILENAME)
 
-        if backend_file_path.exists() or params_file_path.exists():
-            raise FileExistsError
-        elif not dirpath.exists():
+        if not dirpath.exists():
             dirpath.mkdir()
+        else:
+            raise FileExistsError
 
-        self._backend.save(backend_file_path)
-
-        dill.dump(self._params, open(params_file_path, mode='wb'))
+        self._backend.save_weights(weights_path)
+        with open(params_path, mode='wb') as params_file:
+            dill.dump(self._params, params_file)
 
     def guess_and_fill_missing_params(self):
         """
@@ -359,10 +359,14 @@ def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
     """
     dirpath = Path(dirpath)
 
-    backend_file_path = dirpath.joinpath(BaseModel.BACKEND_FILENAME)
-    backend = keras.models.load_model(backend_file_path)
+    params_path = dirpath.joinpath(BaseModel.PARAMS_FILENAME)
+    weights_path = dirpath.joinpath(BaseModel.BACKEND_WEIGHTS_FILENAME)
 
-    params_file_path = dirpath.joinpath(BaseModel.PARAMS_FILENAME)
-    params = dill.load(open(params_file_path, 'rb'))
+    with open(params_path, mode='rb') as params_file:
+        params = dill.load(params_file)
 
-    return params['model_class'](params=params, backend=backend)
+    model_instance = params['model_class'](params=params)
+    model_instance.build()
+    model_instance.compile()
+    model_instance.backend.load_weights(weights_path)
+    return model_instance
