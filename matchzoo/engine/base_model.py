@@ -9,6 +9,7 @@ import numpy as np
 import keras
 import pandas as pd
 
+from matchzoo import DataGenerator
 from matchzoo import engine
 from matchzoo import tasks
 
@@ -161,10 +162,10 @@ class BaseModel(abc.ABC):
 
     def fit_generator(
         self,
-        generator: 'engine.BaseGenerator',
-        steps_per_epoch: int = None,
+        generator: DataGenerator,
         epochs: int = 1,
-        verbose: int = 1
+        verbose: int = 1,
+        **kwargs
     ) -> keras.callbacks.History:
         """
         Fit the model with matchzoo `generator`.
@@ -172,9 +173,7 @@ class BaseModel(abc.ABC):
         See :meth:`keras.models.Model.fit_generator` for more details.
 
         :param generator: A generator, an instance of
-            :class:`engine.BaseGenerator`.
-        :param steps_per_epoch: Total number of steps (batches of samples)
-            to yield from :attr:`generator` object.
+            :class:`engine.DataGenerator`.
         :param epochs: Number of epochs to train the model.
         :param verbose: 0, 1, or 2. Verbosity mode. 0 = silent, 1 = verbose,
             2 = one log line per epoch.
@@ -182,10 +181,12 @@ class BaseModel(abc.ABC):
         :return: A `keras.callbacks.History` instance. Its history attribute
             contains all information collected during training.
         """
-        return self._backend.fit_generator(generator=generator,
-                                           steps_per_epoch=steps_per_epoch,
-                                           epochs=epochs,
-                                           verbose=verbose)
+        return self._backend.fit_generator(
+            generator=generator,
+            steps_per_epoch=len(generator),
+            epochs=epochs,
+            verbose=verbose, **kwargs
+        )
 
     def evaluate(
         self,
@@ -226,7 +227,7 @@ class BaseModel(abc.ABC):
             >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
             >>> right.set_index('id_right', inplace=True)
             >>> generator = mz.generators.ListGenerator(
-            ...     mz.datapack.DataPack(relation=relation,
+            ...     engine.data_pack.DataPack(relation=relation,
             ...                          left=left,
             ...                          right=right)
             ... )

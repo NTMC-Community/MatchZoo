@@ -1,5 +1,6 @@
 """Metric base class and some related utilities."""
 
+import random
 import typing
 import abc
 
@@ -24,6 +25,12 @@ class BaseMetric(abc.ABC):
     @abc.abstractmethod
     def __repr__(self):
         """:return: Formated string representation of the metric."""
+
+
+def sort_and_couple(labels: list, scores: list) -> list:
+    """Zip the `labels` with `scores` into a single list."""
+    couple = list(zip(labels, scores))
+    return sorted(couple, key=lambda x: x[1], reverse=True)
 
 
 def parse_metric(metric: typing.Union[str,

@@ -1,17 +1,15 @@
 """ArcI Preprocessor."""
-import os
 import errno
-
-import typing
 import logging
+import os
+import typing
+
 from tqdm import tqdm
 
-from matchzoo import utils
+from matchzoo import DataPack, pack
 from matchzoo import engine
-from matchzoo import datapack
-from matchzoo import preprocessor
+from matchzoo import preprocessors
 from matchzoo.embedding import Embedding
-from . import segment
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +29,7 @@ class ArcIPreprocessor(engine.BasePreprocessor):
         ...     train_inputs,
         ...     stage='train')
         >>> type(rv_train)
-        <class 'matchzoo.datapack.DataPack'>
+        <class 'matchzoo.data_pack.DataPack'>
         >>> test_inputs = [("id0",
         ...                 "id4",
         ...                 "beijing",
@@ -40,7 +38,7 @@ class ArcIPreprocessor(engine.BasePreprocessor):
         ...     test_inputs,
         ...     stage='predict')
         >>> type(rv_test)
-        <class 'matchzoo.datapack.DataPack'>
+        <class 'matchzoo.data_pack.DataPack'>
 
     """
 
@@ -48,22 +46,22 @@ class ArcIPreprocessor(engine.BasePreprocessor):
                  fixed_length: list = [32, 32],
                  embedding_file: str = ''):
         """Initialization."""
-        self.datapack = None
+        self.data_pack = None
         self._embedding_file = embedding_file
         self._fixed_length = fixed_length
-        self._vocab_unit = preprocessor.VocabularyUnit()
-        self._left_fixedlen_unit = preprocessor.FixedLengthUnit(
+        self._vocab_unit = preprocessors.VocabularyUnit()
+        self._left_fixedlen_unit = preprocessors.FixedLengthUnit(
             self._fixed_length[0])
-        self._right_fixedlen_unit = preprocessor.FixedLengthUnit(
+        self._right_fixedlen_unit = preprocessors.FixedLengthUnit(
             self._fixed_length[1])
 
     def _prepare_stateless_units(self) -> list:
         """Prepare needed process units."""
         return [
-            preprocessor.TokenizeUnit(),
-            preprocessor.LowercaseUnit(),
-            preprocessor.PuncRemovalUnit(),
-            preprocessor.StopRemovalUnit()
+            preprocessors.TokenizeUnit(),
+            preprocessors.LowercaseUnit(),
+            preprocessors.PuncRemovalUnit(),
+            preprocessors.StopRemovalUnit()
         ]
 
     def fit(self, inputs: typing.List[tuple]):
@@ -78,21 +76,21 @@ class ArcIPreprocessor(engine.BasePreprocessor):
 
         logger.info("Start building vocabulary & fitting parameters.")
 
-        # Convert user input into a datapack object.
-        self.datapack = segment(inputs, stage='train')
+        # Convert user input into a data_pack object.
+        self.data_pack = pack(inputs, stage='train')
 
         # Loop through user input to generate words.
         # 1. Used for build vocabulary of words (get dimension).
         # 2. Cached words can be further used to perform input
         #    transformation.
-        for idx, row in tqdm(self.datapack.left.iterrows()):
+        for idx, row in tqdm(self.data_pack.left.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             vocab.extend(text)
 
-        for idx, row in tqdm(self.datapack.right.iterrows()):
+        for idx, row in tqdm(self.data_pack.right.iterrows()):
             # For each piece of text, apply process unit sequentially.
             text = row.text_right
             for unit in units:
@@ -107,7 +105,7 @@ class ArcIPreprocessor(engine.BasePreprocessor):
         elif os.path.isfile(self._embedding_file):
             embed_module = Embedding(embedding_file=self._embedding_file)
             embed_module.build(self._vocab_unit.state['term_index'])
-            self.datapack.context['embedding_mat'] = embed_module.embedding_mat
+            self.data_pack.context['embedding_mat'] = embed_module.embedding_mat
         else:
             logger.error("Embedding file [{}] not found."
                          .format(self._embedding_file))
@@ -115,18 +113,18 @@ class ArcIPreprocessor(engine.BasePreprocessor):
                                     self._embedding_file)
 
         # Store the fitted parameters in context.
-        self.datapack.context['term_index'] = self._vocab_unit.state[
+        self.data_pack.context['term_index'] = self._vocab_unit.state[
             'term_index']
-        self.datapack.context['input_shapes'] = [(self._fixed_length[0],),
+        self.data_pack.context['input_shapes'] = [(self._fixed_length[0],),
                                                  (self._fixed_length[1],)]
         return self
 
-    @utils.validate_context
+    @engine.validate_context
     def transform(
         self,
         inputs: typing.List[tuple],
         stage: str
-    ) -> datapack.DataPack:
+    ) -> DataPack:
         """
         Apply transformation on data, create word ids.
 
@@ -136,7 +134,7 @@ class ArcIPreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         if stage in ['evaluate', 'predict']:
-            self.datapack = segment(inputs, stage=stage)
+            self.data_pack = pack(inputs, stage=stage)
 
         logger.info(f"Start processing input data for {stage} stage.")
 
@@ -144,23 +142,23 @@ class ArcIPreprocessor(engine.BasePreprocessor):
         units = self._prepare_stateless_units()
         units.append(self._vocab_unit)
 
-        for idx, row in tqdm(self.datapack.left.iterrows()):
+        for idx, row in tqdm(self.data_pack.left.iterrows()):
             text = row.text_left
             for unit in units:
                 text = unit.transform(text)
             length = len(text)
             text = self._left_fixedlen_unit.transform(text)
             length = min(length, self._fixed_length[0])
-            self.datapack.left.at[idx, 'text_left'] = text
-            self.datapack.left.at[idx, 'length_left'] = length
-        for idx, row in tqdm(self.datapack.right.iterrows()):
+            self.data_pack.left.at[idx, 'text_left'] = text
+            self.data_pack.left.at[idx, 'length_left'] = length
+        for idx, row in tqdm(self.data_pack.right.iterrows()):
             text = row.text_right
             for unit in units:
                 text = unit.transform(text)
             length = len(text)
             text = self._right_fixedlen_unit.transform(text)
             length = min(length, self._fixed_length[1])
-            self.datapack.right.at[idx, 'text_right'] = text
-            self.datapack.right.at[idx, 'length_right'] = length
+            self.data_pack.right.at[idx, 'text_right'] = text
+            self.data_pack.right.at[idx, 'length_right'] = length
 
-        return self.datapack
+        return self.data_pack

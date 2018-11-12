@@ -4,7 +4,19 @@ import typing
 from pathlib import Path
 
 import dill
+from tqdm import tqdm
+import numpy as np
 import pandas as pd
+
+tqdm.pandas()
+
+
+def convert_to_list_index(index, length):
+    if isinstance(index, int):
+        index = [index]
+    elif isinstance(index, slice):
+        index = list(range(*index.indices(length)))
+    return index
 
 
 class DataPack(object):
@@ -29,7 +41,6 @@ class DataPack(object):
         ...     relation=relation_df,
         ...     left=left,
         ...     right=right,
-        ...     context=context
         ... )
         >>> len(dp)
         2
@@ -40,11 +51,12 @@ class DataPack(object):
 
     DATA_FILENAME = 'data.dill'
 
-    def __init__(self,
-                 relation: pd.DataFrame,
-                 left: pd.DataFrame,
-                 right: pd.DataFrame,
-                 context: dict = {}):
+    def __init__(
+        self,
+        relation: pd.DataFrame,
+        left: pd.DataFrame,
+        right: pd.DataFrame
+    ):
         """
         Initialize :class:`DataPack`.
 
@@ -53,17 +65,47 @@ class DataPack(object):
         :param left: Store the content or features for id_left.
         :param right: Store the content or features for
             id_right.
-        :param context: Hyper-parameter fitted during
-            pre-processing stage.
         """
         self._relation = relation
         self._left = left
         self._right = right
-        self._context = context
+
+    @property
+    def has_label(self):
+        return 'label' in self._relation.columns
 
     def __len__(self) -> int:
         """Get numer of rows in the class:`DataPack` object."""
         return self._relation.shape[0]
+
+    @property
+    def frame(self):
+        return DataPackFrameView(self)
+
+    def unpack(self):
+        frame = self.frame[:]
+
+        columns = list(frame.columns)
+        if self.has_label:
+            columns.remove('label')
+            y = np.array(frame['label'])
+        else:
+            y = None
+
+        x = frame[columns].to_dict(orient='list')
+        for key, val in x.items():
+            x[key] = np.array(val)
+
+        return x, y
+
+    def __getitem__(self, index):
+        index = convert_to_list_index(index, len(self))
+        relation = self._relation.loc[index].reset_index(drop=True)
+        left = self._left.loc[relation['id_left'].unique()]
+        right = self._right.loc[relation['id_right'].unique()]
+        return DataPack(left=left.copy(),
+                        right=right.copy(),
+                        relation=relation.copy())
 
     @property
     def relation(self) -> pd.DataFrame:
@@ -96,15 +138,10 @@ class DataPack(object):
         """
         self._right = value
 
-    @property
-    def context(self) -> dict:
-        """Get :meth:`context` of class:`DataPack`."""
-        return self._context
-
-    @context.setter
-    def context(self, value: dict):
-        """Set the value of :attr:`context`."""
-        self._context = value
+    def copy(self):
+        return DataPack(left=self._left.copy(),
+                        right=self._right.copy(),
+                        relation=self._relation.copy())
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
@@ -126,8 +163,52 @@ class DataPack(object):
 
         dill.dump(self, open(data_file_path, mode='wb'))
 
+    def append_text_length(self, inplace=False):
+        return self.apply_on_text(len, inplace=inplace,
+                                  names=('length_left', 'length_right'))
 
-def load_datapack(dirpath: typing.Union[str, Path]) -> DataPack:
+    def apply_on_text(self, func, inplace=False,
+                      names=('text_left', 'text_right')):
+        if inplace:
+            pack = self
+        else:
+            pack = self.copy()
+
+        left_name, right_name = names
+        func_name = func.__name__
+
+        tqdm.pandas(desc="Processing `text_left` with " + func_name)
+        left = pack.left['text_left'].progress_apply(func)
+        pack.left[left_name] = left
+
+        tqdm.pandas(desc="Processing `text_right` with " + func_name)
+        right = pack.right['text_right'].progress_apply(func)
+        pack.right[right_name] = right
+
+        if not inplace:
+            return pack
+
+
+class DataPackFrameView(object):
+    def __init__(self, data_pack):
+        self._data_pack = data_pack
+
+    def __getitem__(self, index):
+        dp = self._data_pack
+        index = convert_to_list_index(index, len(dp))
+        left_df = dp.left.loc[dp.relation['id_left'][index]].reset_index()
+        right_df = dp.right.loc[dp.relation['id_right'][index]].reset_index()
+        joined_table = left_df.join(right_df)
+        # TODO: join other columns of relation
+        if dp.has_label:
+            labels = dp.relation['label'][index].to_frame()
+            labels = labels.reset_index(drop=True)
+            return joined_table.join(labels)
+        else:
+            return joined_table
+
+
+def load_data_pack(dirpath: typing.Union[str, Path]) -> DataPack:
     """
     Load a :class:`DataPack`. The reverse function of :meth:`save`.
 
