@@ -73,7 +73,7 @@ class RandomInitializedEmbedding(Embedding):
         """"""
         return self._matrix[self._vocab[entity]]
 
-class PretrainedEmbedding(Embedding):
+class PretrainedEmbedding(Embedding, abc.ABC):
     """Pretrained."""
 
     def __init__(self):
@@ -84,7 +84,10 @@ class PretrainedEmbedding(Embedding):
     def _entity_to_vec(self, entity):
         """"""
         return self._matrix.loc[entity].values
-
+    
+    @abc.abstractmethod
+    def _read_embedding(self, file_path: str):
+        """Read embedding file given dir."""
 
 
 class Word2Vec(PretrainedEmbedding):
@@ -107,12 +110,16 @@ class Word2Vec(PretrainedEmbedding):
         file_path: str
     ):
         """Init."""
-        self._matrix = pd.read_table(file_path,
-                                     sep=" ",
-                                     index_col=0,
-                                     header=None,
-                                     skiprows=1)
+        self._matrix = self._read_embedding(file_path)
         super().__init__()
+    
+    def _read_embedding(self, file_path: str):
+        return pd.read_table(file_path,
+                             sep=" ",
+                             index_col=0,
+                             header=None,
+                             skiprows=1)
+
 
 class Glove(PretrainedEmbedding):
     """Glove.
@@ -136,9 +143,12 @@ class Glove(PretrainedEmbedding):
         file_path: str,
     ):
         """Init."""
-        self._matrix = pd.read_table(file_path,
-                                     sep=" ",
-                                     index_col=0,
-                                     header=None,
-                                     quoting=csv.QUOTE_NONE)
+        self._matrix = self._read_embedding(file_path)
         super().__init__()
+    
+    def _read_embedding(self, file_path: str):
+        return pd.read_table(file_path,
+                             sep=" ",
+                             index_col=0,
+                             header=None,
+                             quoting=csv.QUOTE_NONE)
