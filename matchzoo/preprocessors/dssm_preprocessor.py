@@ -19,26 +19,16 @@ class DSSMPreprocessor(engine.BasePreprocessor):
     TODO: NEED REFACTORING.
 
     Example:
-        >>> train_inputs = [
-        ...     ("id0", "id1", "beijing", "Beijing is capital of China", 1),
-        ...     ("id0", "id2", "beijing", "China is in east Asia", 0),
-        ...     ("id0", "id3", "beijing", "Summer in Beijing is hot.", 1)
-        ... ]
-        >>> dssm_preprocessor = DSSMPreprocessor()
-        >>> rv_train = dssm_preprocessor.fit_transform(
-        ...     train_inputs,
-        ...     stage='train')
-        >>> type(rv_train)
-        <class 'matchzoo.data_pack.DataPack'>
-        >>> test_inputs = [("id0",
-        ...                 "id4",
-        ...                 "beijing",
-        ...                 "I visted beijing yesterday.")]
-        >>> rv_test = dssm_preprocessor.fit_transform(
-        ...     test_inputs,
-        ...     stage='predict')
-        >>> type(rv_test)
-        <class 'matchzoo.data_pack.DataPack'>
+        >>> import matchzoo as mz
+        >>> train_data = mz.datasets.toy.load_train_classify_data()
+        >>> test_data = mz.datasets.toy.load_test_classify_data()
+        >>> dssm_preprocessor = mz.preprocessors.DSSMPreprocessor()
+        >>> train_data_processed = dssm_preprocessor.fit_transform(train_data)
+        >>> type(train_data_processed)
+        <class 'matchzoo.data_pack.data_pack.DataPack'>
+        >>> test_data_transformed = dssm_preprocessor.transform(test_data)
+        >>> type(test_data_transformed)
+        <class 'matchzoo.data_pack.data_pack.DataPack'>
 
     """
 
@@ -49,7 +39,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :param data_pack: data_pack to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
-        units = self._preprocess_units()
+        units = self._default_processor_units()
         data_pack = data_pack.apply_on_text(chain_transform(units))
         vocab_unit = build_vocab(data_pack)
 
@@ -71,12 +61,12 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         data_pack = data_pack.copy()
         term_index = self._context['term_index']
         hashing_unit = processor_units.WordHashingUnit(term_index)
-        units = self._preprocess_units() + [hashing_unit]
+        units = self._default_processor_units() + [hashing_unit]
         data_pack.apply_on_text(chain_transform(units), inplace=True)
         return data_pack
 
     @classmethod
-    def _preprocess_units(cls) -> list:
+    def _default_processor_units(cls) -> list:
         """Prepare needed process units."""
         return [
             processor_units.TokenizeUnit(),
