@@ -3,14 +3,9 @@
 import abc
 import csv
 import typing
-import logging
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
-
-
-logger = logging.getLogger(__name__)
 
 
 class Embedding(abc.ABC):
