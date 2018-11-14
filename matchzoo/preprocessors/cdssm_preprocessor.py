@@ -7,9 +7,9 @@ import typing
 import numpy as np
 from tqdm import tqdm
 
-from matchzoo import DataPack, pack
+from matchzoo import DataPack, pack, chain_transform, build_vocab
 from matchzoo import engine
-from matchzoo import preprocessors
+from matchzoo import processor_units
 
 logger = logging.getLogger(__name__)
 
@@ -40,11 +40,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         <class 'matchzoo.data_pack.DataPack'>
     """
 
-    def __init__(self,
-                 text_length: int = 10,
-                 pad_value: int = 0,
-                 pad_mode: str = 'pre',
-                 truncate_mode: str = 'pre'):
+    def __init__(self, text_length: int = 10, pad_value: int = 0,
+                 pad_mode: str = 'pre', truncate_mode: str = 'pre'):
         """Initialization.
 
         :param text_length: fixed length of the text.
@@ -56,62 +53,43 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             remove values from sequences larger than assumed,
             either at the beginning or at the end of the sequences.
         """
-        self.data_pack = None
+        super().__init__()
         self._text_length = text_length
         self._pad_value = pad_value
         self._pad_mode = pad_mode
         self._truncate_mode = truncate_mode
 
-    def _prepare_process_units(self) -> list:
+    def _processor_units(self) -> list:
         """Prepare needed process units."""
         return [
-            preprocessors.TokenizeUnit(),
-            preprocessors.LowercaseUnit(),
-            preprocessors.PuncRemovalUnit(),
-            preprocessors.StopRemovalUnit(),
+            processor_units.TokenizeUnit(),
+            processor_units.LowercaseUnit(),
+            processor_units.PuncRemovalUnit(),
+            processor_units.StopRemovalUnit(),
         ]
 
-    def fit(self, inputs: typing.List[tuple]):
+    def fit(self, data_pack):
         """
         Fit pre-processing context for transformation.
 
         Can be simplified by compute vocabulary term and index.
 
-        :param inputs: Inputs to be preprocessed.
+        :param data_pack: Inputs to be preprocessed.
         :return: class:`CDSSMPreprocessor` instance.
         """
         vocab = []
-        units = self._prepare_process_units()
-        units.append(preprocessors.NgramLetterUnit())
-
-        logger.info("Start building vocabulary & fitting parameters.")
-
-        # Convert user input into a data_pack object.
-        self.data_pack = pack(inputs, stage='train')
-
-        for idx, row in tqdm(self.data_pack.left.iterrows()):
-            # For each piece of text, apply process unit sequentially.
-            text = row.text_left
-            for unit in units:
-                text = unit.transform(text)
-            vocab.extend(text)
-
-        for idx, row in tqdm(self.data_pack.right.iterrows()):
-            text = row.text_right
-            for unit in units:
-                text = unit.transform(text)
-            vocab.extend(text)
-
-        # Initialize a vocabulary process unit to build letter-ngram vocab.
-        vocab_unit = preprocessors.VocabularyUnit()
-        vocab_unit.fit(vocab)
+        units = self._processor_units()
+        units.append(processor_units.NgramLetterUnit())
+        data_pack = data_pack.apply_on_text(chain_transform(units))
+        vocab_unit = build_vocab(data_pack)
 
         # Store the fitted parameters in context.
-        self.data_pack.context['term_index'] = vocab_unit.state['term_index']
-        self._dim_ngram = len(vocab_unit.state['term_index']) + 1
-        self.data_pack.context['input_shapes'] = [
-            (self._text_length, self._dim_ngram),
-            (self._text_length, self._dim_ngram)
+        self._context.update(vocab_unit.state)
+        ngram_dim = len(vocab_unit.state['term_index']) + 1
+        self._context['ngram_dim'] = ngram_dim
+        self._context['input_shapes'] = [
+            (self._text_length, ngram_dim),
+            (self._text_length, ngram_dim)
         ]
         return self
 
@@ -133,12 +111,12 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             self.data_pack = pack(inputs, stage=stage)
 
         # prepare pipeline unit.
-        units = self._prepare_process_units()
-        ngram_unit = preprocessors.NgramLetterUnit()
-        hash_unit = preprocessors.WordHashingUnit(
-            self.data_pack.context['term_index'])
-        fix_unit = preprocessors.FixedLengthUnit(
-            self._text_length * self._dim_ngram, self._pad_value,
+        units = self._processor_units()
+        ngram_unit = processor_units.NgramLetterUnit()
+        hash_unit = processor_units.WordHashingUnit(
+            self._context['term_index'])
+        fix_unit = processor_units.FixedLengthUnit(
+            self._text_length * self._context['ngram_dim'], self._pad_value,
             self._pad_mode, self._truncate_mode)
 
         logger.info(f"Start processing input data for {stage} stage.")

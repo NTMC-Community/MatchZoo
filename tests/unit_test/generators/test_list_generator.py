@@ -1,8 +1,9 @@
-import pytest
-import pandas as pd
 import numpy as np
+import pandas as pd
+import pytest
 from matchzoo.generators import ListGenerator
-from matchzoo.datapack import DataPack
+
+from data_pack.data_pack import DataPack
 
 
 @pytest.fixture

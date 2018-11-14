@@ -1,4 +1,4 @@
-from matchzoo.preprocessor.process_units import *
+from matchzoo.preprocessors.process_units import *
 import pytest
 import numpy as np
 

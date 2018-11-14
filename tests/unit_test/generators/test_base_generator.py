@@ -1,7 +1,8 @@
-import pytest
 import pandas as pd
+import pytest
+
+from data_pack.data_pack import DataPack
 from matchzoo import engine
-from matchzoo.datapack import DataPack
 
 
 @pytest.fixture
@@ -38,7 +39,7 @@ def shuffle(request):
 
 @pytest.fixture
 def generator(x, stage, batch_size, shuffle):
-    class MyBaseGenerator(engine.BaseGenerator):
+    class MyBaseGenerator(engine.DataGenerator):
         def __init__(self, inputs=x, batch_size=1, stage=stage, shuffle=True):
             self.batch_size = batch_size
             super(MyBaseGenerator, self).__init__(batch_size, len(inputs),

@@ -49,7 +49,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :param data_pack: data_pack to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
-        units = self._preprocess_units()
+        units = self._default_processor_units()
         data_pack = data_pack.apply_on_text(chain_transform(units))
         vocab_unit = build_vocab(data_pack)
 
@@ -71,12 +71,12 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         data_pack = data_pack.copy()
         term_index = self._context['term_index']
         hashing_unit = processor_units.WordHashingUnit(term_index)
-        units = self._preprocess_units() + [hashing_unit]
+        units = self._default_processor_units() + [hashing_unit]
         data_pack.apply_on_text(chain_transform(units), inplace=True)
         return data_pack
 
     @classmethod
-    def _preprocess_units(cls) -> list:
+    def _default_processor_units(cls) -> list:
         """Prepare needed process units."""
         return [
             processor_units.TokenizeUnit(),

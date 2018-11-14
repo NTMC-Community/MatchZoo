@@ -1,4 +1,4 @@
-from matchzoo.preprocessor.cdssm_preprocessor import CDSSMPreprocessor
+from matchzoo.preprocessors.cdssm_preprocessor import CDSSMPreprocessor
 import pytest
 import numpy as np
 

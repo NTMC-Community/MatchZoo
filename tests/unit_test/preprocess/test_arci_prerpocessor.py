@@ -1,4 +1,4 @@
-from matchzoo.preprocessor.arci_preprocessor import ArcIPreprocessor
+from matchzoo.preprocessors.arci_preprocessor import ArcIPreprocessor
 import pytest
 
 

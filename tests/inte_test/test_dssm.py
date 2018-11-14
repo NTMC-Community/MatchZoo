@@ -1,13 +1,14 @@
 import os
-import pytest
 import shutil
-import numpy as np
 
-from matchzoo import datapack
-from matchzoo import generators
-from matchzoo import preprocessor
-from matchzoo import models
+import numpy as np
+import pytest
+
+from data_pack import data_pack
 from matchzoo import engine
+from matchzoo import generators
+from matchzoo import models
+from matchzoo import preprocessors
 from matchzoo import tasks
 
 
@@ -36,24 +37,24 @@ def task(request) -> engine.BaseTask:
 
 @pytest.fixture
 def dssm_preprocessor():
-    return preprocessor.DSSMPreprocessor()
+    return preprocessors.DSSMPreprocessor()
 
 
 @pytest.fixture
-def processed_train(train, dssm_preprocessor) -> datapack.DataPack:
+def processed_train(train, dssm_preprocessor) -> data_pack.DataPack:
     preprocessed_train = dssm_preprocessor.fit_transform(train, stage='train')
     dssm_preprocessor.save('.tmpdir')
     return preprocessed_train
 
 
 @pytest.fixture
-def processed_test(test) -> datapack.DataPack:
+def processed_test(test) -> data_pack.DataPack:
     dssm_proprecessor = engine.load_preprocessor('.tmpdir')
     return dssm_proprecessor.fit_transform(test, stage='predict')
 
 
 @pytest.fixture(params=['point', 'pair'])
-def train_generator(request, processed_train, task) -> engine.BaseGenerator:
+def train_generator(request, processed_train, task) -> engine.DataGenerator:
     if request.param == 'point':
         return generators.PointGenerator(processed_train,
                                          task=task,
@@ -64,7 +65,7 @@ def train_generator(request, processed_train, task) -> engine.BaseGenerator:
 
 
 @pytest.fixture(params=['point', 'list'])
-def test_generator(request, processed_test, task) -> engine.BaseGenerator:
+def test_generator(request, processed_test, task) -> engine.DataGenerator:
     if request.param == 'point':
         return generators.PointGenerator(processed_test, task=task,
                                          stage='predict')

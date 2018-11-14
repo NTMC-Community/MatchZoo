@@ -1,8 +1,9 @@
-import pytest
 import pandas as pd
-from matchzoo import tasks
+import pytest
 from matchzoo.generators import PointGenerator
-from matchzoo.datapack import DataPack
+
+from data_pack.data_pack import DataPack
+from matchzoo import tasks
 
 
 @pytest.fixture

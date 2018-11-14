@@ -1,13 +1,14 @@
 import os
-import pytest
 import shutil
-import numpy as np
 
-from matchzoo import datapack
-from matchzoo import generators
-from matchzoo import preprocessor
-from matchzoo import models
+import numpy as np
+import pytest
+
+from data_pack import data_pack
 from matchzoo import engine
+from matchzoo import generators
+from matchzoo import models
+from matchzoo import preprocessors
 from matchzoo import tasks
 
 
@@ -35,33 +36,33 @@ def task(request) -> engine.BaseTask:
 
 
 @pytest.fixture(scope='module', params=[
-    preprocessor.ArcIPreprocessor(),
-    preprocessor.ArcIPreprocessor(fixed_length=[10, 10],
-                                  embedding_file=os.path.join(
+    preprocessors.ArcIPreprocessor(),
+    preprocessors.ArcIPreprocessor(fixed_length=[10, 10],
+                                   embedding_file=os.path.join(
                                           os.path.dirname(__file__),
                                           '../sample/embed_rank.txt'
                                   )
-                                  )
+                                   )
 ])
 def arci_preprocessor(request):
     return request.param
 
 
 @pytest.fixture
-def processed_train(train, arci_preprocessor) -> datapack.DataPack:
+def processed_train(train, arci_preprocessor) -> data_pack.DataPack:
     preprocessed_train = arci_preprocessor.fit_transform(train, stage='train')
     arci_preprocessor.save('.tmpdir')
     return preprocessed_train
 
 
 @pytest.fixture
-def processed_test(test) -> datapack.DataPack:
+def processed_test(test) -> data_pack.DataPack:
     arci_proprecessor = engine.load_preprocessor('.tmpdir')
     return arci_proprecessor.fit_transform(test, stage='predict')
 
 
 @pytest.fixture(params=['point', 'pair'])
-def train_generator(request, processed_train, task) -> engine.BaseGenerator:
+def train_generator(request, processed_train, task) -> engine.DataGenerator:
     if request.param == 'point':
         return generators.PointGenerator(processed_train,
                                          task=task,
@@ -72,7 +73,7 @@ def train_generator(request, processed_train, task) -> engine.BaseGenerator:
 
 
 @pytest.fixture(params=['point', 'list'])
-def test_generator(request, processed_test, task) -> engine.BaseGenerator:
+def test_generator(request, processed_test, task) -> engine.DataGenerator:
     if request.param == 'point':
         return generators.PointGenerator(processed_test, task=task,
                                          stage='predict')

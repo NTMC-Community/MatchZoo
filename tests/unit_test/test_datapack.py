@@ -1,9 +1,10 @@
-from matchzoo.datapack import DataPack, load_datapack
-
-import pytest
 import shutil
 
 import pandas as pd
+import pytest
+
+from data_pack.data_pack import DataPack, load_data_pack
+
 
 @pytest.fixture
 def data_pack():
@@ -48,7 +49,7 @@ def test_setter(data_pack):
 def test_save_load(data_pack):
     dirpath = '.tmpdir'
     data_pack.save(dirpath)
-    dp = load_datapack(dirpath)
+    dp = load_data_pack(dirpath)
     with pytest.raises(FileExistsError):
         data_pack.save(dirpath)
     assert len(data_pack) == 2
