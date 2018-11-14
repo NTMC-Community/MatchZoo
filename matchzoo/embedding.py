@@ -1,142 +1,144 @@
 """Matchzoo toolkit for token embedding."""
-import numpy as np
+
+import abc
+import csv
+import typing
 import logging
+
+import numpy as np
+import pandas as pd
 from tqdm import tqdm
 
 
 logger = logging.getLogger(__name__)
 
 
-class Embedding(object):
+class Embedding(abc.ABC):
     """
     Embedding class.
-
-    TODO: https://github.com/dmlc/gluon-nlp/blob/
-          5e65c4751e1be8920b1021822a988af77224902f/
-          gluonnlp/embedding/token_embedding.py
-
-    Examples:
-        >>> embed = Embedding('tests/sample/embed_10.txt')
-        >>> # Need term_index
-        >>> embed.build({'G': 1, 'C': 2, 'D': 3, 'A': 4, '[PAD]': 0})
-        >>> index_state = embed.index_state
-        >>> index_state # doctest: +SKIP
-        {4: 1, 2: 1, 3: 1, 1: 2, 0: 0}
-        >>> embedding_mat = embed.embedding_mat
-        >>> embedding_mat # doctest: +SKIP
-        array([[ 0.       ,  0.       ,  0.       ,  0.       ,  0.        ,
-             0.        ,  0.        ,  0.        ,  0.        ,  0.        ],
-           [ 0.22785383, -0.09405118,  0.15446669,  0.20727136,  0.05943427,
-             0.12673594,  0.02788511, -0.0433806 , -0.20548974,  0.24532762],
-           [ 0.1       ,  0.2       ,  0.3       ,  0.4       ,  0.5       ,
-             0.6       ,  0.7       ,  0.8       ,  0.9       ,  1.        ],
-           [ 0.1       ,  0.2       ,  0.3       ,  0.4       ,  0.5       ,
-             0.6       ,  0.7       ,  0.8       ,  0.9       ,  1.        ],
-           [ 0.1       ,  0.2       ,  0.3       ,  0.4       ,  0.5       ,
-             0.6       ,  0.7       ,  0.8       ,  0.9       ,  1.        ]])
-        >>> embedding_mat[0] # doctest: +SKIP
-        array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])
-
     """
 
-    def __init__(self, embedding_file: str):
-        """
-        Class initialization.
-
-        :param embedding_file: the embeding input file path.
-        """
-        self._embedding_file = embedding_file
-        self._embedding_dim = 0
-        self._index_state = {}
-        self._embedding_mat = None
-
+    def __init__(self):
+        """Init."""
+        self._vocab = {}
+        self._matrix = None
+        self._dimension = 0
+    
+    @abc.abstractmethod
+    def _entity_to_vec(self, entity: str):
+        """Get word embedding by entity."""
+    
+    def __getitem__(self, entities: typing.Union[str, list]):
+        """Get embeddings by entity of list of entities."""
+        if isinstance(entities, str):
+            return self._entity_to_vec(entities)
+        
+        return np.vstack([self._entity_to_vec(entity) for entity in entities])
+    
+    def __contains__(self, entity):
+        """"""
+        return entity in self._vocab
+    
     @property
-    def embedding_file(self) -> str:
-        """Get embedding file name."""
-        return self._embedding_file
-
+    def dimension(self):
+        """"""
+        return self._dimension
+    
     @property
-    def embedding_dim(self) -> int:
-        """Get embedding dimension."""
-        return self._embedding_dim
+    def matrix(self):
+        """"""
+        return self._matrix
+    
+    @matrix.setter
+    def matrix(self, matrix_instance):
+        self._matrix = matrix_instance
 
-    @property
-    def index_state(self) -> dict:
-        """
-        Get word index state dictionary.
+class RandomInitializedEmbedding(Embedding):
+    """
+    Random Initialized WordEmbedding.
+    """
+    def __init__(
+        self,
+        vocab: dict,
+        dimension: int,
+        random_scale: float = 0.2):
+        """Initialization."""
+        self._vocab = vocab # term index.
+        self._dimension = dimension
+        self._matrix = np.random.uniform(-random_scale,
+                                         random_scale,
+                                         (len(self._vocab), self._dimension))
+    
+    def _entity_to_vec(self, entity):
+        """"""
+        return self._matrix[self._vocab[entity]]
 
-        0 - [PAD] word, 1 - found embed, 2 - OOV word.
-        """
-        return self._index_state
+class PretrainedEmbedding(Embedding):
+    """Pretrained."""
 
-    @property
-    def embedding_mat(self) -> np.ndarray:
-        """Get constructed embedding matrix."""
-        return self._embedding_mat
+    def __init__(self):
+        """"""
+        self._vocab = self._matrix.index.values
+        self._dimension = self._matrix.shape[1]
 
-    def build(self, term_index: dict):
-        """Build an :attr:`embedding_mat` and an :attr:`index_state`."""
-        num_dict_words = max(term_index.values()) + 1
-        if num_dict_words != len(term_index):
-            logger.warning("Some words are not shown in term_index({}). Total "
-                           "number of words are {}.".format(len(term_index),
-                                                            num_dict_words))
+    def _entity_to_vec(self, entity):
+        """"""
+        return self._matrix.loc[entity].values
 
-        # The number of word share with `term_index` and `embedding_file`.
-        num_shared_words = 0
 
-        with open(self._embedding_file, 'rb') as embedding_file_ptr:
-            # Detect embedding_dim from first line
-            # TODO when embedding dim equals one, this will not work.
-            last_pos = embedding_file_ptr.tell()
-            first_line = embedding_file_ptr.readline()
-            if len(first_line.split(b" ")) == 2:
-                _, self._embedding_dim = map(int, first_line.split(b" "))
-            else:
-                entries = first_line.rstrip().split(b" ")
-                vec = entries[1:]
-                self._embedding_dim = len(vec)
-                embedding_file_ptr.seek(last_pos)
 
-            self._embedding_mat = np.random.uniform(-0.25, 0.25,
-                                                    (num_dict_words,
-                                                     self._embedding_dim))
+class Word2Vec(PretrainedEmbedding):
+    """Word2Vec.
 
-            # Go through all embedding file
-            for line in tqdm(embedding_file_ptr):
-                # Explicitly splitting on " " is important, so we don't
-                # get rid of Unicode non-breaking spaces in the vectors.
-                entries = line.rstrip().split(b" ")
+    Examples:
+        >>> word2vec = Word2Vec('tests/sample/embed_10.txt')
+        >>> word2vec.dimension
+        10
+        >>> word2vec.matrix SKIP
+        >>> word2vec['fawn']
+        [...]
+        >>> word2vec['fawn', 'abondon']
+        [[...], [...]]
+        >>> 'oov' in word2vec
+        False
+    """
+    def __init__(
+        self,
+        file_path: str
+    ):
+        """Init."""
+        self._matrix = pd.read_table(file_path,
+                                     sep=" ",
+                                     index_col=0,
+                                     header=None,
+                                     skiprows=1)
+        super().__init__()
 
-                word, vec = entries[0], entries[1:]
+class Glove(PretrainedEmbedding):
+    """Glove.
 
-                if self._embedding_dim != len(vec):
-                    raise RuntimeError(
-                        "Vector for token {} has {} dimensions, but "
-                        "previously read vectors have {} dimensions. "
-                        "All vectors must have the same number of "
-                        "dimensions.".format(word, len(vec),
-                                             self._embedding_dim))
-
-                try:
-                    if isinstance(word, bytes):
-                        word = word.decode('utf-8')
-                except Exception:
-                    logger.warning(
-                        "Skipping non-UTF8 token {}".format(repr(word)))
-                    continue
-
-                index = term_index.get(word, None)
-                if index:
-                    self._embedding_mat[index] = np.array(vec).astype(float)
-                    self._index_state[index] = 1
-                    num_shared_words += 1
-
-            # init tht OOV word embeddings
-            for word in term_index:
-                index = term_index[word]
-                if index not in self._index_state:
-                    self._index_state[index] = 2
-
-            self._index_state[0] = 0
-            self._embedding_mat[0] = np.zeros([self._embedding_dim])
+    Examples:
+        >>> glove = Glove('tests/sample/embed_10.txt')
+        >>> glove.dimension
+        10
+        >>> glove.matrix
+        [[...],
+         [...]]
+        >>> glove['fawn']
+        [...]
+        >>> glove['fawn', 'abondon']
+        [[...], [...]]
+        >>> 'oov' in glove
+        False
+    """
+    def __init__(
+        self,
+        file_path: str,
+    ):
+        """Init."""
+        self._matrix = pd.read_table(file_path,
+                                     sep=" ",
+                                     index_col=0,
+                                     header=None,
+                                     quoting=csv.QUOTE_NONE)
+        super().__init__()
