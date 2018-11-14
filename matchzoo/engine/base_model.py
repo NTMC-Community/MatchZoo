@@ -99,8 +99,7 @@ class BaseModel(abc.ABC):
             >>> class MyModel(BaseModel):
             ...     def build(self):
             ...         pass
-            >>> MyModel
-            <class 'matchzoo.engine.base_model.MyModel'>
+            >>> assert MyModel()
         """
 
     def compile(self):
@@ -226,11 +225,8 @@ class BaseModel(abc.ABC):
             >>> left.set_index('id_left', inplace=True)
             >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
             >>> right.set_index('id_right', inplace=True)
-            >>> generator = mz.generators.ListGenerator(
-            ...     engine.data_pack.DataPack(relation=relation,
-            ...                          left=left,
-            ...                          right=right)
-            ... )
+            >>> generator = mz.DataGenerator(
+            ...     mz.DataPack(relation=relation, left=left, right=right))
             >>> x, y = generator[0]
             >>> m = mz.models.DenseBaselineModel()
             >>> m.params['task'] = mz.tasks.Ranking()

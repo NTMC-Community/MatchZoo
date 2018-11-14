@@ -17,10 +17,8 @@ def reorganize_data_pack_pair_wise(data_pack, num_dup=1, num_neg=0):
             neg_samples = group[group.label < label]
             for _, pos_sample in pos_samples.iterrows():
                 pos_sample = pd.DataFrame([pos_sample])
-                if len(neg_samples) >= num_neg:
-                    neg_sample = neg_samples.sample(num_neg,
-                                                    replace=False)
-                    pairs.extend((pos_sample, neg_sample))
+                neg_sample = neg_samples.sample(num_neg, replace=True)
+                pairs.extend((pos_sample, neg_sample))
     new_relation = pd.concat(pairs, ignore_index=True)
     return DataPack(relation=new_relation,
                     left=data_pack.left.copy(),

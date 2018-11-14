@@ -52,15 +52,15 @@ def parse_metric(metric: typing.Union[str,
     Use `str` as MatchZoo metrics:
         >>> mz_metric = engine.parse_metric('map')
         >>> type(mz_metric)
-        <class 'matchzoo.metrics.MeanAveragePrecision'>
+        <class 'matchzoo.metrics.mean_average_precision.MeanAveragePrecision'>
 
     Use :class:`matchzoo.engine.BaseMetric` subclasses as MatchZoo metrics:
         >>> type(engine.parse_metric(metrics.AveragePrecision))
-        <class 'matchzoo.metrics.AveragePrecision'>
+        <class 'matchzoo.metrics.average_precision.AveragePrecision'>
 
     Use :class:`matchzoo.engine.BaseMetric` instances as MatchZoo metrics:
         >>> type(engine.parse_metric(metrics.AveragePrecision()))
-        <class 'matchzoo.metrics.AveragePrecision'>
+        <class 'matchzoo.metrics.average_precision.AveragePrecision'>
 
     """
     if isinstance(metric, BaseMetric):
