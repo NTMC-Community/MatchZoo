@@ -1,12 +1,12 @@
 import pytest
 
-from matchzoo import metrics
+from matchzoo import engine, metrics
 
 
 def test_sort_and_couple():
     l = [0, 1, 2]
     s = [0.1, 0.4, 0.2]
-    c = metrics.sort_and_couple(l, s)
+    c = engine.sort_and_couple(l, s)
     assert c == [(1, 0.4), (2, 0.2), (0, 0.1)]
 
 

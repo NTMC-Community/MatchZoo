@@ -4,7 +4,7 @@ from keras import layers, backend as K
 
 
 class RankCrossEntropyLoss(object):
-    def __init__(self, num_neg):
+    def __init__(self, num_neg=1):
         self._num_neg = num_neg
 
     def __call__(self, y_true: np.array, y_pred: np.array) -> np.array:

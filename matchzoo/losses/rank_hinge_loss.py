@@ -4,7 +4,7 @@ from keras import layers, backend as K
 
 
 class RankHingeLoss(object):
-    def __init__(self, num_neg, margin):
+    def __init__(self, num_neg=1, margin=1.0):
         self._num_neg = num_neg
         self._margin = margin
 
