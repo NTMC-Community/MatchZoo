@@ -17,7 +17,6 @@ class Embedding(abc.ABC):
         """Init."""
         self._vocab = {}
         self._matrix = None
-        self._dimension = 0
     
     @abc.abstractmethod
     def _entity_to_vec(self, entity: str):
@@ -37,7 +36,7 @@ class Embedding(abc.ABC):
     @property
     def dimension(self):
         """"""
-        return self._dimension
+        return self._matrix.shape[1]
     
     @property
     def matrix(self):
@@ -68,13 +67,12 @@ class RandomInitializedEmbedding(Embedding):
         """"""
         return self._matrix[self._vocab[entity]]
 
-class PretrainedEmbedding(Embedding, abc.ABC):
+class PretrainedEmbedding(Embedding):
     """Pretrained."""
 
     def __init__(self):
         """"""
         self._vocab = self._matrix.index.values
-        self._dimension = self._matrix.shape[1]
 
     def _entity_to_vec(self, entity):
         """"""
