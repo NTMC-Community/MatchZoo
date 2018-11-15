@@ -72,6 +72,7 @@ class PretrainedEmbedding(Embedding):
 
     def __init__(self):
         """"""
+        super().__init__()
         self._vocab = self._matrix.index.values
 
     def _entity_to_vec(self, entity):
