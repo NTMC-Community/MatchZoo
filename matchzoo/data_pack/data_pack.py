@@ -205,11 +205,11 @@ class DataPack(object):
         func_name = func.__name__
 
         tqdm.pandas(desc="Processing " + left_name + " with " + func_name)
-        left_value = pack.left[left_name].progress_apply(func)
+        left_value = pack.left['text_left'].progress_apply(func)
         pack.left[left_name] = left_value
 
         tqdm.pandas(desc="Processing " + right_name + " with " + func_name)
-        right_value = pack.right[right_name].progress_apply(func)
+        right_value = pack.right['text_right'].progress_apply(func)
         pack.right[right_name] = right_value
 
         if not inplace:
