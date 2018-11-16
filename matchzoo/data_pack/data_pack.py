@@ -160,12 +160,42 @@ class DataPack(object):
 
         dill.dump(self, open(data_file_path, mode='wb'))
 
-    def append_text_length(self, inplace=False):
-        return self.apply_on_text(len, inplace=inplace,
-                                  names=('length_left', 'length_right'))
+    def append_text_length(self, inplace: bool=False):
+        return self.apply_on_text(len, names=('length_left', 'length_right'),
+                                  inplace=inplace)
 
-    def apply_on_text(self, func, inplace=False,
-                      names=('text_left', 'text_right')):
+    def apply_on_left(self, func, name:str = 'text_left', inplace:bool = False):
+        if inplace:
+            pack = self
+        else:
+            pack = self.copy()
+
+        func_name = func.__name__
+
+        tqdm.pandas(desc="Processing " + name + " with " + func_name)
+        value = pack.left[name].progress_apply(func)
+        pack.left[name] = value
+
+        if not inplace:
+            return pack
+
+    def apply_on_right(self, func, name:str = 'text_right', inplace:bool = False):
+        if inplace:
+            pack = self
+        else:
+            pack = self.copy()
+
+        func_name = func.__name__
+
+        tqdm.pandas(desc="Processing " + name + " with " + func_name)
+        value = pack.right[name].progress_apply(func)
+        pack.right[name] = value
+
+        if not inplace:
+            return pack
+
+    def apply_on_text(self, func, names = ('text_left', 'text_right'),
+                      inplace:bool = False):
         if inplace:
             pack = self
         else:
@@ -174,17 +204,16 @@ class DataPack(object):
         left_name, right_name = names
         func_name = func.__name__
 
-        tqdm.pandas(desc="Processing `text_left` with " + func_name)
-        left = pack.left['text_left'].progress_apply(func)
-        pack.left[left_name] = left
+        tqdm.pandas(desc="Processing " + left_name + " with " + func_name)
+        left_value = pack.left[left_name].progress_apply(func)
+        pack.left[left_name] = left_value
 
-        tqdm.pandas(desc="Processing `text_right` with " + func_name)
-        right = pack.right['text_right'].progress_apply(func)
-        pack.right[right_name] = right
+        tqdm.pandas(desc="Processing " + right_name + " with " + func_name)
+        right_value = pack.right[right_name].progress_apply(func)
+        pack.right[right_name] = right_value
 
         if not inplace:
             return pack
-
 
 class DataPackFrameView(object):
     def __init__(self, data_pack):
