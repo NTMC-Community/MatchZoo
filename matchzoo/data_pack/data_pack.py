@@ -195,24 +195,36 @@ class DataPack(object):
             True
 
         """
-        self.apply_on_text(len, names=('length_left', 'length_right'),
+        self.apply_on_text(len, rename=('length_left', 'length_right'),
                            inplace=True)
 
     @_optional_inplace
-    def apply_on_left_text(self, func, name: str = 'text_left'):
-        tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
-        self.left[name] = self.left['text_left'].progress_apply(func)
+    def apply_on_text(self, func, mode='both', rename=None):
+        if mode == 'both':
+            self._apply_on_text_both(func, rename)
+        elif mode == 'left':
+            self._apply_on_text_left(func, rename)
+        elif mode == 'right':
+            self._apply_on_text_right(func, rename)
+        else:
+            raise ValueError("`mode` must be one of `left` `right` `both`.")
 
-    @_optional_inplace
-    def apply_on_right_text(self, func, name: str = 'text_right'):
+    def _apply_on_text_right(self, func, rename):
+        name = rename or 'text_right'
         tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
         self.right[name] = self.right['text_right'].progress_apply(func)
 
-    @_optional_inplace
-    def apply_on_text(self, func, names=('text_left', 'text_right')):
-        left_name, right_name = names
-        self.apply_on_left_text(func, left_name, inplace=True)
-        self.apply_on_right_text(func, right_name, inplace=True)
+    def _apply_on_text_left(self, func, rename):
+        name = rename or 'text_left'
+        tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
+        self.left[name] = self.left['text_left'].progress_apply(func)
+
+    def _apply_on_text_both(self, func, rename):
+        left_name, right_name = rename or ('text_left', 'text_right')
+        self.apply_on_text(func, mode='left',
+                           rename=left_name, inplace=True)
+        self.apply_on_text(func, mode='right',
+                           rename=right_name, inplace=True)
 
 
 class DataPackFrameView(object):
