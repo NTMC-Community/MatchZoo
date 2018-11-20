@@ -221,10 +221,8 @@ class DataPack(object):
 
     def _apply_on_text_both(self, func, rename):
         left_name, right_name = rename or ('text_left', 'text_right')
-        self.apply_on_text(func, mode='left',
-                           rename=left_name, inplace=True)
-        self.apply_on_text(func, mode='right',
-                           rename=right_name, inplace=True)
+        self._apply_on_text_left(func, rename=left_name)
+        self._apply_on_text_right(func, rename=right_name)
 
 
 class DataPackFrameView(object):
