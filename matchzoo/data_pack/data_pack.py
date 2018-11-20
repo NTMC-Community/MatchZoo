@@ -2,6 +2,7 @@
 
 import typing
 from pathlib import Path
+import functools
 
 import dill
 from tqdm import tqdm
@@ -160,60 +161,59 @@ class DataPack(object):
 
         dill.dump(self, open(data_file_path, mode='wb'))
 
-    def append_text_length(self, inplace: bool=False):
-        return self.apply_on_text(len, names=('length_left', 'length_right'),
-                                  inplace=inplace)
+    def _optional_inplace(func):
 
-    def apply_on_left(self, func, name:str = 'text_left', inplace:bool = False):
-        if inplace:
-            pack = self
-        else:
-            pack = self.copy()
+        @functools.wraps(func)
+        def wrapper(self, *args, inplace: bool = False, **kwargs):
+            if inplace:
+                target = self
+            else:
+                target = self.copy()
 
-        func_name = func.__name__
+            func(target, *args, **kwargs)
 
-        tqdm.pandas(desc="Processing " + name + " with " + func_name)
-        value = pack.left[name].progress_apply(func)
-        pack.left[name] = value
+            if not inplace:
+                return target
 
-        if not inplace:
-            return pack
+        return wrapper
 
-    def apply_on_right(self, func, name:str = 'text_right', inplace:bool = False):
-        if inplace:
-            pack = self
-        else:
-            pack = self.copy()
+    @_optional_inplace
+    def append_text_length(self):
+        """
 
-        func_name = func.__name__
+            >>> import matchzoo as mz
+            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> 'length_left' in data_pack.frame[0].columns
+            False
+            >>> new_data_pack = data_pack.append_text_length()
+            >>> 'length_left' in new_data_pack.frame[0].columns
+            True
+            >>> 'length_left' in data_pack.frame[0].columns
+            False
+            >>> data_pack.append_text_length(inplace=True)
+            >>> 'length_left' in data_pack.frame[0].columns
+            True
 
-        tqdm.pandas(desc="Processing " + name + " with " + func_name)
-        value = pack.right[name].progress_apply(func)
-        pack.right[name] = value
+        """
+        self.apply_on_text(len, names=('length_left', 'length_right'),
+                           inplace=True)
 
-        if not inplace:
-            return pack
+    @_optional_inplace
+    def apply_on_left_text(self, func, name: str = 'text_left'):
+        tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
+        self.left[name] = self.left['text_left'].progress_apply(func)
 
-    def apply_on_text(self, func, names = ('text_left', 'text_right'),
-                      inplace:bool = False):
-        if inplace:
-            pack = self
-        else:
-            pack = self.copy()
+    @_optional_inplace
+    def apply_on_right_text(self, func, name: str = 'text_right'):
+        tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
+        self.right[name] = self.right['text_right'].progress_apply(func)
 
+    @_optional_inplace
+    def apply_on_text(self, func, names=('text_left', 'text_right')):
         left_name, right_name = names
-        func_name = func.__name__
+        self.apply_on_left_text(func, left_name, inplace=True)
+        self.apply_on_right_text(func, right_name, inplace=True)
 
-        tqdm.pandas(desc="Processing " + left_name + " with " + func_name)
-        left_value = pack.left['text_left'].progress_apply(func)
-        pack.left[left_name] = left_value
-
-        tqdm.pandas(desc="Processing " + right_name + " with " + func_name)
-        right_value = pack.right['text_right'].progress_apply(func)
-        pack.right[right_name] = right_value
-
-        if not inplace:
-            return pack
 
 class DataPackFrameView(object):
     def __init__(self, data_pack):
