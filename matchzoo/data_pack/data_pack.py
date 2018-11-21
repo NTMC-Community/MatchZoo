@@ -199,30 +199,36 @@ class DataPack(object):
                            inplace=True)
 
     @_optional_inplace
-    def apply_on_text(self, func, mode='both', rename=None):
+    def apply_on_text(self, func, mode='both', rename=None, verbose=1):
         if mode == 'both':
-            self._apply_on_text_both(func, rename)
+            self._apply_on_text_both(func, rename, verbose=verbose)
         elif mode == 'left':
-            self._apply_on_text_left(func, rename)
+            self._apply_on_text_left(func, rename, verbose=verbose)
         elif mode == 'right':
-            self._apply_on_text_right(func, rename)
+            self._apply_on_text_right(func, rename, verbose=verbose)
         else:
             raise ValueError("`mode` must be one of `left` `right` `both`.")
 
-    def _apply_on_text_right(self, func, rename):
+    def _apply_on_text_right(self, func, rename, verbose=1):
         name = rename or 'text_right'
-        tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
-        self.right[name] = self.right['text_right'].progress_apply(func)
+        if verbose:
+            tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
+            self.right[name] = self.right['text_right'].progress_apply(func)
+        else:
+            self.right[name] = self.right['text_right'].apply(func)
 
-    def _apply_on_text_left(self, func, rename):
+    def _apply_on_text_left(self, func, rename, verbose=1):
         name = rename or 'text_left'
-        tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
-        self.left[name] = self.left['text_left'].progress_apply(func)
+        if verbose:
+            tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
+            self.left[name] = self.left['text_left'].progress_apply(func)
+        else:
+            self.left[name] = self.left['text_left'].apply(func)
 
-    def _apply_on_text_both(self, func, rename):
+    def _apply_on_text_both(self, func, rename, verbose=1):
         left_name, right_name = rename or ('text_left', 'text_right')
-        self._apply_on_text_left(func, rename=left_name)
-        self._apply_on_text_right(func, rename=right_name)
+        self._apply_on_text_left(func, rename=left_name, verbose=verbose)
+        self._apply_on_text_right(func, rename=right_name, verbose=verbose)
 
 
 class DataPackFrameView(object):
