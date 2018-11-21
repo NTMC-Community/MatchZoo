@@ -92,17 +92,6 @@ class DataGenerator(keras.utils.Sequence):
             self._batch_indices.append(index_pool[lower: upper])
 
 
-# Example: dynamic pre-processing with a unit
-class UnitDynamicDataGenerator(DataGenerator):
-    def __init__(self, *args, unit=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._unit = unit
-
-    def _get_batch_of_transformed_samples(self, indices: np.array):
-        return self._data_pack[indices].apply_on_text(
-            self._unit.transform).unpack()
-
-
 # Example: implement the good old pair-generator
 class OrigPairGeneratorUsingNewInterface(DataGenerator):
     def __init__(self, data_pack, num_neg=1, num_dup=4, **kwargs):

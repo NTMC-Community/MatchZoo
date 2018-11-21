@@ -32,6 +32,10 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
     """
 
+    def __init__(self, with_word_hashing=True):
+        super().__init__()
+        self._with_word_hashing = with_word_hashing
+
     def fit(self, data_pack: DataPack):
         """
         Fit pre-processing context for transformation.
@@ -46,7 +50,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         self._context.update(vocab_unit.state)
         triletter_dim = len(vocab_unit.state['term_index']) + 1
         self._context['input_shapes'] = [(triletter_dim,), (triletter_dim,)]
-
         return self
 
     @engine.validate_context
@@ -59,9 +62,10 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         data_pack = data_pack.copy()
-        term_index = self._context['term_index']
-        hashing_unit = processor_units.WordHashingUnit(term_index)
-        units = self._default_processor_units() + [hashing_unit]
+        units = self._default_processor_units()
+        if self._with_word_hashing:
+            term_index = self._context['term_index']
+            units.append(processor_units.WordHashingUnit(term_index))
         data_pack.apply_on_text(chain_transform(units), inplace=True)
         return data_pack
 
