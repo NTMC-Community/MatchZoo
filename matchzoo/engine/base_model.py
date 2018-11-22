@@ -316,6 +316,13 @@ class BaseModel(abc.ABC):
         with open(params_path, mode='wb') as params_file:
             dill.dump(self._params, params_file)
 
+    def load_embedding_matrix(self, embedding_matrix, name='embedding'):
+        for layer in self._backend.layers:
+            if layer.name == name:
+                layer.set_weights([embedding_matrix])
+                return
+        raise ValueError(f"layer {name} not found.")
+
     def guess_and_fill_missing_params(self):
         """
         Guess and fill missing parameters in :attr:`params`.
