@@ -36,7 +36,7 @@ class BaseModel(abc.ABC):
         self._backend = backend
 
     @classmethod
-    def get_default_params(cls) -> engine.ParamTable:
+    def get_default_params(cls, with_embedding=False) -> engine.ParamTable:
         """
         Model default parameters.
 
@@ -73,6 +73,8 @@ class BaseModel(abc.ABC):
         params.add(engine.Param('input_shapes'))
         params.add(engine.Param('task'))
         params.add(engine.Param('optimizer'))
+        if with_embedding:
+            params.add(engine.Param('embedding_shape'))
         return params
 
     @property
