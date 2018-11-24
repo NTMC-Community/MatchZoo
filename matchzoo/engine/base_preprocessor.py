@@ -90,7 +90,6 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         dill.dump(self, open(data_file_path, mode='wb'))
 
     @classmethod
-    @abc.abstractmethod
     def _default_processor_units(cls) -> list:
         """Prepare needed process units."""
         return [

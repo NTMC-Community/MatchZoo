@@ -12,7 +12,10 @@ import pandas as pd
 tqdm.pandas()
 
 
-def convert_to_list_index(index, length):
+def _convert_to_list_index(
+    index: typing.Union[int, slice, np.array],
+    length: int
+):
     if isinstance(index, int):
         index = [index]
     elif isinstance(index, slice):
@@ -69,7 +72,8 @@ class DataPack(object):
         self._right = right
 
     @property
-    def has_label(self):
+    def has_label(self) -> bool:
+        """:return: `True` if `label` column exists, `False` other wise."""
         return 'label' in self._relation.columns
 
     def __len__(self) -> int:
@@ -77,10 +81,55 @@ class DataPack(object):
         return self._relation.shape[0]
 
     @property
-    def frame(self):
-        return DataPackFrameView(self)
+    def frame(self) -> '_DataPackFrameView':
+        """
+        View as a :class:`pandas.DataFrame`.
 
-    def unpack(self):
+        Returned data frame is created by merging `self.left`, `self.right`,
+        and `self.relation`. Use `[]` to access an item or a slice of items.
+
+        :return: A :class:`_DataPackFrameView instance.
+
+        Example:
+            >>> import matchzoo as mz
+            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> type(data_pack.frame)
+            <class 'matchzoo.data_pack.data_pack._DataPackFrameView'>
+            >>> frame_slice = data_pack.frame[0:5]
+            >>> type(frame_slice)
+            <class 'pandas.core.frame.DataFrame'>
+            >>> list(frame_slice.columns)
+            ['id_left', 'text_left', 'id_right', 'text_right', 'label']
+            >>> full_frame = data_pack.frame[:]
+            >>> len(full_frame) == len(data_pack)
+            True
+
+        """
+        return _DataPackFrameView(self)
+
+    def unpack(self) -> typing.Tuple[typing.Dict[str, np.array],
+                                     typing.Optional[np.array]]:
+        """
+        Unpack the data for training.
+
+        The return value can be directly feed to `model.fit` or
+        `model.fit_generator`.
+
+        :return: A tuple of (X, y). `y` is `None` if `self` has no label.
+
+        Example:
+            >>> import matchzoo as mz
+            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> X, y = data_pack[:10].unpack()
+            >>> type(X)
+            <class 'dict'>
+            >>> sorted(X.keys())
+            ['id_left', 'id_right', 'text_left', 'text_right']
+            >>> type(y)
+            <class 'numpy.ndarray'>
+
+
+        """
         frame = self.frame[:]
 
         columns = list(frame.columns)
@@ -96,8 +145,18 @@ class DataPack(object):
 
         return x, y
 
-    def __getitem__(self, index):
-        index = convert_to_list_index(index, len(self))
+    def __getitem__(self, index: typing.Union[int, slice, np.array]
+                    ) -> 'DataPack':
+        """
+        Get specific item(s) as a new :class:`DataPack`.
+
+        The returned :class:`DataPack` will be a copy of the subset of the
+        original :class:`DataPack`.
+
+        :param index: Index of the item(s) to get.
+        :return: An instance of :class:`DataPack`.
+        """
+        index = _convert_to_list_index(index, len(self))
         relation = self._relation.loc[index].reset_index(drop=True)
         left = self._left.loc[relation['id_left'].unique()]
         right = self._right.loc[relation['id_right'].unique()]
@@ -136,7 +195,8 @@ class DataPack(object):
         """
         self._right = value
 
-    def copy(self):
+    def copy(self) -> 'DataPack':
+        """:return: A deep copy."""
         return DataPack(left=self._left.copy(),
                         right=self._right.copy(),
                         relation=self._relation.copy())
@@ -164,7 +224,9 @@ class DataPack(object):
     def _optional_inplace(func):
 
         @functools.wraps(func)
-        def wrapper(self, *args, inplace: bool = False, **kwargs):
+        def wrapper(
+            self, *args, inplace: bool = False, **kwargs
+        ) -> typing.Optional['DataPack']:
             if inplace:
                 target = self
             else:
@@ -180,7 +242,9 @@ class DataPack(object):
     @_optional_inplace
     def append_text_length(self):
         """
+        Append `length_left` and `length_right` columns.
 
+        Example:
             >>> import matchzoo as mz
             >>> data_pack = mz.datasets.toy.load_train_classify_data()
             >>> 'length_left' in data_pack.frame[0].columns
@@ -199,7 +263,23 @@ class DataPack(object):
                            inplace=True)
 
     @_optional_inplace
-    def apply_on_text(self, func, mode='both', rename=None, verbose=1):
+    def apply_on_text(
+        self, func: typing.Callable,
+        mode: str = 'both',
+        rename: typing.Optional[str] = None,
+        verbose: int = 1
+    ):
+        """
+        Apply `func` to text columns based on `mode`.
+
+        :param func: The function to apply.
+        :param mode: One of "both", "left" and "right".
+        :param rename: If set, use new names for results instead of replacing
+            the original columns. To set `rename` in "both" mode, use a tuple
+            of `str`, e.g. ("text_left_new_name", "text_right_new_name").
+        :param verbose:
+        :return:
+        """
         if mode == 'both':
             self._apply_on_text_both(func, rename, verbose=verbose)
         elif mode == 'left':
@@ -231,13 +311,15 @@ class DataPack(object):
         self._apply_on_text_right(func, rename=right_name, verbose=verbose)
 
 
-class DataPackFrameView(object):
-    def __init__(self, data_pack):
+class _DataPackFrameView(object):
+    """A syntatic sugar class for usage like `DataPack.frame[:10]`."""
+
+    def __init__(self, data_pack: DataPack):
         self._data_pack = data_pack
 
     def __getitem__(self, index):
         dp = self._data_pack
-        index = convert_to_list_index(index, len(dp))
+        index = _convert_to_list_index(index, len(dp))
         left_df = dp.left.loc[dp.relation['id_left'][index]].reset_index()
         right_df = dp.right.loc[dp.relation['id_right'][index]].reset_index()
         joined_table = left_df.join(right_df)
