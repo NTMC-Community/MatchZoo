@@ -6,6 +6,7 @@ from .processor_units import chain_transform
 from .data_pack import DataPack, reorganize_data_pack_pair_wise, pack, \
     build_vocab, load_data_pack
 from .data_generator import DataGenerator
+from .data_generator import PairDataGenerator
 
 from . import tasks
 from . import metrics
