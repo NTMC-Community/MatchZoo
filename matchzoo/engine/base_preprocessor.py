@@ -98,7 +98,6 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             processor_units.LowercaseUnit(),
             processor_units.PuncRemovalUnit(),
             processor_units.StopRemovalUnit(),
-            processor_units.NgramLetterUnit(),
         ]
 
 
