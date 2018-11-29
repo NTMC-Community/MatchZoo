@@ -1,12 +1,19 @@
 """Tuner class. Currently a minimum working demo."""
 
 import hyperopt
-import random
 
 from matchzoo import engine
+from matchzoo import models
 
 
-def tune(model: engine.BaseModel, max_evals: int = 32) -> list:
+def tune(
+    model: engine.BaseModel,
+    train_pack,
+    test_pack,
+    task,
+    max_evals: int = 32,
+    context=None,
+) -> list:
     """
     Tune the `model` `max_evals` times.
 
@@ -18,28 +25,32 @@ def tune(model: engine.BaseModel, max_evals: int = 32) -> list:
     :param model:
     :param max_evals: Number of evaluations of a single tuning process.
     :return: A list of trials of the tuning process.
-
-    Example:
-
-        >>> from matchzoo.models import DenseBaselineModel
-        >>> model = DenseBaselineModel()
-        >>> max_evals = 4
-        >>> trials = tune(model, max_evals)
-        >>> len(trials) == max_evals
-        True
-
     """
-    trials = hyperopt.Trials()
 
     def _test_wrapper(space):
         for key, value in space.items():
             model.params[key] = value
+
+        if isinstance(model, models.DSSMModel):
+            input_shapes = context['input_shapes']
+            model.params['input_shapes'] = input_shapes
+
+        model.params['task'] = task
         model.guess_and_fill_missing_params()
         model.build()
-        # the random loss is for demostration purpose without actual meaning
-        return {'loss': random.random(), 'space': space,
-                'status': hyperopt.STATUS_OK}
+        model.compile()
 
+        model.fit(*train_pack.unpack())
+        metrics = model.evaluate(*test_pack.unpack())
+
+        return {
+            'loss': metrics['loss'],
+            'space': space,
+            'status': hyperopt.STATUS_OK,
+            'model_params': model.params
+        }
+
+    trials = hyperopt.Trials()
     hyperopt.fmin(
         fn=_test_wrapper,
         space=model.params.hyper_space,
@@ -47,4 +58,13 @@ def tune(model: engine.BaseModel, max_evals: int = 32) -> list:
         max_evals=max_evals,
         trials=trials
     )
-    return trials.trials
+
+    return [clean_up_trial(trial) for trial in trials]
+
+
+def clean_up_trial(trial):
+    return {
+        'model_params': trial['result']['model_params'],
+        'sampled_params': trial['result']['space'],
+        'loss': trial['result']['loss']
+    }

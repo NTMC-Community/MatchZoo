@@ -9,6 +9,7 @@ import numpy as np
 import keras
 import pandas as pd
 
+import matchzoo
 from matchzoo import DataGenerator
 from matchzoo import engine
 from matchzoo import tasks
@@ -76,6 +77,10 @@ class BaseModel(abc.ABC):
         if with_embedding:
             params.add(engine.Param('embedding_shape'))
         return params
+
+    @classmethod
+    def get_default_preprocessor(cls) -> engine.BasePreprocessor:
+        return matchzoo.preprocessors.NaivePreprocessor()
 
     @property
     def params(self) -> engine.ParamTable:

@@ -6,8 +6,6 @@ import typing
 import keras
 import numpy as np
 
-from matchzoo import reorganize_data_pack_pair_wise
-
 
 class DataGenerator(keras.utils.Sequence):
     """Abstract base class of all matchzoo generators.
@@ -90,31 +88,3 @@ class DataGenerator(keras.utils.Sequence):
             lower = self._batch_size * i
             upper = self._batch_size * (i + 1)
             self._batch_indices.append(index_pool[lower: upper])
-
-
-# Example: implement the good old pair-generator
-class OrigPairGeneratorUsingNewInterface(DataGenerator):
-    def __init__(self, data_pack, num_neg=1, num_dup=4, **kwargs):
-        super().__init__(data_pack, **kwargs)
-        self._data_pack = reorganize_data_pack_pair_wise(data_pack(num_neg, num_neg))
-
-    @property
-    def num_instances(self):
-        return 'blah'
-
-
-# Example: doing upsampling and dynamic pre-processing at the same time
-class DataGeneratorFusion(DataGenerator):
-    def __init__(self, *args, num_neg=1, num_dup=1, unit=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._unit = unit
-        self._num_dup = num_dup
-        self._num_neg = num_neg
-
-    def _get_batch_of_transformed_samples(self, indices):
-        dp = self._data_pack[indices].copy()
-        func = self._unit.transform
-        dp.left['text_left'] = dp.left['text_left'].apply(func)
-        dp.right['text_right'] = dp.right['text_right'].apply(func)
-        return reorganize_data_pack_pair_wise(dp, num_dup=self._num_dup,
-                                              num_neg=self._num_neg).unpack()

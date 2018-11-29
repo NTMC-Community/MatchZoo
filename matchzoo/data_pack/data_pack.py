@@ -240,6 +240,16 @@ class DataPack(object):
         return wrapper
 
     @_optional_inplace
+    def shuffle(self):
+        """
+        Shuffle the data pack by shuffling the relation column.
+
+        :param inplace: `True` to shuffle in place, `False` to return a
+        shuffled copy.(default: False)
+        """
+        self._relation = self._relation.sample(frac=1)
+
+    @_optional_inplace
     def append_text_length(self):
         """
         Append `length_left` and `length_right` columns.
