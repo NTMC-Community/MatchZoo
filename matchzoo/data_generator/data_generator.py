@@ -61,7 +61,7 @@ class DataGenerator(keras.utils.Sequence):
 
     def __len__(self) -> int:
         """Get the total number of batches."""
-        return math.ceil(len(self._data_pack) / self._batch_size)
+        return math.ceil(self.num_instance / self._batch_size)
 
     def on_epoch_end(self):
         """Reorganize the index array while epoch is ended."""
@@ -72,7 +72,7 @@ class DataGenerator(keras.utils.Sequence):
         self._set_indices()
 
     @property
-    def num_instance(self):
+    def num_instance(self) -> int:
         return len(self._data_pack)
 
     def _set_indices(self):
