@@ -4,7 +4,7 @@ import logging
 
 from tqdm import tqdm
 
-from matchzoo import engine, preprocessors, processor_units
+from matchzoo import engine, processor_units
 from matchzoo import DataPack
 from matchzoo import chain_transform, build_vocab
 
@@ -13,39 +13,47 @@ tqdm.pandas()
 
 
 class DSSMPreprocessor(engine.BasePreprocessor):
-    """
-    DSSM preprocessor helper.
-
-    TODO: NEED REFACTORING.
-
-    Example:
-        >>> import matchzoo as mz
-        >>> train_data = mz.datasets.toy.load_train_classify_data()
-        >>> test_data = mz.datasets.toy.load_test_classify_data()
-        >>> dssm_preprocessor = mz.preprocessors.DSSMPreprocessor()
-        >>> train_data_processed = dssm_preprocessor.fit_transform(train_data)
-        >>> type(train_data_processed)
-        <class 'matchzoo.data_pack.data_pack.DataPack'>
-        >>> test_data_transformed = dssm_preprocessor.transform(test_data)
-        >>> type(test_data_transformed)
-        <class 'matchzoo.data_pack.data_pack.DataPack'>
-
-    """
+    """DSSMModel preprocessor."""
 
     def __init__(self, with_word_hashing=True):
+        """
+        DSSMModel preprocessor.
+
+        The word hashing step could eats up a lot of memory. To workaround
+        this problem, set `with_word_hashing` to `False` and use  a
+        :class:`matchzoo.DynamicDataGenerator` with a
+        :class:`matchzoo.processor_units.WordHashingUnit`.
+
+        :param with_word_hashing: Include a word hashing step if `True`.
+
+        Example:
+            >>> import matchzoo as mz
+            >>> train_data = mz.datasets.toy.load_train_classify_data()
+            >>> test_data = mz.datasets.toy.load_test_classify_data()
+            >>> dssm_preprocessor = mz.preprocessors.DSSMPreprocessor()
+            >>> train_data_processed = dssm_preprocessor.fit_transform(train_data)
+            >>> type(train_data_processed)
+            <class 'matchzoo.data_pack.data_pack.DataPack'>
+            >>> test_data_transformed = dssm_preprocessor.transform(test_data)
+            >>> type(test_data_transformed)
+            <class 'matchzoo.data_pack.data_pack.DataPack'>
+
+        """
         super().__init__()
         self._with_word_hashing = with_word_hashing
 
-    def fit(self, data_pack: DataPack):
+    def fit(self, data_pack: DataPack, verbose=1):
         """
         Fit pre-processing context for transformation.
 
+        :param verbose: Verbosity.
         :param data_pack: data_pack to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
         units = self._default_processor_units()
-        data_pack = data_pack.apply_on_text(chain_transform(units))
-        vocab_unit = build_vocab(data_pack)
+        data_pack = data_pack.apply_on_text(chain_transform(units),
+                                            verbose=verbose)
+        vocab_unit = build_vocab(data_pack, verbose=verbose)
 
         self._context.update(vocab_unit.state)
         triletter_dim = len(vocab_unit.state['term_index']) + 1
@@ -53,11 +61,12 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         return self
 
     @engine.validate_context
-    def transform(self, data_pack: DataPack) -> DataPack:
+    def transform(self, data_pack: DataPack, verbose=1) -> DataPack:
         """
         Apply transformation on data, create `tri-letter` representation.
 
         :param data_pack: Inputs to be preprocessed.
+        :param verbose: Verbosity.
 
         :return: Transformed data as :class:`DataPack` object.
         """
@@ -66,7 +75,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         if self._with_word_hashing:
             term_index = self._context['term_index']
             units.append(processor_units.WordHashingUnit(term_index))
-        data_pack.apply_on_text(chain_transform(units), inplace=True)
+        data_pack.apply_on_text(chain_transform(units), inplace=True,
+                                verbose=verbose)
         return data_pack
 
     @classmethod

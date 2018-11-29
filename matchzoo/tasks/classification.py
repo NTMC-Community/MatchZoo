@@ -41,7 +41,8 @@ class Classification(engine.BaseTask):
         """:return: target data type, expect `int` as output."""
         return int
 
-    def one_hot_encode(self, arr):
+    def one_hot_encode(self, arr) ->np.ndarray:
+        """:return: A one-hot encoded vector."""
         vec = np.zeros((self._num_classes,))
         vec[arr] = 1
         return vec

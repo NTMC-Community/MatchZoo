@@ -36,7 +36,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         return self._context
 
     @abc.abstractmethod
-    def fit(self, inputs: list) -> 'BasePreprocessor':
+    def fit(self, inputs: list, verbose=1) -> 'BasePreprocessor':
         """
         Fit parameters on input data.
 
@@ -47,10 +47,11 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         object.
 
         :param inputs: List of text-left, text-right, label triples.
+        :param verbose: Verbosity.
         """
 
     @abc.abstractmethod
-    def transform(self, inputs: list) -> DataPack:
+    def transform(self, inputs: list, verbose=1) -> DataPack:
         """
         Transform input data to expected manner.
 
@@ -58,6 +59,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         implemented in the child class.
 
         :param inputs: List of text-left, text-right, label triples,
+        :param verbose: Verbosity.
             or list of text-left, text-right tuples.
         """
 

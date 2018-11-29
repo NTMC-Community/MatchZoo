@@ -80,6 +80,16 @@ class BaseModel(abc.ABC):
 
     @classmethod
     def get_default_preprocessor(cls) -> engine.BasePreprocessor:
+        """
+        Model default preprocessor.
+
+        The preprocessor's transform should produce a correctly shaped data
+        pack that can be used for training. Some extra configuration (e.g.
+        setting `input_shapes` in :class:`matchzoo.models.DSSMModel` may be
+        required on the user's end.
+
+        :return: Default preprocessor.
+        """
         return matchzoo.preprocessors.NaivePreprocessor()
 
     @property
@@ -323,7 +333,25 @@ class BaseModel(abc.ABC):
         with open(params_path, mode='wb') as params_file:
             dill.dump(self._params, params_file)
 
-    def load_embedding_matrix(self, embedding_matrix, name='embedding'):
+    def load_embedding_matrix(
+        self,
+        embedding_matrix: np.ndarray,
+        name: str = 'embedding'
+    ):
+        """
+        Load an embedding matrix.
+
+        Load an embedding matrix into the model's embedding layer. The name
+        of the embedding layer is specified by `name`. For models with only
+        one embedding layer, set `name='embedding'` when creating the keras
+        layer, and use the default `name` when load the matrix. For models
+        with more than one embedding layers, initialize keras layer with
+        different layer names, and set `name` accordingly to load a matrix
+        to a chosen layer.
+
+        :param embedding_matrix: Embedding matrix to be loaded.
+        :param name: Name of the layer. (default: 'embedding')
+        """
         for layer in self._backend.layers:
             if layer.name == name:
                 layer.set_weights([embedding_matrix])

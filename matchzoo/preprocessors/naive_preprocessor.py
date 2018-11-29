@@ -30,27 +30,32 @@ class NaivePreprocessor(engine.BasePreprocessor):
 
     """
 
-    def fit(self, data_pack: DataPack):
+    def fit(self, data_pack: DataPack, verbose=1):
         """
         Fit pre-processing context for transformation.
 
         :param data_pack: data_pack to be preprocessed.
+        :param verbose: Verbosity.
         :return: class:`DSSMPreprocessor` instance.
         """
         units = self._default_processor_units()
-        data_pack = data_pack.apply_on_text(chain_transform(units))
-        vocab_unit = build_vocab(data_pack)
-        self._context.update(vocab_unit.state)
+        data_pack = data_pack.apply_on_text(chain_transform(units),
+                                            verbose=verbose)
+        vocab_unit = build_vocab(data_pack, verbose=verbose)
+        self._context['vocab_unit'] = vocab_unit
         return self
 
     @engine.validate_context
-    def transform(self, data_pack: DataPack) -> DataPack:
+    def transform(self, data_pack: DataPack, verbose=1) -> DataPack:
         """
         Apply transformation on data, create `tri-letter` representation.
 
         :param data_pack: Inputs to be preprocessed.
+        :param verbose: Verbosity.
 
         :return: Transformed data as :class:`DataPack` object.
         """
         units = self._default_processor_units()
-        return data_pack.apply_on_text(chain_transform(units))
+        units.append(self._context['vocab_unit'])
+        units.append(processor_units.FixedLengthUnit(text_length=30))
+        return data_pack.apply_on_text(chain_transform(units), verbose=verbose)

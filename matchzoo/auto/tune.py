@@ -11,22 +11,29 @@ def tune(
     train_pack,
     test_pack,
     task,
-    max_evals: int = 32,
     context=None,
+    max_evals: int = 32,
+    verbose=1
 ) -> list:
     """
-    Tune the `model` `max_evals` times.
+    Tune a model.
 
     Construct a hyper parameter searching space by extracting all parameters
     in `model` that have a defined hyper space. Then, using `hyperopt` API,
     iteratively sample parameters and test for loss, and pick the best trial
     out of all. Currently a minimum working demo.
 
-    :param model:
+    :param model: Model to tune.
+    :param train_pack: :class:`matchzoo.DataPack` to train the model.
+    :param test_pack: :class:`matchzoo.DataPack` to test the model.
+    :param task: :class:`matchzoo.engine.BaseTask` to execute.
+    :param context: Extra information for tunning. Different for different
+        models.
     :param max_evals: Number of evaluations of a single tuning process.
+    :param verbose: Verbosity.
+
     :return: A list of trials of the tuning process.
     """
-
     def _test_wrapper(space):
         for key, value in space.items():
             model.params[key] = value
@@ -40,8 +47,8 @@ def tune(
         model.build()
         model.compile()
 
-        model.fit(*train_pack.unpack())
-        metrics = model.evaluate(*test_pack.unpack())
+        model.fit(*train_pack.unpack(), verbose=verbose)
+        metrics = model.evaluate(*test_pack.unpack(), verbose=verbose)
 
         return {
             'loss': metrics['loss'],
@@ -59,10 +66,10 @@ def tune(
         trials=trials
     )
 
-    return [clean_up_trial(trial) for trial in trials]
+    return [_clean_up_trial(trial) for trial in trials]
 
 
-def clean_up_trial(trial):
+def _clean_up_trial(trial):
     return {
         'model_params': trial['result']['model_params'],
         'sampled_params': trial['result']['space'],
