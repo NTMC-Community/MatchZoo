@@ -28,7 +28,21 @@ class PairDataGenerator(DataGenerator):
         # Here the super().__init_ must be after the self._data_pack
         super().__init__(self._data_pack, **kwargs)
 
-    def reorganize_data_pack(self, data_pack: DataPack, num_dup: int = 1,
+    @property
+    def num_instance(self) -> int:
+        """Get the total number of pairs."""
+        return math.ceil(len(self._data_pack) / self._steps)
+
+    def _get_batch_of_transformed_samples(self, indices: np.array):
+        """Get a batch of paired instances."""
+        paired_indices = []
+        for index in indices:
+            paired_indices.extend(
+                range(index * self._steps, (index + 1) * self._steps))
+        return self._data_pack[paired_indices].unpack()
+
+    @classmethod
+    def reorganize_data_pack(cls, data_pack: DataPack, num_dup: int = 1,
                              num_neg: int = 1):
         """Re-organize the data pack as pair-wise format.
 
@@ -56,15 +70,3 @@ class PairDataGenerator(DataGenerator):
                         left=data_pack.left.copy(),
                         right=data_pack.right.copy())
 
-    @property
-    def num_instance(self) -> int:
-        """Get the total number of pairs."""
-        return math.ceil(len(self._data_pack) / self._steps)
-
-    def _get_batch_of_transformed_samples(self, indices: np.array):
-        """Get a batch of paired instances."""
-        paired_indices = []
-        for index in indices:
-            paired_indices.extend(
-                range(index * self._steps, (index + 1) * self._steps))
-        return self._data_pack[paired_indices].unpack()
