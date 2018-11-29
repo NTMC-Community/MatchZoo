@@ -9,7 +9,7 @@ class RankCrossEntropyLoss(object):
 
     def __init__(self, num_neg=1):
         """
-        :class: `RankCrossEntropyLoss` constructor.
+        :class:`RankCrossEntropyLoss` constructor.
 
         :param num_neg: number of negative instances in cross entropy loss.
         """

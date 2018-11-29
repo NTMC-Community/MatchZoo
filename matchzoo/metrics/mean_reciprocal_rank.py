@@ -9,7 +9,7 @@ class MeanReciprocalRank(engine.BaseMetric):
 
     def __init__(self, threshold=0):
         """
-        :class: `MeanReciprocalRankMetric`.
+        :class:`MeanReciprocalRankMetric`.
 
         :param threshold: The label threshold of relevance degree.
         """

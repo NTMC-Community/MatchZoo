@@ -12,7 +12,7 @@ class AveragePrecision(engine.BaseMetric):
 
     def __init__(self, threshold=0):
         """
-        :class: `AveragePrecision` constructor.
+        :class:`AveragePrecision` constructor.
 
         :param threshold: The label threshold of relevance degree.
         """

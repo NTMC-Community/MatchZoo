@@ -9,7 +9,7 @@ class Precision(engine.BaseMetric):
 
     def __init__(self, k=1, threshold=0):
         """
-        :class: `PrecisionMetric` constructor.
+        :class:`PrecisionMetric` constructor.
 
         :param k: Number of results to consider.
         :param threshold: the label threshold of relevance degree.

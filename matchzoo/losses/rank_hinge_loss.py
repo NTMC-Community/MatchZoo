@@ -9,7 +9,7 @@ class RankHingeLoss(object):
 
     def __init__(self, num_neg=1, margin=1.0):
         """
-        :class: `RankHingeLoss` constructor.
+        :class:`RankHingeLoss` constructor.
 
         :param num_neg: number of negative instances in hinge loss.
         :param margin: the margin between positive and negative scores.
