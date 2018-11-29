@@ -1,3 +1,4 @@
+"""Discounted cumulative gain metric for ranking."""
 import math
 
 from matchzoo import engine
@@ -10,7 +11,7 @@ class DiscountedCumulativeGain(engine.BaseMetric):
 
     def __init__(self, k=1, threshold=0):
         """
-        Disconunted cumulative gain metric.
+        :class:`DiscountedCumulativeGain` constructor.
 
         :param k: Number of results to consider.
         :param threshold: the label threshold of relevance degree.
