@@ -1,3 +1,4 @@
+"""Precision for ranking."""
 from matchzoo import engine
 
 
@@ -8,7 +9,7 @@ class Precision(engine.BaseMetric):
 
     def __init__(self, k=1, threshold=0):
         """
-        Precision metric.
+        :class: `PrecisionMetric` constructor.
 
         :param k: Number of results to consider.
         :param threshold: the label threshold of relevance degree.

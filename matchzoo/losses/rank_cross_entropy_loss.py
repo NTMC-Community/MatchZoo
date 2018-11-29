@@ -1,17 +1,23 @@
+"""The rank cross entropy loss."""
 import numpy as np
 
 from keras import layers, backend as K
 
 
 class RankCrossEntropyLoss(object):
+    """Rank cross entropy loss."""
+
     def __init__(self, num_neg=1):
+        """
+        :class: `RankCrossEntropyLoss` constructor.
+
+        :param num_neg: number of negative instances in cross entropy loss.
+        """
         self._num_neg = num_neg
 
     def __call__(self, y_true: np.array, y_pred: np.array) -> np.array:
         """
         Calculate rank cross entropy loss.
-
-        Support user defined :attr:`neg_num`.
 
         :param y_true: Label.
         :param y_pred: Predicted result.

@@ -1,6 +1,5 @@
 """Metric base class and some related utilities."""
 
-import random
 import typing
 import abc
 

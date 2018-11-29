@@ -1,3 +1,4 @@
+"""Mean average precision metric for ranking."""
 from matchzoo import engine
 
 
@@ -7,7 +8,11 @@ class MeanAveragePrecision(engine.BaseMetric):
     ALIAS = ['mean_average_precision', 'map']
 
     def __init__(self, threshold=0):
-        """:param threshold: The label threshold of relevance degree."""
+        """
+        :class: `MeanAveragePrecision` constructor.
+
+        :param threshold: The label threshold of relevance degree.
+        """
         self._threshold = threshold
 
     def __repr__(self):

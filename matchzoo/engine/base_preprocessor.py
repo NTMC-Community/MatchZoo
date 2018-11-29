@@ -12,7 +12,6 @@ from matchzoo import processor_units
 
 def validate_context(func):
     """Validate context in the preprocessor."""
-
     def transform_wrapper(self, *args, **kwargs):
         if not self.context:
             raise ValueError(
@@ -33,6 +32,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     @property
     def context(self):
+        """Return context."""
         return self._context
 
     @abc.abstractmethod

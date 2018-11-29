@@ -1,5 +1,4 @@
-import numpy as np
-
+"""Mean reciprocal ranking metric."""
 from matchzoo import engine
 
 
@@ -10,7 +9,7 @@ class MeanReciprocalRank(engine.BaseMetric):
 
     def __init__(self, threshold=0):
         """
-        Mean reciprocal rank metric.
+        :class: `MeanReciprocalRankMetric`.
 
         :param threshold: The label threshold of relevance degree.
         """
@@ -25,6 +24,7 @@ class MeanReciprocalRank(engine.BaseMetric):
         Calculate reciprocal of the rank of the first relevant item.
 
         Example:
+            >>> import numpy as np
             >>> y_pred = np.asarray([0.2, 0.3, 0.7, 1.0])
             >>> y_true = np.asarray([1, 0, 0, 0])
             >>> MeanReciprocalRank()(y_true, y_pred)
