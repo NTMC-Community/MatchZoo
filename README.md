@@ -46,6 +46,8 @@ MatchZoo is a toolkit for text matching. It was developed with a focus on facili
   </tr>
 </table>
 
+## We're actively developing MatchZoo 2.0 with everything improved, stay tuned! See branch 2.0 for early access.
+
 ## Installation
 MatchZoo is still under development. Before the first stable release (1.0), please clone the repository and run
 ```
