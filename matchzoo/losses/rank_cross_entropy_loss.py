@@ -5,7 +5,19 @@ from keras import layers, backend as K
 
 
 class RankCrossEntropyLoss(object):
-    """Rank cross entropy loss."""
+    """
+    Rank cross entropy loss.
+
+    Examples:
+        >>> from keras import backend as K
+        >>> softmax = lambda x: np.exp(x)/np.sum(np.exp(x), axis=0)
+        >>> x_pred = K.variable(np.array([[1.0], [1.2], [0.8]]))
+        >>> x_true = K.variable(np.array([[1], [0], [0]]))
+        >>> expect = -np.log(softmax(np.array([[1.0], [1.2], [0.8]])))
+        >>> loss = K.eval(RankCrossEntropyLoss(num_neg=2)(x_true, x_pred))
+        >>> assert np.isclose(loss, expect[0])
+
+    """
 
     def __init__(self, num_neg=1):
         """

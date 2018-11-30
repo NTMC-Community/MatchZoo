@@ -1,20 +1,72 @@
-"""Base generator."""
+"""Pair-wise data generator."""
 
 import math
-import typing
 
 import numpy as np
 import pandas as pd
 
-from .data_generator import DataGenerator
-from ..data_pack import DataPack
+from matchzoo.data_pack import DataPack
+from matchzoo.data_generator import DataGenerator
 
 
 class PairDataGenerator(DataGenerator):
-    """Generate pair-wise data."""
+    """
+    Generate pair-wise data.
 
-    def __init__(self, data_pack, num_dup: int = 1, num_neg: int = 1,
-                 **kwargs):
+    Examples:
+        >>> import random
+        >>> random.seed(111)
+        >>> np.random.seed(111)
+        >>> relation = [
+        ...     ['qid0', 'did0', 1],
+        ...     ['qid0', 'did1', 2],
+        ...     ['qid0', 'did2', 0]
+        ... ]
+        >>> left = [['qid0', [1, 2]]]
+        >>> right = [
+        ...     ['did0', [2, 3]],
+        ...     ['did1', [3, 4]],
+        ...     ['did2', [4, 5]]
+        ... ]
+        >>> relation = pd.DataFrame(relation,
+        ...                         columns=['id_left', 'id_right', 'label'])
+        >>> left = pd.DataFrame(left, columns=['id_left', 'text_left'])
+        >>> left.set_index('id_left', inplace=True)
+        >>> left['length_left'] = left.apply(lambda x: len(x['text_left']),
+        ...                                  axis=1)
+        >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
+        >>> right.set_index('id_right', inplace=True)
+        >>> right['length_right'] = right.apply(lambda x: len(x['text_right']),
+        ...                                     axis=1)
+        >>> input = DataPack(relation=relation,
+        ...                  left=left,
+        ...                  right=right
+        ... )
+        >>> data_generator = PairDataGenerator(input, 2, 1, 1, False)
+        >>> data_generator.num_instance
+        4
+        >>> len(data_generator)
+        4
+        >>> x, y = data_generator[0]
+        >>> x['id_left'].tolist()
+        ['qid0', 'qid0']
+        >>> x['text_left'].tolist()
+        [[1, 2], [1, 2]]
+        >>> x['length_left'].tolist()
+        [2, 2]
+        >>> x['id_right'].tolist()
+        ['did1', 'did0']
+        >>> x['text_right'].tolist()
+        [[3, 4], [2, 3]]
+        >>> x['length_right'].tolist()
+        [2, 2]
+        >>> y.tolist()
+        [2, 1]
+
+    """
+
+    def __init__(self, data_pack: DataPack, num_dup: int = 1, num_neg: int = 1,
+                 batch_size: int = 32, shuffle: bool = True):
         """:class:`PairDataGenerator` constructor.
 
         :param num_dup: number of duplicates for each positive sample.
@@ -26,12 +78,12 @@ class PairDataGenerator(DataGenerator):
                                                     num_dup,
                                                     num_neg)
         # Here the super().__init_ must be after the self._data_pack
-        super().__init__(self._data_pack, **kwargs)
+        super().__init__(self._data_pack, batch_size, shuffle)
 
     @property
     def num_instance(self) -> int:
         """Get the total number of pairs."""
-        return math.ceil(len(self._data_pack) / self._steps)
+        return int(math.ceil(len(self._data_pack) / self._steps))
 
     def _get_batch_of_transformed_samples(self, indices: np.array):
         """Get a batch of paired instances."""
@@ -54,7 +106,7 @@ class PairDataGenerator(DataGenerator):
         """
         pairs = []
         groups = data_pack.relation.sort_values(
-                    'label', ascending=False).groupby('id_left')
+            'label', ascending=False).groupby('id_left')
         for idx, group in groups:
             labels = group.label.unique()
             for label in labels[:-1]:
@@ -69,4 +121,3 @@ class PairDataGenerator(DataGenerator):
         return DataPack(relation=new_relation,
                         left=data_pack.left.copy(),
                         right=data_pack.right.copy())
-
