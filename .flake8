@@ -1,3 +1,10 @@
 [flake8]
-# D401 First line should be in imperative mood
-ignore = D401
+ignore = 
+    # D401 First line should be in imperative mood
+    D401,
+
+    # For doctests:
+    # D207 Docstring is under-indented
+    D207,
+    # D301 Use r""" if any backslashes in a docstring
+    D301
