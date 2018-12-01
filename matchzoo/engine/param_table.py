@@ -90,3 +90,7 @@ class ParamTable(object):
 
         """
         return all(param for param in self)
+
+    def keys(self) -> typing.KeysView:
+        """:return: Parameter table keys."""
+        return self._params.keys()

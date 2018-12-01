@@ -1,7 +1,9 @@
 """An implementation of DSSM, Deep Structured Semantic Model."""
-from matchzoo import engine
 from keras.models import Model
 from keras.layers import Dense, Input, Dot
+
+from matchzoo import engine
+from matchzoo import preprocessors
 
 
 class DSSMModel(engine.BaseModel):
@@ -20,12 +22,13 @@ class DSSMModel(engine.BaseModel):
         """:return: model default parameters."""
         params = super().get_default_params()
         params['optimizer'] = 'adam'
-        # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
-        params['input_shapes'] = [(300,), (300,)]
         params.add(engine.Param('w_initializer', 'glorot_normal'))
         params.add(engine.Param('b_initializer', 'zeros'))
         params.add(engine.Param('dim_fan_out', 128))
-        params.add(engine.Param('dim_hidden', 300))
+        params.add(engine.Param(
+            'dim_hidden', 300,
+            hyper_space=engine.hyper_spaces.quniform(low=32, high=512)
+        ))
         params.add(engine.Param('activation_hidden', 'tanh'))
         params.add(engine.Param('num_hidden_layers', 2))
         return params
@@ -74,3 +77,8 @@ class DSSMModel(engine.BaseModel):
         x = Dense(self._params['dim_fan_out'],
                   activation=self._params['activation_hidden'])(x)
         return Model(input_, x)
+
+    @classmethod
+    def get_default_preprocessor(cls):
+        """:return: Default preprocessor."""
+        return preprocessors.DSSMPreprocessor()

@@ -2,11 +2,23 @@
 
 import abc
 import typing
-
-import dill
 from pathlib import Path
 
-from matchzoo import datapack
+import dill
+
+from matchzoo import DataPack
+from matchzoo import processor_units
+
+
+def validate_context(func):
+    """Validate context in the preprocessor."""
+    def transform_wrapper(self, *args, **kwargs):
+        if not self.context:
+            raise ValueError(
+                'Please fit parameters before transformation.')
+        return func(self, *args, **kwargs)
+
+    return transform_wrapper
 
 
 class BasePreprocessor(metaclass=abc.ABCMeta):
@@ -14,8 +26,17 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     DATA_FILENAME = 'preprocessor.dill'
 
+    def __init__(self):
+        """Initialization."""
+        self._context = {}
+
+    @property
+    def context(self):
+        """Return context."""
+        return self._context
+
     @abc.abstractmethod
-    def fit(self, inputs: list) -> 'BasePreprocessor':
+    def fit(self, inputs: list, verbose=1) -> 'BasePreprocessor':
         """
         Fit parameters on input data.
 
@@ -26,10 +47,11 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         object.
 
         :param inputs: List of text-left, text-right, label triples.
+        :param verbose: Verbosity.
         """
 
     @abc.abstractmethod
-    def transform(self, inputs: list, stage: str) -> datapack.DataPack:
+    def transform(self, inputs: list, verbose=1) -> DataPack:
         """
         Transform input data to expected manner.
 
@@ -37,23 +59,17 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         implemented in the child class.
 
         :param inputs: List of text-left, text-right, label triples,
-            or list of text-left, text-right tuples (test stage).
-        :param stage: String indicate the pre-processing stage, `train`,
-            `evaluate`, or `predict` expected.
+        :param verbose: Verbosity.
+            or list of text-left, text-right tuples.
         """
 
-    def fit_transform(self, inputs: list, stage: str) -> datapack.DataPack:
+    def fit_transform(self, inputs: list) -> DataPack:
         """
         Call fit-transform.
 
         :param inputs: List of text-left, text-right, label triples.
-        :param stage: String indicate the pre-processing stage, `train`,
-            `evaluate`, or `predict` expected.
         """
-        if stage == 'train':
-            return self.fit(inputs).transform(inputs, stage)
-        else:
-            return self.transform(inputs, stage)
+        return self.fit(inputs).transform(inputs)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
@@ -75,8 +91,18 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
         dill.dump(self, open(data_file_path, mode='wb'))
 
+    @classmethod
+    def _default_processor_units(cls) -> list:
+        """Prepare needed process units."""
+        return [
+            processor_units.TokenizeUnit(),
+            processor_units.LowercaseUnit(),
+            processor_units.PuncRemovalUnit(),
+            processor_units.StopRemovalUnit(),
+        ]
 
-def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:
+
+def load_preprocessor(dirpath: typing.Union[str, Path]) -> DataPack:
     """
     Load the fitted `context`. The reverse function of :meth:`save`.
 
@@ -86,6 +112,4 @@ def load_preprocessor(dirpath: typing.Union[str, Path]) -> datapack.DataPack:
     dirpath = Path(dirpath)
 
     data_file_path = dirpath.joinpath(BasePreprocessor.DATA_FILENAME)
-    dp = dill.load(open(data_file_path, 'rb'))
-
-    return dp
+    return dill.load(open(data_file_path, 'rb'))

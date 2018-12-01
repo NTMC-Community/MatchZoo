@@ -1,87 +1,76 @@
 import os
-import pytest
 import shutil
+
 import numpy as np
+import pytest
 
-from matchzoo import datapack
-from matchzoo import generators
-from matchzoo import preprocessor
-from matchzoo import models
-from matchzoo import engine
-from matchzoo import tasks
+import matchzoo as mz
 
-@pytest.fixture
-def train():
-    train = []
-    path = os.path.dirname(__file__)
-    with open(os.path.join(path, '../sample/train_rank.txt')) as f:
-        train = [tuple(map(str, i.strip().split('\t'))) for i in f]
-    return train
 
-@pytest.fixture
-def test():
-    test = []
-    path = os.path.dirname(__file__)
-    with open(os.path.join(path, '../sample/test_rank.txt')) as f:
-        test = [tuple(map(str, i.strip().split('\t'))) for i in f]
-    return test
+@pytest.fixture(scope='module')
+def train_data():
+    return mz.datasets.toy.load_train_rank_data()
 
-@pytest.fixture
-def task(request) -> engine.BaseTask:
-    return tasks.Ranking()
 
-@pytest.fixture
+@pytest.fixture(scope='module')
+def test_data():
+    return mz.datasets.toy.load_test_rank_data()
+
+
+@pytest.fixture(scope='module')
+def task(request) -> mz.engine.BaseTask:
+    return mz.tasks.Ranking()
+
+
+@pytest.fixture(scope='module')
 def dssm_preprocessor():
-    return preprocessor.DSSMPreprocessor()
+    return mz.preprocessors.DSSMPreprocessor()
 
-@pytest.fixture
-def processed_train(train, dssm_preprocessor) -> datapack.DataPack:
-    preprocessed_train = dssm_preprocessor.fit_transform(train, stage='train')
-    dssm_preprocessor.save('.tmpdir')
-    return preprocessed_train
 
-@pytest.fixture
-def processed_test(test) -> datapack.DataPack:
-    dssm_proprecessor = engine.load_preprocessor('.tmpdir')
-    return dssm_proprecessor.fit_transform(test, stage='predict')
+@pytest.fixture(scope='module')
+def train_data_processed(train_data, dssm_preprocessor) -> mz.DataPack:
+    data = dssm_preprocessor.fit_transform(train_data)
+    return data
 
-@pytest.fixture(params=['point', 'pair'])
-def train_generator(request, processed_train, task) -> engine.BaseGenerator:
-    if request.param == 'point':
-        return generators.PointGenerator(processed_train,
-                                         task=task,
-                                         stage='train')
-    elif request.param == 'pair':
-        return generators.PairGenerator(processed_train,
-                                         stage='train')
 
-@pytest.fixture(params=['point', 'list'])
-def test_generator(request, processed_test, task) -> engine.BaseGenerator:
-    if request.param == 'point':
-        return generators.PointGenerator(processed_test, task=task, stage='predict')
-    elif request.param == 'list':
-        return generators.ListGenerator(processed_test, stage='predict')
+@pytest.fixture(scope='module')
+def test_data_processed(test_data, dssm_preprocessor) -> mz.DataPack:
+    return dssm_preprocessor.transform(test_data)
 
-def test_dssm(processed_train,
+
+@pytest.fixture(scope='module')
+def train_generator(request, train_data_processed):
+    return mz.DataGenerator(train_data_processed)
+
+
+@pytest.fixture(scope='module')
+def test_generator(request, test_data_processed):
+    return mz.DataGenerator(test_data_processed)
+
+
+@pytest.mark.slow
+def test_dssm(train_data_processed,
               task,
               train_generator,
-              test_generator):
+              test_generator,
+              dssm_preprocessor):
     """Test DSSM model."""
     # Create a dssm model
-    dssm_model = models.DSSMModel()
-    dssm_model.params['input_shapes'] = processed_train.context['input_shapes']
+    dssm_model = mz.models.DSSMModel()
+    input_shapes = dssm_preprocessor.context['input_shapes']
+    dssm_model.params['input_shapes'] = input_shapes
     dssm_model.params['task'] = task
     dssm_model.guess_and_fill_missing_params()
     dssm_model.build()
     dssm_model.compile()
     dssm_model.fit_generator(train_generator)
-    # save
     dssm_model.save('.tmpdir')
 
-    # testing
     X, y = test_generator[0]
-    dssm_model = engine.load_model('.tmpdir')
-    predictions = dssm_model.predict([X.text_left, X.text_right])
-    assert len(predictions) > 0
-    assert type(predictions[0][0]) == np.float32
-    shutil.rmtree('.tmpdir')
+    try:
+        dssm_model = mz.load_model('.tmpdir')
+        predictions = dssm_model.predict(X, y)
+        assert len(predictions) > 0
+        assert type(predictions[0][0]) == np.float32
+    finally:
+        shutil.rmtree('.tmpdir')

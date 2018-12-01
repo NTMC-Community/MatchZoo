@@ -16,7 +16,8 @@ class Embedding(object):
           gluonnlp/embedding/token_embedding.py
 
     Examples:
-        >>> embed = Embedding('tests/sample/embed_10.txt')
+        >>> import matchzoo as mz
+        >>> embed = mz.datasets.toy.load_embedding()
         >>> # Need term_index
         >>> embed.build({'G': 1, 'C': 2, 'D': 3, 'A': 4, '[PAD]': 0})
         >>> index_state = embed.index_state
@@ -39,7 +40,7 @@ class Embedding(object):
 
     """
 
-    def __init__(self, embedding_file: str):
+    def __init__(self, embedding_file):
         """
         Class initialization.
 
