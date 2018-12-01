@@ -6,7 +6,7 @@ def chain_transform(units):
     """Compose unit transformations into a single function."""
     @functools.wraps(chain_transform)
     def wrapper(arg):
-        """Execute the transform function sequentially."""
+        """Wrapper function of transformations composition."""
         for unit in units:
             arg = unit.transform(arg)
         return arg
