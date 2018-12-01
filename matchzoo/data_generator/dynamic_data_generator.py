@@ -51,7 +51,7 @@ class DynamicDataGenerator(DataGenerator):
         """
         Get a batch of samples based on their ids.
 
-        :param indices: a list of instance ids.
+        :param indices: A list of instance ids.
         :return: A batch of transformed samples.
         """
         return self._data_pack[indices].apply_on_text(
