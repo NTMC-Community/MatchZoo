@@ -81,7 +81,7 @@ class DataPack(object):
         return self._relation.shape[0]
 
     @property
-    def frame(self) -> '_DataPackFrameView':
+    def frame(self) -> 'DataPackFrameView':
         """
         View the data pack as a :class:`pandas.DataFrame`.
 
@@ -89,13 +89,13 @@ class DataPack(object):
         the right dataframe and the relation data frame. Use `[]` to access
         an item or a slice of items.
 
-        :return: A :class:`_DataPackFrameView instance.
+        :return: A :class:`DataPackFrameView instance.
 
         Example:
             >>> import matchzoo as mz
             >>> data_pack = mz.datasets.toy.load_train_classify_data()
             >>> type(data_pack.frame)
-            <class 'matchzoo.data_pack.data_pack._DataPackFrameView'>
+            <class 'matchzoo.data_pack.data_pack.DataPackFrameView'>
             >>> frame_slice = data_pack.frame[0:5]
             >>> type(frame_slice)
             <class 'pandas.core.frame.DataFrame'>
@@ -106,7 +106,7 @@ class DataPack(object):
             True
 
         """
-        return _DataPackFrameView(self)
+        return DataPackFrameView(self)
 
     def unpack(self) -> typing.Tuple[typing.Dict[str, np.array],
                                      typing.Optional[np.array]]:
@@ -209,15 +209,16 @@ class DataPack(object):
         dill.dump(self, open(data_file_path, mode='wb'))
 
     def _optional_inplace(func):
+        """
+        Decorator that adds `inplace` key word argument to a method.
 
+        Decorate any method that modifies inplace to make that inplace change
+        optional.
+        """
         @functools.wraps(func)
         def wrapper(
             self, *args, inplace: bool = False, **kwargs
         ) -> typing.Optional['DataPack']:
-            """
-            :param inplace: `True` to modify in place, `False` to return a
-            modified copy. (default: False)
-            """
             if inplace:
                 target = self
             else:
@@ -375,26 +376,45 @@ class DataPack(object):
         self._apply_on_text_right(func, rename=right_name, verbose=verbose)
 
 
-class _DataPackFrameView(object):
-    """
-    A syntatic sugar class for usage like `DataPack.frame[:10]`.
-
-    Example:
-        >>> import matchzoo as mz
-        >>> data_pack = mz.datasets.toy.load_train_classify_data()
-        >>> frame = data_pack.frame
-        >>> list(frame[0].columns)
-        ['id_left', 'text_left', 'id_right', 'text_right', 'label']
-        >>> data_pack.drop_label(inplace=True)
-        >>> list(frame[0].columns)
-        ['id_left', 'text_left', 'id_right', 'text_right']
-
-    """
+class DataPackFrameView(object):
+    """DataPackFrameView."""
 
     def __init__(self, data_pack: DataPack):
+        """
+        View a data pack as a frame.
+
+        A slice of the view is genereated by merging three parts of the data
+        pack being viewed into a big table.
+
+        :param data_pack: :class:`DataPack` to view.
+
+        Examples::
+            >>> import matchzoo as mz
+            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> frame = data_pack.frame
+
+        Use `()` to get a full copy of the frame:
+            >>> list(frame().columns)
+            ['id_left', 'text_left', 'id_right', 'text_right', 'label']
+            >>> len(frame()) == len(data_pack)
+            True
+
+        Notice that a view is binded to the original data pack, so changing
+        contents of the data pack will affect a view previously created:
+            >>> data_pack.drop_label(inplace=True)
+            >>> list(frame().columns)
+            ['id_left', 'text_left', 'id_right', 'text_right']
+
+        To slice the view:
+            >>> frame_slice = frame[3:5]
+            >>> len(frame_slice)
+            2
+
+        """
         self._data_pack = data_pack
 
     def __getitem__(self, index):
+        """Slicer."""
         dp = self._data_pack
         index = _convert_to_list_index(index, len(dp))
         left_df = dp.left.loc[dp.relation['id_left'][index]].reset_index()
@@ -407,6 +427,10 @@ class _DataPackFrameView(object):
             return joined_table.join(labels)
         else:
             return joined_table
+
+    def __call__(self):
+        """:return: A copy of a full frame slice. Equivalant to `frame[:]`."""
+        return self[:]
 
 
 def load_data_pack(dirpath: typing.Union[str, Path]) -> DataPack:
