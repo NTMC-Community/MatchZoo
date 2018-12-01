@@ -14,54 +14,26 @@ class PairDataGenerator(DataGenerator):
     Generate pair-wise data.
 
     Examples:
-        >>> import random
-        >>> random.seed(111)
         >>> np.random.seed(111)
-        >>> relation = [
-        ...     ['qid0', 'did0', 1],
-        ...     ['qid0', 'did1', 2],
-        ...     ['qid0', 'did2', 0]
-        ... ]
-        >>> left = [['qid0', [1, 2]]]
-        >>> right = [
-        ...     ['did0', [2, 3]],
-        ...     ['did1', [3, 4]],
-        ...     ['did2', [4, 5]]
-        ... ]
-        >>> relation = pd.DataFrame(relation,
-        ...                         columns=['id_left', 'id_right', 'label'])
-        >>> left = pd.DataFrame(left, columns=['id_left', 'text_left'])
-        >>> left.set_index('id_left', inplace=True)
-        >>> left['length_left'] = left.apply(lambda x: len(x['text_left']),
-        ...                                  axis=1)
-        >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
-        >>> right.set_index('id_right', inplace=True)
-        >>> right['length_right'] = right.apply(lambda x: len(x['text_right']),
-        ...                                     axis=1)
-        >>> input = DataPack(relation=relation,
-        ...                  left=left,
-        ...                  right=right
-        ... )
+        >>> import matchzoo as mz
+        >>> input = mz.datasets.toy.load_train_rank_data()
         >>> data_generator = PairDataGenerator(input, 2, 1, 1, False)
         >>> data_generator.num_instance
-        4
+        2
         >>> len(data_generator)
-        4
+        2
         >>> x, y = data_generator[0]
         >>> x['id_left'].tolist()
         ['qid0', 'qid0']
         >>> x['text_left'].tolist()
-        [[1, 2], [1, 2]]
-        >>> x['length_left'].tolist()
-        [2, 2]
+        ['how are glacier caves formed ?', 'how are glacier caves formed ?']
         >>> x['id_right'].tolist()
-        ['did1', 'did0']
+        ['did3', 'did1']
         >>> x['text_right'].tolist()
-        [[3, 4], [2, 3]]
-        >>> x['length_right'].tolist()
-        [2, 2]
+        ['A glacier cave is a cave formed within the ice of a glacier .', 'The\
+ ice facade is approximately 60 m high']
         >>> y.tolist()
-        [2, 1]
+        [1.0, 0.0]
 
     """
 

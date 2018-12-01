@@ -8,62 +8,36 @@ class DynamicDataGenerator(DataGenerator):
     Data generator with preprocess unit inside.
 
     Examples:
-        >>> import pandas as pd
-        >>> from matchzoo.data_pack import DataPack
-        >>> from matchzoo.processor_units import FixedLengthUnit
-        >>> relation = [
-        ...     ['qid0', 'did0', 1],
-        ...     ['qid0', 'did1', 2],
-        ...     ['qid0', 'did2', 0]
-        ... ]
-        >>> left = [['qid0', [1, 2, 3]]]
-        >>> right = [
-        ...     ['did0', [2, 3, 5, 6]],
-        ...     ['did1', [3, 4]],
-        ...     ['did2', [4, 5, 7]]
-        ... ]
-        >>> relation = pd.DataFrame(relation,
-        ...                         columns=['id_left', 'id_right', 'label'])
-        >>> left = pd.DataFrame(left, columns=['id_left', 'text_left'])
-        >>> left.set_index('id_left', inplace=True)
-        >>> left['length_left'] = left.apply(lambda x: len(x['text_left']),
-        ...                                  axis=1)
-        >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
-        >>> right.set_index('id_right', inplace=True)
-        >>> right['length_right'] = right.apply(lambda x: len(x['text_right']),
-        ...                                     axis=1)
-        >>> input = DataPack(relation=relation,
-        ...                  left=left,
-        ...                  right=right
-        ... )
-        >>> fixedlenunit = FixedLengthUnit(3, pad_value=0, pad_mode='post',
-        ...     truncate_mode='post')
-        >>> data_generator = DynamicDataGenerator(fixedlenunit.transform,
+        >>> import matchzoo as mz
+        >>> input = mz.datasets.toy.load_train_classify_data()
+        >>> data_generator = DynamicDataGenerator(len,
         ...     data_pack=input, batch_size=1, shuffle=False)
         >>> data_generator.num_instance
-        3
+        49
         >>> len(data_generator)
-        3
+        49
         >>> x0, y0 = data_generator[0]
         >>> x0['id_left'].tolist()
-        ['qid0']
+        ['q1']
         >>> x0['id_right'].tolist()
-        ['did0']
+        ['d1']
         >>> x0['text_left'].tolist()
-        [[1, 2, 3]]
+        [73]
         >>> x0['text_right'].tolist()
-        [[2, 3, 5]]
-        >>> x0['length_right'].tolist()
-        [4]
+        [59]
         >>> y0.tolist()
-        [1]
+        [0.0]
         >>> x1, y1 = data_generator[1]
         >>> x1['id_left'].tolist()
-        ['qid0']
+        ['q2']
         >>> x1['id_right'].tolist()
-        ['did1']
+        ['d2']
+        >>> x1['text_left'].tolist()
+        [30]
         >>> x1['text_right'].tolist()
-        [[3, 4, 0]]
+        [41]
+        >>> y1.tolist()
+        [1.0]
 
     """
     def __init__(self, func, *args, **kwargs):

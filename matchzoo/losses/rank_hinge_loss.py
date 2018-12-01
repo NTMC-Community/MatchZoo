@@ -16,7 +16,8 @@ class RankHingeLoss(object):
         >>> expect
         1.4
         >>> loss = K.eval(RankHingeLoss(num_neg=1, margin=1.0)(x_true, x_pred))
-        >>> assert np.isclose(loss, expect)
+        >>> np.isclose(loss, expect)
+        True
 
     """
 

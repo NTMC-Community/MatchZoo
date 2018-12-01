@@ -15,7 +15,8 @@ class RankCrossEntropyLoss(object):
         >>> x_true = K.variable(np.array([[1], [0], [0]]))
         >>> expect = -np.log(softmax(np.array([[1.0], [1.2], [0.8]])))
         >>> loss = K.eval(RankCrossEntropyLoss(num_neg=2)(x_true, x_pred))
-        >>> assert np.isclose(loss, expect[0])
+        >>> np.isclose(loss, expect[0])
+        array([ True])
 
     """
 
