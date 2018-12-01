@@ -106,4 +106,5 @@ class ParamTable(object):
         return self._params.keys()
 
     def __contains__(self, item):
+        """:return: `True` if parameter in parameters."""
         return item in self._params

@@ -62,4 +62,5 @@ class Classification(engine.BaseTask):
         return vec
 
     def __str__(self):
+        """:return: Task name as string."""
         return f'Classification task with {self._num_classes} classes'

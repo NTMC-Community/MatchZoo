@@ -49,6 +49,7 @@ class ArcIModel(engine.BaseModel):
 
     @classmethod
     def get_default_preprocessor(cls):
+        """:return: Instance of :class:`NaivePreprocessor`."""
         return preprocessors.NaivePreprocessor()
 
     def build(self):
