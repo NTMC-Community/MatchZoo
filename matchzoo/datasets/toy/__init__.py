@@ -7,7 +7,7 @@ CURR_DIR = Path(__file__).parent
 
 def load_data(path, include_label):
     def scan_file():
-        with open(path) as in_file:
+        with open(path, encoding='utf-8') as in_file:
             next(in_file)  # skip header
             for l in in_file:
                 yield l.strip().split('\t')
