@@ -80,4 +80,5 @@ class DSSMModel(engine.BaseModel):
 
     @classmethod
     def get_default_preprocessor(cls):
+        """:return: Default preprocessor."""
         return preprocessors.DSSMPreprocessor()

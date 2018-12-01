@@ -6,7 +6,9 @@ from . import DataPack
 from matchzoo import processor_units
 
 
-def build_vocab(data_pack: DataPack) -> processor_units.VocabularyUnit:
+def build_vocab(
+    data_pack: DataPack, verbose=1
+) -> processor_units.VocabularyUnit:
     """
     Build a :class:`processor_units.VocabularyUnit` given `data_pack`.
 
@@ -15,10 +17,14 @@ def build_vocab(data_pack: DataPack) -> processor_units.VocabularyUnit:
     of tokens.
 
     :param data_pack: The :class:`DataPack` to build vocabulary upon.
+    :param verbose: Verbosity.
+
     :return: A built vocabulary unit.
     """
     vocab = []
-    data_pack.apply_on_text(vocab.extend)
+    data_pack.apply_on_text(vocab.extend, verbose=verbose)
     vocab_unit = processor_units.VocabularyUnit()
-    vocab_unit.fit(tqdm(vocab, desc='Fitting vocabulary unit.'))
+    if verbose:
+        vocab = tqdm(vocab, desc='Fitting vocabulary unit.')
+    vocab_unit.fit(vocab)
     return vocab_unit

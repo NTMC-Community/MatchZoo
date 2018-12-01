@@ -128,7 +128,6 @@ class DataPack(object):
             >>> type(y)
             <class 'numpy.ndarray'>
 
-
         """
         frame = self.frame[:]
 
@@ -246,8 +245,37 @@ class DataPack(object):
 
         :param inplace: `True` to shuffle in place, `False` to return a
         shuffled copy.(default: False)
+
+        Example:
+            >>> import matchzoo as mz
+            >>> import numpy.random
+            >>> numpy.random.seed(0)
+            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> shuffled = data_pack.shuffle()
+            >>> np.any(data_pack.relation.index != shuffled.relation.index)
+            True
+
         """
         self._relation = self._relation.sample(frac=1)
+
+    @_optional_inplace
+    def drop_label(self):
+        """
+        Remove `label` column from the data pack.
+
+        :param inplace: `True` to drop in place, `False` to return a copy
+        with no label column.(default: False)
+
+        Example:
+            >>> import matchzoo as mz
+            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack.has_label
+            True
+            >>> data_pack.drop_label(inplace=True)
+            >>> data_pack.has_label
+            False
+        """
+        self._relation = self._relation.drop(columns='label')
 
     @_optional_inplace
     def append_text_length(self):
@@ -289,6 +317,9 @@ class DataPack(object):
             of `str`, e.g. ("text_left_new_name", "text_right_new_name").
         :param verbose:
         :return:
+
+        Example:
+            ???
         """
         if mode == 'both':
             self._apply_on_text_both(func, rename, verbose=verbose)
@@ -322,7 +353,20 @@ class DataPack(object):
 
 
 class _DataPackFrameView(object):
-    """A syntatic sugar class for usage like `DataPack.frame[:10]`."""
+    """
+    A syntatic sugar class for usage like `DataPack.frame[:10]`.
+
+    Example:
+        >>> import matchzoo as mz
+        >>> data_pack = mz.datasets.toy.load_train_classify_data()
+        >>> frame = data_pack.frame
+        >>> list(frame[0].columns)
+        ['id_left', 'text_left', 'id_right', 'text_right', 'label']
+        >>> data_pack.drop_label(inplace=True)
+        >>> list(frame[0].columns)
+        ['id_left', 'text_left', 'id_right', 'text_right']
+
+    """
 
     def __init__(self, data_pack: DataPack):
         self._data_pack = data_pack
