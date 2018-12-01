@@ -3,7 +3,7 @@ import functools
 
 
 def chain_transform(units):
-    """Organize a chain of transform functions."""
+    """Compose unit transformations into a single function."""
     @functools.wraps(chain_transform)
     def wrapper(arg):
         """Execute the transform function sequentially."""
