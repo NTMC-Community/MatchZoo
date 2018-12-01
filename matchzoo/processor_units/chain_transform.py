@@ -1,9 +1,12 @@
+"""Wrapper function organizes a number of transform functions."""
 import functools
 
 
 def chain_transform(units):
+    """Organize a chain of transform functions."""
     @functools.wraps(chain_transform)
     def wrapper(arg):
+        """Execute the transform function sequentially."""
         for unit in units:
             arg = unit.transform(arg)
         return arg

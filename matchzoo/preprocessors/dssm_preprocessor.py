@@ -13,11 +13,11 @@ tqdm.pandas()
 
 
 class DSSMPreprocessor(engine.BasePreprocessor):
-    """DSSMModel preprocessor."""
+    """DSSM Model preprocessor."""
 
     def __init__(self, with_word_hashing=True):
         """
-        DSSMModel preprocessor.
+        DSSM Model preprocessor.
 
         The word hashing step could eats up a lot of memory. To workaround
         this problem, set `with_word_hashing` to `False` and use  a
@@ -31,7 +31,9 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             >>> train_data = mz.datasets.toy.load_train_classify_data()
             >>> test_data = mz.datasets.toy.load_test_classify_data()
             >>> dssm_preprocessor = mz.preprocessors.DSSMPreprocessor()
-            >>> train_data_processed = dssm_preprocessor.fit_transform(train_data)
+            >>> train_data_processed = dssm_preprocessor.fit_transform(
+            ...     train_data
+            ... )
             >>> type(train_data_processed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
             >>> test_data_transformed = dssm_preprocessor.transform(test_data)
