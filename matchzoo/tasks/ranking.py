@@ -4,7 +4,19 @@ from matchzoo import engine
 
 
 class Ranking(engine.BaseTask):
-    """Ranking Task."""
+    """Ranking Task.
+
+    Examples:
+        >>> ranking_task = Ranking()
+        >>> ranking_task.metrics = ['map', 'ndcg']
+        >>> ranking_task.output_shape
+        (1,)
+        >>> ranking_task.output_dtype
+        <class 'float'>
+        >>> print(ranking_task)
+        Ranking task
+
+    """
 
     @classmethod
     def list_available_losses(cls) -> list:
@@ -27,4 +39,5 @@ class Ranking(engine.BaseTask):
         return float
 
     def __str__(self):
+        """:return: Task name as string."""
         return 'Ranking task'
