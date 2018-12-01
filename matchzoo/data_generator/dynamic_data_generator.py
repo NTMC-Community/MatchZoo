@@ -1,3 +1,4 @@
+"""Dynamic data generator with transform function inside."""
 import numpy as np
 
 from matchzoo.data_generator import DataGenerator
@@ -40,10 +41,18 @@ class DynamicDataGenerator(DataGenerator):
         [1.0]
 
     """
+
     def __init__(self, func, *args, **kwargs):
+        """:class:`DynamicDataGenerator` constructor."""
         super().__init__(*args, **kwargs)
         self._func = func
 
     def _get_batch_of_transformed_samples(self, indices: np.array):
+        """
+        Get a batch of samples based on their ids.
+
+        :param indices: A list of instance ids.
+        :return: A batch of transformed samples.
+        """
         return self._data_pack[indices].apply_on_text(
             self._func, verbose=0).unpack()
