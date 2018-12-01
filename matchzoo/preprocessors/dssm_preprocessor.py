@@ -57,7 +57,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
                                             verbose=verbose)
         vocab_unit = build_vocab(data_pack, verbose=verbose)
 
-        self._context.update(vocab_unit.state)
+        self._context['vocab_unit'] = vocab_unit
         triletter_dim = len(vocab_unit.state['term_index']) + 1
         self._context['input_shapes'] = [(triletter_dim,), (triletter_dim,)]
         return self
@@ -75,7 +75,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         data_pack = data_pack.copy()
         units = self._default_processor_units()
         if self._with_word_hashing:
-            term_index = self._context['term_index']
+            term_index = self._context['vocab_unit'].state['term_index']
             units.append(processor_units.WordHashingUnit(term_index))
         data_pack.apply_on_text(chain_transform(units), inplace=True,
                                 verbose=verbose)

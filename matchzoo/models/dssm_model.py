@@ -12,7 +12,7 @@ class DSSMModel(engine.BaseModel):
 
     Examples:
         >>> model = DSSMModel()
-        >>> model.guess_and_fill_missing_params()
+        >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
     """

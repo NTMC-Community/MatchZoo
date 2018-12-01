@@ -1,10 +1,11 @@
 """Parameter class."""
 
 import inspect
-import typing
 import numbers
+import typing
 
 import hyperopt.pyll
+
 from matchzoo import engine
 
 # Both hyperopt native spaces and matchzoo proxies are valid spaces.
@@ -90,12 +91,12 @@ class Param(object):
     """
 
     def __init__(
-            self,
-            name: str,
-            value: typing.Any = None,
-            hyper_space: typing.Optional[SpaceType] = None,
-            validator: typing.Optional[
-                typing.Callable[[typing.Any], bool]] = None,
+        self,
+        name: str,
+        value: typing.Any = None,
+        hyper_space: typing.Optional[SpaceType] = None,
+        validator: typing.Optional[
+            typing.Callable[[typing.Any], bool]] = None,
     ):
         """
         Parameter constructor.

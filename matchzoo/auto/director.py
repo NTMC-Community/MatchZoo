@@ -74,16 +74,29 @@ class Director(object):
             test_pack_processed = preprocessor.transform(
                 self._params['test_pack'], verbose=0)
 
+            context = self._build_context(model, preprocessor)
+
             trials = tune(
                 model=model,
                 train_pack=train_pack_processed,
                 test_pack=test_pack_processed,
                 task=self._params['task'],
                 max_evals=self._params['evals_per_model'],
-                context=preprocessor.context,
+                context=context,
                 verbose=0
             )
 
             all_trials.append(trials)
 
         return all_trials
+
+    @classmethod
+    def _build_context(cls, model, preprocessor):
+        context = {}
+        if 'input_shapes' in preprocessor.context:
+            context['input_shapes'] = preprocessor.context['input_shapes']
+        elif 'input_shapes' in model.params:
+            context['input_shapes'] = model.params['input_shapes']
+        term_index = preprocessor.context['vocab_unit'].state['term_index']
+        context['vocab_size'] = len(term_index) + 1
+        return context

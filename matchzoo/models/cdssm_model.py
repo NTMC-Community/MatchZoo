@@ -17,7 +17,7 @@ class CDSSMModel(engine.BaseModel):
 
     Examples:
         >>> model = CDSSMModel()
-        >>> model.guess_and_fill_missing_params()
+        >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
     """

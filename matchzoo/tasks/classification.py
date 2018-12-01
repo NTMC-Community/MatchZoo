@@ -46,3 +46,6 @@ class Classification(engine.BaseTask):
         vec = np.zeros((self._num_classes,))
         vec[arr] = 1
         return vec
+
+    def __str__(self):
+        return f'Classification task with {self._num_classes} classes'

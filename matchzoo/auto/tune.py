@@ -34,6 +34,7 @@ def tune(
 
     :return: A list of trials of the tuning process.
     """
+
     def _test_wrapper(space):
         for key, value in space.items():
             model.params[key] = value
@@ -42,8 +43,11 @@ def tune(
             input_shapes = context['input_shapes']
             model.params['input_shapes'] = input_shapes
 
+        if 'with_embedding' in model.params:
+            model.params['embedding_input_dim'] = context['vocab_size']
+
         model.params['task'] = task
-        model.guess_and_fill_missing_params()
+        model.guess_and_fill_missing_params(verbose=verbose)
         model.build()
         model.compile()
 
@@ -58,9 +62,12 @@ def tune(
         }
 
     trials = hyperopt.Trials()
+    hyper_space = model.params.hyper_space
+    if not hyper_space:
+        raise ValueError("Cannot auto-tune on an empty hyper space.")
     hyperopt.fmin(
         fn=_test_wrapper,
-        space=model.params.hyper_space,
+        space=hyper_space,
         algo=hyperopt.tpe.suggest,
         max_evals=max_evals,
         trials=trials

@@ -43,6 +43,16 @@ class ParamTable(object):
             raise ValueError(msg)
         self._params[param.name] = param
 
+    def get(self, key):
+        """:return: The parameter in the table named `key`."""
+        return self._params[key]
+
+    def set(self, key, param: Param):
+        """Set `key` to parameter `param`."""
+        if not isinstance(param, Param):
+            raise ValueError
+        self._params[key] = param
+
     @property
     def hyper_space(self) -> dict:
         """:return: Hyper space of the table, a valid `hyperopt` graph."""
@@ -53,7 +63,7 @@ class ParamTable(object):
         }
 
     def __getitem__(self, key: str) -> typing.Any:
-        """:return: A parameter instance in the table named `key`."""
+        """:return: The value of the parameter in the table named `key`."""
         return self._params[key].value
 
     def __setitem__(self, key: str, value: typing.Any):
@@ -84,7 +94,7 @@ class ParamTable(object):
             >>> model = matchzoo.models.NaiveModel()
             >>> model.params.completed()
             False
-            >>> model.guess_and_fill_missing_params()
+            >>> model.guess_and_fill_missing_params(verbose=0)
             >>> model.params.completed()
             True
 
@@ -94,3 +104,6 @@ class ParamTable(object):
     def keys(self) -> typing.KeysView:
         """:return: Parameter table keys."""
         return self._params.keys()
+
+    def __contains__(self, item):
+        return item in self._params

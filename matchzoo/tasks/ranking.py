@@ -25,3 +25,6 @@ class Ranking(engine.BaseTask):
     def output_dtype(self):
         """:return: target data type, expect `float` as output."""
         return float
+
+    def __str__(self):
+        return 'Ranking task'
