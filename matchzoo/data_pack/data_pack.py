@@ -83,10 +83,11 @@ class DataPack(object):
     @property
     def frame(self) -> '_DataPackFrameView':
         """
-        View as a :class:`pandas.DataFrame`.
+        View the data pack as a :class:`pandas.DataFrame`.
 
-        Returned data frame is created by merging `self.left`, `self.right`,
-        and `self.relation`. Use `[]` to access an item or a slice of items.
+        Returned data frame is created by merging the left data frame,
+        the right dataframe and the relation data frame. Use `[]` to access
+        an item or a slice of items.
 
         :return: A :class:`_DataPackFrameView instance.
 
@@ -120,13 +121,16 @@ class DataPack(object):
         Example:
             >>> import matchzoo as mz
             >>> data_pack = mz.datasets.toy.load_train_classify_data()
-            >>> X, y = data_pack[:10].unpack()
+            >>> X, y = data_pack.unpack()
             >>> type(X)
             <class 'dict'>
             >>> sorted(X.keys())
             ['id_left', 'id_right', 'text_left', 'text_right']
             >>> type(y)
             <class 'numpy.ndarray'>
+            >>> X, y = data_pack.drop_label().unpack()
+            >>> type(y)
+            <class 'NoneType'>
 
         """
         frame = self.frame[:]
@@ -173,26 +177,10 @@ class DataPack(object):
         """Get :meth:`left` of :class:`DataPack`."""
         return self._left
 
-    @left.setter
-    def left(self, value: pd.DataFrame):
-        """Set the value of :attr:`left`.
-
-        Note the value should be indexed with column name.
-        """
-        self._left = value
-
     @property
     def right(self) -> pd.DataFrame:
         """Get :meth:`right` of :class:`DataPack`."""
         return self._right
-
-    @right.setter
-    def right(self, value: pd.DataFrame):
-        """Set the value of :attr:`right`.
-
-        Note the value should be indexed with column name.
-        """
-        self._right = value
 
     def copy(self) -> 'DataPack':
         """:return: A deep copy."""
@@ -226,6 +214,10 @@ class DataPack(object):
         def wrapper(
             self, *args, inplace: bool = False, **kwargs
         ) -> typing.Optional['DataPack']:
+            """
+            :param inplace: `True` to modify in place, `False` to return a
+            modified copy. (default: False)
+            """
             if inplace:
                 target = self
             else:
@@ -243,8 +235,8 @@ class DataPack(object):
         """
         Shuffle the data pack by shuffling the relation column.
 
-        :param inplace: `True` to shuffle in place, `False` to return a
-        shuffled copy.(default: False)
+        :param inplace: `True` to modify in place, `False` to return a
+        modified copy. (default: False)
 
         Example:
             >>> import matchzoo as mz
@@ -318,8 +310,39 @@ class DataPack(object):
         :param verbose:
         :return:
 
-        Example:
-            ???
+        Examples::
+            >>> import matchzoo as mz
+            >>> data_pack = mz.datasets.toy.load_train_rank_data()
+            >>> frame = data_pack.frame
+
+        To apply `len` on the left text and add the result as 'length_left':
+            >>> data_pack.apply_on_text(len, mode='left',
+            ...                         rename='length_left',
+            ...                         inplace=True)
+            >>> list(frame[0].columns)
+            ['id_left', 'text_left', 'length_left', 'id_right', 'text_right', \
+'label']
+
+        To do the same to the right text:
+            >>> data_pack.apply_on_text(len, mode='right',
+            ...                         rename='length_right',
+            ...                         inplace=True)
+            >>> list(frame[0].columns)
+            ['id_left', 'text_left', 'length_left', 'id_right', 'text_right', \
+'length_right', 'label']
+
+        To do the same to the both texts at the same time:
+            >>> data_pack.apply_on_text(len, mode='both',
+            ...                         rename=('extra_left', 'extra_right'),
+            ...                         inplace=True)
+            >>> list(frame[0].columns)
+            ['id_left', 'text_left', 'length_left', 'extra_left', 'id_right', \
+'text_right', 'length_right', 'extra_right', 'label']
+
+        To suppress outputs:
+            >>> data_pack.apply_on_text(len, mode='both', verbose=0,
+            ...                         inplace=True)
+
         """
         if mode == 'both':
             self._apply_on_text_both(func, rename, verbose=verbose)
@@ -334,17 +357,17 @@ class DataPack(object):
         name = rename or 'text_right'
         if verbose:
             tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
-            self.right[name] = self.right['text_right'].progress_apply(func)
+            self._right[name] = self._right['text_right'].progress_apply(func)
         else:
-            self.right[name] = self.right['text_right'].apply(func)
+            self._right[name] = self._right['text_right'].apply(func)
 
     def _apply_on_text_left(self, func, rename, verbose=1):
         name = rename or 'text_left'
         if verbose:
             tqdm.pandas(desc="Processing " + name + " with " + func.__name__)
-            self.left[name] = self.left['text_left'].progress_apply(func)
+            self._left[name] = self._left['text_left'].progress_apply(func)
         else:
-            self.left[name] = self.left['text_left'].apply(func)
+            self._left[name] = self._left['text_left'].apply(func)
 
     def _apply_on_text_both(self, func, rename, verbose=1):
         left_name, right_name = rename or ('text_left', 'text_right')
