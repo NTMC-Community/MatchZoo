@@ -101,7 +101,7 @@ class DataPack(object):
             <class 'pandas.core.frame.DataFrame'>
             >>> list(frame_slice.columns)
             ['id_left', 'text_left', 'id_right', 'text_right', 'label']
-            >>> full_frame = data_pack.frame[:]
+            >>> full_frame = data_pack.frame()
             >>> len(full_frame) == len(data_pack)
             True
 
@@ -133,7 +133,7 @@ class DataPack(object):
             <class 'NoneType'>
 
         """
-        frame = self.frame[:]
+        frame = self.frame()
 
         columns = list(frame.columns)
         if self.has_label:
