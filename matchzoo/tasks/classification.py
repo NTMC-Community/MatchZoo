@@ -5,7 +5,21 @@ from matchzoo import engine
 
 
 class Classification(engine.BaseTask):
-    """Classification task."""
+    """Classification task.
+
+    Examples:
+        >>> classification_task = Classification(num_classes=2)
+        >>> classification_task.metrics = ['precision']
+        >>> classification_task.num_classes
+        2
+        >>> classification_task.output_shape
+        (2,)
+        >>> classification_task.output_dtype
+        <class 'int'>
+        >>> print(classification_task)
+        Classification task with 2 classes
+
+    """
 
     def __init__(self, num_classes: int = 2):
         """Classification task."""
@@ -48,4 +62,5 @@ class Classification(engine.BaseTask):
         return vec
 
     def __str__(self):
+        """:return: Task name as string."""
         return f'Classification task with {self._num_classes} classes'

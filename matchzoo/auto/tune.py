@@ -34,7 +34,6 @@ def tune(
 
     :return: A list of trials of the tuning process.
     """
-
     def _test_wrapper(space):
         for key, value in space.items():
             model.params[key] = value
