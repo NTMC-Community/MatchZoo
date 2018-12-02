@@ -1,5 +1,6 @@
 """Director. Named with some flavor since I couldn't think of a better name."""
 
+import logging
 import typing
 
 from matchzoo import engine
@@ -62,6 +63,7 @@ class Director(object):
         """:return: Parameters."""
         return self._params
 
+    # TODO: action multiple verbosity
     def action(self) -> typing.List[typing.List[typing.Dict[str, typing.Any]]]:
         """:return: a list of trials."""
         all_trials = []
@@ -75,6 +77,8 @@ class Director(object):
                 self._params['test_pack'], verbose=0)
 
             context = self._build_context(model, preprocessor)
+
+            logging.getLogger('hyperopt').setLevel(logging.CRITICAL)
 
             trials = tune(
                 model=model,
