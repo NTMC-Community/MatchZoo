@@ -38,9 +38,7 @@ class DenseBaselineModel(engine.BaseModel):
 
     def build(self):
         """Model structure."""
-        x_in = [keras.layers.Input(name=name, shape=shape)
-                for name, shape in zip(['text_left', 'text_right'],
-                                       self._params['input_shapes'])]
+        x_in = self._get_inputs()
         x = keras.layers.concatenate(x_in)
         for _ in range(self._params['num_dense_layers']):
             x = keras.layers.Dense(self._params['num_dense_units'],
