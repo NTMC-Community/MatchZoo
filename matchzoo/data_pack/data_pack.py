@@ -215,6 +215,7 @@ class DataPack(object):
         Decorate any method that modifies inplace to make that inplace change
         optional.
         """
+
         @functools.wraps(func)
         def wrapper(
             self, *args, inplace: bool = False, **kwargs
@@ -250,6 +251,7 @@ class DataPack(object):
 
         """
         self._relation = self._relation.sample(frac=1)
+        self._relation.reset_index(drop=True, inplace=True)
 
     @_optional_inplace
     def drop_label(self):
@@ -420,13 +422,12 @@ class DataPackFrameView(object):
         left_df = dp.left.loc[dp.relation['id_left'][index]].reset_index()
         right_df = dp.right.loc[dp.relation['id_right'][index]].reset_index()
         joined_table = left_df.join(right_df)
-        # TODO: join other columns of relation
-        if dp.has_label:
-            labels = dp.relation['label'][index].to_frame()
-            labels = labels.reset_index(drop=True)
-            return joined_table.join(labels)
-        else:
-            return joined_table
+        for column in dp.relation.columns:
+            if column not in ['id_left', 'id_right']:
+                labels = dp.relation[column][index].to_frame()
+                labels = labels.reset_index(drop=True)
+                joined_table = joined_table.join(labels)
+        return joined_table
 
     def __call__(self):
         """:return: A copy of a full frame slice. Equivalant to `frame[:]`."""
