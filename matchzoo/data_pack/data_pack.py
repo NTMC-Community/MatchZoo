@@ -244,8 +244,9 @@ class DataPack(object):
             >>> import numpy.random
             >>> numpy.random.seed(0)
             >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> orig_ids = data_pack.relation['id_left']
             >>> shuffled = data_pack.shuffle()
-            >>> np.any(data_pack.relation.index != shuffled.relation.index)
+            >>> (shuffled.relation['id_left'] != orig_ids).any()
             True
 
         """

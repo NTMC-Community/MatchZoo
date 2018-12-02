@@ -1,3 +1,5 @@
+"""DUET Model."""
+
 import keras
 import keras.backend as K
 import tensorflow as tf
@@ -19,6 +21,7 @@ class DUETModel(engine.BaseModel):
 
     @classmethod
     def get_default_params(cls):
+        """Get default parameters."""
         params = super().get_default_params(with_embedding=True)
         params.add(engine.Param('lm_kernel_count', 32))
         params.add(engine.Param('lm_hidden_sizes', [32]))
@@ -39,9 +42,11 @@ class DUETModel(engine.BaseModel):
 
     @classmethod
     def get_default_preprocessor(cls):
+        """Get default preprocessor."""
         return preprocessors.NaivePreprocessor()
 
     def build(self):
+        """Build model."""
         query, doc = self._get_inputs()
 
         embedding = self._get_embedding_layer()
@@ -92,7 +97,7 @@ class DUETModel(engine.BaseModel):
         dm_d_conv2 = keras.layers.Dropout(self._params['dm_dropout_rate'])(
             dm_d_conv2)
 
-        h_dot = keras.layers.Lambda(self.hadamard_dot)([dm_q_rep, dm_d_conv2])
+        h_dot = keras.layers.Lambda(self._hadamard_dot)([dm_q_rep, dm_d_conv2])
         dm_feat = keras.layers.Reshape((-1,))(h_dot)
         for hidden_size in self._params['dm_hidden_sizes']:
             dm_feat = keras.layers.Dense(hidden_size)(dm_feat)
@@ -117,7 +122,7 @@ class DUETModel(engine.BaseModel):
         return out
 
     @classmethod
-    def hadamard_dot(cls, x):
+    def _hadamard_dot(cls, x):
         x1 = x[0]
         x2 = x[1]
         out = x1 * x2

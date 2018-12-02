@@ -1,3 +1,4 @@
+"""KNRM model."""
 import keras
 import keras.backend as K
 
@@ -14,12 +15,15 @@ class KNRMModel(engine.BaseModel):
         >>> model.build()
 
     """
+
     @classmethod
     def get_default_preprocessor(cls):
+        """Get default preprocessor."""
         return preprocessors.NaivePreprocessor()
 
     @classmethod
     def get_default_params(cls):
+        """Get default parameters."""
         params = super().get_default_params(with_embedding=True)
         params.add(engine.Param(
             'kernel_num', 11,
@@ -34,6 +38,7 @@ class KNRMModel(engine.BaseModel):
         return params
 
     def build(self):
+        """Build model."""
         query, doc = self._get_inputs()
 
         embedding = self._get_embedding_layer()

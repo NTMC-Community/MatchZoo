@@ -1,7 +1,6 @@
 """Director. Named with some flavor since I couldn't think of a better name."""
 
 import logging
-import typing
 
 from matchzoo import engine
 from matchzoo.auto.tune import tune
@@ -31,7 +30,7 @@ class Director(object):
             >>> director.params['train_pack'] = train_pack
             >>> director.params['test_pack'] = test_pack
             >>> director.params['task'] = mz.tasks.Ranking()
-            >>> results = director.action()
+            >>> results = director.action(verbose=0)
             >>> sorted(results[0].keys())
             ['loss', 'model_params', 'sampled_params']
 
@@ -61,6 +60,7 @@ class Director(object):
 
     def action(self, verbose=2) -> list:
         """
+        Start doing things.
 
         :param verbose: Verbosity. 0: None. 1: Some. 2: Full.
         :return: A list of trials.

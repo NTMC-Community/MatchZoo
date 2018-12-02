@@ -1,3 +1,5 @@
+"""ConvKNRM model."""
+
 import keras
 import keras.backend as K
 
@@ -15,7 +17,9 @@ class ConvKNRMModel(models.KNRMModel):
         >>> model.build()
 
     """
+
     def get_default_params(cls):
+        """Get default parameters."""
         params = super().get_default_params()
         params.add(engine.Param('num_filters', 128))
         params.add(engine.Param('max_ngram', 3))
@@ -23,6 +27,7 @@ class ConvKNRMModel(models.KNRMModel):
         return params
 
     def build(self):
+        """Build model."""
         query, doc = self._get_inputs()
 
         embedding = self._get_embedding_layer()
