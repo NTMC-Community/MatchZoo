@@ -57,7 +57,7 @@ class Classification(engine.BaseTask):
 
     def one_hot_encode(self, arr) ->np.ndarray:
         """:return: A one-hot encoded vector."""
-        vec = np.zeros((self._num_classes,))
+        vec = np.zeros((self._num_classes,), dtype=np.int64)
         vec[arr] = 1
         return vec
 
