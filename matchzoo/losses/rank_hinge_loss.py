@@ -1,10 +1,33 @@
+"""The rank hinge loss."""
 import numpy as np
 
 from keras import layers, backend as K
 
 
 class RankHingeLoss(object):
+    """
+    Rank hinge loss.
+
+    Examples:
+        >>> from keras import backend as K
+        >>> x_pred = K.variable(np.array([[1.0], [1.2], [0.8], [1.4]]))
+        >>> x_true = K.variable(np.array([[1], [0], [1], [0]]))
+        >>> expect = ((1.0 + 1.2 - 1.0) + (1.0 + 1.4 - 0.8)) / 2
+        >>> expect
+        1.4
+        >>> loss = K.eval(RankHingeLoss(num_neg=1, margin=1.0)(x_true, x_pred))
+        >>> np.isclose(loss, expect)
+        True
+
+    """
+
     def __init__(self, num_neg=1, margin=1.0):
+        """
+        :class:`RankHingeLoss` constructor.
+
+        :param num_neg: number of negative instances in hinge loss.
+        :param margin: the margin between positive and negative scores.
+        """
         self._num_neg = num_neg
         self._margin = margin
 
@@ -12,13 +35,10 @@ class RankHingeLoss(object):
         """
         Calculate rank hinge loss.
 
-        Support user defined :attr:`margin` and :attr:`neg_num`.
-
         :param y_true: Label.
         :param y_pred: Predicted result.
         :return: Hinge loss computed by user-defined margin.
         """
-
         y_pos = layers.Lambda(lambda a: a[::(self._num_neg + 1), :],
                               output_shape=(1,))(y_pred)
         y_neg = []

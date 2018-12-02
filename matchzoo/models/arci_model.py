@@ -1,10 +1,10 @@
 """An implementation of ArcI Model."""
-from matchzoo import engine
 import typing
-import numpy as np
-from keras.models import Model
-from keras.layers import Input, Embedding, Conv1D, MaxPooling1D, Dropout, \
-    Concatenate, Flatten
+
+import keras
+
+from matchzoo import engine
+from matchzoo import preprocessors
 
 
 class ArcIModel(engine.BaseModel):
@@ -12,8 +12,10 @@ class ArcIModel(engine.BaseModel):
     ArcI Model.
 
     Examples:
+        >>> import matchzoo as mz
+        >>> train_pack = mz.datasets.toy.load_train_rank_data()
         >>> model = ArcIModel()
-        >>> model.guess_and_fill_missing_params()
+        >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
     """
@@ -21,57 +23,34 @@ class ArcIModel(engine.BaseModel):
     @classmethod
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
-        params = super().get_default_params()
+        params = super().get_default_params(with_embedding=True)
         params['optimizer'] = 'adam'
-        params['input_shapes'] = [(32,), (32,)]
-        params.add(engine.Param('trainable_embedding', False))
-        params.add(engine.Param('embedding_dim', 300))
-        params.add(engine.Param('vocab_size', 100))
+        opt_space = engine.hyper_spaces.choice(['adam', 'rmsprop', 'adagrad'])
+        params.get('optimizer').hyper_space = opt_space
+        params['embedding_output_dim'] = 300
         params.add(engine.Param('num_blocks', 1))
         params.add(engine.Param('left_kernel_count', [32]))
-        params.add(engine.Param('left_kernel_size', [3]))
+        params.add(engine.Param('left_kernel_sizes', [3]))
         params.add(engine.Param('right_kernel_count', [32]))
-        params.add(engine.Param('right_kernel_size', [3]))
+        params.add(engine.Param('right_kernel_sizes', [3]))
         params.add(engine.Param('activation', 'relu'))
-        params.add(engine.Param('left_pool_size', [2]))
-        params.add(engine.Param('right_pool_size', [2]))
-        params.add(engine.Param('padding', 'same'))
-        params.add(engine.Param('dropout_rate', 0.0))
-        params.add(engine.Param('embedding_mat', None))
-        params.add(engine.Param('embedding_random_scale', 0.2))
+        params.add(engine.Param('left_pool_sizes', [2]))
+        params.add(engine.Param('right_pool_sizes', [2]))
+        params.add(engine.Param(
+            'padding',
+            'same',
+            hyper_space=engine.hyper_spaces.choice(['same', 'valid', 'causal'])
+        ))
+        params.add(engine.Param(
+            'dropout_rate', 0.0,
+            hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8, q=0.01)
+        ))
         return params
 
-    def _conv_pool_block(self, input: typing.Any, kernel_count: int,
-                         kernel_size: int, padding: str, activation: str,
-                         pool_size: int) -> typing.Any:
-        output = Conv1D(kernel_count,
-                        kernel_size,
-                        padding=padding,
-                        activation=activation)(input)
-        output = MaxPooling1D(pool_size=pool_size)(output)
-        return output
-
-    @property
-    def embedding_mat(self) -> np.ndarray:
-        """Get pretrained embedding for ArcI model."""
-        # Check if provided embedding matrix
-        if self._params['embedding_mat'] is None:
-            s = self._params['embedding_random_scale']
-            self._params['embedding_mat'] = \
-                np.random.uniform(-s, s, (self._params['vocab_size'],
-                                          self._params['embedding_dim']))
-        return self._params['embedding_mat']
-
-    @embedding_mat.setter
-    def embedding_mat(self, embedding_mat: np.ndarray):
-        """
-        Set pretrained embedding for ArcI model.
-
-        :param embedding_mat: pretrained embedding in numpy format.
-        """
-        self._params['embedding_mat'] = embedding_mat
-        self._params['vocab_size'], self._params['embedding_dim'] = \
-            embedding_mat.shape
+    @classmethod
+    def get_default_preprocessor(cls):
+        """:return: Instance of :class:`NaivePreprocessor`."""
+        return preprocessors.NaivePreprocessor()
 
     def build(self):
         """
@@ -79,16 +58,9 @@ class ArcIModel(engine.BaseModel):
 
         ArcI use Siamese arthitecture.
         """
-        # Left input and right input.
-        input_left = Input(name='text_left',
-                           shape=self._params['input_shapes'][0])
-        input_right = Input(name='text_right',
-                            shape=self._params['input_shapes'][1])
-        # Process left & right input.
-        embedding = Embedding(self._params['vocab_size'],
-                              self._params['embedding_dim'],
-                              weights=[self.embedding_mat],
-                              trainable=self._params['trainable_embedding'])
+        input_left, input_right = self._get_inputs()
+
+        embedding = self._get_embedding_layer()
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
 
@@ -96,24 +68,42 @@ class ArcIModel(engine.BaseModel):
             embed_left = self._conv_pool_block(
                 embed_left,
                 self._params['left_kernel_count'][i],
-                self._params['left_kernel_size'][i],
+                self._params['left_kernel_sizes'][i],
                 self._params['padding'],
                 self._params['activation'],
-                self._params['left_pool_size'][i]
+                self._params['left_pool_sizes'][i]
             )
             embed_right = self._conv_pool_block(
                 embed_right,
                 self._params['right_kernel_count'][i],
-                self._params['right_kernel_size'][i],
+                self._params['right_kernel_sizes'][i],
                 self._params['padding'],
                 self._params['activation'],
-                self._params['right_pool_size'][i]
+                self._params['right_pool_sizes'][i]
             )
 
-        embed_flat = Flatten()(Concatenate(axis=1)([embed_left, embed_right]))
-        x = Dropout(rate=self._params['dropout_rate'])(embed_flat)
+        concat = keras.layers.Concatenate(axis=1)([embed_left, embed_right])
+        embed_flat = keras.layers.Flatten()(concat)
+        x = keras.layers.Dropout(rate=self._params['dropout_rate'])(embed_flat)
 
+        inputs = [input_left, input_right]
         x_out = self._make_output_layer()(x)
-        self._backend = Model(
-            inputs=[input_left, input_right],
-            outputs=x_out)
+        self._backend = keras.Model(inputs=inputs, outputs=x_out)
+
+    def _conv_pool_block(
+        self,
+        input_: typing.Any,
+        kernel_count: int,
+        kernel_size: int,
+        padding: str,
+        activation: str,
+        pool_size: int
+    ) -> typing.Any:
+        output = keras.layers.Conv1D(
+            kernel_count,
+            kernel_size,
+            padding=padding,
+            activation=activation
+        )(input_)
+        output = keras.layers.MaxPooling1D(pool_size=pool_size)(output)
+        return output

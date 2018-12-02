@@ -1,10 +1,11 @@
 """Parameter class."""
 
 import inspect
-import typing
 import numbers
+import typing
 
 import hyperopt.pyll
+
 from matchzoo import engine
 
 # Both hyperopt native spaces and matchzoo proxies are valid spaces.
@@ -90,12 +91,12 @@ class Param(object):
     """
 
     def __init__(
-            self,
-            name: str,
-            value: typing.Any = None,
-            hyper_space: typing.Optional[SpaceType] = None,
-            validator: typing.Optional[
-                typing.Callable[[typing.Any], bool]] = None,
+        self,
+        name: str,
+        value: typing.Any = None,
+        hyper_space: typing.Optional[SpaceType] = None,
+        validator: typing.Optional[
+            typing.Callable[[typing.Any], bool]] = None,
     ):
         """
         Parameter constructor.
@@ -192,3 +193,15 @@ class Param(object):
     def __bool__(self):
         """:return: `False` when the value is `None`, `True` otherwise."""
         return self._value is not None
+
+    def set_default(self, val, verbose=1):
+        """
+        Set default value, has no effect if already has a value.
+
+        :param val: Default value to set.
+        :param verbose: Verbosity.
+        """
+        if self._value is None:
+            self.value = val
+            if verbose:
+                print(f"Parameter \"{self._name}\" set to {val}.")

@@ -12,7 +12,6 @@ from matchzoo import processor_units
 
 def validate_context(func):
     """Validate context in the preprocessor."""
-
     def transform_wrapper(self, *args, **kwargs):
         if not self.context:
             raise ValueError(
@@ -33,10 +32,11 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     @property
     def context(self):
+        """Return context."""
         return self._context
 
     @abc.abstractmethod
-    def fit(self, inputs: list) -> 'BasePreprocessor':
+    def fit(self, inputs: list, verbose=1) -> 'BasePreprocessor':
         """
         Fit parameters on input data.
 
@@ -47,10 +47,11 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         object.
 
         :param inputs: List of text-left, text-right, label triples.
+        :param verbose: Verbosity.
         """
 
     @abc.abstractmethod
-    def transform(self, inputs: list) -> DataPack:
+    def transform(self, inputs: list, verbose=1) -> DataPack:
         """
         Transform input data to expected manner.
 
@@ -58,6 +59,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         implemented in the child class.
 
         :param inputs: List of text-left, text-right, label triples,
+        :param verbose: Verbosity.
             or list of text-left, text-right tuples.
         """
 
@@ -90,7 +92,6 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         dill.dump(self, open(data_file_path, mode='wb'))
 
     @classmethod
-    @abc.abstractmethod
     def _default_processor_units(cls) -> list:
         """Prepare needed process units."""
         return [
@@ -98,7 +99,6 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             processor_units.LowercaseUnit(),
             processor_units.PuncRemovalUnit(),
             processor_units.StopRemovalUnit(),
-            processor_units.NgramLetterUnit(),
         ]
 
 

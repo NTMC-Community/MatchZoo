@@ -6,7 +6,7 @@ import typing
 import keras
 import numpy as np
 
-from matchzoo import reorganize_data_pack_pair_wise
+from matchzoo import DataPack
 
 
 class DataGenerator(keras.utils.Sequence):
@@ -15,17 +15,49 @@ class DataGenerator(keras.utils.Sequence):
     Every generator must implement :meth:`_get_batch_of_transformed_samples`
     method.
 
+    Examples:
+        >>> import matchzoo as mz
+        >>> input = mz.datasets.toy.load_train_classify_data()
+        >>> data_generator = DataGenerator(input, 1, False)
+        >>> len(data_generator)
+        49
+        >>> data_generator.num_instance
+        49
+        >>> x, y = data_generator[0]
+        >>> x['text_left'].tolist()
+        ['How can I increase the speed of my internet connection while using a\
+ VPN?']
+        >>> x['text_right'].tolist()
+        ['How can Internet speed be increased by hacking through DNS?']
+        >>> x['id_left'].tolist()
+        ['q1']
+        >>> x['id_right'].tolist()
+        ['d1']
+        >>> y.tolist()
+        [0.0]
+        >>> data_generator.reset()
+        >>> x1, y1 = data_generator[:2]
+        >>> len(x1['text_left'])
+        2
+        >>> y1.tolist()
+        [0.0, 1.0]
+        >>> data_generator.on_epoch_end()
+        >>> x2, y2 = data_generator[0:2]
+        >>> y2.tolist()
+        [0.0, 1.0]
+
     """
 
     def __init__(
         self,
-        data_pack,
+        data_pack: DataPack,
         batch_size: int = 32,
         shuffle: bool = True
     ):
         """
         :class:`DataGenerator` constructor.
 
+        :param data_pack: a :class:`DataPack` object.
         :param batch_size: number of instances for each batch
         :param shuffle: a bool variable to determine whether choose samples
         randomly
@@ -61,7 +93,7 @@ class DataGenerator(keras.utils.Sequence):
 
     def __len__(self) -> int:
         """Get the total number of batches."""
-        return math.ceil(len(self._data_pack) / self._batch_size)
+        return math.ceil(self.num_instance / self._batch_size)
 
     def on_epoch_end(self):
         """Reorganize the index array while epoch is ended."""
@@ -72,7 +104,8 @@ class DataGenerator(keras.utils.Sequence):
         self._set_indices()
 
     @property
-    def num_instance(self):
+    def num_instance(self) -> int:
+        """Return the number of instances."""
         return len(self._data_pack)
 
     def _set_indices(self):
@@ -90,42 +123,3 @@ class DataGenerator(keras.utils.Sequence):
             lower = self._batch_size * i
             upper = self._batch_size * (i + 1)
             self._batch_indices.append(index_pool[lower: upper])
-
-
-# Example: dynamic pre-processing with a unit
-class UnitDynamicDataGenerator(DataGenerator):
-    def __init__(self, *args, unit=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._unit = unit
-
-    def _get_batch_of_transformed_samples(self, indices: np.array):
-        return self._data_pack[indices].apply_on_text(
-            self._unit.transform).unpack()
-
-
-# Example: implement the good old pair-generator
-class OrigPairGeneratorUsingNewInterface(DataGenerator):
-    def __init__(self, data_pack, num_neg=1, num_dup=4, **kwargs):
-        super().__init__(data_pack, **kwargs)
-        self._data_pack = reorganize_data_pack_pair_wise(data_pack(num_neg, num_neg))
-
-    @property
-    def num_instances(self):
-        return 'blah'
-
-
-# Example: doing upsampling and dynamic pre-processing at the same time
-class DataGeneratorFusion(DataGenerator):
-    def __init__(self, *args, num_neg=1, num_dup=1, unit=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._unit = unit
-        self._num_dup = num_dup
-        self._num_neg = num_neg
-
-    def _get_batch_of_transformed_samples(self, indices):
-        dp = self._data_pack[indices].copy()
-        func = self._unit.transform
-        dp.left['text_left'] = dp.left['text_left'].apply(func)
-        dp.right['text_right'] = dp.right['text_right'].apply(func)
-        return reorganize_data_pack_pair_wise(dp, num_dup=self._num_dup,
-                                              num_neg=self._num_neg).unpack()

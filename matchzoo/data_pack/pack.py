@@ -5,7 +5,7 @@ import pandas as pd
 from . import DataPack
 
 
-def has_label(data: list):
+def _has_label(data: list):
     if data and len(data[0]) == 5:
         return True
     elif len(data[0]) == 4:
@@ -26,7 +26,7 @@ def pack(data: list) -> DataPack:
     col_all = ['id_left', 'id_right', 'text_left', 'text_right']
     col_relation = ['id_left', 'id_right']
 
-    if has_label(data):
+    if _has_label(data):
         col_relation.append('label')
         col_all.append('label')
 
