@@ -215,7 +215,6 @@ class DataPack(object):
         Decorate any method that modifies inplace to make that inplace change
         optional.
         """
-
         @functools.wraps(func)
         def wrapper(
             self, *args, inplace: bool = False, **kwargs
