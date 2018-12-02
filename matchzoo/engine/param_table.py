@@ -43,7 +43,7 @@ class ParamTable(object):
             raise ValueError(msg)
         self._params[param.name] = param
 
-    def get(self, key):
+    def get(self, key) -> Param:
         """:return: The parameter in the table named `key`."""
         return self._params[key]
 

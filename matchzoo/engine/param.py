@@ -193,3 +193,15 @@ class Param(object):
     def __bool__(self):
         """:return: `False` when the value is `None`, `True` otherwise."""
         return self._value is not None
+
+    def set_default(self, val, verbose=1):
+        """
+        Set default value, has no effect if already has a value.
+
+        :param val: Default value to set.
+        :param verbose: Verbosity.
+        """
+        if self._value is None:
+            self.value = val
+            if verbose:
+                print(f"Parameter \"{self._name}\" set to {val}.")

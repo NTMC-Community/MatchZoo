@@ -368,15 +368,15 @@ class BaseModel(abc.ABC):
 
         :param verbose: Verbosity.
         """
-        self._set_param_default('name', self.__class__.__name__, verbose)
+        self._params.get('name').set_default(self.__class__.__name__, verbose)
         task = engine.list_available_tasks()[1]()
-        self._set_param_default('task', task, verbose)
-        self._set_param_default('input_shapes', [(30,), (30,)], verbose)
-        self._set_param_default('optimizer', 'adam', verbose)
+        self._params.get('task').set_default(task, verbose)
+        self._params.get('input_shapes').set_default([(30,), (30,)], verbose)
+        self._params.get('optimizer').set_default('adam', verbose)
         if 'with_embedding' in self._params:
-            self._set_param_default('embedding_input_dim', 300, verbose)
-            self._set_param_default('embedding_output_dim', 300, verbose)
-            self._set_param_default('embedding_trainable', True, verbose)
+            self._params.get('embedding_input_dim').set_default(300, verbose)
+            self._params.get('embedding_output_dim').set_default(300, verbose)
+            self._params.get('embedding_trainable').set_default(True, verbose)
 
     def _set_param_default(self, name, default_val, verbose):
         if self._params[name] is None:
