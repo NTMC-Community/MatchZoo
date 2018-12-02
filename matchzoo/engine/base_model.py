@@ -403,7 +403,7 @@ class BaseModel(abc.ABC):
             name='text_right',
             shape=self._params['input_shapes'][1]
         )
-        return input_left, input_right
+        return [input_left, input_right]
 
     def _get_embedding_layer(self, name='embedding'):
         return keras.layers.Embedding(
