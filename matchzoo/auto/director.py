@@ -64,21 +64,34 @@ class Director(object):
         return self._params
 
     # TODO: action multiple verbosity
-    def action(self) -> typing.List[typing.List[typing.Dict[str, typing.Any]]]:
-        """:return: a list of trials."""
+    def action(self, verbose=2) -> list:
+        """
+
+        :param verbose: Verbosity. 0: None. 1: Some. 2: Full.
+        :return: A list of trials.
+        """
         all_trials = []
-        for model in self._params['models']:
+        num_models = len(self._params['models'])
+        for i, model in enumerate(self._params['models']):
+            show_stages = 1 if verbose >= 1 else 0
+            show_details = 1 if verbose >= 2 else 0
+
+            if not show_details:
+                logging.getLogger('hyperopt').setLevel(logging.CRITICAL)
+
             preprocessor = model.get_default_preprocessor()
-            preprocessor.fit(self._params['train_pack'], verbose=0)
+            preprocessor.fit(self._params['train_pack'], verbose=show_details)
 
             train_pack_processed = preprocessor.transform(
-                self._params['train_pack'], verbose=0)
+                self._params['train_pack'], verbose=show_details)
             test_pack_processed = preprocessor.transform(
-                self._params['test_pack'], verbose=0)
+                self._params['test_pack'], verbose=show_details)
 
             context = self._build_context(model, preprocessor)
 
-            logging.getLogger('hyperopt').setLevel(logging.CRITICAL)
+            if show_stages:
+                print(f"Start tunning model #{i + 1} (total: {num_models}).")
+                print(f"Model class: {model.params['model_class']}")
 
             trials = tune(
                 model=model,
@@ -87,10 +100,14 @@ class Director(object):
                 task=self._params['task'],
                 max_evals=self._params['evals_per_model'],
                 context=context,
-                verbose=0
+                verbose=show_details
             )
 
-            all_trials.append(trials)
+            if show_stages:
+                print(f'Finish tuning model #{i + 1} (total: {num_models})')
+                print()
+
+            all_trials.extend(trials)
 
         return all_trials
 
