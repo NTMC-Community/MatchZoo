@@ -32,11 +32,7 @@ class Director(object):
             >>> director.params['test_pack'] = test_pack
             >>> director.params['task'] = mz.tasks.Ranking()
             >>> results = director.action()
-            >>> len(results) == len(director.params['models'])
-            True
-            >>> len(results[0]) == director.params['evals_per_model']
-            True
-            >>> sorted(results[0][0].keys())
+            >>> sorted(results[0].keys())
             ['loss', 'model_params', 'sampled_params']
 
         """
@@ -63,7 +59,6 @@ class Director(object):
         """:return: Parameters."""
         return self._params
 
-    # TODO: action multiple verbosity
     def action(self, verbose=2) -> list:
         """
 
