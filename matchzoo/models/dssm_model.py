@@ -65,7 +65,7 @@ class DSSMModel(engine.BaseModel):
 
         :return: x: 128d vector(tensor) representation.
         """
-        # TODO use sparse input in the future.
+        # TODO: use sparse input in the future.
         input_ = Input(shape=input_shape)
         x = Dense(self._params['dim_hidden'],
                   kernel_initializer=self._params['w_initializer'],
