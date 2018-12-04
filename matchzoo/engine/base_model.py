@@ -158,7 +158,8 @@ class BaseModel(abc.ABC):
         y: np.ndarray,
         batch_size: int = 128,
         epochs: int = 1,
-        verbose: int = 1
+        verbose: int = 1,
+        **kwargs
     ) -> keras.callbacks.History:
         """
         Fit the model.
@@ -172,12 +173,14 @@ class BaseModel(abc.ABC):
         :param verbose: 0, 1, or 2. Verbosity mode. 0 = silent, 1 = verbose,
             2 = one log line per epoch.
 
+        Key word arguments not listed above will be propagated to keras's fit.
+
         :return: A `keras.callbacks.History` instance. Its history attribute
             contains all information collected during training.
         """
         return self._backend.fit(x=x, y=y,
                                  batch_size=batch_size, epochs=epochs,
-                                 verbose=verbose)
+                                 verbose=verbose, **kwargs)
 
     def fit_generator(
         self,
