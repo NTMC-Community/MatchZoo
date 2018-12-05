@@ -22,10 +22,25 @@ class BaseModel(abc.ABC):
     PARAMS_FILENAME = 'params.dill'
 
     class EvaluateOnCall(keras.callbacks.Callback):
-        def __init__(self, x, y,
+        """:class:`EvaluateOncall` evaluate validation datasets on callback."""
+
+        def __init__(self,
+                     x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+                     y: np.ndarray,
                      metrics: typing.Union[list, str, engine.BaseMetric],
                      valid_steps=3,
                      batch_size: int = 32):
+            """
+            :class:`EvaluateOnCall` constructor.
+
+            :param x: input data.
+            :param y: labels.
+            :param metrics: metric function.
+            :param valid_steps: integer, skipping steps(number of batches) to
+                call the :class:`EvaluateOnCall`.
+            :param batch_size: integer, number of instances in a batch.
+
+            """
             super().__init__()
             self._x = x
             self._y = y
@@ -34,17 +49,24 @@ class BaseModel(abc.ABC):
             self._batch_size = batch_size
 
         def on_epoch_end(self, epoch, logs={}):
+            """
+            Called at the end of en epoch.
+
+            :param epoch: integer, index of epoch.
+            :param logs: dictionary of logs.
+            :return: dictionary of logs.
+            """
             if epoch % self._valid_steps:
                 return logs
             val_x = self._x
             val_y = self._y
             val_logs = self.model.evaluate(x=val_x, y=val_y,
-                                                batch_size=self._batch_size,
-                                                verbose=0)
+                                           batch_size=self._batch_size,
+                                           verbose=0)
             if not isinstance(val_logs, list):
                 val_logs = [val_logs]
             val_logs = {name: val for name, val in
-                    zip(self.model.metrics_names, val_logs)}
+                        zip(self.model.metrics_names, val_logs)}
             dataframe = None
             for metric in self._metrics:
                 if isinstance(metric, engine.BaseMetric):
