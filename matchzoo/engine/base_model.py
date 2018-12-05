@@ -22,27 +22,29 @@ class BaseModel(abc.ABC):
     PARAMS_FILENAME = 'params.dill'
 
     class EvaluateOnCall(keras.callbacks.Callback):
-        def __init__(self,
-                     x,
-                     y,
+        def __init__(self, x, y,
                      metrics: typing.Union[list, str, engine.BaseMetric],
+                     valid_steps=3,
                      batch_size: int = 32):
             super().__init__()
             self._x = x
             self._y = y
             self._metrics = metrics
+            self._valid_steps = valid_steps
             self._batch_size = batch_size
 
         def on_epoch_end(self, epoch, logs={}):
+            if epoch % self._valid_steps:
+                return logs
             val_x = self._x
             val_y = self._y
-            backend_evals = self.model.evaluate(x=val_x, y=val_y,
+            val_logs = self.model.evaluate(x=val_x, y=val_y,
                                                 batch_size=self._batch_size,
                                                 verbose=0)
-            if not isinstance(backend_evals, list):
-                backend_evals = [backend_evals]
-            logs = {name: val for name, val in
-                    zip(self.model.metrics_names, backend_evals)}
+            if not isinstance(val_logs, list):
+                val_logs = [val_logs]
+            val_logs = {name: val for name, val in
+                    zip(self.model.metrics_names, val_logs)}
             dataframe = None
             for metric in self._metrics:
                 if isinstance(metric, engine.BaseMetric):
@@ -60,10 +62,10 @@ class BaseModel(abc.ABC):
                     metric_val = dataframe.groupby(by='id').apply(
                         lambda df: metric(df['true'], df['pred'])
                     ).mean()
-                    logs[str(metric)] = metric_val
+                    val_logs[str(metric)] = metric_val
 
             print('Validation: ' + ' - '.join(
-                ['%s:%f' % (k, v) for k, v in logs.items()]))
+                ['%s:%f' % (k, v) for k, v in val_logs.items()]))
             return logs
 
     def __init__(
