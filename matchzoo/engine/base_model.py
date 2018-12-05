@@ -2,6 +2,7 @@
 
 import abc
 import typing
+import logging
 from pathlib import Path
 
 import dill
@@ -13,6 +14,8 @@ import matchzoo
 from matchzoo import DataGenerator
 from matchzoo import engine
 from matchzoo import tasks
+
+logger = logging.getLogger(__name__)
 
 
 class BaseModel(abc.ABC):
@@ -42,8 +45,8 @@ class BaseModel(abc.ABC):
 
             """
             super().__init__()
-            self._x = x
-            self._y = y
+            self._val_x = x
+            self._val_y = y
             self._metrics = metrics
             self._valid_steps = valid_steps
             self._batch_size = batch_size
@@ -58,9 +61,7 @@ class BaseModel(abc.ABC):
             """
             if epoch % self._valid_steps:
                 return logs
-            val_x = self._x
-            val_y = self._y
-            val_logs = self.model.evaluate(x=val_x, y=val_y,
+            val_logs = self.model.evaluate(x=self._val_x, y=self._val_y,
                                            batch_size=self._batch_size,
                                            verbose=0)
             if not isinstance(val_logs, list):
@@ -71,12 +72,12 @@ class BaseModel(abc.ABC):
             for metric in self._metrics:
                 if isinstance(metric, engine.BaseMetric):
                     if dataframe is None:
-                        y_pred = self.model.predict(val_x,
+                        y_pred = self.model.predict(self._val_x,
                                                     batch_size=self._batch_size
                                                     ).reshape((-1,))
                         data = {
-                            'id': val_x['id_left'].tolist(),
-                            'true': val_y.tolist(),
+                            'id': self._val_x['id_left'].tolist(),
+                            'true': self._val_y.tolist(),
                             'pred': y_pred.tolist()
                         }
                         dataframe = pd.DataFrame(data=data)
@@ -86,8 +87,9 @@ class BaseModel(abc.ABC):
                     ).mean()
                     val_logs[str(metric)] = metric_val
 
-            print('Validation: ' + ' - '.join(
+            logger.info('Validation: ' + ' - '.join(
                 ['%s:%f' % (k, v) for k, v in val_logs.items()]))
+
             return logs
 
     def __init__(
