@@ -21,6 +21,51 @@ class BaseModel(abc.ABC):
     BACKEND_WEIGHTS_FILENAME = 'backend_weights.h5'
     PARAMS_FILENAME = 'params.dill'
 
+    class EvaluateOnCall(keras.callbacks.Callback):
+        def __init__(self,
+                     x,
+                     y,
+                     metrics: typing.Union[list, str, engine.BaseMetric],
+                     batch_size: int = 32):
+            super().__init__()
+            self._x = x
+            self._y = y
+            self._metrics = metrics
+            self._batch_size = batch_size
+
+        def on_epoch_end(self, epoch, logs={}):
+            val_x = self._x
+            val_y = self._y
+            backend_evals = self.model.evaluate(x=val_x, y=val_y,
+                                                batch_size=self._batch_size,
+                                                verbose=0)
+            if not isinstance(backend_evals, list):
+                backend_evals = [backend_evals]
+            logs = {name: val for name, val in
+                    zip(self.model.metrics_names, backend_evals)}
+            dataframe = None
+            for metric in self._metrics:
+                if isinstance(metric, engine.BaseMetric):
+                    if dataframe is None:
+                        y_pred = self.model.predict(val_x,
+                                                    batch_size=self._batch_size
+                                                    ).reshape((-1,))
+                        data = {
+                            'id': val_x['id_left'].tolist(),
+                            'true': val_y.tolist(),
+                            'pred': y_pred.tolist()
+                        }
+                        dataframe = pd.DataFrame(data=data)
+
+                    metric_val = dataframe.groupby(by='id').apply(
+                        lambda df: metric(df['true'], df['pred'])
+                    ).mean()
+                    logs[str(metric)] = metric_val
+
+            print('Validation: ' + ' - '.join(
+                ['%s:%f' % (k, v) for k, v in logs.items()]))
+            return logs
+
     def __init__(
         self,
         params: engine.ParamTable = None,
@@ -205,7 +250,6 @@ class BaseModel(abc.ABC):
         """
         return self._backend.fit_generator(
             generator=generator,
-            steps_per_epoch=len(generator),
             epochs=epochs,
             verbose=verbose, **kwargs
         )
