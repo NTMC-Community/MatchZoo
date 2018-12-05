@@ -95,7 +95,7 @@ class DataPack(object):
             >>> import matchzoo as mz
             >>> data_pack = mz.datasets.toy.load_train_classify_data()
             >>> type(data_pack.frame)
-            <class 'matchzoo.data_pack.data_pack.FrameView'>
+            <class 'matchzoo.data_pack.data_pack.DataPack.FrameView'>
             >>> frame_slice = data_pack.frame[0:5]
             >>> type(frame_slice)
             <class 'pandas.core.frame.DataFrame'>
@@ -381,7 +381,7 @@ class DataPack(object):
     class FrameView(object):
         """FrameView."""
 
-        def __init__(self, data_pack: DataPack):
+        def __init__(self, data_pack: 'DataPack'):
             """
             View a data pack as a frame.
 
