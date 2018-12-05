@@ -2,6 +2,8 @@
 ignore = 
     # D401 First line should be in imperative mood
     D401,
+    # D202 No blank lines allowed after function docstring
+    D202,
 
     # For doctests:
     # D207 Docstring is under-indented
