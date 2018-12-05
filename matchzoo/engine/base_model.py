@@ -2,6 +2,7 @@
 
 import abc
 import typing
+import logging
 from pathlib import Path
 
 import dill
@@ -14,12 +15,82 @@ from matchzoo import DataGenerator
 from matchzoo import engine
 from matchzoo import tasks
 
+logger = logging.getLogger(__name__)
+
 
 class BaseModel(abc.ABC):
     """Abstract base class of all matchzoo models."""
 
     BACKEND_WEIGHTS_FILENAME = 'backend_weights.h5'
     PARAMS_FILENAME = 'params.dill'
+
+    class EvaluateOnCall(keras.callbacks.Callback):
+        """:class:`EvaluateOncall` evaluate validation datasets on callback."""
+
+        def __init__(self,
+                     x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+                     y: np.ndarray,
+                     metrics: typing.Union[list, str, engine.BaseMetric],
+                     valid_steps=3,
+                     batch_size: int = 32):
+            """
+            :class:`EvaluateOnCall` constructor.
+
+            :param x: input data.
+            :param y: labels.
+            :param metrics: metric function.
+            :param valid_steps: integer, skipping steps(number of batches) to
+                call the :class:`EvaluateOnCall`.
+            :param batch_size: integer, number of instances in a batch.
+
+            """
+            super().__init__()
+            self._val_x = x
+            self._val_y = y
+            self._metrics = metrics
+            self._valid_steps = valid_steps
+            self._batch_size = batch_size
+
+        def on_epoch_end(self, epoch, logs={}):
+            """
+            Called at the end of en epoch.
+
+            :param epoch: integer, index of epoch.
+            :param logs: dictionary of logs.
+            :return: dictionary of logs.
+            """
+            if epoch % self._valid_steps:
+                return logs
+            val_logs = self.model.evaluate(x=self._val_x, y=self._val_y,
+                                           batch_size=self._batch_size,
+                                           verbose=0)
+            if not isinstance(val_logs, list):
+                val_logs = [val_logs]
+            val_logs = {name: val for name, val in
+                        zip(self.model.metrics_names, val_logs)}
+            dataframe = None
+            for metric in self._metrics:
+                if isinstance(metric, engine.BaseMetric):
+                    if dataframe is None:
+                        y_pred = self.model.predict(self._val_x,
+                                                    batch_size=self._batch_size
+                                                    ).reshape((-1,))
+                        data = {
+                            'id': self._val_x['id_left'].tolist(),
+                            'true': self._val_y.tolist(),
+                            'pred': y_pred.tolist()
+                        }
+                        dataframe = pd.DataFrame(data=data)
+
+                    metric_val = dataframe.groupby(by='id').apply(
+                        lambda df: metric(df['true'], df['pred'])
+                    ).mean()
+                    val_logs[str(metric)] = metric_val
+
+            logger.info('Validation: ' + ' - '.join(
+                ['%s:%f' % (k, v) for k, v in val_logs.items()]))
+
+            return logs
 
     def __init__(
         self,
@@ -205,7 +276,6 @@ class BaseModel(abc.ABC):
         """
         return self._backend.fit_generator(
             generator=generator,
-            steps_per_epoch=len(generator),
             epochs=epochs,
             verbose=verbose, **kwargs
         )
