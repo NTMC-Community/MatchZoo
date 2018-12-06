@@ -274,23 +274,9 @@ class BaseModel(abc.ABC):
 
         Examples::
             >>> import matchzoo as mz
-            >>> np.random.seed(111)
-            >>> relation = [['qid0', 'did0', 0],
-            ...             ['qid0', 'did1', 1],
-            ...             ['qid0', 'did2', 2]]
-            >>> left = [['qid0', (np.random.rand(30) * 10).astype(int)]]
-            >>> right = [['did0', (np.random.rand(30) * 10).astype(int)],
-            ...          ['did1', (np.random.rand(30) * 10).astype(int)],
-            ...          ['did2', (np.random.rand(30) * 10).astype(int)], ]
-            >>> relation = pd.DataFrame(
-            ...     relation, columns=['id_left', 'id_right', 'label'])
-            >>> left = pd.DataFrame(left, columns=['id_left', 'text_left'])
-            >>> left.set_index('id_left', inplace=True)
-            >>> right = pd.DataFrame(right, columns=['id_right', 'text_right'])
-            >>> right.set_index('id_right', inplace=True)
-            >>> generator = mz.DataGenerator(
-            ...     mz.DataPack(relation=relation, left=left, right=right))
-            >>> x, y = generator[0]
+            >>> data_pack = mz.datasets.toy.load_train_rank_data()
+            >>> preprocessor = mz.preprocessors.NaivePreprocessor()
+            >>> data_pack = preprocessor.fit_transform(data_pack)
             >>> m = mz.models.DenseBaselineModel()
             >>> m.params['task'] = mz.tasks.Ranking()
             >>> m.params['task'].metrics = [
