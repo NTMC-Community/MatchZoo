@@ -28,30 +28,30 @@ class BaseModel(abc.ABC):
         """:class:`EvaluateOncall` evaluate validation datasets on callback."""
 
         def __init__(self,
+                     matchzoo_model: 'BaseModel',
                      x: typing.Union[np.ndarray, typing.List[np.ndarray]],
                      y: np.ndarray,
-                     metrics: typing.Union[list, str, engine.BaseMetric],
                      valid_steps=3,
                      batch_size: int = 32):
             """
             :class:`EvaluateOnCall` constructor.
 
+            :param matchzoo_model: model to evaluate.
             :param x: input data.
             :param y: labels.
-            :param metrics: metric function.
             :param valid_steps: integer, skipping steps(number of batches) to
                 call the :class:`EvaluateOnCall`.
             :param batch_size: integer, number of instances in a batch.
 
             """
             super().__init__()
+            self._mz_model = matchzoo_model
             self._val_x = x
             self._val_y = y
-            self._metrics = metrics
             self._valid_steps = valid_steps
             self._batch_size = batch_size
 
-        def on_epoch_end(self, epoch, logs={}):
+        def on_epoch_end(self, epoch, logs=None):
             """
             Called at the end of en epoch.
 
@@ -59,38 +59,11 @@ class BaseModel(abc.ABC):
             :param logs: dictionary of logs.
             :return: dictionary of logs.
             """
-            if epoch % self._valid_steps:
-                return logs
-            val_logs = self.model.evaluate(x=self._val_x, y=self._val_y,
-                                           batch_size=self._batch_size,
-                                           verbose=0)
-            if not isinstance(val_logs, list):
-                val_logs = [val_logs]
-            val_logs = {name: val for name, val in
-                        zip(self.model.metrics_names, val_logs)}
-            dataframe = None
-            for metric in self._metrics:
-                if isinstance(metric, engine.BaseMetric):
-                    if dataframe is None:
-                        y_pred = self.model.predict(self._val_x,
-                                                    batch_size=self._batch_size
-                                                    ).reshape((-1,))
-                        data = {
-                            'id': self._val_x['id_left'].tolist(),
-                            'true': self._val_y.tolist(),
-                            'pred': y_pred.tolist()
-                        }
-                        dataframe = pd.DataFrame(data=data)
-
-                    metric_val = dataframe.groupby(by='id').apply(
-                        lambda df: metric(df['true'], df['pred'])
-                    ).mean()
-                    val_logs[str(metric)] = metric_val
-
-            logger.info('Validation: ' + ' - '.join(
-                ['%s:%f' % (k, v) for k, v in val_logs.items()]))
-
-            return logs
+            if epoch % self._valid_steps == 0:
+                val_logs = self._mz_model.evaluate(self._val_x, self._val_y,
+                                                   self._batch_size, verbose=0)
+                logger.info('Validation: ' + ' - '.join(
+                    f'{k}:{v:f}' for k, v in val_logs.items()))
 
     def __init__(
         self,
@@ -215,10 +188,7 @@ class BaseModel(abc.ABC):
             ['loss', 'mean_squared_error']
 
         """
-        keras_metrics = []
-        for metric in self._params['task'].metrics:
-            if not isinstance(engine.parse_metric(metric), engine.BaseMetric):
-                keras_metrics.append(metric)
+        _, keras_metrics = self._separate_metrics()
         self._backend.compile(optimizer=self._params['optimizer'],
                               loss=self._params['task'].loss,
                               metrics=keras_metrics)
@@ -332,43 +302,60 @@ class BaseModel(abc.ABC):
             ...     mz.metrics.Precision(k=2, threshold=2),
             ...     mz.metrics.DiscountedCumulativeGain(k=2),
             ...     mz.metrics.NormalizedDiscountedCumulativeGain(
-            ...         k=3,threshold=-1),
+            ...         k=3, threshold=-1),
             ...     mz.metrics.MeanReciprocalRank(threshold=2),
             ...     mz.metrics.MeanAveragePrecision(threshold=3)
             ... ]
             >>> m.guess_and_fill_missing_params(verbose=0)
             >>> m.build()
             >>> m.compile()
+            >>> x, y = data_pack.unpack()
             >>> evals = m.evaluate(x, y, verbose=0)
             >>> type(evals)
             <class 'dict'>
 
         """
-        backend_evals = self._backend.evaluate(x=x, y=y,
-                                               batch_size=batch_size,
-                                               verbose=verbose)
-        if not isinstance(backend_evals, list):
-            backend_evals = [backend_evals]
-        metrics_lookup = {name: val for name, val in
-                          zip(self._backend.metrics_names, backend_evals)}
-        dataframe = None
+        result = self._evaluate_backend(x, y, batch_size, verbose)
+        matchzoo_metrics, _ = self._separate_metrics()
+        if matchzoo_metrics:
+            df = self._build_data_frame_for_eval(x, y, batch_size)
+            for metric in matchzoo_metrics:
+                result[metric] = self._eval_metric_on_data_frame(metric, df)
+        return result
+
+    def _evaluate_backend(self, x, y, batch_size, verbose):
+        vals = self._backend.evaluate(x=x, y=y,
+                                      batch_size=batch_size,
+                                      verbose=verbose)
+        if not isinstance(vals, list):
+            vals = [vals]
+        return dict(zip(self._backend.metrics_names, vals))
+
+    def _separate_metrics(self):
+        matchzoo_metrics = []
+        keras_metrics = []
         for metric in self._params['task'].metrics:
             if isinstance(metric, engine.BaseMetric):
-                if dataframe is None:
-                    y_pred = self.predict(x, batch_size).reshape((-1,))
-                    data = {
-                        'id': x['id_left'].tolist(),
-                        'true': y.tolist(),
-                        'pred': y_pred.tolist()
-                    }
-                    dataframe = pd.DataFrame(data=data)
+                matchzoo_metrics.append(metric)
+            else:
+                keras_metrics.append(metric)
+        return matchzoo_metrics, keras_metrics
 
-                metric_val = dataframe.groupby(by='id').apply(
-                    lambda df: metric(df['true'], df['pred'])
-                ).mean()
-                metrics_lookup[str(metric)] = metric_val
+    def _build_data_frame_for_eval(self, x, y, batch_size):
+        y_pred = self.predict(x, batch_size).reshape((-1,))
+        return pd.DataFrame(data={
+            'id': x['id_left'].tolist(),
+            'true': y.tolist(),
+            'pred': y_pred.tolist()
+        })
 
-        return metrics_lookup
+    @classmethod
+    def _eval_metric_on_data_frame(cls, metric: engine.BaseMetric, eval_df):
+        assert isinstance(metric, engine.BaseMetric)
+        val = eval_df.groupby(by='id').apply(
+            lambda df: metric(df['true'], df['pred'])
+        ).mean()
+        return val
 
     def predict(
         self,
