@@ -52,17 +52,22 @@ class Embedding(object):
 
     def build_matrix(
         self,
-        term_index: typing.Union[dict,
-                                 processor_units.VocabularyUnit.TermIndex]
+        term_index: typing.Union[
+            dict, processor_units.VocabularyUnit.TermIndex],
+        initializer=lambda shape: np.random.uniform(-0.2, 0.2, shape)
     ) -> np.ndarray:
         """
         Build a matrix using `term_index`.
 
         :param term_index: A `dict` or `TermIndex` to build with.
+        :param initializer: Initializer to initialize missing terms in data.
+            Should takes two arguments, `input_dim` and `output_dim` as
+            arguments and returns a initialized matrix. (default: a random
+            uniform distribution in `(-0.2, 0.2)`)
         :return: A matrix.
         """
         input_dim = len(term_index) + 1
-        matrix = np.random.uniform(-0.2, 0.2, (input_dim, self.output_dim))
+        matrix = initializer((input_dim, self.output_dim))
         for term, index in term_index.items():
             if term in self._data.index:
                 matrix[index] = self._data.loc[term]
