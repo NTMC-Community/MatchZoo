@@ -36,7 +36,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         return self._context
 
     @abc.abstractmethod
-    def fit(self, inputs: list, verbose=1) -> 'BasePreprocessor':
+    def fit(self, data_pack: DataPack, verbose=1) -> 'BasePreprocessor':
         """
         Fit parameters on input data.
 
@@ -46,30 +46,30 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         This method is expected to return itself as a callable
         object.
 
-        :param inputs: List of text-left, text-right, label triples.
+        :param data_pack: :class:`Datapack` object to be fitted.
         :param verbose: Verbosity.
         """
 
     @abc.abstractmethod
-    def transform(self, inputs: list, verbose=1) -> DataPack:
+    def transform(self, data_pack: DataPack, verbose=1) -> DataPack:
         """
         Transform input data to expected manner.
 
         This method is an abstract base method, need to be
         implemented in the child class.
 
-        :param inputs: List of text-left, text-right, label triples,
+        :param data_pack: :class:`DataPack` object to be transformed.
         :param verbose: Verbosity.
             or list of text-left, text-right tuples.
         """
 
-    def fit_transform(self, inputs: list) -> DataPack:
+    def fit_transform(self, data_pack: DataPack) -> DataPack:
         """
         Call fit-transform.
 
-        :param inputs: List of text-left, text-right, label triples.
+        :param data_pack: :class:`DataPack` object to be processed.
         """
-        return self.fit(inputs).transform(inputs)
+        return self.fit(data_pack).transform(data_pack)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
