@@ -1,68 +1,95 @@
 """Matchzoo toolkit for token embedding."""
 
-import abc
 import csv
 import typing
 
 import numpy as np
 import pandas as pd
 
+from matchzoo import processor_units
+
 
 class Embedding(object):
     """
     Embedding class.
+
+    Examples::
+        >>> import matchzoo as mz
+        >>> data_pack = mz.datasets.toy.load_train_rank_data()
+        >>> pp = mz.preprocessors.NaivePreprocessor()
+        >>> vocab_unit = mz.build_vocab(pp.fit_transform(data_pack))
+        >>> term_index = vocab_unit.state['term_index']
+        >>> embed_path = mz.datasets.embeddings.EMBED_RANK
+
+    To load from a file:
+        >>> embedding = mz.embedding.load_from_file(embed_path)
+        >>> matrix = embedding.build_matrix(term_index)
+        >>> matrix.shape[0] == len(term_index) + 1
+        True
+
+    To build your own:
+        >>> data = pd.read_table(embed_path, sep=" ", index_col=0,
+        ...                      header=None, skiprows=1)
+        >>> embedding = mz.embedding.Embedding(data)
+        >>> matrix = embedding.build_matrix(term_index)
+        >>> matrix.shape[0] == len(term_index) + 1
+        True
+
     """
 
-    def __init__(self):
-        """Init."""
-        self._matrix = None
+    def __init__(self, data: pd.DataFrame):
+        """
+        Embedding.
 
-    def _entity_to_vec(self, entity: str):
-        """Get word embedding by entity."""
-        return self._matrix.loc[entity].values
-
-    def __getitem__(self, entities: typing.Union[str, list]):
-        """Get embeddings by entity of list of entities."""
-        if isinstance(entities, str):
-            return self._entity_to_vec(entities)
-
-        return np.vstack([self._entity_to_vec(entity) for entity in entities])
+        :param data: DataFrame to use as term to vector mapping.
+        """
+        self._data = data
 
     @property
-    def dimension(self):
-        """"""
-        return self._matrix.shape[1]
+    def output_dim(self) -> int:
+        """:return Embedding output dimension."""
+        return self._data.shape[1]
 
-    @property
-    def matrix(self):
-        """Getter."""
-        if not self._matrix:
-            raise ValueError('Please load embedding.')
-        return self._matrix
+    def build_matrix(
+        self,
+        term_index: typing.Union[dict,
+                                 processor_units.VocabularyUnit.TermIndex]
+    ) -> np.ndarray:
+        """
+        Build a matrix using `term_index`.
 
-    @matrix.setter
-    def matrix(self, matrix_instance):
-        """Setter."""
-        self._matrix = matrix_instance
+        :param term_index: A `dict` or `TermIndex` to build with.
+        :return: A matrix.
+        """
+        input_dim = len(term_index) + 1
+        matrix = np.random.uniform(-0.2, 0.2, (input_dim, self.output_dim))
+        for term, index in term_index.items():
+            if term in self._data.index:
+                matrix[index] = self._data.loc[term]
+        return matrix
 
-    @classmethod
-    def load(cls, dir: str, embedding_type: str = 'random'):
-        """Load embeddings."""
-        if embedding_type == 'random':
-            self._matrix = pd.DataFrame(np.random.uniform(-random_scale,
-                                                          random_scale,
-                                                          (len(self._vocab), self._dimension)))
-        elif embedding_type == 'word2vec':
-            self._matrix = pd.read_table(file_path,
-                                         sep=" ",
-                                         index_col=0,
-                                         header=None,
-                                         skiprows=1)
-        elif embedding_type == 'glove':
-            self._matrix = pd.read_table(file_path,
-                                         sep=" ",
-                                         index_col=0,
-                                         header=None,
-                                         quoting=csv.QUOTE_NONE)
-        else:
-            raise TypeError("Not supported embedding type.")
+
+def load_from_file(file_path: str, mode: str = 'word2vec') -> Embedding:
+    """
+    Load embedding from `file_path`.
+
+    :param file_path: Path to file.
+    :param mode: Embedding file format mode, one of 'word2vec' or 'glove'.
+        (default: 'word2vec')
+    :return: An :class:`matchzoo.embedding.Embedding` instance.
+    """
+    if mode == 'word2vec':
+        matrix = pd.read_table(file_path,
+                               sep=" ",
+                               index_col=0,
+                               header=None,
+                               skiprows=1)
+    elif mode == 'glove':
+        matrix = pd.read_table(file_path,
+                               sep=" ",
+                               index_col=0,
+                               header=None,
+                               quoting=csv.QUOTE_NONE)
+    else:
+        raise TypeError("Not supported embedding type.")
+    return Embedding(matrix)
