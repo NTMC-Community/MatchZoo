@@ -61,9 +61,8 @@ class Embedding(object):
 
         :param term_index: A `dict` or `TermIndex` to build with.
         :param initializer: Initializer to initialize missing terms in data.
-            Should takes two arguments, `input_dim` and `output_dim` as
-            arguments and returns a initialized matrix. (default: a random
-            uniform distribution in `(-0.2, 0.2)`)
+            Should takes `shape` as arguments and returns a initialized matrix.
+            (default: a random uniform distribution in `(-0.2, 0.2)`)
         :return: A matrix.
         """
         input_dim = len(term_index) + 1
