@@ -286,32 +286,34 @@ class VocabularyUnit(StatefulProcessorUnit):
 
 
 class FrequencyFilterUnit(StatefulProcessorUnit):
+    """
+    Frequency filter unit.
+
+    :param low: Lower bound, inclusive.
+    :param high: Upper bound, exclusive.
+    :param mode: One of `tf`, `df`, and `idf`
+
+    Examples::
+        >>> import matchzoo as mz
+
+    To filter based on term frequency (tf):
+        >>> tf_filter = mz.processor_units.FrequencyFilterUnit(
+        ...     low=2, mode='tf')
+        >>> tf_filter.fit([['A', 'B', 'B'], ['C', 'C', 'C']])
+        >>> tf_filter.transform(['A', 'B', 'C'])
+        ['B', 'C']
+
+    To filter based on document frequency (df):
+        >>> tf_filter = mz.processor_units.FrequencyFilterUnit(
+        ...     low=2, mode='df')
+        >>> tf_filter.fit([['A', 'B'], ['B', 'C']])
+        >>> tf_filter.transform(['A', 'B', 'C'])
+        ['B']
+
+    """
+
     def __init__(self, low=0, high=float('inf'), mode='df'):
-        """
-        Frequency filter unit.
-
-        :param low: Lower bound, inclusive.
-        :param high: Upper bound, exclusive.
-        :param mode: One of `tf`, `df`, and `idf`
-
-        Examples::
-            >>> import matchzoo as mz
-
-        To filter based on term frequency (tf):
-            >>> tf_filter = mz.processor_units.FrequencyFilterUnit(
-            ...     low=2, mode='tf')
-            >>> tf_filter.fit([['A', 'B', 'B'], ['C', 'C', 'C']])
-            >>> tf_filter.transform(['A', 'B', 'C'])
-            ['B', 'C']
-
-        To filter based on document frequency (df):
-            >>> tf_filter = mz.processor_units.FrequencyFilterUnit(
-            ...     low=2, mode='df')
-            >>> tf_filter.fit([['A', 'B'], ['B', 'C']])
-            >>> tf_filter.transform(['A', 'B', 'C'])
-            ['B']
-
-        """
+        """Frequency filter unit."""
         super().__init__()
         self._low = low
         self._high = high
