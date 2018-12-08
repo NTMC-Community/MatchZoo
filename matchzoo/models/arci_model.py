@@ -58,9 +58,9 @@ class ArcIModel(engine.BaseModel):
 
         ArcI use Siamese arthitecture.
         """
-        input_left, input_right = self._get_inputs()
+        input_left, input_right = self._make_inputs()
 
-        embedding = self._get_embedding_layer()
+        embedding = self._make_embedding_layer()
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
 
