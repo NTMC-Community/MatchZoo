@@ -34,10 +34,9 @@ def load_data(stage='train', task='ranking'):
         task = matchzoo.tasks.Classification()
 
     if isinstance(task, matchzoo.tasks.Ranking):
-        binary = (data_pack._relation['label'] == 'entailment').astype(int)
-        return matchzoo.DataPack(left=data_pack.left,
-                                 right=data_pack.right,
-                                 relation=binary)
+        binary = (data_pack.relation['label'] == 'entailment').astype(int)
+        data_pack.relation['label'] = binary
+        return data_pack
     elif isinstance(task, matchzoo.tasks.Classification):
         classes = ['neutral', 'contradiction', 'entailment', '-']
         label = data_pack.relation['label'].apply(classes.index)
