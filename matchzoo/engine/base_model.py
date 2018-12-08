@@ -430,17 +430,7 @@ class BaseModel(abc.ABC):
             if verbose:
                 print(f"Parameter \"{name}\" set to {default_val}.")
 
-    def _make_output_layer(self):
-        """:return: a correctly shaped keras dense layer for model output."""
-        task = self._params['task']
-        if isinstance(task, tasks.Classification):
-            return keras.layers.Dense(task.num_classes, activation='softmax')
-        elif isinstance(task, tasks.Ranking):
-            return keras.layers.Dense(1, activation='linear')
-        else:
-            raise ValueError("Invalid task type.")
-
-    def _get_inputs(self):
+    def _make_inputs(self):
         input_left = keras.layers.Input(
             name='text_left',
             shape=self._params['input_shapes'][0]
@@ -451,7 +441,17 @@ class BaseModel(abc.ABC):
         )
         return [input_left, input_right]
 
-    def _get_embedding_layer(self, name='embedding'):
+    def _make_output_layer(self):
+        """:return: a correctly shaped keras dense layer for model output."""
+        task = self._params['task']
+        if isinstance(task, tasks.Classification):
+            return keras.layers.Dense(task.num_classes, activation='softmax')
+        elif isinstance(task, tasks.Ranking):
+            return keras.layers.Dense(1, activation='linear')
+        else:
+            raise ValueError("Invalid task type.")
+
+    def _make_embedding_layer(self, name='embedding'):
         return keras.layers.Embedding(
             self._params['embedding_input_dim'],
             self._params['embedding_output_dim'],
