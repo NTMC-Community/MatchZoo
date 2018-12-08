@@ -46,8 +46,8 @@ class BaseModel(abc.ABC):
             """
             super().__init__()
             self._mz_model = matchzoo_model
-            self._val_x = x
-            self._val_y = y
+            self._dev_x = x
+            self._dev_y = y
             self._valid_steps = valid_steps
             self._batch_size = batch_size
 
@@ -60,7 +60,7 @@ class BaseModel(abc.ABC):
             :return: dictionary of logs.
             """
             if epoch % self._valid_steps == 0:
-                val_logs = self._mz_model.evaluate(self._val_x, self._val_y,
+                val_logs = self._mz_model.evaluate(self._dev_x, self._dev_y,
                                                    self._batch_size, verbose=0)
                 logger.info('Validation: ' + ' - '.join(
                     f'{k}:{v:f}' for k, v in val_logs.items()))
