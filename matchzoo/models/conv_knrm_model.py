@@ -28,9 +28,9 @@ class ConvKNRMModel(models.KNRMModel):
 
     def build(self):
         """Build model."""
-        query, doc = self._get_inputs()
+        query, doc = self._make_inputs()
 
-        embedding = self._get_embedding_layer()
+        embedding = self._make_embedding_layer()
 
         q_embed = embedding(query)
         d_embed = embedding(doc)

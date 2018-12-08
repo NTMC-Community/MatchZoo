@@ -10,14 +10,15 @@ _url = "https://download.microsoft.com/download/E/5/F/" \
        "E5FCFCEE-7005-4814-853D-DAA7C66507E0/WikiQACorpus.zip"
 
 
-def load_data(stage='train', task='ranking') -> matchzoo.DataPack:
+def load_data(stage='train', task='ranking'):
     """
     Load WikiQA data.
 
     :param stage: One of `train`, `dev`, and `test`.
     :param task: Could be one of `ranking`, `classification` or a
         :class:`matchzoo.engine.BaseTask` instance.
-    :return: A :class:`matchzoo.DataPack` instance.
+    :return: A DataPack if `ranking`, a tuple of (DataPack, classes) if
+        `classification`.
     """
     if stage not in ('train', 'dev', 'test'):
         raise ValueError(f"{stage} is not a valid stage."
@@ -38,7 +39,7 @@ def load_data(stage='train', task='ranking') -> matchzoo.DataPack:
         label = data_pack.relation['label'].astype(int).apply(
             task.one_hot_encode)
         data_pack.relation['label'] = label
-        return data_pack
+        return data_pack, [False, True]
     else:
         raise ValueError(f"{task} is not a valid task.")
 

@@ -237,8 +237,8 @@ class DataPack(object):
         """
         Shuffle the data pack by shuffling the relation column.
 
-        :param inplace: `True` to modify in place, `False` to return a
-        modified copy. (default: False)
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: False)
 
         Example:
             >>> import matchzoo as mz
@@ -259,8 +259,8 @@ class DataPack(object):
         """
         Remove `label` column from the data pack.
 
-        :param inplace: `True` to drop in place, `False` to return a copy
-        with no label column.(default: False)
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: False)
 
         Example:
             >>> import matchzoo as mz
@@ -277,6 +277,9 @@ class DataPack(object):
     def append_text_length(self):
         """
         Append `length_left` and `length_right` columns.
+
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: False)
 
         Example:
             >>> import matchzoo as mz
@@ -311,7 +314,9 @@ class DataPack(object):
         :param rename: If set, use new names for results instead of replacing
             the original columns. To set `rename` in "both" mode, use a tuple
             of `str`, e.g. ("text_left_new_name", "text_right_new_name").
-        :param verbose:
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: False)
+        :param verbose: Verbosity.
         :return:
 
         Examples::
