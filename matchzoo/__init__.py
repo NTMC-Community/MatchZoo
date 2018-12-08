@@ -4,7 +4,8 @@ from .version import __version__
 from . import processor_units
 from .processor_units import chain_transform, ProcessorUnit
 
-from .data_pack import DataPack, pack, build_unit_from_datapack, load_data_pack
+from .data_pack import DataPack, pack, build_vocab_unit, \
+    build_unit_from_data_pack, load_data_pack
 
 from .data_generator import DataGenerator
 from .data_generator import PairDataGenerator
@@ -21,4 +22,3 @@ from . import embedding
 
 from .engine import load_model, load_preprocessor
 from .auto import Director
-

@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from matchzoo import engine, processor_units
 from matchzoo import DataPack
-from matchzoo import chain_transform, build_unit_from_datapack
+from matchzoo import chain_transform, build_vocab_unit
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
@@ -55,9 +55,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         units = self._default_processor_units()
         data_pack = data_pack.apply_on_text(chain_transform(units),
                                             verbose=verbose)
-        vocab_unit = processor_units.VocabularyUnit()
-        vocab_unit = build_unit_from_datapack(vocab_unit, data_pack,
-                                              flatten=True, verbose=verbose)
+        vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
 
         self._context['vocab_unit'] = vocab_unit
         triletter_dim = len(vocab_unit.state['term_index']) + 1
