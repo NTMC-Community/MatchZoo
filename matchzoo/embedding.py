@@ -88,17 +88,17 @@ def load_from_file(file_path: str, mode: str = 'word2vec') -> Embedding:
     :return: An :class:`matchzoo.embedding.Embedding` instance.
     """
     if mode == 'word2vec':
-        matrix = pd.read_table(file_path,
-                               sep=" ",
-                               index_col=0,
-                               header=None,
-                               skiprows=1)
+        data = pd.read_table(file_path,
+                             sep=" ",
+                             index_col=0,
+                             header=None,
+                             skiprows=1)
     elif mode == 'glove':
-        matrix = pd.read_table(file_path,
-                               sep=" ",
-                               index_col=0,
-                               header=None,
-                               quoting=csv.QUOTE_NONE)
+        data = pd.read_table(file_path,
+                             sep=" ",
+                             index_col=0,
+                             header=None,
+                             quoting=csv.QUOTE_NONE)
     else:
         raise TypeError("Not supported embedding type.")
-    return Embedding(matrix)
+    return Embedding(data)
