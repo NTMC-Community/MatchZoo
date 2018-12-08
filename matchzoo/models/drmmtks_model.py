@@ -35,8 +35,9 @@ class DRMMTKSModel(engine.BaseModel):
         params = super().get_default_params(with_embedding=True)
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(5,), (300,)]
-        params.add(engine.Param('vocab_size', 100))
-        params.add(engine.Param('top_k', 10))
+        params.add(engine.Param('top_k', value=10,
+            hyper_space=engine.hyper_spaces.quniform(low=2, high=100)
+        ))
         params.add(engine.Param('hidden_sizes', [5, 1]))
         return params
 
