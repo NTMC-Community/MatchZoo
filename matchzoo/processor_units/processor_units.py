@@ -291,7 +291,8 @@ class FrequencyFilterUnit(StatefulProcessorUnit):
 
     :param low: Lower bound, inclusive.
     :param high: Upper bound, exclusive.
-    :param mode: One of `tf`, `df`, and `idf`
+    :param mode: One of `tf` (term frequency), `df` (document frequency),
+        and `idf` (inverse document frequency).
 
     Examples::
         >>> import matchzoo as mz

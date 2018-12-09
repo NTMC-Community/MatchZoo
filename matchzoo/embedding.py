@@ -17,7 +17,8 @@ class Embedding(object):
         >>> import matchzoo as mz
         >>> data_pack = mz.datasets.toy.load_train_rank_data()
         >>> pp = mz.preprocessors.NaivePreprocessor()
-        >>> vocab_unit = mz.build_vocab(pp.fit_transform(data_pack))
+        >>> vocab_unit = mz.build_vocab_unit(pp.fit_transform(data_pack),
+        ...                                  verbose=0)
         >>> term_index = vocab_unit.state['term_index']
         >>> embed_path = mz.datasets.embeddings.EMBED_RANK
 
@@ -28,11 +29,10 @@ class Embedding(object):
         True
 
     To build your own:
-        >>> data = pd.read_table(embed_path, sep=" ", index_col=0,
-        ...                      header=None, skiprows=1)
+        >>> data = pd.DataFrame(data=[[0, 1], [2, 3]], index=['A', 'B'])
         >>> embedding = mz.embedding.Embedding(data)
-        >>> matrix = embedding.build_matrix(term_index)
-        >>> matrix.shape[0] == len(term_index) + 1
+        >>> matrix = embedding.build_matrix({'A': 2, 'B': 1})
+        >>> matrix.shape == (3, 2)
         True
 
     """
@@ -54,22 +54,28 @@ class Embedding(object):
         self,
         term_index: typing.Union[
             dict, processor_units.VocabularyUnit.TermIndex],
-        initializer=lambda shape: np.random.uniform(-0.2, 0.2, shape)
+        initializer=lambda: np.random.uniform(-0.2, 0.2)
     ) -> np.ndarray:
         """
         Build a matrix using `term_index`.
 
         :param term_index: A `dict` or `TermIndex` to build with.
-        :param initializer: Initializer to initialize missing terms in data.
-            Should takes `shape` as arguments and returns a initialized matrix.
-            (default: a random uniform distribution in `(-0.2, 0.2)`)
+        :param initializer: A callable that returns a default value for missing
+            terms in data. (default: a random uniform distribution in range
+            `(-0.2, 0.2)`).
         :return: A matrix.
         """
         input_dim = len(term_index) + 1
-        matrix = initializer((input_dim, self.output_dim))
+
+        matrix = np.empty((input_dim, self.output_dim))
+        for index in np.ndindex(*matrix.shape):
+            matrix[index] = initializer()
+
+        valid_keys = set(self._data.index)
         for term, index in term_index.items():
-            if term in self._data.index:
+            if term in valid_keys:
                 matrix[index] = self._data.loc[term]
+
         return matrix
 
 
@@ -83,17 +89,17 @@ def load_from_file(file_path: str, mode: str = 'word2vec') -> Embedding:
     :return: An :class:`matchzoo.embedding.Embedding` instance.
     """
     if mode == 'word2vec':
-        matrix = pd.read_table(file_path,
-                               sep=" ",
-                               index_col=0,
-                               header=None,
-                               skiprows=1)
+        data = pd.read_table(file_path,
+                             sep=" ",
+                             index_col=0,
+                             header=None,
+                             skiprows=1)
     elif mode == 'glove':
-        matrix = pd.read_table(file_path,
-                               sep=" ",
-                               index_col=0,
-                               header=None,
-                               quoting=csv.QUOTE_NONE)
+        data = pd.read_table(file_path,
+                             sep=" ",
+                             index_col=0,
+                             header=None,
+                             quoting=csv.QUOTE_NONE)
     else:
         raise TypeError("Not supported embedding type.")
-    return Embedding(matrix)
+    return Embedding(data)
