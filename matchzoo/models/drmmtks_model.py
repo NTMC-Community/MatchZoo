@@ -35,7 +35,8 @@ class DRMMTKSModel(engine.BaseModel):
         params = super().get_default_params(with_embedding=True)
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(5,), (300,)]
-        params.add(engine.Param('top_k', value=10,
+        params.add(engine.Param(
+            'top_k', value=10,
             hyper_space=engine.hyper_spaces.quniform(low=2, high=100)
         ))
         params.add(engine.Param('hidden_sizes', [5, 1]))
@@ -54,11 +55,11 @@ class DRMMTKSModel(engine.BaseModel):
         # Left input and right input.
         # shape = [B, L]
         # shape = [B, R]
-        query, doc = self._get_inputs()
+        query, doc = self._make_inputs()
         show_tensor_info('query', query)
         show_tensor_info('doc', doc)
 
-        embedding = self._get_embedding_layer()
+        embedding = self._make_embedding_layer()
         # Process left input.
         # shape = [B, L, D]
         embed_query = embedding(query)
