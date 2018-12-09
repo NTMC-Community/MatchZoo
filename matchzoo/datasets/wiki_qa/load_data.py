@@ -45,7 +45,8 @@ def load_data(stage='train', task='ranking'):
 
 
 def _download_data():
-    ref_path = keras.utils.data_utils.get_file('wikiqa', _url, extract=True)
+    ref_path = keras.utils.data_utils.get_file(
+        'wikiqa', _url, extract=True, cache_dir=matchzoo.USER_DATA_DIR)
     return Path(ref_path).parent.joinpath('WikiQACorpus')
 
 

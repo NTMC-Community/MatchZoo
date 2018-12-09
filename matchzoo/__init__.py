@@ -1,3 +1,12 @@
+from pathlib import Path
+
+USER_DIR = Path.expanduser(Path('~')).joinpath('.matchzoo')
+if not USER_DIR.exists():
+    USER_DIR.mkdir()
+USER_DATA_DIR = USER_DIR.joinpath('datasets')
+if not USER_DATA_DIR.exists():
+    USER_DATA_DIR.mkdir()
+
 from .logger import logger
 from .version import __version__
 

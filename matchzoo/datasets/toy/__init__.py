@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from matchzoo import pack, embedding
+from matchzoo import pack
 
 DATA_ROOT = Path(__file__).parent
 
