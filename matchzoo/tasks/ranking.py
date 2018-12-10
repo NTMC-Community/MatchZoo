@@ -40,4 +40,4 @@ class Ranking(engine.BaseTask):
 
     def __str__(self):
         """:return: Task name as string."""
-        return 'Ranking task'
+        return 'Ranking Task'

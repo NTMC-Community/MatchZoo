@@ -29,6 +29,7 @@ def prepare(
 
     """
     params = copy.deepcopy(model.params)
+
     if preprocessor:
         new_preprocessor = copy.deepcopy(preprocessor)
     else:
