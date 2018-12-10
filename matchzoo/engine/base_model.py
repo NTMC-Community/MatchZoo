@@ -304,6 +304,8 @@ class BaseModel(abc.ABC):
         result = self._evaluate_backend(x, y, batch_size, verbose)
         matchzoo_metrics, _ = self._separate_metrics()
         if matchzoo_metrics:
+            if not isinstance(self.params['task'], tasks.Ranking):
+                raise ValueError("Matchzoo metrics only works on ranking.")
             df = self._build_data_frame_for_eval(x, y, batch_size)
             for metric in matchzoo_metrics:
                 result[metric] = self._eval_metric_on_data_frame(metric, df)
@@ -328,18 +330,18 @@ class BaseModel(abc.ABC):
         return matchzoo_metrics, keras_metrics
 
     def _build_data_frame_for_eval(self, x, y, batch_size):
-        y_pred = self.predict(x, batch_size).reshape((-1,))
+        y_pred = self.predict(x, batch_size)
         return pd.DataFrame(data={
-            'id': x['id_left'].tolist(),
-            'true': y.tolist(),
-            'pred': y_pred.tolist()
+            'id': x['id_left'],
+            'true': y.squeeze(),
+            'pred': y_pred.squeeze()
         })
 
     @classmethod
     def _eval_metric_on_data_frame(cls, metric: engine.BaseMetric, eval_df):
         assert isinstance(metric, engine.BaseMetric)
         val = eval_df.groupby(by='id').apply(
-            lambda df: metric(df['true'], df['pred'])
+            lambda df: metric(df['true'].values, df['pred'].values)
         ).mean()
         return val
 
