@@ -138,7 +138,7 @@ class DataPack(object):
         columns = list(frame.columns)
         if self.has_label:
             columns.remove('label')
-            y = np.array(frame['label'])
+            y = np.vstack(frame['label'])
         else:
             y = None
 
