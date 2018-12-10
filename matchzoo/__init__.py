@@ -26,8 +26,8 @@ from . import losses
 from . import engine
 from . import preprocessors
 from . import models
-from . import datasets
 from . import embedding
+from . import datasets
 
 from .engine import load_model, load_preprocessor
 from .auto import Director
