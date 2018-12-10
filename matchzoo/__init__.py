@@ -13,8 +13,11 @@ from .version import __version__
 from . import processor_units
 from .processor_units import chain_transform, ProcessorUnit
 
-from .data_pack import DataPack, pack, build_vocab_unit, \
-    build_unit_from_data_pack, load_data_pack
+from .data_pack import DataPack
+from .data_pack import pack
+from .data_pack import load_data_pack
+from .data_pack import build_unit_from_data_pack
+from .data_pack import build_vocab_unit
 
 from .data_generator import DataGenerator
 from .data_generator import PairDataGenerator
@@ -26,8 +29,9 @@ from . import losses
 from . import engine
 from . import preprocessors
 from . import models
-from . import embedding
 from . import datasets
+from . import embedding
+from . import auto
 
-from .engine import load_model, load_preprocessor
-from .auto import Director
+from .engine import load_model
+from .engine import load_preprocessor
