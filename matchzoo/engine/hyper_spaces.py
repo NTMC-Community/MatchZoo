@@ -87,6 +87,8 @@ class quniform(HyperoptProxy):
         """
         :func:`hyperopt.hp.quniform` proxy.
 
+        If using with integer values, then `high` is exclusive.
+
         :param low: lower bound of the space
         :param high: upper bound of the space
         :param q: similar to the `step` in the python built-in `range`

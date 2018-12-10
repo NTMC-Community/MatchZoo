@@ -3,15 +3,12 @@
 import hyperopt
 
 from matchzoo import engine
-from matchzoo import models
 
 
 def tune(
     model: engine.BaseModel,
     train_pack,
     test_pack,
-    task,
-    context=None,
     max_evals: int = 32,
     verbose=1
 ) -> list:
@@ -26,36 +23,31 @@ def tune(
     :param model: Model to tune.
     :param train_pack: :class:`matchzoo.DataPack` to train the model.
     :param test_pack: :class:`matchzoo.DataPack` to test the model.
-    :param task: :class:`matchzoo.engine.BaseTask` to execute.
-    :param context: Extra information for tunning. Different for different
-        models.
     :param max_evals: Number of evaluations of a single tuning process.
     :param verbose: Verbosity.
 
     :return: A list of trials of the tuning process.
     """
+
     def _test_wrapper(space):
         for key, value in space.items():
             model.params[key] = value
-
-        if isinstance(model, models.DSSMModel):
-            input_shapes = context['input_shapes']
-            model.params['input_shapes'] = input_shapes
-
-        model.params['task'] = task
-        model.guess_and_fill_missing_params()
-        model.build()
-        model.compile()
-
-        model.fit(*train_pack.unpack(), verbose=verbose)
-        metrics = model.evaluate(*test_pack.unpack(), verbose=verbose)
-
+        results = _eval_model()
         return {
-            'loss': metrics['loss'],
+            'loss': results['loss'],
             'space': space,
             'status': hyperopt.STATUS_OK,
             'model_params': model.params
         }
+
+    def _eval_model():
+        model.build()
+        model.compile()
+        model.fit(*train_pack.unpack(), verbose=verbose)
+        return model.evaluate(*test_pack.unpack(), verbose=verbose)
+
+    if not model.params.hyper_space:
+        raise ValueError("Model hyper parameter space empty.")
 
     trials = hyperopt.Trials()
     hyperopt.fmin(
@@ -65,7 +57,6 @@ def tune(
         max_evals=max_evals,
         trials=trials
     )
-
     return [_clean_up_trial(trial) for trial in trials]
 
 

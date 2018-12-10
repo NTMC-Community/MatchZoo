@@ -27,7 +27,7 @@ class DynamicDataGenerator(DataGenerator):
         >>> x0['text_right'].tolist()
         [59]
         >>> y0.tolist()
-        [0.0]
+        [[0.0]]
         >>> x1, y1 = data_generator[1]
         >>> x1['id_left'].tolist()
         ['q2']
@@ -38,7 +38,7 @@ class DynamicDataGenerator(DataGenerator):
         >>> x1['text_right'].tolist()
         [41]
         >>> y1.tolist()
-        [1.0]
+        [[1.0]]
 
     """
 

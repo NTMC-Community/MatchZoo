@@ -1,5 +1,7 @@
 import pytest
 
+import numpy as np
+
 from matchzoo import engine, metrics
 
 
@@ -7,7 +9,7 @@ def test_sort_and_couple():
     l = [0, 1, 2]
     s = [0.1, 0.4, 0.2]
     c = engine.sort_and_couple(l, s)
-    assert c == [(1, 0.4), (2, 0.2), (0, 0.1)]
+    assert (c == np.array([(1, 0.4), (2, 0.2), (0, 0.1)])).all()
 
 
 def test_mean_reciprocal_rank():

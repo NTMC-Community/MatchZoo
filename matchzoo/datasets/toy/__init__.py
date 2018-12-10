@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from matchzoo import pack, embedding
+from matchzoo import pack
 
-CURR_DIR = Path(__file__).parent
+DATA_ROOT = Path(__file__).parent
 
 
 def load_data(path, include_label):
@@ -20,25 +20,20 @@ def load_data(path, include_label):
 
 
 def load_train_classify_data():
-    path = CURR_DIR.joinpath('train_classify.txt')
+    path = DATA_ROOT.joinpath('train_classify.txt')
     return load_data(path, include_label=True)
 
 
 def load_test_classify_data():
-    path = CURR_DIR.joinpath('test_classify.txt')
+    path = DATA_ROOT.joinpath('test_classify.txt')
     return load_data(path, include_label=False)
 
 
 def load_train_rank_data():
-    path = CURR_DIR.joinpath('train_rank.txt')
+    path = DATA_ROOT.joinpath('train_rank.txt')
     return load_data(path, include_label=True)
 
 
 def load_test_rank_data():
-    path = CURR_DIR.joinpath('test_rank.txt')
+    path = DATA_ROOT.joinpath('test_rank.txt')
     return load_data(path, include_label=False)
-
-
-def load_embedding():
-    path = CURR_DIR.joinpath('embed_10.txt')
-    return embedding.Embedding(path)

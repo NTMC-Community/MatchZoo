@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from matchzoo import engine, processor_units
 from matchzoo import DataPack
-from matchzoo import chain_transform, build_vocab
+from matchzoo import chain_transform, build_vocab_unit
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
@@ -41,7 +41,7 @@ class NaivePreprocessor(engine.BasePreprocessor):
         units = self._default_processor_units()
         data_pack = data_pack.apply_on_text(chain_transform(units),
                                             verbose=verbose)
-        vocab_unit = build_vocab(data_pack, verbose=verbose)
+        vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
         self._context['vocab_unit'] = vocab_unit
         return self
 

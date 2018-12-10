@@ -34,17 +34,17 @@ class DataGenerator(keras.utils.Sequence):
         >>> x['id_right'].tolist()
         ['d1']
         >>> y.tolist()
-        [0.0]
+        [[0.0]]
         >>> data_generator.reset()
         >>> x1, y1 = data_generator[:2]
         >>> len(x1['text_left'])
         2
         >>> y1.tolist()
-        [0.0, 1.0]
+        [[0.0], [1.0]]
         >>> data_generator.on_epoch_end()
         >>> x2, y2 = data_generator[0:2]
         >>> y2.tolist()
-        [0.0, 1.0]
+        [[0.0], [1.0]]
 
     """
 

@@ -81,7 +81,7 @@ class DataPack(object):
         return self._relation.shape[0]
 
     @property
-    def frame(self) -> 'DataPackFrameView':
+    def frame(self) -> 'FrameView':
         """
         View the data pack as a :class:`pandas.DataFrame`.
 
@@ -89,24 +89,24 @@ class DataPack(object):
         the right dataframe and the relation data frame. Use `[]` to access
         an item or a slice of items.
 
-        :return: A :class:`DataPackFrameView instance.
+        :return: A :class:`FrameView instance.
 
         Example:
             >>> import matchzoo as mz
             >>> data_pack = mz.datasets.toy.load_train_classify_data()
             >>> type(data_pack.frame)
-            <class 'matchzoo.data_pack.data_pack.DataPackFrameView'>
+            <class 'matchzoo.data_pack.data_pack.DataPack.FrameView'>
             >>> frame_slice = data_pack.frame[0:5]
             >>> type(frame_slice)
             <class 'pandas.core.frame.DataFrame'>
             >>> list(frame_slice.columns)
             ['id_left', 'text_left', 'id_right', 'text_right', 'label']
-            >>> full_frame = data_pack.frame[:]
+            >>> full_frame = data_pack.frame()
             >>> len(full_frame) == len(data_pack)
             True
 
         """
-        return DataPackFrameView(self)
+        return DataPack.FrameView(self)
 
     def unpack(self) -> typing.Tuple[typing.Dict[str, np.array],
                                      typing.Optional[np.array]]:
@@ -133,12 +133,12 @@ class DataPack(object):
             <class 'NoneType'>
 
         """
-        frame = self.frame[:]
+        frame = self.frame()
 
         columns = list(frame.columns)
         if self.has_label:
             columns.remove('label')
-            y = np.array(frame['label'])
+            y = np.vstack(frame['label'])
         else:
             y = None
 
@@ -215,6 +215,7 @@ class DataPack(object):
         Decorate any method that modifies inplace to make that inplace change
         optional.
         """
+
         @functools.wraps(func)
         def wrapper(
             self, *args, inplace: bool = False, **kwargs
@@ -236,28 +237,30 @@ class DataPack(object):
         """
         Shuffle the data pack by shuffling the relation column.
 
-        :param inplace: `True` to modify in place, `False` to return a
-        modified copy. (default: False)
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: False)
 
         Example:
             >>> import matchzoo as mz
             >>> import numpy.random
             >>> numpy.random.seed(0)
             >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> orig_ids = data_pack.relation['id_left']
             >>> shuffled = data_pack.shuffle()
-            >>> np.any(data_pack.relation.index != shuffled.relation.index)
+            >>> (shuffled.relation['id_left'] != orig_ids).any()
             True
 
         """
         self._relation = self._relation.sample(frac=1)
+        self._relation.reset_index(drop=True, inplace=True)
 
     @_optional_inplace
     def drop_label(self):
         """
         Remove `label` column from the data pack.
 
-        :param inplace: `True` to drop in place, `False` to return a copy
-        with no label column.(default: False)
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: False)
 
         Example:
             >>> import matchzoo as mz
@@ -274,6 +277,9 @@ class DataPack(object):
     def append_text_length(self):
         """
         Append `length_left` and `length_right` columns.
+
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: False)
 
         Example:
             >>> import matchzoo as mz
@@ -308,7 +314,9 @@ class DataPack(object):
         :param rename: If set, use new names for results instead of replacing
             the original columns. To set `rename` in "both" mode, use a tuple
             of `str`, e.g. ("text_left_new_name", "text_right_new_name").
-        :param verbose:
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: False)
+        :param verbose: Verbosity.
         :return:
 
         Examples::
@@ -375,62 +383,61 @@ class DataPack(object):
         self._apply_on_text_left(func, rename=left_name, verbose=verbose)
         self._apply_on_text_right(func, rename=right_name, verbose=verbose)
 
+    class FrameView(object):
+        """FrameView."""
 
-class DataPackFrameView(object):
-    """DataPackFrameView."""
+        def __init__(self, data_pack: 'DataPack'):
+            """
+            View a data pack as a frame.
 
-    def __init__(self, data_pack: DataPack):
-        """
-        View a data pack as a frame.
+            A slice of the view is genereated by merging three parts of the
+            data pack being viewed into a big table.
 
-        A slice of the view is genereated by merging three parts of the data
-        pack being viewed into a big table.
+            :param data_pack: :class:`DataPack` to view.
 
-        :param data_pack: :class:`DataPack` to view.
+            Examples::
+                >>> import matchzoo as mz
+                >>> data_pack = mz.datasets.toy.load_train_classify_data()
+                >>> frame = data_pack.frame
 
-        Examples::
-            >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
-            >>> frame = data_pack.frame
+            Use `()` to get a full copy of the frame:
+                >>> list(frame().columns)
+                ['id_left', 'text_left', 'id_right', 'text_right', 'label']
+                >>> len(frame()) == len(data_pack)
+                True
 
-        Use `()` to get a full copy of the frame:
-            >>> list(frame().columns)
-            ['id_left', 'text_left', 'id_right', 'text_right', 'label']
-            >>> len(frame()) == len(data_pack)
-            True
+            Notice that a view is binded to the original data pack, so changing
+            contents of the data pack will affect a view previously created:
+                >>> data_pack.drop_label(inplace=True)
+                >>> list(frame().columns)
+                ['id_left', 'text_left', 'id_right', 'text_right']
 
-        Notice that a view is binded to the original data pack, so changing
-        contents of the data pack will affect a view previously created:
-            >>> data_pack.drop_label(inplace=True)
-            >>> list(frame().columns)
-            ['id_left', 'text_left', 'id_right', 'text_right']
+            To slice the view:
+                >>> frame_slice = frame[3:5]
+                >>> len(frame_slice)
+                2
 
-        To slice the view:
-            >>> frame_slice = frame[3:5]
-            >>> len(frame_slice)
-            2
+            """
+            self._data_pack = data_pack
 
-        """
-        self._data_pack = data_pack
-
-    def __getitem__(self, index):
-        """Slicer."""
-        dp = self._data_pack
-        index = _convert_to_list_index(index, len(dp))
-        left_df = dp.left.loc[dp.relation['id_left'][index]].reset_index()
-        right_df = dp.right.loc[dp.relation['id_right'][index]].reset_index()
-        joined_table = left_df.join(right_df)
-        # TODO: join other columns of relation
-        if dp.has_label:
-            labels = dp.relation['label'][index].to_frame()
-            labels = labels.reset_index(drop=True)
-            return joined_table.join(labels)
-        else:
+        def __getitem__(self, index):
+            """Slicer."""
+            dp = self._data_pack
+            index = _convert_to_list_index(index, len(dp))
+            left_df = dp.left.loc[dp.relation['id_left'][index]].reset_index()
+            right_df = dp.right.loc[
+                dp.relation['id_right'][index]].reset_index()
+            joined_table = left_df.join(right_df)
+            for column in dp.relation.columns:
+                if column not in ['id_left', 'id_right']:
+                    labels = dp.relation[column][index].to_frame()
+                    labels = labels.reset_index(drop=True)
+                    joined_table = joined_table.join(labels)
             return joined_table
 
-    def __call__(self):
-        """:return: A copy of a full frame slice. Equivalant to `frame[:]`."""
-        return self[:]
+        def __call__(self):
+            """:return: A full copy. Equivalant to `frame[:]`."""
+            return self[:]
 
 
 def load_data_pack(dirpath: typing.Union[str, Path]) -> DataPack:
