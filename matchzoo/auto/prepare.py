@@ -1,21 +1,28 @@
+"""Prepare mode, preprocessor, and data pack."""
+
 import copy
+import typing
 
 import numpy as np
 
+import matchzoo
 from matchzoo import tasks
 from matchzoo import models
 
 
 def prepare(
     model,
-    train_pack,
+    data_pack,
     preprocessor=None,
     verbose=1
-):
+) -> typing.Tuple[matchzoo.engine.BaseModel,
+                  matchzoo.DataPack,
+                  matchzoo.engine.BasePreprocessor]:
     """
+    Prepare mode, preprocessor, and data pack.
 
     :param model:
-    :param train_pack:
+    :param data_pack:
     :param preprocessor:
     :param verbose:
     :return:
@@ -27,10 +34,10 @@ def prepare(
     else:
         new_preprocessor = model.get_default_preprocessor()
 
-    train_pack_processed = new_preprocessor.fit_transform(train_pack, verbose)
+    train_pack_processed = new_preprocessor.fit_transform(data_pack, verbose)
 
     if not params['task']:
-        params['task'] = _guess_task(train_pack)
+        params['task'] = _guess_task(data_pack)
 
     context = {}
     if 'input_shapes' in new_preprocessor.context:
