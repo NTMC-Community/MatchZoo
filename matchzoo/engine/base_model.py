@@ -417,8 +417,7 @@ class BaseModel(abc.ABC):
         :param verbose: Verbosity.
         """
         self._params.get('name').set_default(self.__class__.__name__, verbose)
-        task = engine.list_available_tasks()[1]()
-        self._params.get('task').set_default(task, verbose)
+        self._params.get('task').set_default(tasks.Ranking(), verbose)
         self._params.get('input_shapes').set_default([(30,), (30,)], verbose)
         self._params.get('optimizer').set_default('adam', verbose)
         if 'with_embedding' in self._params:
