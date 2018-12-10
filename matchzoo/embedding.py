@@ -46,6 +46,11 @@ class Embedding(object):
         self._data = data
 
     @property
+    def input_dim(self) -> int:
+        """:return Embedding input dimension."""
+        return self._data.shape[0]
+
+    @property
     def output_dim(self) -> int:
         """:return Embedding output dimension."""
         return self._data.shape[1]
