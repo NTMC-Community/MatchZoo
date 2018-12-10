@@ -6,8 +6,7 @@ from tqdm import tqdm
 
 from matchzoo import engine, processor_units
 from matchzoo import DataPack
-from matchzoo import chain_transform, build_vocab_unit, \
-    build_unit_from_data_pack
+from matchzoo import chain_transform, build_vocab_unit
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
@@ -42,11 +41,7 @@ class NaivePreprocessor(engine.BasePreprocessor):
         units = self._default_processor_units()
         data_pack = data_pack.apply_on_text(chain_transform(units),
                                             verbose=verbose)
-        filter_unit = processor_units.FrequencyFilterUnit(low=2, mode='df')
-        filter_unit = build_unit_from_data_pack(filter_unit, data_pack,
-                                                flatten=False, verbose=verbose)
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
-        self._context['filter_unit'] = filter_unit
         self._context['vocab_unit'] = vocab_unit
         return self
 
@@ -61,7 +56,6 @@ class NaivePreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         units = self._default_processor_units()
-        units.append(self._context['filter_unit'])
         units.append(self._context['vocab_unit'])
         units.append(processor_units.FixedLengthUnit(text_length=30))
         return data_pack.apply_on_text(chain_transform(units), verbose=verbose)
