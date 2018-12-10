@@ -29,8 +29,8 @@ from . import losses
 from . import engine
 from . import preprocessors
 from . import models
-from . import datasets
 from . import embedding
+from . import datasets
 from . import auto
 
 from .engine import load_model
