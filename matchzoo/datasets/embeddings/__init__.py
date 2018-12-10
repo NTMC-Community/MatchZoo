@@ -1,4 +1,5 @@
 from pathlib import Path
+from .load_embedding import load_glove_embedding
 
 DATA_ROOT = Path(__file__).parent
 EMBED_RANK = DATA_ROOT.joinpath('embed_rank.txt')
