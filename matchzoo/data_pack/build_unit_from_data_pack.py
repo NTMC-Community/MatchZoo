@@ -1,7 +1,9 @@
+"""Build unit from data pack."""
+
 from tqdm import tqdm
 
-from .data_pack import DataPack
 from matchzoo import processor_units
+from .data_pack import DataPack
 
 
 def build_unit_from_data_pack(
