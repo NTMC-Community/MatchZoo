@@ -33,7 +33,7 @@ class PairDataGenerator(DataGenerator):
         ['A glacier cave is a cave formed within the ice of a glacier .', 'The\
  ice facade is approximately 60 m high']
         >>> y.tolist()
-        [1.0, 0.0]
+        [[1.0], [0.0]]
 
     """
 
