@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import keras
+import pandas as pd
 
 import matchzoo
 
@@ -44,16 +45,17 @@ def load_data(stage='train', task='ranking'):
 
 def _download_data():
     ref_path = keras.utils.data_utils.get_file(
-        'wikiqa', _url, extract=True, cache_dir=matchzoo.USER_DATA_DIR)
+        'wikiqa', _url, extract=True, cache_dir=matchzoo.USER_DIR)
     return Path(ref_path).parent.joinpath('WikiQACorpus')
 
 
 def _read_data(path):
-    def scan_file():
-        with open(path) as in_file:
-            next(in_file)  # skip header
-            for l in in_file:
-                qid, q, _, _, did, d, label = l.strip().split('\t')
-                yield qid, did, q, d, float(label)
-
-    return matchzoo.pack(list(scan_file()))
+    table = pd.read_table(path)
+    df = pd.DataFrame({
+        'text_left': table['Question'],
+        'text_right': table['Sentence'],
+        'id_left': table['DocumentID'],
+        'id_right': table['SentenceID'],
+        'label': table['Label']
+    })
+    return matchzoo.pack(df)

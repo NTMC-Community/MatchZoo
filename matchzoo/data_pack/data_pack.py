@@ -1,6 +1,7 @@
 """Matchzoo DataPack, pair-wise tuple (feature) and context as input."""
 
 import typing
+import inspect
 from pathlib import Path
 import functools
 
@@ -8,6 +9,8 @@ import dill
 from tqdm import tqdm
 import numpy as np
 import pandas as pd
+
+import matchzoo
 
 tqdm.pandas()
 
@@ -26,6 +29,16 @@ def _convert_to_list_index(
 class DataPack(object):
     """
     Matchzoo :class:`DataPack` data structure, store dataframe and context.
+
+    `DataPack` is a MatchZoo native data structure that most MatchZoo data
+    handling processes build upon. A `DataPack` consists of three parts:
+    `left`, `right` and `relation`, each one of is a `pandas.DataFrame`.
+
+    :param relation: Store the relation between left document
+        and right document use ids.
+    :param left: Store the content or features for id_left.
+    :param right: Store the content or features for
+        id_right.
 
     Example:
         >>> left = [
@@ -58,15 +71,7 @@ class DataPack(object):
         left: pd.DataFrame,
         right: pd.DataFrame
     ):
-        """
-        Initialize :class:`DataPack`.
-
-        :param relation: Store the relation between left document
-            and right document use ids.
-        :param left: Store the content or features for id_left.
-        :param right: Store the content or features for
-            id_right.
-        """
+        """:class:`DataPack` initializer."""
         self._relation = relation
         self._left = left
         self._right = right
@@ -215,11 +220,22 @@ class DataPack(object):
         Decorate any method that modifies inplace to make that inplace change
         optional.
         """
+        doc = ":param inplace: `True` to modify inplace, `False` to return " \
+              "a modified copy. (default: `False`)"
+
+        def _clean(s):
+            return s.replace(' ', '').replace('\n', '')
+
+        if _clean(doc) not in _clean(inspect.getdoc(func)):
+            raise NotImplementedError(
+                f"`inplace` parameter of {func} not documented.\n"
+                f"Please add the following line to its documentation:\n{doc}")
 
         @functools.wraps(func)
         def wrapper(
             self, *args, inplace: bool = False, **kwargs
         ) -> typing.Optional['DataPack']:
+
             if inplace:
                 target = self
             else:
@@ -238,7 +254,7 @@ class DataPack(object):
         Shuffle the data pack by shuffling the relation column.
 
         :param inplace: `True` to modify inplace, `False` to return a modified
-            copy. (default: False)
+            copy. (default: `False`)
 
         Example:
             >>> import matchzoo as mz
@@ -260,7 +276,7 @@ class DataPack(object):
         Remove `label` column from the data pack.
 
         :param inplace: `True` to modify inplace, `False` to return a modified
-            copy. (default: False)
+            copy. (default: `False`)
 
         Example:
             >>> import matchzoo as mz
@@ -279,7 +295,7 @@ class DataPack(object):
         Append `length_left` and `length_right` columns.
 
         :param inplace: `True` to modify inplace, `False` to return a modified
-            copy. (default: False)
+            copy. (default: `False`)
 
         Example:
             >>> import matchzoo as mz
@@ -315,7 +331,7 @@ class DataPack(object):
             the original columns. To set `rename` in "both" mode, use a tuple
             of `str`, e.g. ("text_left_new_name", "text_right_new_name").
         :param inplace: `True` to modify inplace, `False` to return a modified
-            copy. (default: False)
+            copy. (default: `False`)
         :param verbose: Verbosity.
         :return:
 
@@ -382,6 +398,19 @@ class DataPack(object):
         left_name, right_name = rename or ('text_left', 'text_right')
         self._apply_on_text_left(func, rename=left_name, verbose=verbose)
         self._apply_on_text_right(func, rename=right_name, verbose=verbose)
+
+    @_optional_inplace
+    def one_hot_encode_label(self, num_classes=2):
+        """
+        One-hot encode `label` column of `relation`
+
+        :param num_classes: Number of classes.
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: `False`)
+        :return:
+        """
+        self._relation['label'] = self._relation['label'].apply(
+            lambda idx: matchzoo.one_hot(idx, num_classes))
 
     class FrameView(object):
         """FrameView."""

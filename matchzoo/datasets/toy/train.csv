@@ -1,0 +1,101 @@
+,id_left,text_left,id_right,text_right,label
+0,Q1,how are glacier caves formed?,D1-0,A partly submerged glacier cave on Perito Moreno Glacier .,0.0
+1,Q1,how are glacier caves formed?,D1-1,The ice facade is approximately 60 m high,0.0
+2,Q1,how are glacier caves formed?,D1-2,Ice formations in the Titlis glacier cave,0.0
+3,Q1,how are glacier caves formed?,D1-3,A glacier cave is a cave formed within the ice of a glacier .,1.0
+4,Q1,how are glacier caves formed?,D1-4,"Glacier caves are often called ice caves , but this term is properly used to describe bedrock caves that contain year-round ice.",0.0
+5,Q2,How are the directions of the velocity and force vectors related in a circular motion,D2-0,"In physics , circular motion is a movement of an object along the circumference of a circle or rotation along a circular path.",0.0
+6,Q2,How are the directions of the velocity and force vectors related in a circular motion,D2-1,"It can be uniform, with constant angular rate of rotation (and constant speed), or non-uniform with a changing rate of rotation.",0.0
+7,Q2,How are the directions of the velocity and force vectors related in a circular motion,D2-2,The rotation around a fixed axis of a three-dimensional body involves circular motion of its parts.,0.0
+8,Q2,How are the directions of the velocity and force vectors related in a circular motion,D2-3,The equations of motion describe the movement of the center of mass of a body.,0.0
+9,Q2,How are the directions of the velocity and force vectors related in a circular motion,D2-4,"Examples of circular motion include: an artificial satellite orbiting the Earth at constant height, a stone which is tied to a rope and is being swung in circles, a car turning through a curve in a race track , an electron moving perpendicular to a uniform magnetic field , and a gear turning inside a mechanism.",0.0
+10,Q2,How are the directions of the velocity and force vectors related in a circular motion,D2-5,"Since the object's velocity vector is constantly changing direction, the moving object is undergoing acceleration by a centripetal force in the direction of the center of rotation.",0.0
+11,Q2,How are the directions of the velocity and force vectors related in a circular motion,D2-6,"Without this acceleration, the object would move in a straight line, according to Newton's laws of motion .",0.0
+12,Q5,how did apollo creed die,D5-0,"Apollo Creed is a fictional character from the Rocky films , initially portrayed as the Undisputed Heavyweight Champion of the World.",0.0
+13,Q5,how did apollo creed die,D5-1,He was played by Carl Weathers .,0.0
+14,Q5,how did apollo creed die,D5-2,"Creed had multiple nicknames, including The Master of Disaster, The King of Sting, The Dancing Destroyer, The Prince of Punch, The One and Only and The Count of Monte Fisto.",0.0
+15,Q5,how did apollo creed die,D5-3,"Urban legend states that Apollo Creed's name is a wordplay on the Apostles' Creed , a statement of belief used in Christian churches.",0.0
+16,Q5,how did apollo creed die,D5-4,All of Apollo's championship fights were scheduled for the 15 round distance.,0.0
+17,Q5,how did apollo creed die,D5-5,Championship fights did not convert from 15 rounds to 12 rounds until 1987.,0.0
+18,Q5,how did apollo creed die,D5-6,"Rocky Balboa is often wrongly credited with popularizing the red, white, and blue trunks; Creed was the first man to wear them (latterly worn by Rocky Balboa in the 3rd and 4th installments and finally by Tommy ""The Machine"" Gunn ( Tommy Morrison ) in the 5th installment) although normally he wore red and white, as seen in Rocky II.",0.0
+19,Q5,how did apollo creed die,D5-7,Balboa's signature colors were black and gold—colors he used in the latest movie .,0.0
+20,Q6,how long is the term for federal judges,D6-0,"In the United States, the title of federal judge usually means a judge appointed by the President of the United States and confirmed by the United States Senate pursuant to the Appointments Clause in Article II of the United States Constitution .",0.0
+21,Q6,how long is the term for federal judges,D6-1,"In addition to the Supreme Court of the United States , whose existence and some aspects of whose jurisdiction are beyond the constitutional power of Congress to alter, acts of Congress have established 13 courts of appeals (also called ""circuit courts"") with appellate jurisdiction over different regions of the United States, and 94 United States district courts .",0.0
+22,Q6,how long is the term for federal judges,D6-2,"Every judge appointed to such a court may be categorized as a federal judge; such positions include the Chief Justice and Associate Justices of the Supreme Court, Circuit Judges of the courts of appeals, and district judges of the United States district courts .",0.0
+23,Q6,how long is the term for federal judges,D6-3,"All of these judges described thus far are referred to sometimes as ""Article III judges"" because they exercise the judicial power vested in the judicial branch of the federal government by Article III of the U.S. Constitution.",0.0
+24,Q6,how long is the term for federal judges,D6-4,"In addition, judges of the Court of International Trade exercise judicial power pursuant to Article III.",0.0
+25,Q6,how long is the term for federal judges,D6-5,"Other judges serving in the federal courts, including magistrate judges and bankruptcy judges , are also sometimes referred to as ""federal judges""; however, they are neither appointed by the President nor confirmed by the Senate, and their power derives from Article I instead.",0.0
+26,Q6,how long is the term for federal judges,D6-6,See Article I and Article III tribunals .,0.0
+27,Q7,how a beretta model 21 pistols magazines works,D7-0,The Beretta 21A Bobcat is a small pocket-sized semi-automatic pistol designed by Beretta in Italy.,0.0
+28,Q7,how a beretta model 21 pistols magazines works,D7-1,"Production began in late 1984, solely in the Beretta U.S.A. facility in Accokeek, Maryland.",0.0
+29,Q7,how a beretta model 21 pistols magazines works,D7-2,"It is a further development of the Beretta Model 20, whose production ended in 1985.",0.0
+30,Q9,how a vul works,D9-0,Variable Universal Life Insurance (often shortened to VUL) is a type of life insurance that builds a cash value.,0.0
+31,Q9,how a vul works,D9-1,"In a VUL, the cash value can be invested in a wide variety of separate accounts , similar to mutual funds , and the choice of which of the available separate accounts to use is entirely up to the contract owner.",0.0
+32,Q9,how a vul works,D9-2,The 'variable' component in the name refers to this ability to invest in separate accounts whose values vary—they vary because they are invested in stock and/or bond markets.,0.0
+33,Q9,how a vul works,D9-3,The 'universal' component in the name refers to the flexibility the owner has in making premium payments.,0.0
+34,Q9,how a vul works,D9-4,The premiums can vary from nothing in a given month up to maximums defined by the Internal Revenue Code for life insurance.,0.0
+35,Q9,how a vul works,D9-5,"This flexibility is in contrast to whole life insurance that has fixed premium payments that typically cannot be missed without lapsing the policy (although one may exercise an Automatic Premium Loan feature, or surrender dividends to pay a Whole Life premium).",0.0
+36,Q9,how a vul works,D9-6,"Variable universal life is a type of permanent life insurance , because the death benefit will be paid if the insured dies any time as long as there is sufficient cash value to pay the costs of insurance in the policy.",0.0
+37,Q9,how a vul works,D9-7,"With most if not all VULs, unlike whole life, there is no endowment age (the age at which the cash value equals the death benefit amount, which for whole life is typically 100).",0.0
+38,Q9,how a vul works,D9-8,This is yet another key advantage of VUL over Whole Life.,0.0
+39,Q9,how a vul works,D9-9,"With a typical whole life policy, the death benefit is limited to the face amount specified in the policy, and at endowment age, the face amount is all that is paid out.",0.0
+40,Q9,how a vul works,D9-10,"Thus with either death or endowment, the insurance company keeps any cash value built up over the years.",0.0
+41,Q9,how a vul works,D9-11,"However, some participating whole life policies offer riders which specify that any dividends paid on the policy be used to purchase ""paid up additions"" to the policy which increase both the cash value and the death benefit over time.",0.0
+42,Q9,how a vul works,D9-12,"If investments made in the separate accounts out-perform the general account of the insurance company, a higher rate-of-return can occur than the fixed rates-of-return typical for whole life.",0.0
+43,Q9,how a vul works,D9-13,"The combination over the years of no endowment age, continually increasing death benefit, and if a high rate-of-return is earned in the separate accounts of a VUL policy, this could result in higher value to the owner or beneficiary than that of a whole life policy with the same amounts of money paid in as premiums.",0.0
+44,Q10,how an outdoor wood boiler works,D10-0,The outdoor wood boiler is a variant of the classic wood stove adapted for set-up outdoors while still transferring the heat to interior buildings.,0.0
+45,Q12,how big did girl scout cookie boxes used to be,D12-0,A mound of Girl Scout cookies.,0.0
+46,Q12,how big did girl scout cookie boxes used to be,D12-1,This mound contains 74 boxes of cookies,0.0
+47,Q12,how big did girl scout cookie boxes used to be,D12-2,Girl Scout Cookies are cookies sold by Girl Scouts of the USA (GSUSA) as one of its major fundraisers for local Scout units.,0.0
+48,Q12,how big did girl scout cookie boxes used to be,D12-3,Members of the GSUSA have been selling cookies since 1917 to raise funds.,0.0
+49,Q12,how big did girl scout cookie boxes used to be,D12-4,Girls who participate can earn prizes for their efforts.,0.0
+50,Q12,how big did girl scout cookie boxes used to be,D12-5,There are also unit incentives if the unit as a whole does well.,0.0
+51,Q12,how big did girl scout cookie boxes used to be,D12-6,"As of 2007, sales were estimated at about 200 million boxes per year.",0.0
+52,Q13,how big is the purdue greek system,D13-0,University Hall,0.0
+53,Q13,how big is the purdue greek system,D13-1,"Purdue University, located in West Lafayette, Indiana , is the flagship university of the six-campus Purdue University system .",0.0
+54,Q13,how big is the purdue greek system,D13-2,"Purdue was founded on May 6, 1869, as a land-grant university when the Indiana General Assembly , taking advantage of the Morrill Act , accepted a donation of land and money from Lafayette businessman John Purdue to establish a college of science, technology, and agriculture in his name.",0.0
+55,Q13,how big is the purdue greek system,D13-3,"The first classes were held on September 16, 1874, with six instructors and 39 students.",0.0
+56,Q13,how big is the purdue greek system,D13-4,"Today, Purdue is a member of the Big Ten Conference , and is a well known world-class research institution.",0.0
+57,Q13,how big is the purdue greek system,D13-5,Purdue enrolls the second largest student body of any university in Indiana as well as the fourth largest international student population of any university in the United States.,0.0
+58,Q13,how big is the purdue greek system,D13-6,"Purdue offers both undergraduate and graduate programs in over 211 major areas of study, and is well known for its competitive engineering curricula.",0.0
+59,Q13,how big is the purdue greek system,D13-7,"The university has also been highly influential in America's history of aviation , having established the first college credit offered in flight training , the first four-year bachelor's degree in aviation, and the first university airport ( Purdue University Airport ).",0.0
+60,Q13,how big is the purdue greek system,D13-8,Purdue's aviation technology program remains one of the most competitive aviation-specific programs in the world.,0.0
+61,Q13,how big is the purdue greek system,D13-9,"In the mid-20th century, Purdue's aviation program expanded to encompass advanced spaceflight technology giving rise to Purdue's nickname, Cradle of Astronauts.",0.0
+62,Q13,how big is the purdue greek system,D13-10,"Twenty-three Purdue graduates have gone on to become astronauts, including Gus Grissom (one of the original Mercury Seven astronauts), Neil Armstrong (the first person to walk on the moon), and Eugene Cernan (the most recent person to walk on the moon).",0.0
+63,Q14,how big do sebaceous cysts get,D14-0,A sebaceous cyst () is a term that loosely refers to either epidermoid cysts (also known as epidermal cysts; L72.0 ) or pilar cysts (also known as trichilemmal cysts; L72.1 ).,0.0
+64,Q14,how big do sebaceous cysts get,D14-1,"Because an epidermoid cyst originates in the epidermis and a pilar cyst originates from hair follicles , by definition, neither type of cyst is strictly a sebaceous cyst.",0.0
+65,Q14,how big do sebaceous cysts get,D14-2,"The name is regarded as a misnomer as the fatty, white, semi-solid material in both of these cyst entities is not sebum , but keratin .",0.0
+66,Q14,how big do sebaceous cysts get,D14-3,"Furthermore, under the microscope neither entity contains sebaceous glands .",0.0
+67,Q14,how big do sebaceous cysts get,D14-4,"In practice, however, the terms are often used interchangeably.",0.0
+68,Q14,how big do sebaceous cysts get,D14-5,"""True"" sebaceous cysts are relatively rare and are known as steatocystomas or, if multiple, as steatocystoma multiplex .",0.0
+69,Q15,how are pointe shoes made,D15-0,Modern pointe shoes.,0.0
+70,Q15,how are pointe shoes made,D15-1,"The edge of the toe pad, which is inserted between the foot and toe box for cushioning, can be seen on the right foot.",0.0
+71,Q15,how are pointe shoes made,D15-2,A pointe shoe is a type of shoe worn by ballet dancers when performing pointe work .,0.0
+72,Q15,how are pointe shoes made,D15-3,Pointe shoes developed from the desire for dancers to appear weightless and sylph -like and have evolved to enable dancers to dance en pointe (on the tips of their toes) for extended periods of time.,0.0
+73,Q15,how are pointe shoes made,D15-4,"They are normally worn by female dancers, though male dancers may wear them for unorthodox roles such as the ugly stepsisters in Cinderella , Bottom in A Midsummer Night's Dream , or men performing as women in dance companies such as Les Ballets Trockadero and Grandiva.",0.0
+74,Q15,how are pointe shoes made,D15-5,"They are manufactured in a variety of colors, most commonly in shades of light pink.",0.0
+75,Q16,how much is 1 tablespoon of water,D16-0,This tablespoon has a capacity of about 15 mL.,1.0
+76,Q16,how much is 1 tablespoon of water,D16-1,Measuring Spoons,0.0
+77,Q16,how much is 1 tablespoon of water,D16-2,"In the US and parts of Canada, a tablespoon is the largest type of spoon used for eating from a bowl.",0.0
+78,Q16,how much is 1 tablespoon of water,D16-3,"In the UK, Europe and most Commonwealth countries, a tablespoon is a type of large spoon usually used for serving.",0.0
+79,Q16,how much is 1 tablespoon of water,D16-4,"In countries where a tablespoon is a serving spoon, the nearest equivalent to the US tablespoon is either the dessert spoon or the soup spoon .",0.0
+80,Q16,how much is 1 tablespoon of water,D16-5,"A tablespoonful, nominally the capacity of one tablespoon, is commonly used as a measure of volume in cooking .",0.0
+81,Q16,how much is 1 tablespoon of water,D16-6,"It is abbreviated as T, tb, tbs, tbsp, tblsp, or tblspn.",0.0
+82,Q16,how much is 1 tablespoon of water,D16-7,The capacity of ordinary tablespoons is not regulated by law and is subject to considerable variation.,0.0
+83,Q16,how much is 1 tablespoon of water,D16-8,In the USA one tablespoon (measurement unit) is approximately 15 mL; the capacity of an actual tablespoon (dining utensil) ranges from 7 mL to 14 mL.,1.0
+84,Q16,how much is 1 tablespoon of water,D16-9,In Australia one tablespoon (measurement unit) is 20 mL.,1.0
+85,Q17,how much are the harry potter movies worth,D17-0,Harry Potter is a series of seven fantasy novels written by the British author J. K. Rowling .,0.0
+86,Q17,how much are the harry potter movies worth,D17-1,"The books chronicle the adventures of a wizard , Harry Potter , and his friends Ronald Weasley and Hermione Granger , all of whom are students at Hogwarts School of Witchcraft and Wizardry .",0.0
+87,Q17,how much are the harry potter movies worth,D17-2,"The main story arc concerns Harry's quest to overcome the Dark wizard Lord Voldemort , whose aims are to become immortal, conquer the wizarding world , subjugate non-magical people, and destroy all those who stand in his way, especially Harry Potter.",0.0
+88,Q17,how much are the harry potter movies worth,D17-3,"Since the release of the first novel Harry Potter and the Philosopher's Stone on 30 June 1997, the books have gained immense popularity, critical acclaim and commercial success worldwide.",0.0
+89,Q17,how much are the harry potter movies worth,D17-4,"The series has also had some share of criticism, including concern for the increasingly dark tone.",0.0
+90,Q17,how much are the harry potter movies worth,D17-5,", the book series has sold about 450 million copies, making it the best-selling book series in history , and has been translated into 67 languages .",0.0
+91,Q17,how much are the harry potter movies worth,D17-6,The last four books consecutively set records as the fastest-selling books in history.,0.0
+92,Q17,how much are the harry potter movies worth,D17-7,"A series of many genres , including fantasy and coming of age (with elements of mystery , thriller , adventure , and romance ), it has many cultural meanings and references.",0.0
+93,Q17,how much are the harry potter movies worth,D17-8,"According to Rowling, the main theme is death.",0.0
+94,Q17,how much are the harry potter movies worth,D17-9,"There are also many other themes in the series, such as prejudice and corruption.",0.0
+95,Q17,how much are the harry potter movies worth,D17-10,The initial major publishers of the books were Bloomsbury in the United Kingdom and Scholastic Press in the United States.,0.0
+96,Q17,how much are the harry potter movies worth,D17-11,The books have since been published by many publishers worldwide.,0.0
+97,Q17,how much are the harry potter movies worth,D17-12,"The books, with the seventh book split into two parts, have been made into an eight-part film series by Warner Bros. Pictures , the highest-grossing film series of all time.",0.0
+98,Q17,how much are the harry potter movies worth,D17-13,"The series also originated much tie-in merchandise, making the Harry Potter brand worth in excess of $15 billion.",1.0
+99,Q17,how much are the harry potter movies worth,D17-14,"Also due to the success of the books and films, Harry Potter has been used for a theme park, The Wizarding World of Harry Potter in Universal Parks & Resorts 's Islands of Adventure .",0.0
