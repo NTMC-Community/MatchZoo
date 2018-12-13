@@ -47,6 +47,7 @@ def load_data(stage='train', task='ranking', target_label='entailment'):
         classes = ['entailment', 'contradiction', 'neutral', '-']
         label = data_pack.relation['label'].apply(classes.index)
         data_pack.relation['label'] = label
+        data_pack.one_hot_encode_label(num_classes=4, inplace=True)
         return data_pack, classes
     else:
         raise ValueError(f"{task} is not a valid task.")
