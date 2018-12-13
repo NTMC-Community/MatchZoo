@@ -20,7 +20,8 @@ def load_glove_embedding(dimension: int = 50) -> mz.embedding.Embedding:
     ref_path = keras.utils.data_utils.get_file('glove_embedding',
                                                _glove_embedding_url,
                                                extract=True,
-                                               cache_dir=mz.USER_DATA_DIR)
+                                               cache_dir=mz.USER_DATA_DIR,
+                                               cache_subdir='glove')
     file_name = 'glove.6B.' + str(dimension) + 'd.txt'
     file_path = Path(ref_path).parent.joinpath(file_name)
     return mz.embedding.load_from_file(file_path=str(file_path), mode='glove')
