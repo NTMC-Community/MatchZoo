@@ -274,7 +274,7 @@ class BaseModel(abc.ABC):
 
         Examples::
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_rank_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> preprocessor = mz.preprocessors.NaivePreprocessor()
             >>> data_pack = preprocessor.fit_transform(data_pack)
             >>> m = mz.models.DenseBaselineModel()

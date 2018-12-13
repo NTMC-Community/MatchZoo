@@ -16,7 +16,7 @@ class PairDataGenerator(DataGenerator):
     Examples:
         >>> np.random.seed(111)
         >>> import matchzoo as mz
-        >>> input = mz.datasets.toy.load_train_rank_data()
+        >>> input = mz.datasets.toy.load_data()
         >>> data_generator = PairDataGenerator(input, 2, 1, 1, False)
         >>> data_generator.num_instance
         2

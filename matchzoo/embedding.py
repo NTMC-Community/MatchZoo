@@ -15,7 +15,7 @@ class Embedding(object):
 
     Examples::
         >>> import matchzoo as mz
-        >>> data_pack = mz.datasets.toy.load_train_rank_data()
+        >>> data_pack = mz.datasets.toy.load_data()
         >>> pp = mz.preprocessors.NaivePreprocessor()
         >>> vocab_unit = mz.build_vocab_unit(pp.fit_transform(data_pack),
         ...                                  verbose=0)

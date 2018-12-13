@@ -42,15 +42,14 @@ class DataPack(object):
 
     Example:
         >>> left = [
-        ...     ['qid1', 'query 1', 'feature 1'],
-        ...     ['qid2', 'query 2', 'feature 2']
+        ...     ['qid1', 'query 1'],
+        ...     ['qid2', 'query 2']
         ... ]
         >>> right = [
         ...     ['did1', 'document 1'],
         ...     ['did2', 'document 2']
         ... ]
         >>> relation = [['qid1', 'did1', 1], ['qid2', 'did2', 1]]
-        >>> context = {'vocab_size': 2000}
         >>> relation_df = pd.DataFrame(relation)
         >>> left = pd.DataFrame(left)
         >>> right = pd.DataFrame(right)
@@ -98,7 +97,7 @@ class DataPack(object):
 
         Example:
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> type(data_pack.frame)
             <class 'matchzoo.data_pack.data_pack.DataPack.FrameView'>
             >>> frame_slice = data_pack.frame[0:5]
@@ -125,7 +124,7 @@ class DataPack(object):
 
         Example:
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> X, y = data_pack.unpack()
             >>> type(X)
             <class 'dict'>
@@ -260,7 +259,7 @@ class DataPack(object):
             >>> import matchzoo as mz
             >>> import numpy.random
             >>> numpy.random.seed(0)
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> orig_ids = data_pack.relation['id_left']
             >>> shuffled = data_pack.shuffle()
             >>> (shuffled.relation['id_left'] != orig_ids).any()
@@ -280,7 +279,7 @@ class DataPack(object):
 
         Example:
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> data_pack.has_label
             True
             >>> data_pack.drop_label(inplace=True)
@@ -299,7 +298,7 @@ class DataPack(object):
 
         Example:
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> 'length_left' in data_pack.frame[0].columns
             False
             >>> new_data_pack = data_pack.append_text_length()
@@ -337,7 +336,7 @@ class DataPack(object):
 
         Examples::
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_rank_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> frame = data_pack.frame
 
         To apply `len` on the left text and add the result as 'length_left':
@@ -426,7 +425,7 @@ class DataPack(object):
 
             Examples::
                 >>> import matchzoo as mz
-                >>> data_pack = mz.datasets.toy.load_train_classify_data()
+                >>> data_pack = mz.datasets.toy.load_data()
                 >>> frame = data_pack.frame
 
             Use `()` to get a full copy of the frame:

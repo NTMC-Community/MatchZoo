@@ -28,8 +28,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         Example:
             >>> import matchzoo as mz
-            >>> train_data = mz.datasets.toy.load_train_classify_data()
-            >>> test_data = mz.datasets.toy.load_test_classify_data()
+            >>> train_data = mz.datasets.toy.load_data()
+            >>> test_data = mz.datasets.toy.load_data(stage='test')
             >>> dssm_preprocessor = mz.preprocessors.DSSMPreprocessor()
             >>> train_data_processed = dssm_preprocessor.fit_transform(
             ...     train_data

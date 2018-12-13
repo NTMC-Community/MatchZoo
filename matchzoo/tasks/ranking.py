@@ -14,7 +14,7 @@ class Ranking(engine.BaseTask):
         >>> ranking_task.output_dtype
         <class 'float'>
         >>> print(ranking_task)
-        Ranking task
+        Ranking Task
 
     """
 

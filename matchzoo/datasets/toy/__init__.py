@@ -21,7 +21,7 @@ def load_data(stage='train', task='ranking'):
         >>> tasks = 'ranking', 'classification'
         >>> for stage in stages:
         ...     for task in tasks:
-        ...         mz.datasets.toy.load_data(stage, task)
+        ...         _ = mz.datasets.toy.load_data(stage, task)
     """
     if stage not in ('train', 'dev', 'test'):
         raise ValueError(f"{stage} is not a valid stage."
@@ -33,7 +33,7 @@ def load_data(stage='train', task='ranking'):
         task = matchzoo.tasks.Classification()
 
     path = Path(__file__).parent.joinpath(f'{stage}.csv')
-    data_pack = matchzoo.pack(pd.read_csv(path))
+    data_pack = matchzoo.pack(pd.read_csv(path, index_col=0))
 
     if isinstance(task, matchzoo.tasks.Ranking):
         return data_pack

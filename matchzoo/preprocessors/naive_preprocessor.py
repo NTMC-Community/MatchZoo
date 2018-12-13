@@ -18,8 +18,8 @@ class NaivePreprocessor(engine.BasePreprocessor):
 
     Example:
         >>> import matchzoo as mz
-        >>> train_data = mz.datasets.toy.load_train_classify_data()
-        >>> test_data = mz.datasets.toy.load_test_classify_data()
+        >>> train_data = mz.datasets.toy.load_data()
+        >>> test_data = mz.datasets.toy.load_data(stage='test')
         >>> preprocessor = mz.preprocessors.NaivePreprocessor()
         >>> train_data_processed = preprocessor.fit_transform(train_data)
         >>> type(train_data_processed)

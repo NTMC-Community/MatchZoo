@@ -10,7 +10,7 @@ class DynamicDataGenerator(DataGenerator):
 
     Examples:
         >>> import matchzoo as mz
-        >>> input = mz.datasets.toy.load_train_classify_data()
+        >>> input = mz.datasets.toy.load_data()
         >>> data_generator = DynamicDataGenerator(len,
         ...     data_pack=input, batch_size=1, shuffle=False)
         >>> data_generator.num_instance

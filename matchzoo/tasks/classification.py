@@ -17,7 +17,7 @@ class Classification(engine.BaseTask):
         >>> classification_task.output_dtype
         <class 'int'>
         >>> print(classification_task)
-        Classification task with 2 classes
+        Classification Task with 2 classes
 
     """
 

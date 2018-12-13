@@ -17,8 +17,8 @@ class DataGenerator(keras.utils.Sequence):
 
     Examples:
         >>> import matchzoo as mz
-        >>> input = mz.datasets.toy.load_train_classify_data()
-        >>> data_generator = DataGenerator(input, 1, False)
+        >>> input = mz.datasets.toy.load_data()
+        >>> data_generator = DataGenerator(input, batch_size=1, shuffle=False)
         >>> len(data_generator)
         49
         >>> data_generator.num_instance
