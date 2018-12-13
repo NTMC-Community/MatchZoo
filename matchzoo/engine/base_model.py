@@ -414,6 +414,13 @@ class BaseModel(abc.ABC):
         """
         Guess and fill missing parameters in :attr:`params`.
 
+        Use this method to automatically fill-in hyper parameters.
+        This involves some guessing so the parameter it fills could be
+        wrong. For example, the default task is `Ranking`, and if we do not
+        set it to `Classification` manaully for data packs prepared for
+        classification, then the shape of the model output and the data will
+        mismatch.
+
         :param verbose: Verbosity.
         """
         self._params.get('name').set_default(self.__class__.__name__, verbose)

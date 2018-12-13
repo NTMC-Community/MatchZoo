@@ -21,10 +21,17 @@ def prepare(
     """
     Prepare mode, preprocessor, and data pack.
 
+    This handles interaction among data, model, and preprocessor
+    automatically. For example, some model like `DSSM` have dynamic input
+    shapes based on the result of word hashing. Some models have an
+    embedding layer which dimension is related to the data's vocabulary
+    size. `prepare` takes care of all that and returns properly prepared
+    model, data, and preprocessor for you.
+
     :param model:
     :param data_pack:
-    :param preprocessor:
-    :param verbose:
+    :param preprocessor: If not set, use the model's default preprocessor.
+    :param verbose: Verbosity, 0 or 1.
     :return:
 
     """
