@@ -17,34 +17,28 @@ class DataGenerator(keras.utils.Sequence):
 
     Examples:
         >>> import matchzoo as mz
-        >>> input = mz.datasets.toy.load_data()
-        >>> data_generator = DataGenerator(input, batch_size=1, shuffle=False)
+        >>> raw_data = mz.datasets.toy.load_data()
+        >>> data_generator = DataGenerator(raw_data, batch_size=2,
+        ...                                shuffle=False)
         >>> len(data_generator)
-        49
+        50
         >>> data_generator.num_instance
-        49
-        >>> x, y = data_generator[0]
-        >>> x['text_left'].tolist()
-        ['How can I increase the speed of my internet connection while using a\
- VPN?']
-        >>> x['text_right'].tolist()
-        ['How can Internet speed be increased by hacking through DNS?']
-        >>> x['id_left'].tolist()
-        ['q1']
-        >>> x['id_right'].tolist()
-        ['d1']
-        >>> y.tolist()
-        [[0.0]]
-        >>> data_generator.reset()
-        >>> x1, y1 = data_generator[:2]
-        >>> len(x1['text_left'])
-        2
-        >>> y1.tolist()
-        [[0.0], [1.0]]
-        >>> data_generator.on_epoch_end()
-        >>> x2, y2 = data_generator[0:2]
-        >>> y2.tolist()
-        [[0.0], [1.0]]
+        100
+        >>> x, y = data_generator[:10]
+        >>> type(x)
+        <class 'dict'>
+        >>> x.keys()
+        dict_keys(['id_left', 'text_left', 'id_right', 'text_right'])
+        >>> type(x['id_left'])
+        <class 'numpy.ndarray'>
+        >>> type(x['id_right'])
+        <class 'numpy.ndarray'>
+        >>> type(x['text_left'])
+        <class 'numpy.ndarray'>
+        >>> type(x['text_right'])
+        <class 'numpy.ndarray'>
+        >>> type(y)
+        <class 'numpy.ndarray'>
 
     """
 
