@@ -39,6 +39,6 @@ def load_data(stage='train', task='ranking'):
         return data_pack
     elif isinstance(task, matchzoo.tasks.Classification):
         data_pack.relation['label'] = data_pack.relation['label'].astype(int)
-        return data_pack.one_hot_encode_label(task.num_classes)
+        return data_pack.one_hot_encode_label(num_classes=2), [False, True]
     else:
         raise ValueError(f"{task} is not a valid task.")

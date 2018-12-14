@@ -1,3 +1,4 @@
+"""One hot vectors."""
 import numpy as np
 
 

@@ -401,7 +401,7 @@ class DataPack(object):
     @_optional_inplace
     def one_hot_encode_label(self, num_classes=2):
         """
-        One-hot encode `label` column of `relation`
+        One-hot encode `label` column of `relation`.
 
         :param num_classes: Number of classes.
         :param inplace: `True` to modify inplace, `False` to return a modified

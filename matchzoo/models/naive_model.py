@@ -6,7 +6,12 @@ from matchzoo import engine
 
 
 class NaiveModel(engine.BaseModel):
-    """Naive model with a simplest structure for testing purposes."""
+    """
+    Naive model with a simplest structure for testing purposes.
+
+    Bare minimum functioning model. The best choice to get things rolling.
+    The worst choice to fit and evaluate performance.
+    """
 
     def build(self):
         """Build."""
