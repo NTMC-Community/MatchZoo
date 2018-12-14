@@ -1,6 +1,5 @@
 """An implementation of DRMM Model."""
 import typing
-import logging
 
 import keras
 import keras.backend as K
@@ -8,15 +7,13 @@ from keras.activations import softmax
 
 from matchzoo import engine
 
-logger = logging.getLogger(__name__)
 
-
-class DRMMModel(engine.BaseModel):
+class DRMM(engine.BaseModel):
     """
     DRMM Model.
 
     Examples:
-        >>> model = DRMMModel()
+        >>> model = DRMM()
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
