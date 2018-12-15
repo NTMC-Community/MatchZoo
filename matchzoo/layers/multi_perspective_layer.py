@@ -7,6 +7,7 @@ from keras.engine.topology import Layer
 from matchzoo import utils
 from matchzoo.layers.attention_layer import attention_func
 
+
 class MultiPerspectiveLayer(Layer):
     """
     A keras implementation of Bimpm multi-perspective layer.
@@ -16,14 +17,14 @@ class MultiPerspectiveLayer(Layer):
     """
 
     def __init__(
-        self,
-        dim_output: int,
-        dim_embedding: int,
-        perspective: dict = {'full': True,
-                             'maxpooling': True,
-                             'attentive': True,
-                             'max-attentive': True},
-        **kwargs
+            self,
+            dim_output: int,
+            dim_embedding: int,
+            perspective: dict = {'full': True,
+                                 'maxpooling': True,
+                                 'attentive': True,
+                                 'max-attentive': True},
+            **kwargs
     ):
         """
         Class initialization.
@@ -135,12 +136,10 @@ class MultiPerspectiveLayer(Layer):
         """
         # [batch, steps_lt, steps_rt]
         atten_score = attention_func([lstm_lt, lstm_rt])
-
-        atten_score = K.expand_dims(atten_score,axis=-1)  # [batch, steps_lt, steps_rt, -1]
+        atten_score = K.expand_dims(atten_score, axis=-1)  # [batch, steps_lt, steps_rt, -1]
         lstm_rt = K.expand_dims(lstm_rt, axis=-1)  # [batch, 1, steps_rt, d]
         att_lt = K.sum(atten_score * lstm_rt, axis=2)
         return att_lt
-
 
     def _match_tensors_with_tensor(self, lstm_lt, h_rt, W):
         """

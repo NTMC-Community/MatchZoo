@@ -69,7 +69,7 @@ class AttentionLayer(Layer):
 
         # [1, 1, d, 20]
         atten_W = K.expand_dims(self.atten_W, axis=0)
-        atten_W = K.expand_dims(self.atten_W, axis=1)
+        atten_W = K.expand_dims(atten_W, axis=1)
         # [b, s, d, -1]
         lstm_lt = K.expand_dims(lstm_lt, axis=-1)
         atten_lt = K.sum(lstm_lt * atten_W, axis=2)
@@ -112,8 +112,7 @@ class AttentionLayer(Layer):
 
         len_lt = input_shapes[0][1]
         len_rt = input_shapes[1][1]
-        return (input_shapes[0][0], len_lt, len_rt)
-
+        return input_shapes[0][0], len_lt, len_rt
 
 
 attention_func = AttentionLayer(20)
