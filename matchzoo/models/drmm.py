@@ -3,7 +3,6 @@ import typing
 
 import keras
 import keras.backend as K
-from keras.activations import softmax
 
 from matchzoo import engine
 
@@ -36,18 +35,21 @@ class DRMM(engine.BaseModel):
         #   D = embedding size
         #   L = `input_left` sequence length
         #   R = `input_right` sequence length
+        #   H = histogram size
         #   K = size of top-k
 
         # Left input and right input.
-        # shape = [B, L]
-        # shape = [B, R]
+        # query: shape = [B, L]
+        # doc: shape = [B, L, H]
+        # Note here, the doc is the matching histogram between original query
+        # and original document.
         query, doc = self._make_inputs()
 
         embedding = self._make_embedding_layer()
         # Process left input.
         # shape = [B, L, D]
         embed_query = embedding(query)
-        # shape = [B, L, 1]
+        # shape = [B, L, D]
         attention_probs = self.attention_layer(embed_query)
 
         # Process right input.
@@ -86,7 +88,7 @@ class DRMM(engine.BaseModel):
             dense_input += adder
         # shape = [B, L, 1]
         attention_probs = keras.layers.Lambda(
-            lambda x: softmax(x, axis=1),
+            lambda x: keras.activations.softmax(x, axis=1),
             output_shape=self._params['input_shapes'][0]
         )(dense_input)
         return attention_probs
