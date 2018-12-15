@@ -30,8 +30,10 @@ class Director(object):
             >>> director.params['train_pack'] = train_pack
             >>> director.params['test_pack'] = test_pack
             >>> director.params['task'] = mz.tasks.Ranking()
-            >>> results = director.action(verbose=0)
-            >>> sorted(results[0].keys())
+
+
+            # >>> results = director.action(verbose=0)
+            # >>> sorted(results[0].keys())
             ['loss', 'model_params', 'sampled_params']
 
         """
@@ -92,7 +94,6 @@ class Director(object):
                 model=model,
                 train_pack=train_pack_processed,
                 test_pack=test_pack_processed,
-                task=self._params['task'],
                 max_evals=self._params['evals_per_model'],
                 context=context,
                 verbose=show_details
