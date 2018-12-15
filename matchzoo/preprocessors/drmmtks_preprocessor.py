@@ -28,6 +28,12 @@ class DRMMTKSPreprocessor(engine.BasePreprocessor):
         >>> train_data_processed = preprocessor.fit_transform(train_data)
         >>> type(train_data_processed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
+        >>> processed_train_data = preprocessor.fit(train_data).transform(
+        ...     train_data)
+        >>> type(processed_train_data)
+        <class 'matchzoo.data_pack.data_pack.DataPack'>
+        >>> any(train_data_processed.frame[:] == processed_train_data.frame[:])
+        True
         >>> test_data_transformed = preprocessor.transform(test_data)
         >>> type(test_data_transformed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
