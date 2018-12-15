@@ -1,2 +1,3 @@
 from .dssm_preprocessor import DSSMPreprocessor
+from .mvlstm_preprocessor import MVLSTMPreprocessor
 from .naive_preprocessor import NaivePreprocessor
