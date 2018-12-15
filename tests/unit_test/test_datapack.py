@@ -33,20 +33,6 @@ def test_getter(data_pack):
     assert data_pack.right.loc['did1', 'text_right'] == [3, 4, 5]
 
 
-def test_setter(data_pack):
-    data = [['id0', [1]], ['id1', [2]]]
-    left = pd.DataFrame(data, columns=['id_left', 'text_left'])
-    left.set_index('id_left', inplace=True)
-    data_pack.left = left
-    assert data_pack.left.loc['id0', 'text_left'] == [1]
-    right = pd.DataFrame(data, columns=['id_right', 'text_right'])
-    right.set_index('id_right', inplace=True)
-    data_pack.right = right
-    assert data_pack.right.loc['id0', 'text_right'] == [1]
-    data_pack.context = {'a': 1}
-    assert data_pack.context
-
-
 def test_save_load(data_pack):
     dirpath = '.tmpdir'
     data_pack.save(dirpath)

@@ -75,7 +75,10 @@ class BaseModel(abc.ABC):
         params.add(engine.Param('task'))
         params.add(engine.Param('optimizer'))
         if with_embedding:
-            params.add(engine.Param('embedding_shape'))
+            params.add(engine.Param('with_embedding', True))
+            params.add(engine.Param('embedding_input_dim'))
+            params.add(engine.Param('embedding_output_dim'))
+            params.add(engine.Param('embedding_trainable'))
         return params
 
     @classmethod
@@ -131,7 +134,7 @@ class BaseModel(abc.ABC):
         Examples:
             >>> from matchzoo import models
             >>> model = models.NaiveModel()
-            >>> model.guess_and_fill_missing_params()
+            >>> model.guess_and_fill_missing_params(verbose=0)
             >>> model.params['task'].metrics = ['mse', 'map']
             >>> model.params['task'].metrics
             ['mse', mean_average_precision(0)]
@@ -260,7 +263,7 @@ class BaseModel(abc.ABC):
             ...     mz.metrics.MeanReciprocalRank(threshold=2),
             ...     mz.metrics.MeanAveragePrecision(threshold=3)
             ... ]
-            >>> m.guess_and_fill_missing_params()
+            >>> m.guess_and_fill_missing_params(verbose=0)
             >>> m.build()
             >>> m.compile()
             >>> evals = m.evaluate(x, y, verbose=0)
@@ -356,26 +359,30 @@ class BaseModel(abc.ABC):
             if layer.name == name:
                 layer.set_weights([embedding_matrix])
                 return
-        raise ValueError(f"layer {name} not found.")
+        raise ValueError(f"layer {name} not found. Initialize your embedding "
+                         f"layer with `name='{name}'`.")
 
-    def guess_and_fill_missing_params(self):
+    def guess_and_fill_missing_params(self, verbose=1):
         """
         Guess and fill missing parameters in :attr:`params`.
 
-        Note: likely to be moved to a higher level API in the future.
+        :param verbose: Verbosity.
         """
-        if self._params['name'] is None:
-            self._params['name'] = self.__class__.__name__
+        self._params.get('name').set_default(self.__class__.__name__, verbose)
+        task = engine.list_available_tasks()[1]()
+        self._params.get('task').set_default(task, verbose)
+        self._params.get('input_shapes').set_default([(30,), (30,)], verbose)
+        self._params.get('optimizer').set_default('adam', verbose)
+        if 'with_embedding' in self._params:
+            self._params.get('embedding_input_dim').set_default(300, verbose)
+            self._params.get('embedding_output_dim').set_default(300, verbose)
+            self._params.get('embedding_trainable').set_default(True, verbose)
 
-        if self._params['task'] is None:
-            # index 0 points to an abstract task class
-            self._params['task'] = engine.list_available_tasks()[1]()
-
-        if self._params['input_shapes'] is None:
-            self._params['input_shapes'] = [(30,), (30,)]
-
-        if self._params['optimizer'] is None:
-            self._params['optimizer'] = 'adam'
+    def _set_param_default(self, name, default_val, verbose):
+        if self._params[name] is None:
+            self._params[name] = default_val
+            if verbose:
+                print(f"Parameter \"{name}\" set to {default_val}.")
 
     def _make_output_layer(self):
         """:return: a correctly shaped keras dense layer for model output."""
@@ -386,6 +393,25 @@ class BaseModel(abc.ABC):
             return keras.layers.Dense(1, activation='linear')
         else:
             raise ValueError("Invalid task type.")
+
+    def _get_inputs(self):
+        input_left = keras.layers.Input(
+            name='text_left',
+            shape=self._params['input_shapes'][0]
+        )
+        input_right = keras.layers.Input(
+            name='text_right',
+            shape=self._params['input_shapes'][1]
+        )
+        return [input_left, input_right]
+
+    def _get_embedding_layer(self, name='embedding'):
+        return keras.layers.Embedding(
+            self._params['embedding_input_dim'],
+            self._params['embedding_output_dim'],
+            trainable=self._params['embedding_trainable'],
+            name=name
+        )
 
 
 def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:

@@ -101,7 +101,7 @@ class DataPack(object):
             <class 'pandas.core.frame.DataFrame'>
             >>> list(frame_slice.columns)
             ['id_left', 'text_left', 'id_right', 'text_right', 'label']
-            >>> full_frame = data_pack.frame[:]
+            >>> full_frame = data_pack.frame()
             >>> len(full_frame) == len(data_pack)
             True
 
@@ -133,7 +133,7 @@ class DataPack(object):
             <class 'NoneType'>
 
         """
-        frame = self.frame[:]
+        frame = self.frame()
 
         columns = list(frame.columns)
         if self.has_label:
@@ -244,12 +244,14 @@ class DataPack(object):
             >>> import numpy.random
             >>> numpy.random.seed(0)
             >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> orig_ids = data_pack.relation['id_left']
             >>> shuffled = data_pack.shuffle()
-            >>> np.any(data_pack.relation.index != shuffled.relation.index)
+            >>> (shuffled.relation['id_left'] != orig_ids).any()
             True
 
         """
         self._relation = self._relation.sample(frac=1)
+        self._relation.reset_index(drop=True, inplace=True)
 
     @_optional_inplace
     def drop_label(self):
@@ -420,13 +422,12 @@ class DataPackFrameView(object):
         left_df = dp.left.loc[dp.relation['id_left'][index]].reset_index()
         right_df = dp.right.loc[dp.relation['id_right'][index]].reset_index()
         joined_table = left_df.join(right_df)
-        # TODO: join other columns of relation
-        if dp.has_label:
-            labels = dp.relation['label'][index].to_frame()
-            labels = labels.reset_index(drop=True)
-            return joined_table.join(labels)
-        else:
-            return joined_table
+        for column in dp.relation.columns:
+            if column not in ['id_left', 'id_right']:
+                labels = dp.relation[column][index].to_frame()
+                labels = labels.reset_index(drop=True)
+                joined_table = joined_table.join(labels)
+        return joined_table
 
     def __call__(self):
         """:return: A copy of a full frame slice. Equivalant to `frame[:]`."""

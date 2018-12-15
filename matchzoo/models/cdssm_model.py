@@ -17,7 +17,7 @@ class CDSSMModel(engine.BaseModel):
 
     Examples:
         >>> model = CDSSMModel()
-        >>> model.guess_and_fill_missing_params()
+        >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
     """
@@ -27,8 +27,6 @@ class CDSSMModel(engine.BaseModel):
         """:return: model default parameters."""
         params = super().get_default_params()
         params['optimizer'] = 'adam'
-        # TODO GET TRI-LETTER DIMENSIONALITY FROM FIT-TRANSFORM AS INPUT SHAPE
-        # Dimension: (TEXT_LENGTH, DIM_WORD_N_GRAM)
         params['input_shapes'] = [(10, 900), (10, 900)]
         params.add(engine.Param('w_initializer', 'glorot_normal'))
         params.add(engine.Param('b_initializer', 'zeros'))

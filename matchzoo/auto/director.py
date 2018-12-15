@@ -1,6 +1,6 @@
 """Director. Named with some flavor since I couldn't think of a better name."""
 
-import typing
+import logging
 
 from matchzoo import engine
 from matchzoo.auto.tune import tune
@@ -30,12 +30,8 @@ class Director(object):
             >>> director.params['train_pack'] = train_pack
             >>> director.params['test_pack'] = test_pack
             >>> director.params['task'] = mz.tasks.Ranking()
-            >>> results = director.action()
-            >>> len(results) == len(director.params['models'])
-            True
-            >>> len(results[0]) == director.params['evals_per_model']
-            True
-            >>> sorted(results[0][0].keys())
+            >>> results = director.action(verbose=0)
+            >>> sorted(results[0].keys())
             ['loss', 'model_params', 'sampled_params']
 
         """
@@ -62,17 +58,35 @@ class Director(object):
         """:return: Parameters."""
         return self._params
 
-    def action(self) -> typing.List[typing.List[typing.Dict[str, typing.Any]]]:
-        """:return: a list of trials."""
+    def action(self, verbose=2) -> list:
+        """
+        Start doing things.
+
+        :param verbose: Verbosity. 0: None. 1: Some. 2: Full.
+        :return: A list of trials.
+        """
         all_trials = []
-        for model in self._params['models']:
+        num_models = len(self._params['models'])
+        for i, model in enumerate(self._params['models']):
+            show_stages = 1 if verbose >= 1 else 0
+            show_details = 1 if verbose >= 2 else 0
+
+            if not show_details:
+                logging.getLogger('hyperopt').setLevel(logging.CRITICAL)
+
             preprocessor = model.get_default_preprocessor()
-            preprocessor.fit(self._params['train_pack'], verbose=0)
+            preprocessor.fit(self._params['train_pack'], verbose=show_details)
 
             train_pack_processed = preprocessor.transform(
-                self._params['train_pack'], verbose=0)
+                self._params['train_pack'], verbose=show_details)
             test_pack_processed = preprocessor.transform(
-                self._params['test_pack'], verbose=0)
+                self._params['test_pack'], verbose=show_details)
+
+            context = self._build_context(model, preprocessor)
+
+            if show_stages:
+                print(f"Start tunning model #{i + 1} (total: {num_models}).")
+                print(f"Model class: {model.params['model_class']}")
 
             trials = tune(
                 model=model,
@@ -80,10 +94,25 @@ class Director(object):
                 test_pack=test_pack_processed,
                 task=self._params['task'],
                 max_evals=self._params['evals_per_model'],
-                context=preprocessor.context,
-                verbose=0
+                context=context,
+                verbose=show_details
             )
 
-            all_trials.append(trials)
+            if show_stages:
+                print(f'Finish tuning model #{i + 1} (total: {num_models})')
+                print()
+
+            all_trials.extend(trials)
 
         return all_trials
+
+    @classmethod
+    def _build_context(cls, model, preprocessor):
+        context = {}
+        if 'input_shapes' in preprocessor.context:
+            context['input_shapes'] = preprocessor.context['input_shapes']
+        elif 'input_shapes' in model.params:
+            context['input_shapes'] = model.params['input_shapes']
+        term_index = preprocessor.context['vocab_unit'].state['term_index']
+        context['vocab_size'] = len(term_index) + 1
+        return context

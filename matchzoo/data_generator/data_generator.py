@@ -6,6 +6,8 @@ import typing
 import keras
 import numpy as np
 
+from matchzoo import DataPack
+
 
 class DataGenerator(keras.utils.Sequence):
     """Abstract base class of all matchzoo generators.
@@ -13,17 +15,49 @@ class DataGenerator(keras.utils.Sequence):
     Every generator must implement :meth:`_get_batch_of_transformed_samples`
     method.
 
+    Examples:
+        >>> import matchzoo as mz
+        >>> input = mz.datasets.toy.load_train_classify_data()
+        >>> data_generator = DataGenerator(input, 1, False)
+        >>> len(data_generator)
+        49
+        >>> data_generator.num_instance
+        49
+        >>> x, y = data_generator[0]
+        >>> x['text_left'].tolist()
+        ['How can I increase the speed of my internet connection while using a\
+ VPN?']
+        >>> x['text_right'].tolist()
+        ['How can Internet speed be increased by hacking through DNS?']
+        >>> x['id_left'].tolist()
+        ['q1']
+        >>> x['id_right'].tolist()
+        ['d1']
+        >>> y.tolist()
+        [0.0]
+        >>> data_generator.reset()
+        >>> x1, y1 = data_generator[:2]
+        >>> len(x1['text_left'])
+        2
+        >>> y1.tolist()
+        [0.0, 1.0]
+        >>> data_generator.on_epoch_end()
+        >>> x2, y2 = data_generator[0:2]
+        >>> y2.tolist()
+        [0.0, 1.0]
+
     """
 
     def __init__(
         self,
-        data_pack,
+        data_pack: DataPack,
         batch_size: int = 32,
         shuffle: bool = True
     ):
         """
         :class:`DataGenerator` constructor.
 
+        :param data_pack: a :class:`DataPack` object.
         :param batch_size: number of instances for each batch
         :param shuffle: a bool variable to determine whether choose samples
         randomly
@@ -71,6 +105,7 @@ class DataGenerator(keras.utils.Sequence):
 
     @property
     def num_instance(self) -> int:
+        """Return the number of instances."""
         return len(self._data_pack)
 
     def _set_indices(self):
