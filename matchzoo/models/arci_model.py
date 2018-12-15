@@ -13,7 +13,7 @@ class ArcIModel(engine.BaseModel):
 
     Examples:
         >>> import matchzoo as mz
-        >>> train_pack = mz.datasets.toy.load_train_rank_data()
+        >>> train_pack = mz.datasets.toy.load_data()
         >>> model = ArcIModel()
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()

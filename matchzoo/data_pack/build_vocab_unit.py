@@ -1,13 +1,13 @@
 """Build a :class:`processor_units.VocabularyUnit` given `data_pack`."""
-
-from tqdm import tqdm
-
-from . import DataPack
 from matchzoo import processor_units
+from . import DataPack
+from . import build_unit_from_data_pack
 
 
-def build_vocab(
-    data_pack: DataPack, verbose=1
+def build_vocab_unit(
+    data_pack: DataPack,
+    mode: str = 'both',
+    verbose: int = 1
 ) -> processor_units.VocabularyUnit:
     """
     Build a :class:`processor_units.VocabularyUnit` given `data_pack`.
@@ -17,14 +17,11 @@ def build_vocab(
     of tokens.
 
     :param data_pack: The :class:`DataPack` to build vocabulary upon.
+    :param mode: One of 'left', 'right', and 'both', to determine the source
+            data for building the :class:`VocabularyUnit`.
     :param verbose: Verbosity.
-
     :return: A built vocabulary unit.
+
     """
-    vocab = []
-    data_pack.apply_on_text(vocab.extend, verbose=verbose)
-    vocab_unit = processor_units.VocabularyUnit()
-    if verbose:
-        vocab = tqdm(vocab, desc='Fitting vocabulary unit.')
-    vocab_unit.fit(vocab)
-    return vocab_unit
+    return build_unit_from_data_pack(processor_units.VocabularyUnit(),
+                                     data_pack, mode, True, verbose)

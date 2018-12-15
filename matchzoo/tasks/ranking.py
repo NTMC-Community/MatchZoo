@@ -14,7 +14,7 @@ class Ranking(engine.BaseTask):
         >>> ranking_task.output_dtype
         <class 'float'>
         >>> print(ranking_task)
-        Ranking task
+        Ranking Task
 
     """
 
@@ -40,4 +40,4 @@ class Ranking(engine.BaseTask):
 
     def __str__(self):
         """:return: Task name as string."""
-        return 'Ranking task'
+        return 'Ranking Task'

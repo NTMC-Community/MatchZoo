@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from matchzoo import engine, processor_units
 from matchzoo import DataPack
-from matchzoo import chain_transform, build_vocab
+from matchzoo import chain_transform, build_vocab_unit
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
@@ -28,8 +28,8 @@ class DSSMPreprocessor(engine.BasePreprocessor):
 
         Example:
             >>> import matchzoo as mz
-            >>> train_data = mz.datasets.toy.load_train_classify_data()
-            >>> test_data = mz.datasets.toy.load_test_classify_data()
+            >>> train_data = mz.datasets.toy.load_data()
+            >>> test_data = mz.datasets.toy.load_data(stage='test')
             >>> dssm_preprocessor = mz.preprocessors.DSSMPreprocessor()
             >>> train_data_processed = dssm_preprocessor.fit_transform(
             ...     train_data
@@ -55,7 +55,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         units = self._default_processor_units()
         data_pack = data_pack.apply_on_text(chain_transform(units),
                                             verbose=verbose)
-        vocab_unit = build_vocab(data_pack, verbose=verbose)
+        vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
 
         self._context['vocab_unit'] = vocab_unit
         triletter_dim = len(vocab_unit.state['term_index']) + 1

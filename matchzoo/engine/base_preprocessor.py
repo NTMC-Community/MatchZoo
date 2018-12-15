@@ -63,13 +63,13 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             or list of text-left, text-right tuples.
         """
 
-    def fit_transform(self, data_pack: DataPack) -> DataPack:
+    def fit_transform(self, data_pack: DataPack, verbose=1) -> DataPack:
         """
         Call fit-transform.
 
         :param data_pack: :class:`DataPack` object to be processed.
         """
-        return self.fit(data_pack).transform(data_pack)
+        return self.fit(data_pack, verbose).transform(data_pack, verbose)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
@@ -98,7 +98,6 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             processor_units.TokenizeUnit(),
             processor_units.LowercaseUnit(),
             processor_units.PuncRemovalUnit(),
-            processor_units.StopRemovalUnit(),
         ]
 
 

@@ -15,9 +15,10 @@ class Embedding(object):
 
     Examples::
         >>> import matchzoo as mz
-        >>> data_pack = mz.datasets.toy.load_train_rank_data()
+        >>> data_pack = mz.datasets.toy.load_data()
         >>> pp = mz.preprocessors.NaivePreprocessor()
-        >>> vocab_unit = mz.build_vocab(pp.fit_transform(data_pack))
+        >>> vocab_unit = mz.build_vocab_unit(pp.fit_transform(data_pack),
+        ...                                  verbose=0)
         >>> term_index = vocab_unit.state['term_index']
         >>> embed_path = mz.datasets.embeddings.EMBED_RANK
 
@@ -43,6 +44,11 @@ class Embedding(object):
         :param data: DataFrame to use as term to vector mapping.
         """
         self._data = data
+
+    @property
+    def input_dim(self) -> int:
+        """:return Embedding input dimension."""
+        return self._data.shape[0]
 
     @property
     def output_dim(self) -> int:

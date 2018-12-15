@@ -26,10 +26,10 @@ class BaseMetric(abc.ABC):
         """:return: Formated string representation of the metric."""
 
 
-def sort_and_couple(labels: list, scores: list) -> list:
+def sort_and_couple(labels: np.array, scores: np.array) -> np.array:
     """Zip the `labels` with `scores` into a single list."""
     couple = list(zip(labels, scores))
-    return sorted(couple, key=lambda x: x[1], reverse=True)
+    return np.array(sorted(couple, key=lambda x: x[1], reverse=True))
 
 
 def parse_metric(metric: typing.Union[str,

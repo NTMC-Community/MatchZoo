@@ -10,35 +10,26 @@ class DynamicDataGenerator(DataGenerator):
 
     Examples:
         >>> import matchzoo as mz
-        >>> input = mz.datasets.toy.load_train_classify_data()
-        >>> data_generator = DynamicDataGenerator(len,
-        ...     data_pack=input, batch_size=1, shuffle=False)
-        >>> data_generator.num_instance
-        49
+        >>> raw_data = mz.datasets.toy.load_data()
+        >>> data_generator = DynamicDataGenerator(len, data_pack=raw_data,
+        ...                                       batch_size=1, shuffle=False)
         >>> len(data_generator)
-        49
-        >>> x0, y0 = data_generator[0]
-        >>> x0['id_left'].tolist()
-        ['q1']
-        >>> x0['id_right'].tolist()
-        ['d1']
-        >>> x0['text_left'].tolist()
-        [73]
-        >>> x0['text_right'].tolist()
-        [59]
-        >>> y0.tolist()
-        [0.0]
-        >>> x1, y1 = data_generator[1]
-        >>> x1['id_left'].tolist()
-        ['q2']
-        >>> x1['id_right'].tolist()
-        ['d2']
-        >>> x1['text_left'].tolist()
-        [30]
-        >>> x1['text_right'].tolist()
-        [41]
-        >>> y1.tolist()
-        [1.0]
+        100
+        >>> x, y = data_generator[0]
+        >>> type(x)
+        <class 'dict'>
+        >>> x.keys()
+        dict_keys(['id_left', 'text_left', 'id_right', 'text_right'])
+        >>> type(x['id_left'])
+        <class 'numpy.ndarray'>
+        >>> type(x['id_right'])
+        <class 'numpy.ndarray'>
+        >>> type(x['text_left'])
+        <class 'numpy.ndarray'>
+        >>> type(x['text_right'])
+        <class 'numpy.ndarray'>
+        >>> type(y)
+        <class 'numpy.ndarray'>
 
     """
 
