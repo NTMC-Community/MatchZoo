@@ -16,24 +16,31 @@ class PairDataGenerator(DataGenerator):
     Examples:
         >>> np.random.seed(111)
         >>> import matchzoo as mz
-        >>> input = mz.datasets.toy.load_train_rank_data()
-        >>> data_generator = PairDataGenerator(input, 2, 1, 1, False)
+        >>> raw_data = mz.datasets.toy.load_data()
+        >>> data_generator = PairDataGenerator(raw_data, 2, 1, 2, False)
         >>> data_generator.num_instance
-        2
+        10
         >>> len(data_generator)
-        2
+        5
         >>> x, y = data_generator[0]
-        >>> x['id_left'].tolist()
-        ['qid0', 'qid0']
-        >>> x['text_left'].tolist()
-        ['how are glacier caves formed ?', 'how are glacier caves formed ?']
-        >>> x['id_right'].tolist()
-        ['did3', 'did1']
-        >>> x['text_right'].tolist()
-        ['A glacier cave is a cave formed within the ice of a glacier .', 'The\
- ice facade is approximately 60 m high']
-        >>> y.tolist()
-        [1.0, 0.0]
+        >>> type(x)
+        <class 'dict'>
+        >>> x.keys()
+        dict_keys(['id_left', 'text_left', 'id_right', 'text_right'])
+        >>> type(x['id_left'])
+        <class 'numpy.ndarray'>
+        >>> type(x['id_right'])
+        <class 'numpy.ndarray'>
+        >>> type(x['text_left'])
+        <class 'numpy.ndarray'>
+        >>> type(x['text_right'])
+        <class 'numpy.ndarray'>
+        >>> len(x['id_left'])
+        4
+        >>> len(x['id_right'])
+        4
+        >>> type(y)
+        <class 'numpy.ndarray'>
 
     """
 

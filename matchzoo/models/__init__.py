@@ -6,3 +6,8 @@ from .arci_model import ArcIModel
 from .knrm_model import KNRMModel
 from .conv_knrm_model import ConvKNRMModel
 from .duet_model import DUETModel
+from .drmmtks_model import DRMMTKSModel
+
+import matchzoo
+def list_available():
+    return matchzoo.engine.BaseModel.__subclasses__()

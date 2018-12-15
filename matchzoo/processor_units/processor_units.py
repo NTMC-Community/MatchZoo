@@ -10,6 +10,8 @@ import numpy as np
 
 match_punc = re.compile(r'[^\w\s]')
 
+def list_available():
+    return ProcessorUnit.__subclasses__()
 
 class ProcessorUnit(metaclass=abc.ABCMeta):
     """Process unit do not persive state (i.e. do not need fit)."""
@@ -283,6 +285,87 @@ class VocabularyUnit(StatefulProcessorUnit):
     def transform(self, tokens: list) -> list:
         """Transform a list of tokens to corresponding indices."""
         return [self._state['term_index'][token] for token in tokens]
+
+
+class FrequencyFilterUnit(StatefulProcessorUnit):
+    """
+    Frequency filter unit.
+
+    :param low: Lower bound, inclusive.
+    :param high: Upper bound, exclusive.
+    :param mode: One of `tf` (term frequency), `df` (document frequency),
+        and `idf` (inverse document frequency).
+
+    Examples::
+        >>> import matchzoo as mz
+
+    To filter based on term frequency (tf):
+        >>> tf_filter = mz.processor_units.FrequencyFilterUnit(
+        ...     low=2, mode='tf')
+        >>> tf_filter.fit([['A', 'B', 'B'], ['C', 'C', 'C']])
+        >>> tf_filter.transform(['A', 'B', 'C'])
+        ['B', 'C']
+
+    To filter based on document frequency (df):
+        >>> tf_filter = mz.processor_units.FrequencyFilterUnit(
+        ...     low=2, mode='df')
+        >>> tf_filter.fit([['A', 'B'], ['B', 'C']])
+        >>> tf_filter.transform(['A', 'B', 'C'])
+        ['B']
+
+    """
+
+    def __init__(self, low=0, high=float('inf'), mode='df'):
+        """Frequency filter unit."""
+        super().__init__()
+        self._low = low
+        self._high = high
+        self._mode = mode
+
+    def fit(self, list_of_tokens: typing.List[typing.List[str]]):
+        """Fit `list_of_tokens` by calculating `mode` states."""
+        valid_terms = set()
+        if self._mode == 'tf':
+            stats = self._tf(list_of_tokens)
+        elif self._mode == 'df':
+            stats = self._df(list_of_tokens)
+        elif self._mode == 'idf':
+            stats = self._idf(list_of_tokens)
+        else:
+            raise ValueError('Mode must be one of `tf`, `df`, and `idf`.')
+
+        for k, v in stats.items():
+            if self._low <= v < self._high:
+                valid_terms.add(k)
+
+        self._state[self._mode] = valid_terms
+
+    def transform(self, tokens: list) -> list:
+        """Transform a list of tokens by filtering out unwanted words."""
+        valid_terms = self._state[self._mode]
+        return list(filter(lambda token: token in valid_terms, tokens))
+
+    @classmethod
+    def _tf(cls, list_of_tokens):
+        stats = collections.Counter()
+        for tokens in list_of_tokens:
+            stats.update(tokens)
+        return stats
+
+    @classmethod
+    def _df(cls, list_of_tokens):
+        stats = collections.Counter()
+        for tokens in list_of_tokens:
+            stats.update(set(tokens))
+        return stats
+
+    @classmethod
+    def _idf(cls, list_of_tokens):
+        num_docs = len(list_of_tokens)
+        stats = cls._df(list_of_tokens)
+        for key, val in stats:
+            stats[key] = np.log((1 + num_docs) / (1 + val)) + 1
+        return stats
 
 
 class WordHashingUnit(ProcessorUnit):

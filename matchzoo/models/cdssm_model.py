@@ -2,7 +2,7 @@
 
 from matchzoo import engine
 
-from keras import Model
+from keras.models import Model
 from keras.layers import Input, Conv1D, GlobalMaxPool1D, Dot, Dense
 
 

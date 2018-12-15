@@ -2,7 +2,7 @@
 
 import pandas as pd
 
-from . import DataPack
+import matchzoo
 
 
 def _has_label(data: list):
@@ -14,38 +14,68 @@ def _has_label(data: list):
         raise ValueError('Invalid data format.')
 
 
-def pack(data: list) -> DataPack:
+def pack(df: pd.DataFrame) -> 'matchzoo.DataPack':
     """
-    Pack user input into :class:`DataPack`.
+    Pack a :class:`DataPack` using `df`.
 
-    :param data: Raw user inputs, list of tuples.
+    The `df` must have `text_left` and `text_right` columns. Optionally,
+    the `df` can have `id_left`, `id_right` to index `text_left` and
+    `text_right` respectively. `id_left`, `id_right` will be automatically
+    generated if not specified.
 
-    :return: User input into a :class:`DataPack` with left, right and
-        relation..
+    :param df: Input :class:`pandas.DataFrame` to use.
+
+    Examples::
+        >>> import matchzoo as mz
+        >>> import pandas as pd
+        >>> df = pd.DataFrame(data={'text_left': list('AABC'),
+        ...                         'text_right': list('abbc'),
+        ...                         'label': [0, 1, 1, 0]})
+        >>> mz.pack(df).frame()
+          id_left text_left id_right text_right  label
+        0     L-0         A      R-0          a      0
+        1     L-0         A      R-1          b      1
+        2     L-1         B      R-1          b      1
+        3     L-2         C      R-2          c      0
+
     """
-    col_all = ['id_left', 'id_right', 'text_left', 'text_right']
-    col_relation = ['id_left', 'id_right']
+    if 'text_left' not in df or 'text_right' not in df:
+        raise ValueError(
+            'Input data frame must have `text_left` and `text_right`.')
 
-    if _has_label(data):
-        col_relation.append('label')
-        col_all.append('label')
+    # Gather IDs
+    if 'id_left' not in df:
+        id_left = _gen_ids(df, 'text_left', 'L-')
+    else:
+        id_left = df['id_left']
+    if 'id_right' not in df:
+        id_right = _gen_ids(df, 'text_right', 'R-')
+    else:
+        id_right = df['id_right']
 
-    # prepare data pack.
-    df = pd.DataFrame(data, columns=col_all)
-    df.fillna('missing')  # avoid tokenization exception.
+    # Build Relation
+    relation = pd.DataFrame(data={'id_left': id_left, 'id_right': id_right})
+    for col in df:
+        if col not in ['id_left', 'id_right', 'text_left', 'text_right']:
+            relation[col] = df[col]
 
-    # Segment input into 3 dataframes.
-    relation = df[col_relation]
+    # Build Left and Right
+    left = _merge(df, id_left, 'text_left', 'id_left')
+    right = _merge(df, id_right, 'text_right', 'id_right')
+    return matchzoo.DataPack(relation, left, right)
 
-    left = df[['id_left', 'text_left']].drop_duplicates(['id_left'])
-    left.set_index('id_left', inplace=True)
-    # Infer the length of the text left
-    # left['length_left'] = left.apply(lambda r: len(r['text_left']), axis=1)
 
-    right = df[['id_right', 'text_right']].drop_duplicates(['id_right'])
-    right.set_index('id_right', inplace=True)
-    # Infer the length of the text right
+def _merge(data, ids, text_label, id_label):
+    left = pd.DataFrame(data={
+        text_label: data[text_label], id_label: ids
+    })
+    left.drop_duplicates(id_label, inplace=True)
+    left.set_index(id_label, inplace=True)
+    return left
 
-    return DataPack(relation=relation,
-                    left=left,
-                    right=right)
+
+def _gen_ids(data, col, prefix):
+    lookup = {}
+    for text in data[col].unique():
+        lookup[text] = prefix + str(len(lookup))
+    return data[col].map(lookup)
