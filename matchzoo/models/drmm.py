@@ -13,18 +13,23 @@ class DRMM(engine.BaseModel):
 
     Examples:
         >>> model = DRMM()
+        >>> model.params['mlp_num_layers'] = 1
+        >>> model.params['mlp_num_units'] = 5
+        >>> model.params['mlp_num_fan_out'] = 1
+        >>> model.params['mlp_activation_func'] = 'tanh'
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
+        >>> model.compile()
 
     """
 
     @classmethod
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
-        params = super().get_default_params(with_embedding=True)
+        params = super().get_default_params(with_embedding=True,
+                                            with_multi_layer_perceptron=True)
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(5,), (5, 30,)]
-        params.add(engine.Param('hidden_sizes', [5, 1]))
         return params
 
     def build(self):
@@ -54,7 +59,7 @@ class DRMM(engine.BaseModel):
 
         # Process right input.
         # shape = [B, L, 1]
-        dense_output = self.multi_layer_perceptron(doc)
+        dense_output = self._make_multi_layer_perceptron_layer()(doc)
 
         # shape = [B, 1, 1]
         dot_score = keras.layers.Dot(axes=[1, 1])(
@@ -65,14 +70,15 @@ class DRMM(engine.BaseModel):
         x_out = self._make_output_layer()(flatten_score)
         self._backend = keras.Model(inputs=[query, doc], outputs=x_out)
 
-    def attention_layer(self, attention_input: typing.Any,
+    @classmethod
+    def attention_layer(cls, attention_input: typing.Any,
                         attention_mask: typing.Any = None):
         """
         Performs attention on the input.
 
         :param attention_input: The input tensor for attention layer.
         :param attention_mask: A tensor to mask the invalid values.
-        :return: The output tensor.
+        :return: The masked output tensor.
         """
         # shape = [B, L, 1]
         dense_input = keras.layers.Dense(1, use_bias=False)(attention_input)
@@ -88,22 +94,7 @@ class DRMM(engine.BaseModel):
             dense_input += adder
         # shape = [B, L, 1]
         attention_probs = keras.layers.Lambda(
-            lambda x: keras.activations.softmax(x, axis=1),
-            output_shape=self._params['input_shapes'][0]
+            lambda x: keras.layers.activations.softmax(x, axis=1),
+            output_shape=lambda s: (s[0], s[1], s[2])
         )(dense_input)
         return attention_probs
-
-    def multi_layer_perceptron(self, input: typing.Any):
-        """
-        Multiple Layer Perceptron.
-
-        :param input: The input tensor for multi-layer perceptron.
-        :return: The output tensor.
-        """
-        # shape = [B, L, H]
-        out = input
-        for idx, hidden_size in enumerate(self._params['hidden_sizes']):
-            out = keras.layers.Dense(hidden_size)(out)
-            out = keras.layers.Activation('tanh')(out)
-        # shape = [B, L, 1]
-        return out
