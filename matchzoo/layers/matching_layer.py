@@ -8,7 +8,7 @@ from keras.engine import Layer
 class MatchingLayer(Layer):
     """
     Layer that computes a matching matrix between samples in two tensors.
-    
+
     Examples:
         >>> import matchzoo as mz
         >>> layer = mz.layers.MatchingLayer()
