@@ -15,7 +15,6 @@ class DenseBaselineModel(engine.BaseModel):
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
         >>> model.compile()
-        >>> model.backend.summary()
 
     """
 

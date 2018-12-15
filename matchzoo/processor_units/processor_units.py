@@ -10,8 +10,11 @@ import numpy as np
 
 match_punc = re.compile(r'[^\w\s]')
 
+
 def list_available():
+    """List all avaible units."""
     return ProcessorUnit.__subclasses__()
+
 
 class ProcessorUnit(metaclass=abc.ABCMeta):
     """Process unit do not persive state (i.e. do not need fit)."""
