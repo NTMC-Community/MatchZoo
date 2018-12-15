@@ -1,5 +1,5 @@
-from .match_layer import MatchLayer
+from .matching_layer import MatchingLayer
 
 layer_dict = {
-    "MatchLayer": MatchLayer
+    "MatchingLayer": MatchingLayer
 }

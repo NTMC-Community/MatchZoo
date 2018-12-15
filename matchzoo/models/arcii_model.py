@@ -75,8 +75,9 @@ class ArcIIModel(engine.BaseModel):
                                padding=self._params['padding'])(embed_right)
 
         # Interaction
-        embed_cross = layers.MatchLayer(match_type='plus')([conv_1d_left,
-                                                            conv_1d_right])
+        embed_cross = layers.MatchingLayer(matching_type='plus')([
+            conv_1d_left,
+            conv_1d_right])
 
         for i in range(self._params['num_blocks']):
             embed_cross = self._conv_pool_block(
