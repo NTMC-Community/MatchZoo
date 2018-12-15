@@ -1,24 +1,15 @@
 """An implementation of aNMM Model."""
 
-import typing
-import logging
-import numpy as np
 
+import logging
 import keras
-import keras.backend as K
+
 from keras.activations import softmax
-from  keras.initializers import RandomUniform
-from keras.layers import *
+from keras.initializers import RandomUniform
 
 from matchzoo import engine
 
 logger = logging.getLogger(__name__)
-
-
-def show_tensor_info(name: str, input: np.ndarray):
-    """Show the tensor shapes."""
-    logger.info(
-        '[Layer]: %s\t[Shape]: %s\n' % (name, input.get_shape().as_list()))
 
 
 class ANMMModel(engine.BaseModel):
@@ -44,7 +35,11 @@ class ANMMModel(engine.BaseModel):
         return params
 
     def build(self):
-        """Build model structure."""
+        """
+        Build model structure.
+
+        aNMM model based on bin weighting and query term attentions
+        """
         # query is [batch_size, left_text_len]
         # doc is [batch_size, right_text_len, bin_num]
         query, doc = self._make_inputs()
@@ -53,15 +48,21 @@ class ANMMModel(engine.BaseModel):
         initializer_gate = RandomUniform(minval=-0.01, maxval=0.01, seed=11)
 
         q_embed = embedding(query)
-        q_w = Dense(1, kernel_initializer=initializer_gate, use_bias=False)(q_embed)
-        q_w = Lambda(lambda x: softmax(x, axis=1), output_shape=(self._params['left_text_len'],))(q_w)
+        q_w = keras.layers.Dense(
+            1, kernel_initializer=initializer_gate, use_bias=False)(q_embed)
+        q_w = keras.layers.Lambda(
+            lambda x: softmax(x, axis=1),
+            output_shape=(self._params['left_text_len'],)
+        )(q_w)
         z = doc
-        z = Dropout(rate=self._params['dropout_rate'])(z)
+        z = keras.layers.Dropout(rate=self._params['dropout_rate'])(z)
         for i in range(self._params['num_layers'] - 1):
-            z = Dense(self._params['hidden_sizes'][i], kernel_initializer=initializer_fc)(z)
-            z = Activation('tanh')(z)
-        z = Dense(self._params['hidden_sizes'][self._params['num_layers'] - 1], kernel_initializer=initializer_fc)(z)
-        z = Reshape((self._params['left_text_len'],))(z)
-        q_w = Reshape((self._params['left_text_len'],))(q_w)
-        x_out = Dot(axes=[1, 1])([z, q_w])
+            z = keras.layers.Dense(self._params['hidden_sizes'][i],
+                                   kernel_initializer=initializer_fc)(z)
+            z = keras.layers.Activation('tanh')(z)
+        z = keras.layers.Dense(
+            self._params['hidden_sizes'][self._params['num_layers'] - 1])(z)
+        z = keras.layers.Reshape((self._params['left_text_len'],))(z)
+        q_w = keras.layers.Reshape((self._params['left_text_len'],))(q_w)
+        x_out = keras.layers.Dot(axes=[1, 1])([z, q_w])
         self._backend = keras.Model(inputs=[query, doc], outputs=x_out)
