@@ -24,7 +24,7 @@ def task(request) -> mz.engine.BaseTask:
 
 @pytest.fixture(scope='module')
 def mvlstm_preprocessor():
-    return mz.preprocessors.DSSMPreprocessor()
+    return mz.preprocessors.MVLSTMPreprocessor()
 
 
 @pytest.fixture(scope='module')
@@ -54,12 +54,14 @@ def test_mvlstm(train_data_processed,
               train_generator,
               test_generator,
               mvlstm_preprocessor):
-    """Test DSSM model."""
+    """Test MVLSTM model."""
     # Create a mvlstm model
-    mvlstm_model = mz.models.DSSMModel()
+    mvlstm_model = mz.models.MVLSTMModel()
     input_shapes = mvlstm_preprocessor.context['input_shapes']
+    #embedding_input_dim = mvlstm_preprocessor.context['embedding_input_dim']
     mvlstm_model.params['input_shapes'] = input_shapes
     mvlstm_model.params['task'] = task
+    #mvlstm_model.params['embedding_input_dim'] = embedding_input_dim
     mvlstm_model.guess_and_fill_missing_params()
     mvlstm_model.build()
     mvlstm_model.compile()
