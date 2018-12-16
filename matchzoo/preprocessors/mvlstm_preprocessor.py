@@ -15,16 +15,12 @@ tqdm.pandas()
 class MVLSTMPreprocessor(engine.BasePreprocessor):
     """MVLSTMModel preprocessor."""
 
-    def __init__(self, with_word_hashing=True):
+    def __init__(self, fixed_length: list = [10, 10]):
         """
         MVLSTM Model preprocessor.
 
-        The word hashing step could eats up a lot of memory. To workaround
-        this problem, set `with_word_hashing` to `False` and use  a
-        :class:`matchzoo.DynamicDataGenerator` with a
-        :class:`matchzoo.processor_units.WordHashingUnit`.
-
-        :param with_word_hashing: Include a word hashing step if `True`.
+        :param fixed_length: The fixed length of 'text_left' 
+            and 'text_right'.
 
         Example:
             >>> import matchzoo as mz
@@ -40,7 +36,12 @@ class MVLSTMPreprocessor(engine.BasePreprocessor):
 
         """
         super().__init__()
-        self._with_word_hashing = with_word_hashing
+        self._fixed_length = fixed_length
+        self._left_fixedlength_unit = processor_units.FixedLengthUnit(
+            self._fixed_length[0], pad_mode='post')
+        self._right_fixedlength_unit = processor_units.FixedLengthUnit(
+            self._fixed_length[1], pad_mode='post')
+        self._VocabularyUnit = processor_units.VocabularyUnit
 
     def fit(self, data_pack: DataPack, verbose=1):
         """
@@ -56,14 +57,17 @@ class MVLSTMPreprocessor(engine.BasePreprocessor):
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
 
         self._context.update(vocab_unit.state)
-        triletter_dim = len(vocab_unit.state['term_index']) + 1
-        self._context['input_shapes'] = [(triletter_dim,), (triletter_dim,)]
+        self._context['embedding_input_dim'] = len(
+                    vocab_unit.state['term_index']) + 1 
+        self._context['vocab_unit'] = vocab_unit
+        self._context['input_shapes'] = [(self._fixed_length[0],),
+                                         (self._fixed_length[1],)]
         return self
 
     @engine.validate_context
     def transform(self, data_pack: DataPack, verbose=1) -> DataPack:
-        """
-        Apply transformation on data, create `tri-letter` representation.
+        """ 
+        Apply transformation on data, create fixed length representation.
 
         :param data_pack: Inputs to be preprocessed.
         :param verbose: Verbosity.
@@ -72,11 +76,20 @@ class MVLSTMPreprocessor(engine.BasePreprocessor):
         """
         data_pack = data_pack.copy()
         units = self._default_processor_units()
-        if self._with_word_hashing:
-            term_index = self._context['term_index']
-            units.append(processor_units.WordHashingUnit(term_index))
         data_pack.apply_on_text(chain_transform(units), inplace=True,
                                 verbose=verbose)
+        data_pack.apply_on_text(self._context['vocab_unit'].transform,
+                                mode='both', inplace=True, verbose=verbose)
+
+        data_pack.append_text_length(inplace=True)
+        data_pack.apply_on_text(self._left_fixedlength_unit.transform,
+                                mode='left', inplace=True, verbose=verbose)
+        data_pack.apply_on_text(self._right_fixedlength_unit.transform,
+                                mode='right', inplace=True, verbose=verbose)
+        data_pack.apply_on_text(self._context['vocab_unit'].transform,
+                                mode='left', inplace=True, verbose=verbose)
+        data_pack.apply_on_text(self._context['vocab_unit'].transform,
+                                mode='right', inplace=True, verbose=verbose)
         return data_pack
 
     @classmethod
@@ -87,5 +100,4 @@ class MVLSTMPreprocessor(engine.BasePreprocessor):
             processor_units.LowercaseUnit(),
             processor_units.PuncRemovalUnit(),
             processor_units.StopRemovalUnit(),
-            processor_units.NgramLetterUnit(),
         ]

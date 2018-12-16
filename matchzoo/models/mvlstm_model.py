@@ -22,6 +22,7 @@ class MVLSTMModel(engine.BaseModel):
         params = super().get_default_params(with_embedding=True)
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(5,), (300,)]
+        params['embedding_output_dim'] =  50
         params.add(engine.Param('trainable_embedding', False))
         params.add(engine.Param('vocab_size', 100))
         params.add(engine.Param('hidden_size', 32))
@@ -32,7 +33,6 @@ class MVLSTMModel(engine.BaseModel):
             hyper_space=engine.hyper_spaces.quniform(low=2, high=100)
         ))
         return params
-
 
     def build(self):
         """Build model structure."""

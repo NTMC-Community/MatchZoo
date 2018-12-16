@@ -58,12 +58,25 @@ def test_mvlstm(train_data_processed,
     # Create a mvlstm model
     mvlstm_model = mz.models.MVLSTMModel()
     input_shapes = mvlstm_preprocessor.context['input_shapes']
-    #embedding_input_dim = mvlstm_preprocessor.context['embedding_input_dim']
+    term_index = mvlstm_preprocessor.context['vocab_unit'].state['term_index']
+    embedding_input_dim = mvlstm_preprocessor.context['embedding_input_dim']
     mvlstm_model.params['input_shapes'] = input_shapes
     mvlstm_model.params['task'] = task
-    #mvlstm_model.params['embedding_input_dim'] = embedding_input_dim
+    mvlstm_model.params['embedding_input_dim'] = embedding_input_dim
+
+    parent_path = os.path.dirname(__file__)
+    parent_path = os.path.dirname(parent_path)
+    parent_path = os.path.dirname(parent_path) 
+    #parent_path = os.path.dirname(parent_path) 
+    embed_path = os.path.join(
+                    parent_path,
+                    'matchzoo/datasets/embeddings/embed_rank.txt')
+    embedding = mz.embedding.load_from_file(embed_path)
+    embedding_matrix = embedding.build_matrix(term_index)
+
     mvlstm_model.guess_and_fill_missing_params()
     mvlstm_model.build()
+    mvlstm_model.load_embedding_matrix(embedding_matrix)
     mvlstm_model.compile()
     mvlstm_model.fit_generator(train_generator)
     mvlstm_model.save('.tmpdir')
