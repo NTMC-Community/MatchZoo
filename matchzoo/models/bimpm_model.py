@@ -6,6 +6,7 @@ from keras.layers import Input, Bidirectional, LSTM, Dense, Concatenate
 
 
 from matchzoo import engine
+from matchzoo import preprocessors
 from matchzoo.layers import MultiPerspectiveLayer
 
 
@@ -15,25 +16,34 @@ class BimpmModel(engine.BaseModel):
     @classmethod
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
-        params = super().get_default_params()
+        params = super().get_default_params(with_embedding=True)
         params['optimizer'] = 'adam'
-        params['input_shapes'] = [(32,), (32,)]
-        params.add(engine.Param('dim_word_embedding', 300))
+
+        params.add(engine.Param('dim_word_embedding', 50))
         params.add(engine.Param('dim_char_embedding', 50))
         params.add(engine.Param('word_embedding_mat', None))
         params.add(engine.Param('char_embedding_mat', None))
         params.add(engine.Param('embedding_random_scale', 0.2))
         params.add(engine.Param('activation_embedding', 'softmax'))
-        params.add(engine.Param('vocab_size', 100))
-        params.add(engine.Param('w_initializer', 'glorot_uniform'))
-        params.add(engine.Param('b_initializer', 'zeros'))
-        params.add(engine.Param('activation_hidden', 'linear'))
-        params.add(engine.Param('dim_hidden', 128))
+
+        # Bimpm Setting
         params.add(engine.Param('perspective', {'full': True,
                                                 'max-pooling': True,
                                                 'attentive': True,
                                                 'max-attentive': True}))
+        params.add(engine.Param('dim_perspective', 20))
+        params.add(engine.Param('hidden_size', 128))
+        params.add(engine.Param('dropout_rate', 0.0))
+        params.add(engine.Param('w_initializer', 'glorot_uniform'))
+        params.add(engine.Param('b_initializer', 'zeros'))
+        params.add(engine.Param('activation_hidden', 'linear'))
+
         return params
+
+    @classmethod
+    def get_default_preprocessor(cls):
+        """:return: Instance of :class:`NaivePreprocessor`."""
+        return preprocessors.NaivePreprocessor()
 
     @property
     def word_embedding_mat(self) -> np.ndarray:
@@ -75,64 +85,61 @@ class BimpmModel(engine.BaseModel):
         return Model(input_char, embed_char)
 
     def build(self):
-        """Build."""
-        input_shape_lt = self._params['input_shapes'][0]
-        input_shape_rt = self._params['input_shapes'][1]
-        input_lt = Input(shape=input_shape_lt)
-        input_rt = Input(shape=input_shape_rt)
+        """
+        Build model structure
+        """
+        input_left, input_right = self._make_inputs()
+
         # Word representation layer.
-        # TODO Concanate word level embedding and character level embedding.
-        # Context represntation layer.
-        x_lt = Bidirectional(
-            LSTM(input_shape_lt[0],
-                 return_sequences=True,
-                 return_state=True,
-                 kernel_initializer=self._params['w_initializer'],
-                 bias_initializer=self._params['b_initializer']),
-            merge_mode=None)(input_lt)
-        x_rt = Bidirectional(
-            LSTM(input_shape_rt[0],
-                 return_sequences=True,
-                 return_state=True,
-                 kernel_initializer=self._params['w_initializer'],
-                 bias_initializer=self._params['b_initializer']),
-            merge_mode=None)(input_rt)
+        # TODO: Concanate word level embedding and character level embedding.
+        embedding = self._make_embedding_layer()
+        embed_left = embedding(input_left)
+        embed_right = embedding(input_right)
+
+        # Context representation layer.
+        # Note: When merge_mode = None, output will be [lstm_forward, lstm_backward],
+        #      the default setting of merge_mode is concat, and the output will be
+        #      [lstm]. If with return_state, then the output would append [h,c,h,c]
+        bi_lstm = Bidirectional(LSTM(self._params['hidden_size'],
+                                     return_sequences=True,
+                                     return_state=True,
+                                     dropout=self._params['dropout_rate'],
+                                     kernel_initializer=self._params['w_initializer'],
+                                     bias_initializer=self._params['b_initializer']),
+                                merge_mode='concat')
+        x_left = bi_lstm(embed_left)
+        x_right = bi_lstm(embed_right)
+
         # Multiperspective Matching layer.
         # Output is two sequence of vectors.
         # TODO Finalize MultiPerspectiveMatching
-        x_lt = MultiPerspectiveLayer(
-            dim_output=(MultiPerspectiveLayer.num_perspective,
-                        self._params['dim_embedding']),
-            dim_embedding=self._params['dim_embedding'],
-            perspective=self._params['perspective'])([x_lt, x_rt])
-        x_rt = MultiPerspectiveLayer(
-            dim_output=(MultiPerspectiveLayer.num_perspective,
-                        self._params['dim_embedding']),
-            dim_embedding=self._params['dim_embedding'],
-            perspective=self._params['perspective'])([x_rt, x_lt])
+        multi_perspective = MultiPerspectiveLayer(dim_input=self._params['hidden_size']*2,
+                                                  dim_output=self._params['dim_perspective'],
+                                                  perspective=self._params['perspective'],
+                                                  dim_perspective=self._params['dim_perspective'])
+        # Note: input to `keras layer` must be list of tensors.
+        mp_left = multi_perspective(x_left + x_right)
+        mp_right = multi_perspective(x_right + x_left)
+
         # Aggregation layer.
-        x_lt = Bidirectional(
-            LSTM(self._params['dim_hidden'],
-                 return_sequences=False,
-                 return_state=False,
-                 kernel_initializer=self._params['w_initializer'],
-                 bias_initializer=self._params['b_initializer']),
-            merge_mode='concat')(x_lt)
-        x_rt = Bidirectional(
-            LSTM(self._params['dim_hidden'],
-                 return_sequences=False,
-                 return_state=False,
-                 kernel_initializer=self._params['w_initializer'],
-                 bias_initializer=self._params['b_initializer']),
-            merge_mode='concat')(x_rt)
-        # catenate the forward-backward vector of left & right.
+        aggregation = Bidirectional(LSTM(self._params['hidden_size'],
+                                         return_sequences=False,
+                                         return_state=False,
+                                         kernel_initializer=self._params['w_initializer'],
+                                         bias_initializer=self._params['b_initializer']),
+                                    merge_mode='concat')
+        print(mp_left.shape)
+        rep_left = aggregation(mp_left)
+        rep_right = aggregation(mp_right)
+
         # Concatenate the concatenated vector of left and right.
-        x = Concatenate()([x_lt, x_rt])
-        # prediction layer.
-        x = Dense(self._params['dim_hidden'],
+        x = Concatenate()([rep_left, rep_right])
+
+        # Prediction layer.
+        x = Dense(self._params['hidden_size'],
                   activation=self._params['activation_hidden'])(x)
-        x = Dense(self._params['dim_hidden'],
+        x = Dense(self._params['hidden_size'],
                   activation=self._params['activation_hidden'])(x)
         x_out = self._make_output_layer()(x)
-        self._backend = Model(inputs=[input_lt, input_rt],
+        self._backend = Model(inputs=[input_left, input_right],
                               outputs=x_out)

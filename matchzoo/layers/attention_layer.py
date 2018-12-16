@@ -1,10 +1,7 @@
 """An implementation of Attention Layer for Bimpm model."""
 
-from keras import layers
 from keras import backend as K
-from keras.engine.topology import Layer
-
-from matchzoo import utils
+from keras.engine import Layer
 
 
 class AttentionLayer(Layer):
@@ -57,7 +54,7 @@ class AttentionLayer(Layer):
                                           )
         super(AttentionLayer, self).build(input_shapes)
 
-    def call(self, inputs: list):
+    def call(self, inputs: list, **kwargs):
         # calculate attention ==> a: [batch_size, len_1, len_2]
 
         if not isinstance(inputs, list):
@@ -74,13 +71,14 @@ class AttentionLayer(Layer):
         lstm_lt = K.expand_dims(lstm_lt, axis=-1)
         atten_lt = K.sum(lstm_lt * atten_W, axis=2)
         lstm_rt = K.expand_dims(lstm_rt, axis=-1)
-        atten_rt = K.expand_dims(lstm_rt * atten_W, axis=2)
+        atten_rt = K.sum(lstm_rt * atten_W, axis=2)
 
         atten_lt = K.tanh(atten_lt) # [b, s, 20]
         atten_rt = K.tanh(atten_rt)
 
         atten_lt = atten_lt * self.diagnoal_W  # [b, s, 20]
         # atten_rt [b, s, 20]
+        atten_rt = K.permute_dimensions(atten_rt, (0, 2, 1))
         atten_value = K.batch_dot(atten_lt, atten_rt)  # [batch_size, s, s]
 
         # TODO(tjf) or remove: normalize

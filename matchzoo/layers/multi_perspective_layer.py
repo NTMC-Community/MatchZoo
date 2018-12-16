@@ -2,7 +2,7 @@
 
 from keras import layers
 from keras import backend as K
-from keras.engine.topology import Layer
+from keras.engine import Layer
 
 from matchzoo import utils
 from matchzoo.layers.attention_layer import attention_func
@@ -18,10 +18,11 @@ class MultiPerspectiveLayer(Layer):
 
     def __init__(
             self,
+            dim_input: int,
             dim_output: int,
-            dim_embedding: int,
+            dim_perspective: int,
             perspective: dict = {'full': True,
-                                 'maxpooling': True,
+                                 'max-pooling': True,
                                  'attentive': True,
                                  'max-attentive': True},
             **kwargs
@@ -31,55 +32,58 @@ class MultiPerspectiveLayer(Layer):
 
         :param output_dim: dimensionality of output space.
         """
+        self._dim_input = dim_input
         self._dim_output = dim_output
-        self._dim_embedding = dim_embedding
+        self._dim_perspective = dim_perspective
         self._perspective = perspective
         super(MultiPerspectiveLayer, self).__init__(**kwargs)
 
         @classmethod
         def list_available_perspectives(cls) -> list:
             """List available strategy for multi-perspective matching."""
-            return ['full', 'maxpooling', 'attentive', 'max-attentive']
+            return ['full', 'max-pooling', 'attentive', 'max-attentive']
 
-        @property
-        def num_perspective(cls):
-            """Get the number of perspectives that is True."""
-            return sum(self._perspective.values())
+    @property
+    def num_perspective(cls):
+        """Get the number of perspectives that is True."""
+        return sum(cls._perspective.values())
 
-        def build(self, input_shape: list):
-            """Input shape."""
-            # The shape of the weights is l * d.
-            self._dim_output = 1
-            if self._perspective.get('full'):
-                self.full = self.add_weight(name='pool',
-                                            shape=(self._dim_output,
-                                                   self._dim_embedding),
-                                            initializer='uniform',
-                                            trainable=True)
-            if self._perspective.get('maxpooling'):
-                self.maxp = self.add_weight(name='maxpooling',
-                                            shape=(self._dim_output,
-                                                   self._dim_embedding),
-                                            initializer='uniform',
-                                            trainable=True)
-            if self._perspective.get('attentive'):
-                self.atte = self.add_weight(name='attentive',
-                                            shape=(self._dim_output,
-                                                   self._dim_embedding),
-                                            initializer='uniform',
-                                            trainable=True)
-            if self._perspective.get('max-attentive'):
-                self.maxa = self.add_weight(name='max-attentive',
-                                            shape=(self._dim_output,
-                                                   self._dim_embedding),
-                                            initializer='uniform',
-                                            trainable=True)
-            super(MultiPerspectiveLayer, self).build(input_shape)
+    def build(self, input_shape: list):
+        """Input shape."""
+        # The shape of the weights is l * d.
+        # self._dim_output = 1
+        if self._perspective.get('full'):
+            self.full = self.add_weight(name='pool',
+                                        shape=(self._dim_output,
+                                               self._dim_input),
+                                        initializer='uniform',
+                                        trainable=True)
+        if self._perspective.get('max-pooling'):
+            self.maxpooling = self.add_weight(name='max-pooling',
+                                        shape=(self._dim_output,
+                                               self._dim_input),
+                                        initializer='uniform',
+                                        trainable=True)
+        if self._perspective.get('attentive'):
+            self.attentive = self.add_weight(name='attentive',
+                                        shape=(self._dim_output,
+                                               self._dim_input),
+                                        initializer='uniform',
+                                        trainable=True)
+        if self._perspective.get('max-attentive'):
+            self.max_attentive = self.add_weight(name='max-attentive',
+                                        shape=(self._dim_output,
+                                               self._dim_input),
+                                        initializer='uniform',
+                                        trainable=True)
+        self.built = True
+
 
     def call(self, x: list):
         """Call."""
         rv = []
-        seq_lt, seq_rt = x
+        seq_lt, seq_rt = x[:5], x[5:]
+
         # unpack seq_left and seq_right
         # all hidden states, last hidden state of forward pass,
         # last cell state of forward pass, last hidden state of
@@ -96,7 +100,7 @@ class MultiPerspectiveLayer(Layer):
             full_matching = self._match_tensors_with_tensor(lstm_lt, h_rt, self.full)
             rv.append(full_matching)
 
-        if self._perspective.get('maxpooling'):
+        if self._perspective.get('max-pooling'):
             # each contextual embedding compare with each contextual embedding.
             # retain the maximum of each dimension.
 
@@ -123,7 +127,10 @@ class MultiPerspectiveLayer(Layer):
             att_lt = self.attention(lstm_lt, lstm_rt, pooling='max')
             max_attentive_matching = self._match_tensors_with_attentive_tensor(lstm_lt, att_lt, self.max_attentive)
             rv.append(max_attentive_matching)
-        return rv
+
+        mp_tensor = K.concatenate(rv, axis=-1)
+
+        return mp_tensor
 
     def attention(self, lstm_lt, lstm_rt, pooling='sum'):
         """
@@ -217,5 +224,5 @@ class MultiPerspectiveLayer(Layer):
 
     def compute_output_shape(self, input_shape: list):
         """Compute output shape."""
-        shape_a, shape_b = input_shape
-        return [(shape_a[0], self._dim_output), shape_b[:-1]]
+        shape_a = input_shape[0]
+        return (shape_a[0], shape_a[1], self._dim_output*len(self._perspective))
