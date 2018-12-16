@@ -2,8 +2,8 @@
 
 
 import logging
-import keras
 
+import keras
 from keras.activations import softmax
 from keras.initializers import RandomUniform
 
@@ -31,7 +31,7 @@ class ANMMModel(engine.BaseModel):
         params.add(engine.Param('dropout_rate', 0.1))
         params.add(engine.Param('left_text_len', 10))
         params.add(engine.Param('num_layers', 2))
-        params.add(engine.Param('hidden_sizes', [10, 10]))
+        params.add(engine.Param('hidden_sizes', [5, 10]))
         return params
 
     def build(self):
@@ -44,25 +44,27 @@ class ANMMModel(engine.BaseModel):
         # doc is [batch_size, right_text_len, bin_num]
         query, doc = self._make_inputs()
         embedding = self._make_embedding_layer()
-        initializer_fc = RandomUniform(minval=-0.1, maxval=0.1, seed=11)
-        initializer_gate = RandomUniform(minval=-0.01, maxval=0.01, seed=11)
 
         q_embed = embedding(query)
-        q_w = keras.layers.Dense(
-            1, kernel_initializer=initializer_gate, use_bias=False)(q_embed)
-        q_w = keras.layers.Lambda(
+        q_attention = keras.layers.Dense(
+            1, kernel_initializer=RandomUniform(), use_bias=False)(q_embed)
+        q_attention = keras.layers.Lambda(
             lambda x: softmax(x, axis=1),
             output_shape=(self._params['left_text_len'],)
-        )(q_w)
-        z = doc
-        z = keras.layers.Dropout(rate=self._params['dropout_rate'])(z)
-        for i in range(self._params['num_layers'] - 1):
-            z = keras.layers.Dense(self._params['hidden_sizes'][i],
-                                   kernel_initializer=initializer_fc)(z)
-            z = keras.layers.Activation('tanh')(z)
-        z = keras.layers.Dense(
-            self._params['hidden_sizes'][self._params['num_layers'] - 1])(z)
-        z = keras.layers.Reshape((self._params['left_text_len'],))(z)
-        q_w = keras.layers.Reshape((self._params['left_text_len'],))(q_w)
-        x_out = keras.layers.Dot(axes=[1, 1])([z, q_w])
-        self._backend = keras.Model(inputs=[query, doc], outputs=x_out)
+        )(q_attention)
+        d_bin = keras.layers.Dropout(
+            rate=self._params['dropout_rate'])(doc)
+        for layer_id in range(self._params['num_layers'] - 1):
+            d_bin = keras.layers.Dense(
+                self._params['hidden_sizes'][layer_id],
+                kernel_initializer=RandomUniform())(d_bin)
+            d_bin = keras.layers.Activation('tanh')(d_bin)
+            d_bin = keras.layers.Dense(
+                self._params['hidden_sizes'][self._params['num_layers'] - 1])(
+                d_bin)
+            d_bin = keras.layers.Reshape((self._params['left_text_len'],))(
+                d_bin)
+        q_attention = keras.layers.Reshape((self._params['left_text_len'],))(
+            q_attention)
+        out = keras.layers.Dot(axes=[1, 1])([d_bin, q_attention])
+        self._backend = keras.Model(inputs=[query, doc], outputs=out)
