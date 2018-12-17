@@ -1,5 +1,5 @@
 keras == 2.2.2 # rq.filter: >=2.2.0,<2.2.3
-tensorflow >= 1.1.0
+tensorflow >= 1.8.0
 nltk >= 3.2.3
 numpy >= 1.12.1
 tqdm >= 4.19.4
