@@ -90,6 +90,7 @@ class BimpmModel(engine.BaseModel):
         """
         input_left, input_right = self._make_inputs()
 
+
         # Word representation layer.
         # TODO: Concanate word level embedding and character level embedding.
         embedding = self._make_embedding_layer()
@@ -114,9 +115,9 @@ class BimpmModel(engine.BaseModel):
         # Output is two sequence of vectors.
         # TODO Finalize MultiPerspectiveMatching
         multi_perspective = MultiPerspectiveLayer(dim_input=self._params['hidden_size']*2,
-                                                  dim_output=self._params['dim_perspective'],
-                                                  perspective=self._params['perspective'],
-                                                  dim_perspective=self._params['dim_perspective'])
+                                                  dim_perspective=self._params['dim_perspective'],
+                                                  perspective=self._params['perspective']
+                                                  )
         # Note: input to `keras layer` must be list of tensors.
         mp_left = multi_perspective(x_left + x_right)
         mp_right = multi_perspective(x_right + x_left)
@@ -133,6 +134,8 @@ class BimpmModel(engine.BaseModel):
         rep_right = aggregation(mp_right)
 
         # Concatenate the concatenated vector of left and right.
+        # TODO(tjf) add more functions here
+        # ref: https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L206-L339
         x = Concatenate()([rep_left, rep_right])
 
         # Prediction layer.

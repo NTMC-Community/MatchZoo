@@ -19,12 +19,8 @@ class MultiPerspectiveLayer(Layer):
     def __init__(
             self,
             dim_input: int,
-            dim_output: int,
             dim_perspective: int,
-            perspective: dict = {'full': True,
-                                 'max-pooling': True,
-                                 'attentive': True,
-                                 'max-attentive': True},
+            perspective: dict,
             **kwargs
     ):
         """
@@ -33,15 +29,14 @@ class MultiPerspectiveLayer(Layer):
         :param output_dim: dimensionality of output space.
         """
         self._dim_input = dim_input
-        self._dim_output = dim_output
         self._dim_perspective = dim_perspective
         self._perspective = perspective
         super(MultiPerspectiveLayer, self).__init__(**kwargs)
 
-        @classmethod
-        def list_available_perspectives(cls) -> list:
-            """List available strategy for multi-perspective matching."""
-            return ['full', 'max-pooling', 'attentive', 'max-attentive']
+    @classmethod
+    def list_available_perspectives(cls) -> list:
+        """List available strategy for multi-perspective matching."""
+        return ['full', 'max-pooling', 'attentive', 'max-attentive']
 
     @property
     def num_perspective(cls):
@@ -51,35 +46,33 @@ class MultiPerspectiveLayer(Layer):
     def build(self, input_shape: list):
         """Input shape."""
         # The shape of the weights is l * d.
-        # self._dim_output = 1
         if self._perspective.get('full'):
             self.full = self.add_weight(name='pool',
-                                        shape=(self._dim_output,
+                                        shape=(self._dim_perspective,
                                                self._dim_input),
                                         initializer='uniform',
                                         trainable=True)
         if self._perspective.get('max-pooling'):
             self.maxpooling = self.add_weight(name='max-pooling',
-                                        shape=(self._dim_output,
-                                               self._dim_input),
-                                        initializer='uniform',
-                                        trainable=True)
+                                              shape=(self._dim_perspective,
+                                                     self._dim_input),
+                                              initializer='uniform',
+                                              trainable=True)
         if self._perspective.get('attentive'):
             self.attentive = self.add_weight(name='attentive',
-                                        shape=(self._dim_output,
-                                               self._dim_input),
-                                        initializer='uniform',
-                                        trainable=True)
+                                             shape=(self._dim_perspective,
+                                                    self._dim_input),
+                                             initializer='uniform',
+                                             trainable=True)
         if self._perspective.get('max-attentive'):
             self.max_attentive = self.add_weight(name='max-attentive',
-                                        shape=(self._dim_output,
-                                               self._dim_input),
-                                        initializer='uniform',
-                                        trainable=True)
+                                                 shape=(self._dim_perspective,
+                                                        self._dim_input),
+                                                 initializer='uniform',
+                                                 trainable=True)
         self.built = True
 
-
-    def call(self, x: list):
+    def call(self, x: list, **kwargs):
         """Call."""
         rv = []
         seq_lt, seq_rt = x[:5], x[5:]
@@ -225,4 +218,4 @@ class MultiPerspectiveLayer(Layer):
     def compute_output_shape(self, input_shape: list):
         """Compute output shape."""
         shape_a = input_shape[0]
-        return (shape_a[0], shape_a[1], self._dim_output*len(self._perspective))
+        return (shape_a[0], shape_a[1], self._dim_perspective*len(self._perspective))
