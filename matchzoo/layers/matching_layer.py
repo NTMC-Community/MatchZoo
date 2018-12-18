@@ -9,6 +9,13 @@ class MatchingLayer(Layer):
     """
     Layer that computes a matching matrix between samples in two tensors.
 
+    :param normalize: Whether to L2-normalize samples along the
+        dot product axis before taking the dot product.
+        If set to True, then the output of the dot product
+        is the cosine proximity between the two samples.
+    :param matching_type: the similarity function for matching
+    :param **kwargs: Standard layer keyword arguments.
+
     Examples:
         >>> import matchzoo as mz
         >>> layer = mz.layers.MatchingLayer()
@@ -17,16 +24,7 @@ class MatchingLayer(Layer):
 
     def __init__(self, normalize: bool = False,
                  matching_type: str = 'dot', **kwargs):
-        """
-        :class:`MatchingLayer` constructor.
-
-        :param normalize: Whether to L2-normalize samples along the
-            dot product axis before taking the dot product.
-            If set to True, then the output of the dot product
-            is the cosine proximity between the two samples.
-        :param matching_type: the similarity function for matching
-        :param **kwargs: Standard layer keyword arguments.
-        """
+        """:class:`MatchingLayer` constructor."""
         super(MatchingLayer, self).__init__(**kwargs)
         self.normalize = normalize
         self.matching_type = matching_type
