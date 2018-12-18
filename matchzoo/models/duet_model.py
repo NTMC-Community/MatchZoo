@@ -14,6 +14,16 @@ class DUETModel(engine.BaseModel):
 
     Examples:
         >>> model = DUETModel()
+        >>> model.params['embedding_input_dim'] = 1000
+        >>> model.params['embedding_output_dim'] = 300
+        >>> model.params['lm_filters'] = 32
+        >>> model.params['lm_hidden_sizes'] = [64, 32]
+        >>> model.params['lm_dropout_rate'] = 0.5
+        >>> model.params['dm_filters'] = 32
+        >>> model.params['dm_kernel_size'] = 3
+        >>> model.params['dm_d_mpool'] = 4
+        >>> model.params['dm_hidden_sizes'] = [64, 32]
+        >>> model.params['dm_dropout_rate'] = 0.5
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -23,9 +33,9 @@ class DUETModel(engine.BaseModel):
     def get_default_params(cls):
         """Get default parameters."""
         params = super().get_default_params(with_embedding=True)
-        params.add(engine.Param('lm_kernel_count', 32))
+        params.add(engine.Param('lm_filters', 32))
         params.add(engine.Param('lm_hidden_sizes', [32]))
-        params.add(engine.Param('dm_kernel_count', 32))
+        params.add(engine.Param('dm_filters', 32))
         params.add(engine.Param('dm_kernel_size', 3))
         params.add(engine.Param('dm_q_hidden_size', 32))
         params.add(engine.Param('dm_d_mpool', 3))
@@ -54,7 +64,7 @@ class DUETModel(engine.BaseModel):
         d_embed = embedding(doc)
 
         lm_xor = keras.layers.Lambda(self._xor_match)([query, doc])
-        lm_conv = keras.layers.Conv1D(self._params['lm_kernel_count'],
+        lm_conv = keras.layers.Conv1D(self._params['lm_filters'],
                                       self._params['input_shapes'][1][0],
                                       padding='same',
                                       activation='tanh')(lm_xor)
@@ -69,7 +79,7 @@ class DUETModel(engine.BaseModel):
             lm_feat)
         lm_score = keras.layers.Dense(1)(lm_drop)
 
-        dm_q_conv = keras.layers.Conv1D(self._params['dm_kernel_count'],
+        dm_q_conv = keras.layers.Conv1D(self._params['dm_filters'],
                                         self._params['dm_kernel_size'],
                                         padding='same',
                                         activation='tanh')(q_embed)
@@ -83,7 +93,7 @@ class DUETModel(engine.BaseModel):
         dm_q_rep = keras.layers.Lambda(lambda x: tf.expand_dims(x, 1))(
             dm_q_rep)
 
-        dm_d_conv1 = keras.layers.Conv1D(self._params['dm_kernel_count'],
+        dm_d_conv1 = keras.layers.Conv1D(self._params['dm_filters'],
                                          self._params['dm_kernel_size'],
                                          padding='same',
                                          activation='tanh')(d_embed)
@@ -91,7 +101,7 @@ class DUETModel(engine.BaseModel):
             dm_d_conv1)
         dm_d_mp = keras.layers.MaxPooling1D(
             pool_size=self._params['dm_d_mpool'])(dm_d_conv1)
-        dm_d_conv2 = keras.layers.Conv1D(self._params['dm_kernel_count'], 1,
+        dm_d_conv2 = keras.layers.Conv1D(self._params['dm_filters'], 1,
                                          padding='same',
                                          activation='tanh')(dm_d_mp)
         dm_d_conv2 = keras.layers.Dropout(self._params['dm_dropout_rate'])(
