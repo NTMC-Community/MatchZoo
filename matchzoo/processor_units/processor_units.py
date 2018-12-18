@@ -12,7 +12,7 @@ match_punc = re.compile(r'[^\w\s]')
 
 
 def list_available():
-    """List all avaible units."""
+    """List all available units."""
     return ProcessorUnit.__subclasses__()
 
 

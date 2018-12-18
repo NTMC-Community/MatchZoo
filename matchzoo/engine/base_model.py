@@ -132,7 +132,7 @@ class BaseModel(abc.ABC):
             params.add(engine.Param('mlp_num_units'))
             params.add(engine.Param('mlp_num_layers'))
             params.add(engine.Param('mlp_num_fan_out'))
-            params.add(engine.Param('mlp_num_activation'))
+            params.add(engine.Param('mlp_activation_func'))
         return params
 
     @classmethod
@@ -445,7 +445,8 @@ class BaseModel(abc.ABC):
             self._params.get('mlp_num_layers').set_default(3, verbose)
             self._params.get('mlp_num_units').set_default(64, verbose)
             self._params.get('mlp_num_fan_out').set_default(32, verbose)
-            self._params.get('mlp_num_activation').set_default('relu', verbose)
+            self._params.get('mlp_activation_func').set_default('relu',
+                                                                verbose)
 
     def _set_param_default(self, name, default_val, verbose):
         if self._params[name] is None:
@@ -487,7 +488,7 @@ class BaseModel(abc.ABC):
             raise AttributeError
 
         def _wrapper(x):
-            activation = self._params['mlp_num_activation']
+            activation = self._params['mlp_activation_func']
             for _ in range(self._params['mlp_num_layers']):
                 x = keras.layers.Dense(self._params['mlp_num_units'],
                                        activation=activation)(x)
