@@ -18,7 +18,11 @@ class MatchingLayer(Layer):
 
     Examples:
         >>> import matchzoo as mz
-        >>> layer = mz.layers.MatchingLayer()
+        >>> layer = mz.layers.MatchingLayer(matching_type='dot',
+        ...                                 normalize=True)
+        >>> num_batch, left_len, right_len, num_dim = 5, 3, 2, 10
+        >>> layer.build([[num_batch, left_len, num_dim],
+        ...              [num_batch, right_len, num_dim]])
 
     """
 
