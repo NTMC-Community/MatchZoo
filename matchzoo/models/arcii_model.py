@@ -14,8 +14,6 @@ class ArcIIModel(engine.BaseModel):
     ArcII Model.
 
     Examples:
-        >>> import matchzoo as mz
-        >>> train_pack = mz.datasets.toy.load_data()
         >>> model = ArcIIModel()
         >>> model.params['embedding_output_dim'] = 300
         >>> model.params['num_blocks'] = 2
