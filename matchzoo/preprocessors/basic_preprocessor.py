@@ -27,6 +27,7 @@ class BasicPreprocessor(engine.BasePreprocessor):
         :class:`FrequenceFilterUnit`.
     :param filter_high_freq: Float, upper bound value used by
         :class:`FrequenceFilterUnit`.
+    :param remove_stop_words: Bool, use :class:`StopRemovalUnit` unit or not.
 
     Example:
         >>> import matchzoo as mz
@@ -37,7 +38,8 @@ class BasicPreprocessor(engine.BasePreprocessor):
         ...     fixed_length_right=20,
         ...     filter_mode='df',
         ...     filter_low_freq=2,
-        ...     filter_high_freq=1000
+        ...     filter_high_freq=1000,
+        ...     remove_stop_words=True
         ... )
         >>> preprocessor = preprocessor.fit(train_data)
         >>> preprocessor.context['input_shapes']
@@ -57,7 +59,8 @@ class BasicPreprocessor(engine.BasePreprocessor):
                  fixed_length_right: int = 30,
                  filter_mode: str = 'df',
                  filter_low_freq: float = 2,
-                 filter_high_freq: float = float('inf')):
+                 filter_high_freq: float = float('inf'),
+                 remove_stop_words: bool = False):
         """Initialization."""
         super().__init__()
         self._fixed_length_left = fixed_length_left
@@ -75,6 +78,9 @@ class BasicPreprocessor(engine.BasePreprocessor):
             high=filter_high_freq,
             mode=filter_mode
         )
+        self._default_units = self._default_processor_units()
+        if remove_stop_words:
+            self._default_units.append(processor_units.StopRemovalUnit())
 
     def fit(self, data_pack: DataPack, verbose=1):
         """
@@ -132,12 +138,3 @@ class BasicPreprocessor(engine.BasePreprocessor):
         data_pack.apply_on_text(self._right_fixedlength_unit.transform,
                                 mode='right', inplace=True, verbose=verbose)
         return data_pack
-
-    @classmethod
-    def _default_processor_units(cls) -> list:
-        """Prepare needed process units."""
-        return [
-            processor_units.TokenizeUnit(),
-            processor_units.LowercaseUnit(),
-            processor_units.PuncRemovalUnit(),
-        ]
