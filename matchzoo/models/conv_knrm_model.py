@@ -13,6 +13,10 @@ class ConvKNRMModel(models.KNRMModel):
 
     Examples:
         >>> model = ConvKNRMModel()
+        >>> model.params['filters'] = 128
+        >>> model.params['conv_activation_func'] = 'tanh'
+        >>> model.params['max_ngram'] = 3
+        >>> model.params['use_crossmatch'] = True
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -21,7 +25,8 @@ class ConvKNRMModel(models.KNRMModel):
     def get_default_params(cls):
         """Get default parameters."""
         params = super().get_default_params()
-        params.add(engine.Param('num_filters', 128))
+        params.add(engine.Param('filters', 128))
+        params.add(engine.Param('conv_activation_func', 'relu'))
         params.add(engine.Param('max_ngram', 3))
         params.add(engine.Param('use_crossmatch', True))
         return params
@@ -38,8 +43,11 @@ class ConvKNRMModel(models.KNRMModel):
         q_convs = []
         d_convs = []
         for i in range(self._params['max_ngram']):
-            c = keras.layers.Conv1D(self._params['num_filters'], i + 1,
-                                    activation='relu', padding='same')
+            c = keras.layers.Conv1D(
+                self._params['filters'], i + 1,
+                activation=self._params['conv_activation_func'],
+                padding='same'
+            )
             q_convs.append(c(q_embed))
             d_convs.append(c(d_embed))
 

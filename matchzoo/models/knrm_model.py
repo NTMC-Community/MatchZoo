@@ -11,6 +11,9 @@ class KNRMModel(engine.BaseModel):
 
     Examples:
         >>> model = KNRMModel()
+        >>> model.params['kernel_num'] = 11
+        >>> model.params['sigma'] = 0.1
+        >>> model.params['exact_sigma'] = 0.001
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 

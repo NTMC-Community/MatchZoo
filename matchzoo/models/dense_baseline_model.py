@@ -11,7 +11,10 @@ class DenseBaselineModel(engine.BaseModel):
 
     Examples:
         >>> model = DenseBaselineModel()
-        >>> model.params['mlp_num_units'] = 128
+        >>> model.params['mlp_num_layers'] = 2
+        >>> model.params['mlp_num_units'] = 300
+        >>> model.params['mlp_num_fan_out'] = 128
+        >>> model.params['mlp_activation_func'] = 'relu'
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
         >>> model.compile()
