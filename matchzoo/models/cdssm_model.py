@@ -3,7 +3,7 @@
 from matchzoo import engine
 
 from keras.models import Model
-from keras.layers import Input, Conv1D, GlobalMaxPool1D, Dot, Dense
+from keras.layers import Input, Conv1D, GlobalMaxPool1D, Dot
 
 
 class CDSSMModel(engine.BaseModel):
@@ -17,6 +17,14 @@ class CDSSMModel(engine.BaseModel):
 
     Examples:
         >>> model = CDSSMModel()
+        >>> model.params['filters'] =  32
+        >>> model.params['kernel_size'] = 3
+        >>> model.params['strides'] = 2
+        >>> model.params['padding'] = 'same'
+        >>> model.params['mlp_num_layers'] = 2
+        >>> model.params['mlp_num_units'] = 300
+        >>> model.params['mlp_num_fan_out'] = 128
+        >>> model.params['conv_activation_func'] = 'relu'
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -25,18 +33,16 @@ class CDSSMModel(engine.BaseModel):
     @classmethod
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
-        params = super().get_default_params()
+        params = super().get_default_params(with_multi_layer_perceptron=True)
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(10, 900), (10, 900)]
         params.add(engine.Param('w_initializer', 'glorot_normal'))
         params.add(engine.Param('b_initializer', 'zeros'))
-        params.add(engine.Param('dim_fan_out', 128))
-        params.add(engine.Param('dim_hidden', 300))
-        params.add(engine.Param('contextual_window', 3))
+        params.add(engine.Param('filters', 32))
+        params.add(engine.Param('kernel_size', 3))
         params.add(engine.Param('strides', 1))
         params.add(engine.Param('padding', 'same'))
-        params.add(engine.Param('activation_hidden', 'tanh'))
-        params.add(engine.Param('num_hidden_layers', 1))
+        params.add(engine.Param('conv_activation_func', 'tanh'))
         return params
 
     def _create_base_network(self, input_shape: tuple) -> Model:
@@ -57,20 +63,18 @@ class CDSSMModel(engine.BaseModel):
         # Apply 1d convolutional on each word_ngram (lt).
         # Input shape: (batch_size, num_tri_letters, 90000)
         # Sequence of num_tri_letters vectors of 90000d vectors.
-        x = Conv1D(filters=self._params['dim_hidden'],
-                   kernel_size=self._params['contextual_window'],
+        x = Conv1D(filters=self._params['filters'],
+                   kernel_size=self._params['kernel_size'],
                    strides=self._params['strides'],
                    padding=self._params['padding'],
-                   activation=self._params['activation_hidden'],
+                   activation=self._params['conv_activation_func'],
                    kernel_initializer=self._params['w_initializer'],
                    bias_initializer=self._params['b_initializer'])(x_in)
         # Apply max pooling by take max at each dimension across
         # all word_trigram features.
         x = GlobalMaxPool1D()(x)
         # Apply a none-linear transformation use a tanh layer.
-        for _ in range(0, self._params['num_hidden_layers']):
-            x = Dense(self._params['dim_fan_out'],
-                      activation=self._params['activation_hidden'])(x)
+        x = self._make_multi_layer_perceptron_layer()(x)
         return Model(inputs=x_in, outputs=x)
 
     def build(self):
