@@ -26,9 +26,11 @@ class BaseMetric(abc.ABC):
         """:return: Formated string representation of the metric."""
 
     def __eq__(self, other):
+        """:return: `True` if two metrics are equal, `False` otherwise."""
         return (type(self) is type(other)) and (vars(self) == vars(other))
 
     def __hash__(self):
+        """:return: Hashing value using the metric as `str`."""
         return str(self).__hash__()
 
 
