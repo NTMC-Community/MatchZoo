@@ -25,6 +25,12 @@ class BaseMetric(abc.ABC):
     def __repr__(self):
         """:return: Formated string representation of the metric."""
 
+    def __eq__(self, other):
+        return (type(self) is type(other)) and (vars(self) == vars(other))
+
+    def __hash__(self):
+        return str(self).__hash__()
+
 
 def sort_and_couple(labels: np.array, scores: np.array) -> np.array:
     """Zip the `labels` with `scores` into a single list."""
