@@ -21,6 +21,13 @@ class BasicPreprocessor(engine.BasePreprocessor):
         data_pack.
     :param fixed_length_right: Integer, maximize length of :attr:`right` in the
         data_pack.
+    :param filter_mode: String, mode used by :class:`FrequenceFilterUnit`, Can
+        be 'df', 'cf', and 'idf'.
+    :param filter_low_freq: Float, lower bound value used by
+        :class:`FrequenceFilterUnit`.
+    :param filter_high_freq: Float, upper bound value used by
+        :class:`FrequenceFilterUnit`.
+    :param remove_stop_words: Bool, use :class:`StopRemovalUnit` unit or not.
 
     Example:
         >>> import matchzoo as mz
@@ -28,7 +35,11 @@ class BasicPreprocessor(engine.BasePreprocessor):
         >>> test_data = mz.datasets.toy.load_data('test')
         >>> preprocessor = mz.preprocessors.BasicPreprocessor(
         ...     fixed_length_left=10,
-        ...     fixed_length_right=20
+        ...     fixed_length_right=20,
+        ...     filter_mode='df',
+        ...     filter_low_freq=2,
+        ...     filter_high_freq=1000,
+        ...     remove_stop_words=True
         ... )
         >>> preprocessor = preprocessor.fit(train_data)
         >>> preprocessor.context['input_shapes']
@@ -45,15 +56,31 @@ class BasicPreprocessor(engine.BasePreprocessor):
     """
 
     def __init__(self, fixed_length_left: int = 30,
-                 fixed_length_right: int = 30):
+                 fixed_length_right: int = 30,
+                 filter_mode: str = 'df',
+                 filter_low_freq: float = 2,
+                 filter_high_freq: float = float('inf'),
+                 remove_stop_words: bool = False):
         """Initialization."""
         super().__init__()
         self._fixed_length_left = fixed_length_left
         self._fixed_length_right = fixed_length_right
         self._left_fixedlength_unit = processor_units.FixedLengthUnit(
-            self._fixed_length_left, pad_mode='post')
+            self._fixed_length_left,
+            pad_mode='post'
+        )
         self._right_fixedlength_unit = processor_units.FixedLengthUnit(
-            self._fixed_length_right, pad_mode='post')
+            self._fixed_length_right,
+            pad_mode='post'
+        )
+        self._filter_unit = processor_units.FrequencyFilterUnit(
+            low=filter_low_freq,
+            high=filter_high_freq,
+            mode=filter_mode
+        )
+        self._default_units = self._default_processor_units()
+        if remove_stop_words:
+            self._default_units.append(processor_units.StopRemovalUnit())
 
     def fit(self, data_pack: DataPack, verbose=1):
         """
@@ -61,18 +88,19 @@ class BasicPreprocessor(engine.BasePreprocessor):
 
         :param data_pack: data_pack to be preprocessed.
         :param verbose: Verbosity.
-        :return: class:`DRMMTKSPreprocessor` instance.
+        :return: class:`BasicPreprocessor` instance.
         """
         units = self._default_processor_units()
         data_pack = data_pack.apply_on_text(chain_transform(units))
 
-        filter_unit = processor_units.FrequencyFilterUnit(low=2, mode='df')
-        filter_unit = build_unit_from_data_pack(filter_unit, data_pack,
-                                                flatten=False, mode='right',
-                                                verbose=verbose)
-        data_pack = data_pack.apply_on_text(filter_unit.transform,
+        fitted_filter_unit = build_unit_from_data_pack(self._filter_unit,
+                                                       data_pack,
+                                                       flatten=False,
+                                                       mode='right',
+                                                       verbose=verbose)
+        data_pack = data_pack.apply_on_text(fitted_filter_unit.transform,
                                             mode='right', verbose=verbose)
-        self._context['filter_unit'] = filter_unit
+        self._context['filter_unit'] = fitted_filter_unit
 
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
         self._context['vocab_unit'] = vocab_unit
@@ -110,12 +138,3 @@ class BasicPreprocessor(engine.BasePreprocessor):
         data_pack.apply_on_text(self._right_fixedlength_unit.transform,
                                 mode='right', inplace=True, verbose=verbose)
         return data_pack
-
-    @classmethod
-    def _default_processor_units(cls) -> list:
-        """Prepare needed process units."""
-        return [
-            processor_units.TokenizeUnit(),
-            processor_units.LowercaseUnit(),
-            processor_units.PuncRemovalUnit(),
-        ]
