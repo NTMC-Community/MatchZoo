@@ -7,6 +7,7 @@ from .knrm_model import KNRMModel
 from .conv_knrm_model import ConvKNRMModel
 from .duet_model import DUETModel
 from .drmmtks_model import DRMMTKSModel
+from .bimpm_model import BimpmModel
 
 import matchzoo
 def list_available():

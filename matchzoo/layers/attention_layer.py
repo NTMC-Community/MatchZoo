@@ -6,27 +6,34 @@ from keras.engine import Layer
 
 class AttentionLayer(Layer):
     """
-    A keras implementation of Attention function of Bimpm multi-perspective layer.
-    For detailed information, see Bilateral Multi-Perspective
-    Matching for Natural Language Sentences, section 3.2.
+    Layer that compute attention for Bimpm model.
 
-    Reference: https://github.com/zhiguowang/BiMPM/blob/master/src/layer_utils.py#L145-L196
+    For detailed information, see Bilateral Multi-Perspective Matching for
+    Natural Language Sentences, section 3.2.
+
+    Reference:
+    https://github.com/zhiguowang/BiMPM/blob/master/src/layer_utils.py#L145-L196
+
+    Examples:
+        >>> import matchzoo as mz
+        >>> layer = mz.layers.AttentionLayer(att_dim=50)
+
     """
 
-    def __init__(
-        self,
-        att_dim: int,
-        att_type: str = 'default',
-        remove_diagnoal: bool = False,
-        **kwargs
-    ):
+    def __init__(self,
+                 att_dim: int,
+                 att_type: str = 'default',
+                 remove_diagnoal: bool = False,
+                 **kwargs):
         """
-        Class initialization.
+        class: `AttentionLayer` constructor.
 
-        :param output_dim: dimensionality of output space.
+        :param att_dim: int
+        :param att_type: int
+        :param remove_diagnoal: bool
         """
-        self.att_type = att_type
         self.att_dim = att_dim
+        self.att_type = att_type
         self.remove_diagnoal = remove_diagnoal
         super(AttentionLayer, self).__init__(**kwargs)
 
@@ -36,6 +43,11 @@ class AttentionLayer(Layer):
         return cls.att_type
 
     def build(self, input_shapes):
+        """
+        Build the layer.
+
+        :param input_shapes: input_shapes
+        """
         if not isinstance(input_shapes, list):
             raise ValueError('A attention layer should be called '
                              'on a list of inputs.')
@@ -55,13 +67,17 @@ class AttentionLayer(Layer):
         super(AttentionLayer, self).build(input_shapes)
 
     def call(self, x: list, **kwargs):
-        # calculate attention ==> a: [batch_size, len_1, len_2]
+        """
+        Calculate attention.
+
+        :param x: [reps_lt, reps_rt]
+        :return attn_prob: [batch_size, len_1, len_2]
+        """
 
         if not isinstance(x, list):
             raise ValueError('A attention layer should be called '
                              'on a list of inputs.')
 
-        # TODO(tjf) add mask
         reps_lt, reps_rt = x
 
         # [1, 1, d, 20]
@@ -75,7 +91,7 @@ class AttentionLayer(Layer):
         reps_rt = K.expand_dims(reps_rt, axis=-1)
         attn_reps_rt = K.sum(reps_rt * attn_kernel, axis=2)
 
-        # tanh
+        # Tanh
         attn_reps_lt = K.tanh(attn_reps_lt)  # [b, s, 20]
         attn_reps_rt = K.tanh(attn_reps_rt)
 
@@ -83,7 +99,8 @@ class AttentionLayer(Layer):
         attn_reps_lt = attn_reps_lt * self.diagnoal_W  # [b, s, 20]
         attn_reps_rt = K.permute_dimensions(attn_reps_rt, (0, 2, 1))
 
-        attn_value = K.batch_dot(attn_reps_lt, attn_reps_rt)  # [batch_size, s, s]
+        # [batch_size, s, s]
+        attn_value = K.batch_dot(attn_reps_lt, attn_reps_rt)
 
         # TODO(tjf) or remove: normalize
         # if self.remove_diagnoal:
@@ -111,9 +128,8 @@ class AttentionLayer(Layer):
         return attn_prob
 
     def compute_output_shape(self, input_shapes):
+        """Calculate the layer output shape."""
         if not isinstance(input_shapes, list):
             raise ValueError('A attention layer should be called '
                              'on a list of inputs.')
-        len_lt = input_shapes[0][1]
-        len_rt = input_shapes[1][1]
-        return input_shapes[0][0], len_lt, len_rt
+        return input_shapes[0][0], input_shapes[0][1], input_shapes[1][1]
