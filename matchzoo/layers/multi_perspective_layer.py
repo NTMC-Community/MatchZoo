@@ -90,7 +90,7 @@ class MultiPerspectiveLayer(Layer):
 
             # TODO(tjf): add mask
             h_rt = K.concatenate([forward_h_rt, backward_h_rt], axis=-1)
-            full_matching = self._match_tensors_with_tensor(lstm_lt, h_rt, self.full)
+            full_matching = self._full_matching(lstm_lt, h_rt, self.full)
             rv.append(full_matching)
 
         if self._perspective.get('max-pooling'):
@@ -141,25 +141,6 @@ class MultiPerspectiveLayer(Layer):
         att_lt = K.sum(atten_score * lstm_rt, axis=2)
         return att_lt
 
-    def _match_tensors_with_tensor(self, lstm_lt, h_rt, W):
-        """
-        TODO(tjf): add mask
-        """
-        # W: -> [1, 1, l, d]
-        W = K.expand_dims(W, 0)
-        W = K.expand_dims(W, 0)
-        # lstm_lt: -> [batch, steps_lt, l, d]
-        lstm_lt = W * K.expand_dims(lstm_lt, 2)
-
-        # h_rt: -> [batch, 1, 1, d]
-        h_rt = K.expand_dims(h_rt, 1)
-        h_rt = K.expand_dims(h_rt, 1)
-        h_rt = h_rt
-
-        # matching: -> [batch, steps_lt, l]
-        matching = self._cosine_distance(lstm_lt, h_rt, cosine_norm=False)
-        return matching
-
     def _match_tensors_with_attentive_tensor(self, lstm_lt, att_lt, W):
         # TODO(tjf): add mask
 
@@ -174,7 +155,7 @@ class MultiPerspectiveLayer(Layer):
         att_lt = K.expand_dims(att_lt, 2)
 
         # matching: -> [batch, steps_lt, l]
-        matching = self._cosine_distance(lstm_lt, att_lt, cosine_norm=False)
+        matching = _cosine_distance(lstm_lt, att_lt, cosine_norm=False)
         return matching
 
     def _match_tensors(self, lstm_lt, lstm_rt, W):
@@ -197,25 +178,114 @@ class MultiPerspectiveLayer(Layer):
         # lstm_lt * W: [batch, steps_lt, 1, num_perspective, d]
         # lstm_rt: [batch, 1, steps_rt, 1, 1, d]
         # matching -> [batch, steps_lt, steps_rt, num_perspective]
-        matching = self._cosine_distance(lstm_lt * W, lstm_rt, cosine_norm=False)
+        matching = _cosine_distance(lstm_lt * W, lstm_rt, cosine_norm=False)
         return matching
-
-    def _cosine_distance(self, v1, v2, cosine_norm=True, eps=1e-6):
-        """
-        only requires `K.sum(v1 * v2, axis=-1)`
-        """
-        # cosine_norm = True
-        # v1 [batch, time_steps(v1), 1, l, d]
-        # v2 [batch, 1, time_steps(v2), l, d]
-        # [batch, time_steps(v1), time_steps(v2), l]
-        cosine_numerator = K.sum(v1 * v2, axis=-1)
-        if not cosine_norm:
-            return K.tanh(cosine_numerator)
-        v1_norm = K.sqrt(K.maximum(K.sum(K.square(v1), axis=-1), eps))
-        v2_norm = K.sqrt(K.maximum(K.sum(K.square(v2), axis=-1), eps))
-        return cosine_numerator / v1_norm / v2_norm
 
     def compute_output_shape(self, input_shape: list):
         """Compute output shape."""
         shape_a = input_shape[0]
         return (shape_a[0], shape_a[1], self._dim_perspective*len(self._perspective))
+
+
+class MpFullMatchLayer(Layer):
+    """
+    Mp Full Match Layer
+    """
+
+    def __init__(self, mp_dim, **kwargs):
+        self.mp_dim = mp_dim
+        super(MpFullMatchLayer, self).__init__(**kwargs)
+
+    def build(self, input_shapes):
+        input_shape = input_shapes[0]
+        super(MpFullMatchLayer, self).build(input_shape)
+
+    def call(self, x, **kwargs):
+        reps_lt, rep_rt = x
+        reps_rt = K.expand_dims(rep_rt, 1)
+
+        # matching: -> [batch, steps_lt, mp_dim+1]
+        match_tensor, match_dim = multi_perspective_match(self.mp_dim, reps_lt, reps_rt)
+        return match_tensor
+
+    def compute_output_shape(self, input_shape):
+        return (input_shape[0][0], input_shape[0][1], self.mp_dim+1)
+
+
+class MpMaxPoolingLayer()
+
+
+def multi_perspective_match(mp_dim, reps_lt, reps_rt, with_cosine=True, with_mp_cosine=True):
+    """
+    reference: https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L207-L223
+    :param mp_dim: about 20
+    :param reps_lt: [batch, len, dim]
+    :param reps_rt: [batch, len, dim]
+    :param with_cosine: True
+    :param with_mp_cosine: True
+    :return: [batch, len, feature_dim*2]
+    """
+    input_shape = K.shape(reps_lt)
+    batch_size = input_shape[0]
+    seq_length = input_shape[1]
+
+    match_dim = 0
+    match_result_list = []
+    if with_cosine:
+        cosine_value = _cosine_distance(reps_lt, reps_rt, False)
+        cosine_value = K.reshape(cosine_value, [batch_size, seq_length, 1])
+        match_result_list.append(cosine_value)
+        match_dim += 1
+
+    if with_mp_cosine:
+        mp_cosine_layer = MpCosineLayer(mp_dim)
+        match_tensor = mp_cosine_layer([reps_lt, reps_rt])
+        match_result_list.append(match_tensor)
+        match_dim += mp_cosine_layer.mp_dim
+
+    match_result = K.concatenate(match_result_list, 2)
+    return match_result, match_dim
+
+
+class MpCosineLayer(Layer):
+    """
+    Implementation of Multi-Perspective Cosine Distance
+    Reference: https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L121-L129
+    """
+
+    def __init__(self, mp_dim, **kwargs):
+        self.mp_dim = mp_dim
+        super(MpCosineLayer, self).__init__(**kwargs)
+
+    def build(self, input_shape):
+        self.kernel = self.add_weight(name='kernal',
+                                      shape=(1, 1, self.mp_dim, input_shape[0][-1]),
+                                      initializer='uniform',
+                                      trainable=True)
+        super(MpCosineLayer, self).build(input_shape)
+
+    def call(self, x, **kwargs):
+        v1, v2 = x
+        v1 = K.expand_dims(v1, 2) * self.kernel
+        v2 = K.expand_dims(v2, 2)
+        return _cosine_distance(v1, v2, False)
+
+    def compute_output_shape(self, input_shape):
+        return (input_shape[0][0], input_shape[0][1], self.mp_dim)
+
+
+def _cosine_distance(v1, v2, cosine_norm=True, eps=1e-6):
+    """
+    only requires `K.sum(v1 * v2, axis=-1)`
+    :param v1: [batch, time_steps(v1), 1, l, d]
+    :param v2: [batch, 1, time_steps(v2), l, d]
+    :param cosine_norm: True
+    :param eps: 1e-6
+    :return: [batch, time_steps(v1), time_steps(v2), l]
+    """
+    cosine_numerator = K.sum(v1 * v2, axis=-1)
+    if not cosine_norm:
+        return K.tanh(cosine_numerator)
+    v1_norm = K.sqrt(K.maximum(K.sum(K.square(v1), axis=-1), eps))
+    v2_norm = K.sqrt(K.maximum(K.sum(K.square(v2), axis=-1), eps))
+    return cosine_numerator / v1_norm / v2_norm

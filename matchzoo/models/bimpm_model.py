@@ -2,7 +2,7 @@
 
 import numpy as np
 from keras.models import Model
-from keras.layers import Input, Bidirectional, LSTM, Dense, Concatenate
+from keras.layers import Input, Bidirectional, LSTM, Dense, Concatenate, Dropout
 
 
 from matchzoo import engine
@@ -25,7 +25,6 @@ class BimpmModel(engine.BaseModel):
         params.add(engine.Param('char_embedding_mat', None))
         params.add(engine.Param('embedding_random_scale', 0.2))
         params.add(engine.Param('activation_embedding', 'softmax'))
-
         # Bimpm Setting
         params.add(engine.Param('perspective', {'full': True,
                                                 'max-pooling': True,
@@ -88,19 +87,19 @@ class BimpmModel(engine.BaseModel):
         """
         Build model structure
         """
+        # ~ Input Layer
         input_left, input_right = self._make_inputs()
 
-
-        # Word representation layer.
-        # TODO: Concanate word level embedding and character level embedding.
+        # Word Representation Layer
+        # TODO: concatenate word level embedding and character level embedding.
         embedding = self._make_embedding_layer()
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
 
-        # Context representation layer.
+        # ~ Encoding Layer
         # Note: When merge_mode = None, output will be [lstm_forward, lstm_backward],
-        #      the default setting of merge_mode is concat, and the output will be
-        #      [lstm]. If with return_state, then the output would append [h,c,h,c]
+        #       the default setting of merge_mode is concat, and the output will be
+        #       [lstm]. If with return_state, then the output would append [h,c,h,c]
         bi_lstm = Bidirectional(LSTM(self._params['hidden_size'],
                                      return_sequences=True,
                                      return_state=True,
@@ -108,30 +107,50 @@ class BimpmModel(engine.BaseModel):
                                      kernel_initializer=self._params['w_initializer'],
                                      bias_initializer=self._params['b_initializer']),
                                 merge_mode='concat')
+        # x_left = [lstm_lt, forward_h_lt, _, backward_h_lt, _ ]
         x_left = bi_lstm(embed_left)
         x_right = bi_lstm(embed_right)
 
-        # Multiperspective Matching layer.
+        # ~ Word Level Matching Layer
+        # Reference: https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L207-L223
+        # TODO pass
+
+        # ~ Multi-Perspective Matching layer.
         # Output is two sequence of vectors.
-        # TODO Finalize MultiPerspectiveMatching
+        # Cons: Haven't support multiple context layer
         multi_perspective = MultiPerspectiveLayer(dim_input=self._params['hidden_size']*2,
                                                   dim_perspective=self._params['dim_perspective'],
-                                                  perspective=self._params['perspective']
-                                                  )
+                                                  perspective=self._params['perspective'])
         # Note: input to `keras layer` must be list of tensors.
         mp_left = multi_perspective(x_left + x_right)
         mp_right = multi_perspective(x_right + x_left)
 
-        # Aggregation layer.
+        # ~ Dropout Layer
+        mp_left = Dropout(self._params['dropout_rate'])(mp_left)
+        mp_right = Dropout(self._params['dropout_rate'])(mp_right)
+
+        # ~ Highway Layer
+        # reference: https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L289-L295
+        if self.with_match_highway:
+            # the input is left matching representations (question / passage)
+            pass
+
+        # ~ Aggregation layer
+        # TODO: before input into the Bidirectional layer, the above layer has been masked
         aggregation = Bidirectional(LSTM(self._params['hidden_size'],
                                          return_sequences=False,
                                          return_state=False,
+                                         dropout=self._params['dropout_rate'],
                                          kernel_initializer=self._params['w_initializer'],
                                          bias_initializer=self._params['b_initializer']),
                                     merge_mode='concat')
-        print(mp_left.shape)
         rep_left = aggregation(mp_left)
         rep_right = aggregation(mp_right)
+
+        # ~ Highway Network
+        # reference: https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L289-L295
+        if self.with_aggregation_highway:
+            pass
 
         # Concatenate the concatenated vector of left and right.
         # TODO(tjf) add more functions here
