@@ -64,6 +64,8 @@ class BaseModel(abc.ABC):
                                                    self._batch_size, verbose=0)
                 logger.info('Validation: ' + ' - '.join(
                     f'{k}:{v:f}' for k, v in val_logs.items()))
+                for k, v in val_logs.items():
+                    logs[k] = v
 
     def __init__(
         self,
@@ -81,7 +83,11 @@ class BaseModel(abc.ABC):
         self._backend = backend
 
     @classmethod
-    def get_default_params(cls, with_embedding=False) -> engine.ParamTable:
+    def get_default_params(
+        cls,
+        with_embedding=False,
+        with_multi_layer_perceptron=False
+    ) -> engine.ParamTable:
         """
         Model default parameters.
 
@@ -123,6 +129,12 @@ class BaseModel(abc.ABC):
             params.add(engine.Param('embedding_input_dim'))
             params.add(engine.Param('embedding_output_dim'))
             params.add(engine.Param('embedding_trainable'))
+        if with_multi_layer_perceptron:
+            params.add(engine.Param('with_multi_layer_perceptron', True))
+            params.add(engine.Param('mlp_num_units'))
+            params.add(engine.Param('mlp_num_layers'))
+            params.add(engine.Param('mlp_num_fan_out'))
+            params.add(engine.Param('mlp_activation_func'))
         return params
 
     @classmethod
@@ -431,6 +443,12 @@ class BaseModel(abc.ABC):
             self._params.get('embedding_input_dim').set_default(300, verbose)
             self._params.get('embedding_output_dim').set_default(300, verbose)
             self._params.get('embedding_trainable').set_default(True, verbose)
+        if 'with_multi_layer_perceptron' in self._params:
+            self._params.get('mlp_num_layers').set_default(3, verbose)
+            self._params.get('mlp_num_units').set_default(64, verbose)
+            self._params.get('mlp_num_fan_out').set_default(32, verbose)
+            self._params.get('mlp_activation_func').set_default('relu',
+                                                                verbose)
 
     def _set_param_default(self, name, default_val, verbose):
         if self._params[name] is None:
@@ -466,6 +484,20 @@ class BaseModel(abc.ABC):
             trainable=self._params['embedding_trainable'],
             name=name
         )
+
+    def _make_multi_layer_perceptron_layer(self):
+        if not self._params['with_multi_layer_perceptron']:
+            raise AttributeError
+
+        def _wrapper(x):
+            activation = self._params['mlp_activation_func']
+            for _ in range(self._params['mlp_num_layers']):
+                x = keras.layers.Dense(self._params['mlp_num_units'],
+                                       activation=activation)(x)
+            return keras.layers.Dense(self._params['mlp_num_fan_out'],
+                                      activation=activation)(x)
+
+        return _wrapper
 
 
 def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:

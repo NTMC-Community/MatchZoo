@@ -6,7 +6,8 @@ from . import build_unit_from_data_pack
 
 def build_vocab_unit(
     data_pack: DataPack,
-    verbose=1
+    mode: str = 'both',
+    verbose: int = 1
 ) -> processor_units.VocabularyUnit:
     """
     Build a :class:`processor_units.VocabularyUnit` given `data_pack`.
@@ -16,9 +17,11 @@ def build_vocab_unit(
     of tokens.
 
     :param data_pack: The :class:`DataPack` to build vocabulary upon.
+    :param mode: One of 'left', 'right', and 'both', to determine the source
+            data for building the :class:`VocabularyUnit`.
     :param verbose: Verbosity.
     :return: A built vocabulary unit.
 
     """
     return build_unit_from_data_pack(processor_units.VocabularyUnit(),
-                                     data_pack, True, verbose)
+                                     data_pack, mode, True, verbose)

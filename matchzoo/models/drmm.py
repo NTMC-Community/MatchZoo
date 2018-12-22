@@ -1,46 +1,35 @@
-"""An implementation of DRMMTKS Model."""
+"""An implementation of DRMM Model."""
 import typing
-import logging
 
 import keras
 import keras.backend as K
 
 from matchzoo import engine
 
-logger = logging.getLogger(__name__)
 
-
-class DRMMTKSModel(engine.BaseModel):
+class DRMM(engine.BaseModel):
     """
-    DRMMTKS Model.
+    DRMM Model.
 
     Examples:
-        >>> model = DRMMTKSModel()
-        >>> model.params['embedding_input_dim'] = 10000
-        >>> model.params['embedding_output_dim'] = 100
-        >>> model.params['top_k'] = 20
+        >>> model = DRMM()
         >>> model.params['mlp_num_layers'] = 1
         >>> model.params['mlp_num_units'] = 5
         >>> model.params['mlp_num_fan_out'] = 1
         >>> model.params['mlp_activation_func'] = 'tanh'
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
+        >>> model.compile()
 
     """
 
     @classmethod
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
-        params = super().get_default_params(
-            with_embedding=True,
-            with_multi_layer_perceptron=True
-        )
+        params = super().get_default_params(with_embedding=True,
+                                            with_multi_layer_perceptron=True)
         params['optimizer'] = 'adam'
-        params['input_shapes'] = [(5,), (300,)]
-        params.add(engine.Param(
-            'top_k', value=10,
-            hyper_space=engine.hyper_spaces.quniform(low=2, high=100)
-        ))
+        params['input_shapes'] = [(5,), (5, 30,)]
         return params
 
     def build(self):
@@ -51,35 +40,26 @@ class DRMMTKSModel(engine.BaseModel):
         #   D = embedding size
         #   L = `input_left` sequence length
         #   R = `input_right` sequence length
+        #   H = histogram size
         #   K = size of top-k
 
         # Left input and right input.
-        # shape = [B, L]
-        # shape = [B, R]
+        # query: shape = [B, L]
+        # doc: shape = [B, L, H]
+        # Note here, the doc is the matching histogram between original query
+        # and original document.
         query, doc = self._make_inputs()
 
         embedding = self._make_embedding_layer()
         # Process left input.
         # shape = [B, L, D]
         embed_query = embedding(query)
-        # shape = [B, R, D]
-        embed_doc = embedding(doc)
-        # shape = [B, L, 1]
+        # shape = [B, L, D]
         attention_probs = self.attention_layer(embed_query)
-
-        # Matching histogram of top-k
-        # shape = [B, L, R]
-        matching_matrix = keras.layers.Dot(axes=[2, 2], normalize=True)(
-            [embed_query,
-             embed_doc])
-        # shape = [B, L, K]
-        matching_topk = keras.layers.Lambda(
-            lambda x: K.tf.nn.top_k(x, k=self._params['top_k'], sorted=True)[0]
-        )(matching_matrix)
 
         # Process right input.
         # shape = [B, L, 1]
-        dense_output = self._make_multi_layer_perceptron_layer()(matching_topk)
+        dense_output = self._make_multi_layer_perceptron_layer()(doc)
 
         # shape = [B, 1, 1]
         dot_score = keras.layers.Dot(axes=[1, 1])(

@@ -57,7 +57,7 @@ def _read_data(path):
     df = pd.DataFrame({
         'text_left': table['Question'],
         'text_right': table['Sentence'],
-        'id_left': table['DocumentID'],
+        'id_left': table['QuestionID'],
         'id_right': table['SentenceID'],
         'label': table['Label']
     })
