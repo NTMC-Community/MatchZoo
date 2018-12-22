@@ -18,13 +18,13 @@ class DataGenerator(keras.utils.Sequence):
     Examples:
         >>> import matchzoo as mz
         >>> raw_data = mz.datasets.toy.load_data()
-        >>> data_generator = DataGenerator(raw_data, batch_size=2,
+        >>> data_generator = DataGenerator(raw_data, batch_size=3,
         ...                                shuffle=False)
         >>> len(data_generator)
-        50
+        34
         >>> data_generator.num_instance
         100
-        >>> x, y = data_generator[:10]
+        >>> x, y = data_generator[-1]
         >>> type(x)
         <class 'dict'>
         >>> x.keys()
@@ -113,7 +113,9 @@ class DataGenerator(keras.utils.Sequence):
         else:
             index_pool = list(range(self.num_instance))
         self._batch_indices = []
-        for i in range(len(self)):
+        for i in range(len(self) - 1):
             lower = self._batch_size * i
             upper = self._batch_size * (i + 1)
             self._batch_indices.append(index_pool[lower: upper])
+        lower = self._batch_size * (len(self) - 1)
+        self._batch_indices.append(index_pool[lower:])
