@@ -6,10 +6,11 @@ from keras.engine import Layer
 
 class AttentionLayer(Layer):
     """
-    A keras implementation of Bimpm multi-perspective layer.
-
+    A keras implementation of Attention function of Bimpm multi-perspective layer.
     For detailed information, see Bilateral Multi-Perspective
     Matching for Natural Language Sentences, section 3.2.
+
+    Reference: https://github.com/zhiguowang/BiMPM/blob/master/src/layer_utils.py#L145-L196
     """
 
     def __init__(
@@ -40,46 +41,49 @@ class AttentionLayer(Layer):
                              'on a list of inputs.')
         # input_shapes[0]: batch, time_steps, d
         hidden_dim = input_shapes[0][2]
-        self.atten_W = self.add_weight(name='atten_W',
-                                       shape=(hidden_dim,
-                                              self.att_dim),
-                                       initializer='uniform',
-                                       trainable=True)
+        self.attn_kernel = self.add_weight(name='attn_kernel',
+                                           shape=(hidden_dim,
+                                                  self.att_dim),
+                                           initializer='uniform',
+                                           trainable=True)
         self.diagnoal_W = self.add_weight(name='diagnoal_W',
                                           shape=(1,
                                                  1,
                                                  self.att_dim),
                                           initializer='uniform',
-                                          trainable=True
-                                          )
+                                          trainable=True)
         super(AttentionLayer, self).build(input_shapes)
 
-    def call(self, inputs: list, **kwargs):
+    def call(self, x: list, **kwargs):
         # calculate attention ==> a: [batch_size, len_1, len_2]
 
-        if not isinstance(inputs, list):
+        if not isinstance(x, list):
             raise ValueError('A attention layer should be called '
                              'on a list of inputs.')
 
         # TODO(tjf) add mask
-        lstm_lt, lstm_rt = inputs
+        reps_lt, reps_rt = x
 
         # [1, 1, d, 20]
-        atten_W = K.expand_dims(self.atten_W, axis=0)
-        atten_W = K.expand_dims(atten_W, axis=1)
+        attn_kernel = self.attn_kernel
+
+        attn_kernel = K.expand_dims(attn_kernel, axis=0)
+        attn_kernel = K.expand_dims(attn_kernel, axis=1)
         # [b, s, d, -1]
-        lstm_lt = K.expand_dims(lstm_lt, axis=-1)
-        atten_lt = K.sum(lstm_lt * atten_W, axis=2)
-        lstm_rt = K.expand_dims(lstm_rt, axis=-1)
-        atten_rt = K.sum(lstm_rt * atten_W, axis=2)
+        reps_lt = K.expand_dims(reps_lt, axis=-1)
+        attn_reps_lt = K.sum(reps_lt * attn_kernel, axis=2)
+        reps_rt = K.expand_dims(reps_rt, axis=-1)
+        attn_reps_rt = K.sum(reps_rt * attn_kernel, axis=2)
 
-        atten_lt = K.tanh(atten_lt) # [b, s, 20]
-        atten_rt = K.tanh(atten_rt)
+        # tanh
+        attn_reps_lt = K.tanh(attn_reps_lt)  # [b, s, 20]
+        attn_reps_rt = K.tanh(attn_reps_rt)
 
-        atten_lt = atten_lt * self.diagnoal_W  # [b, s, 20]
-        # atten_rt [b, s, 20]
-        atten_rt = K.permute_dimensions(atten_rt, (0, 2, 1))
-        atten_value = K.batch_dot(atten_lt, atten_rt)  # [batch_size, s, s]
+        # diagnoal_W
+        attn_reps_lt = attn_reps_lt * self.diagnoal_W  # [b, s, 20]
+        attn_reps_rt = K.permute_dimensions(attn_reps_rt, (0, 2, 1))
+
+        attn_value = K.batch_dot(attn_reps_lt, attn_reps_rt)  # [batch_size, s, s]
 
         # TODO(tjf) or remove: normalize
         # if self.remove_diagnoal:
@@ -88,29 +92,28 @@ class AttentionLayer(Layer):
         #     diagnoal = tf.expand_dims(diagnoal, axis=0)  # ['x', len1, len1]
         #     atten_value = atten_value * diagnoal
 
-        if len(inputs) == 4:
-            mask_lt = inputs[2]
-            mask_rt = inputs[3]
-            atten_value = atten_value * K.expand_dims(mask_lt, axis=-1)
-            atten_value = atten_value * K.expand_dims(mask_rt, axis=1)
+        if len(x) == 4:
+            mask_lt = x[2]
+            mask_rt = x[3]
+            attn_value = attn_value * K.expand_dims(mask_lt, axis=2)
+            attn_value = attn_value * K.expand_dims(mask_rt, axis=1)
 
-        atten_value = K.softmax(atten_value)  # [batch_size, len_1, len_2]
-        # if remove_diagnoal: atten_value = atten_value * diagnoal
-        if len(inputs) == 4:
-            mask_lt = inputs[2]
-            mask_rt = inputs[3]
-            atten_value = atten_value * K.expand_dims(mask_lt, axis=-1)
-            atten_value = atten_value * K.expand_dims(mask_rt, axis=1)
-        return atten_value
+        # softmax
+        attn_prob = K.softmax(attn_value)  # [batch_size, len_1, len_2]
+
+        # if remove_diagnoal: attn_value = attn_value * diagnoal
+        if len(x) == 4:
+            mask_lt = x[2]
+            mask_rt = x[3]
+            attn_prob = attn_prob * K.expand_dims(mask_lt, axis=2)
+            attn_prob = attn_prob * K.expand_dims(mask_rt, axis=1)
+
+        return attn_prob
 
     def compute_output_shape(self, input_shapes):
         if not isinstance(input_shapes, list):
             raise ValueError('A attention layer should be called '
                              'on a list of inputs.')
-
         len_lt = input_shapes[0][1]
         len_rt = input_shapes[1][1]
         return input_shapes[0][0], len_lt, len_rt
-
-
-attention_func = AttentionLayer(20)

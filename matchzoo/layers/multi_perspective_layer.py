@@ -1,11 +1,9 @@
 """An implementation of MultiPerspectiveLayer for Bimpm model."""
 
-from keras import layers
 from keras import backend as K
 from keras.engine import Layer
 
-from matchzoo import utils
-from matchzoo.layers.attention_layer import attention_func
+from matchzoo.layers.attention_layer import AttentionLayer
 
 
 class MultiPerspectiveLayer(Layer):
@@ -19,7 +17,8 @@ class MultiPerspectiveLayer(Layer):
     def __init__(
             self,
             dim_input: int,
-            dim_perspective: int,
+            att_dim: int,
+            mp_dim: int,
             perspective: dict,
             **kwargs
     ):
@@ -29,7 +28,8 @@ class MultiPerspectiveLayer(Layer):
         :param output_dim: dimensionality of output space.
         """
         self._dim_input = dim_input
-        self._dim_perspective = dim_perspective
+        self._att_dim = att_dim
+        self._mp_dim = mp_dim
         self._perspective = perspective
         super(MultiPerspectiveLayer, self).__init__(**kwargs)
 
@@ -47,164 +47,87 @@ class MultiPerspectiveLayer(Layer):
         """Input shape."""
         # The shape of the weights is l * d.
         if self._perspective.get('full'):
-            self.full = self.add_weight(name='pool',
-                                        shape=(self._dim_perspective,
-                                               self._dim_input),
-                                        initializer='uniform',
-                                        trainable=True)
+            self.full_match = MpFullMatch(self._mp_dim)
+
         if self._perspective.get('max-pooling'):
-            self.maxpooling = self.add_weight(name='max-pooling',
-                                              shape=(self._dim_perspective,
-                                                     self._dim_input),
-                                              initializer='uniform',
-                                              trainable=True)
+            self.max_pooling_match = MpMaxPoolingMatch(self._mp_dim)
+
         if self._perspective.get('attentive'):
-            self.attentive = self.add_weight(name='attentive',
-                                             shape=(self._dim_perspective,
-                                                    self._dim_input),
-                                             initializer='uniform',
-                                             trainable=True)
+            self.attentive_match = MpAttentiveMatch(self._att_dim, self._mp_dim)
+
         if self._perspective.get('max-attentive'):
-            self.max_attentive = self.add_weight(name='max-attentive',
-                                                 shape=(self._dim_perspective,
-                                                        self._dim_input),
-                                                 initializer='uniform',
-                                                 trainable=True)
-        self.built = True
+            self.max_attentive_match = MpAttentiveMatch(self._att_dim, self._mp_dim)
+
+        super(MultiPerspectiveLayer, self).build(input_shape)
 
     def call(self, x: list, **kwargs):
         """Call."""
-        rv = []
         seq_lt, seq_rt = x[:5], x[5:]
-
         # unpack seq_left and seq_right
         # all hidden states, last hidden state of forward pass,
         # last cell state of forward pass, last hidden state of
         # backward pass, last cell state of backward pass.
-        lstm_lt, forward_h_lt, _, backward_h_lt, _ = seq_lt
-        lstm_rt, forward_h_rt, _, backward_h_rt, _ = seq_rt
+        lstm_reps_lt, forward_h_lt, _, backward_h_lt, _ = seq_lt
+        lstm_reps_rt, forward_h_rt, _, backward_h_rt, _ = seq_rt
 
+        match_tensor_list = []
+        match_dim = 0
         if self._perspective.get('full'):
-            # each forward & backward contextual embedding compare
+            # Each forward & backward contextual embedding compare
             # with the last step of the last time step of the other sentence.
-
-            # TODO(tjf): add mask
             h_rt = K.concatenate([forward_h_rt, backward_h_rt], axis=-1)
-            full_matching = self._full_matching(lstm_lt, h_rt, self.full)
-            rv.append(full_matching)
+            full_match_tensor = self.full_match([lstm_reps_lt, h_rt])
+            match_tensor_list.append(full_match_tensor)
+            match_dim += self._mp_dim + 1
 
         if self._perspective.get('max-pooling'):
-            # each contextual embedding compare with each contextual embedding.
+            # Each contextual embedding compare with each contextual embedding.
             # retain the maximum of each dimension.
-
-            # [batch, time_steps(q), time_steps(p), num_perspective]
-            # TODO(tjf): add mask
-            match_matrix = self._match_tensors(lstm_lt, lstm_rt, self.maxpooling)
-            maxpooling_matching = K.max(match_matrix, axis=2)
-            rv.append(maxpooling_matching)
+            max_match_tensor = self.max_pooling_match([lstm_reps_lt, lstm_reps_rt])
+            match_tensor_list.append(max_match_tensor)
+            match_dim += self._mp_dim
 
         if self._perspective.get('attentive'):
-            # each contextual embedding compare with each contextual embedding.
+            # Each contextual embedding compare with each contextual embedding.
             # retain sum of weighted mean of each dimension.
-
-            # TODO(tjf): add mask
-            att_lt = self.attention(lstm_lt, lstm_rt, pooling='max')
-            attentive_matching = self._match_tensors_with_attentive_tensor(lstm_lt, att_lt, self.attentive)
-            rv.append(attentive_matching)
+            attentive_tensor = self.attentive_match([lstm_reps_lt, lstm_reps_rt])
+            match_tensor_list.append(attentive_tensor)
+            match_dim += self._mp_dim + 1
 
         if self._perspective.get('max-attentive'):
-            # each contextual embedding compare with each contextual embedding.
+            # Each contextual embedding compare with each contextual embedding.
             # retain max of weighted mean of each dimension.
+            max_attentive_tensor = self.max_attentive_match([lstm_reps_lt, lstm_reps_rt])
+            match_tensor_list.append(max_attentive_tensor)
+            match_dim += self._mp_dim + 1
 
-            # TODO(tjf): add mask
-            att_lt = self.attention(lstm_lt, lstm_rt, pooling='max')
-            max_attentive_matching = self._match_tensors_with_attentive_tensor(lstm_lt, att_lt, self.max_attentive)
-            rv.append(max_attentive_matching)
-
-        mp_tensor = K.concatenate(rv, axis=-1)
-
+        mp_tensor = K.concatenate(match_tensor_list, axis=-1)
+        self.output_dim = match_dim
         return mp_tensor
-
-    def attention(self, lstm_lt, lstm_rt, pooling='sum'):
-        """
-        TODO(tjf) add bilinear attention or mlp attention
-        calculate attention
-        :param lstm_lt: [batch, steps_lt, d]
-        :param lstm_rt: [batch, steps_rt, d]
-        :param pooling: sum / max
-        :return: [batch, steps_lt, d]
-        """
-        # [batch, steps_lt, steps_rt]
-        atten_score = attention_func([lstm_lt, lstm_rt])
-        atten_score = K.expand_dims(atten_score, axis=-1)  # [batch, steps_lt, steps_rt, -1]
-        lstm_rt = K.expand_dims(lstm_rt, axis=-1)  # [batch, 1, steps_rt, d]
-        att_lt = K.sum(atten_score * lstm_rt, axis=2)
-        return att_lt
-
-    def _match_tensors_with_attentive_tensor(self, lstm_lt, att_lt, W):
-        # TODO(tjf): add mask
-
-        # W: -> [1, 1, l, d]
-        W = K.expand_dims(W, 0)
-        W = K.expand_dims(W, 0)
-
-        # lstm_lt: -> [batch, steps_lt, l, d]
-        lstm_lt = W * K.expand_dims(lstm_lt, 2)
-
-        # att_lt: -> [batch, steps_lt, 1, d]
-        att_lt = K.expand_dims(att_lt, 2)
-
-        # matching: -> [batch, steps_lt, l]
-        matching = _cosine_distance(lstm_lt, att_lt, cosine_norm=False)
-        return matching
-
-    def _match_tensors(self, lstm_lt, lstm_rt, W):
-        """
-        TODO(tjf): add mask
-        """
-        # W: [1, 1, 1, num_perspective, d]
-        W = K.expand_dims(W, axis=0)
-        W = K.expand_dims(W, axis=0)
-        W = K.expand_dims(W, axis=0)
-
-        # lstm_lt: [batch, steps_lt, 1, 1, d]
-        lstm_lt = K.expand_dims(lstm_lt, axis=2)
-        lstm_lt = K.expand_dims(lstm_lt, axis=2)
-
-        # lstm_rt: [batch, 1, steps_rt, 1, d]
-        lstm_rt = K.expand_dims(lstm_rt, axis=2)
-        lstm_rt = K.expand_dims(lstm_rt, axis=1)
-
-        # lstm_lt * W: [batch, steps_lt, 1, num_perspective, d]
-        # lstm_rt: [batch, 1, steps_rt, 1, 1, d]
-        # matching -> [batch, steps_lt, steps_rt, num_perspective]
-        matching = _cosine_distance(lstm_lt * W, lstm_rt, cosine_norm=False)
-        return matching
 
     def compute_output_shape(self, input_shape: list):
         """Compute output shape."""
         shape_a = input_shape[0]
-        return (shape_a[0], shape_a[1], self._dim_perspective*len(self._perspective))
+        return (shape_a[0], shape_a[1], self.output_dim)
 
 
-class MpFullMatchLayer(Layer):
+class MpFullMatch(Layer):
     """
     Mp Full Match Layer
     """
 
     def __init__(self, mp_dim, **kwargs):
         self.mp_dim = mp_dim
-        super(MpFullMatchLayer, self).__init__(**kwargs)
+        super(MpFullMatch, self).__init__(**kwargs)
 
     def build(self, input_shapes):
         input_shape = input_shapes[0]
-        super(MpFullMatchLayer, self).build(input_shape)
+        super(MpFullMatch, self).build(input_shape)
 
     def call(self, x, **kwargs):
         reps_lt, rep_rt = x
         reps_rt = K.expand_dims(rep_rt, 1)
-
-        # matching: -> [batch, steps_lt, mp_dim+1]
+        # match_tensor: [batch, steps_lt, mp_dim+1]
         match_tensor, match_dim = multi_perspective_match(self.mp_dim, reps_lt, reps_rt)
         return match_tensor
 
@@ -212,11 +135,129 @@ class MpFullMatchLayer(Layer):
         return (input_shape[0][0], input_shape[0][1], self.mp_dim+1)
 
 
-class MpMaxPoolingLayer()
+class MpMaxPoolingMatch(Layer):
+
+    def __init__(self, mp_dim, **kwargs):
+        self.mp_dim = mp_dim
+        super(MpMaxPoolingMatch, self).__init__(**kwargs)
+
+    def build(self, input_shapes):
+        self.kernel = self.add_weight(name='kernel',
+                                      shape=(1, 1, 1, self.mp_dim, input_shapes[0][-1]),
+                                      initializer='uniform',
+                                      trainable=True)
+        super(MpMaxPoolingMatch, self).build(input_shapes)
+
+    def call(self, x, **kwargs):
+        reps_lt, reps_rt = x
+
+        # kernel: [1, 1, 1, mp_dim, d]
+        # lstm_lt -> [batch, steps_lt, 1, 1, d]
+        reps_lt = K.expand_dims(reps_lt, axis=2)
+        reps_lt = K.expand_dims(reps_lt, axis=2)
+        reps_lt = reps_lt * self.kernel
+
+        # lstm_rt -> [batch, 1, steps_rt, 1, d]
+        reps_rt = K.expand_dims(reps_rt, axis=2)
+        reps_rt = K.expand_dims(reps_rt, axis=1)
+
+        # match_tensor -> [batch, steps_lt, steps_rt, mp_dim]
+        match_tensor = _cosine_distance(reps_lt, reps_rt, cosine_norm=False)
+        max_match_tensor = K.max(match_tensor, axis=2)
+        return max_match_tensor
+
+    def compute_output_shape(self, input_shape):
+        return (input_shape[0][0], input_shape[0][1], self.mp_dim)
+
+
+class MpAttentiveMatch(Layer):
+    """
+    Reference: https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L188-L193
+    """
+    def __init__(self, att_dim, mp_dim, **kwargs):
+        self.att_dim = att_dim
+        self.mp_dim = mp_dim
+        super(MpAttentiveMatch, self).__init__(**kwargs)
+
+    def build(self, input_shapes):
+        input_shape = input_shapes[0]
+        super(MpAttentiveMatch, self).build(input_shape)
+
+    def call(self, x, **kwargs):
+        reps_lt, reps_rt = x[0], x[1]
+        # attention prob matrix
+        attention_layer = AttentionLayer(self.att_dim)
+        attn_prob = attention_layer([reps_lt, reps_rt])
+        # attention reps
+        reps_lt = K.batch_dot(attn_prob, reps_lt)
+        # mp match
+        attn_match_tensor, match_dim = multi_perspective_match(self.mp_dim, reps_lt, reps_rt)
+        return attn_match_tensor
+
+    def compute_output_shape(self, input_shape):
+        return (input_shape[0][0], input_shape[0][1], self.mp_dim)
+
+
+class MpMaxAttentiveMatch(Layer):
+
+    def __init__(self, mp_dim, **kwargs):
+        self.mp_dim = mp_dim
+        super(MpMaxAttentiveMatch, self).__init__(**kwargs)
+
+    def build(self, input_shapes):
+        input_shape = input_shapes[0]
+        super(MpMaxAttentiveMatch, self).build(input_shape)
+
+    def call(self, x, **kwargs):
+        reps_lt, reps_rt = x[0], x[1]
+        relevancy_matrix = x[3]
+        max_att_lt = cal_max_question_representation(reps_lt, relevancy_matrix)
+        max_attentive_tensor, match_dim = multi_perspective_match(self.mp_dim, reps_rt, max_att_lt)
+        return max_attentive_tensor
+
+
+def cal_max_question_representation(question_representation, attn_scores):
+    attn_positions = K.tf.argmax(attn_scores, axis=2)  # [batch_size, passage_len]
+    max_question_reps = collect_representation(question_representation, attn_positions)
+    return max_question_reps
+
+
+def collect_representation(representation, positions):
+    # representation: [batch_size, node_num, feature_dim]
+    # positions: [batch_size, neigh_num]
+    return collect_probs(representation, positions)
+
+
+def collect_final_step_of_lstm(lstm_representation, lengths):
+    # lstm_representation: [batch_size, passsage_length, dim]
+    # lengths: [batch_size]
+    lengths = K.maximum(lengths, K.zeros_like(lengths))
+
+    batch_size = K.shape(lengths)[0]
+    batch_nums = K.tf.range(0, limit=batch_size) # shape (batch_size)
+    indices = K.stack((batch_nums, lengths), axis=1) # shape (batch_size, 2)
+    result = K.tf.gather_nd(lstm_representation, indices, name='last-forwar-lstm')
+    return result # [batch_size, dim]
+
+
+def collect_probs(probs, positions):
+    # probs [batch_size, chunks_size]
+    # positions [batch_size, pair_size]
+    batch_size = K.tf.shape(probs)[0]
+    pair_size = K.tf.shape(positions)[1]
+    batch_nums = K.tf.range(0, limit=batch_size) # shape (batch_size)
+    batch_nums = K.tf.reshape(batch_nums, shape=[-1, 1]) # [batch_size, 1]
+    batch_nums = K.tf.tile(batch_nums, multiples=[1, pair_size]) # [batch_size, pair_size]
+
+    indices = K.tf.stack((batch_nums, positions), axis=2) # shape (batch_size, pair_size, 2)
+    pair_probs = K.tf.gather_nd(probs, indices)
+    # pair_probs = tf.reshape(pair_probs, shape=[batch_size, pair_size])
+    return pair_probs
 
 
 def multi_perspective_match(mp_dim, reps_lt, reps_rt, with_cosine=True, with_mp_cosine=True):
     """
+    It is the core function of zhiguowang's implementation
     reference: https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L207-L223
     :param mp_dim: about 20
     :param reps_lt: [batch, len, dim]
@@ -258,7 +299,7 @@ class MpCosineLayer(Layer):
         super(MpCosineLayer, self).__init__(**kwargs)
 
     def build(self, input_shape):
-        self.kernel = self.add_weight(name='kernal',
+        self.kernel = self.add_weight(name='kernel',
                                       shape=(1, 1, self.mp_dim, input_shape[0][-1]),
                                       initializer='uniform',
                                       trainable=True)
