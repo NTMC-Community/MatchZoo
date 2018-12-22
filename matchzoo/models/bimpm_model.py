@@ -1,12 +1,10 @@
 """Bimpm."""
 
-import numpy as np
 from keras.models import Model
-from keras.layers import Input, Dense, Concatenate, Dropout
+from keras.layers import Dense, Concatenate, Dropout
 from keras.layers import Bidirectional, LSTM
 
 from matchzoo import engine
-from matchzoo import preprocessors
 from matchzoo.layers import MultiPerspectiveLayer
 
 
@@ -19,6 +17,7 @@ class BimpmModel(engine.BaseModel):
         >>> model = mz.models.BimpmModel()
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
+
     """
 
     @classmethod
