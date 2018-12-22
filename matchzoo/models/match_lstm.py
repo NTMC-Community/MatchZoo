@@ -4,12 +4,12 @@ import keras.backend as K
 from matchzoo import engine, preprocessors
 
 
-class MLSTMModel(engine.BaseModel):
+class MatchLSTM(engine.BaseModel):
     """
     Match LSTM model.
-
+A
     Examples:
-        >>> model = MLSTMModel()
+        >>> model = MatchLSTM()
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -33,7 +33,6 @@ class MLSTMModel(engine.BaseModel):
             hyper_space=engine.hyper_spaces.quniform(
                 low=100, high=300, q=100)
         ))
-        params.add(engine.Param('exact_sigma', 0.001))
         return params
 
     def build(self):
@@ -51,28 +50,33 @@ class MLSTMModel(engine.BaseModel):
                                      return_sequences=True)
         doc_encoded = lstm_doc(doc_embed)
         query_encoded = lstm_query(query_embed)
+        def attention(tensors):
+            query, doc = tensors
+            tensor_left = K.expand_dims(query, axis=2)
+            tensor_right = K.expand_dims(doc, axis=1)
+            tensor_left = K.repeat_elements(tensor_left, doc_len, 2)
+            tensor_right = K.repeat_elements(tensor_right, query_len, 1)
+            tensor_merged = K.concatenate([tensor_left, tensor_right], axis=-1)
+            middle_output = keras.layers.Dense(self._params['fc_hidden_size'],
+                                               activation='tanh')(
+                tensor_merged)
+            attn_scores = keras.layers.Dense(1)(middle_output)
+            attn_scores = K.squeeze(attn_scores, axis=3)
+            exp_attn_scores = K.exp(
+                attn_scores - K.max(attn_scores, axis=-1, keepdims=True))
+            exp_sum = K.sum(exp_attn_scores, axis=-1, keepdims=True)
+            attention_weights = exp_attn_scores / exp_sum
+            query_attn_vec = K.batch_dot(attention_weights, doc)
+            return query_attn_vec
 
-        tensor_left = K.expand_dims(query_encoded, axis=2)
-        tensor_right = K.expand_dims(doc_encoded, axis=1)
-        tensor_left = K.repeat_elements(tensor_left, doc_len, 2)
-        tensor_right = K.repeat_elements(tensor_right, query_len, 1)
-        tensor_merged = K.concatenate([tensor_left, tensor_right], axis=-1)
-        middle_output = keras.layers.Dense(self._params['fc_hidden_size'],
-                                           activation='tanh')(tensor_merged)
-        attn_scores = keras.layers.Dense(1)(middle_output)
-        attn_scores = K.squeeze(attn_scores, axis=3)
-        exp_attn_scores = K.exp(
-            attn_scores - K.max(attn_scores, axis=-1, keepdims=True))
-        exp_sum = K.sum(exp_attn_scores, axis=-1, keepdims=True)
-        attention_weights = exp_attn_scores / exp_sum
-        query_attn_vec = K.batch_dot(attention_weights, doc_encoded)
-
+        attn_layer = keras.layers.Lambda(attention)
+        query_attn_vec = attn_layer([query_encoded, doc_encoded])
         concat = keras.layers.Concatenate(axis=2)(
-            [query_attn_vec, query_encoded])
+            [query_attn_vec, doc_encoded])
         lstm_merge = keras.layers.LSTM(self._params['rnn_hidden_size'] * 2,
                                        return_sequences=True)
-        out = lstm_merge(concat)
+        merged = lstm_merge(concat)
         phi = keras.layers.Dense(self._params['fc_hidden_size'],
-                                 activation='tanh')(out)
+                                 activation='tanh')(merged)
         out = self._make_output_layer()(phi)
         self._backend = keras.Model(inputs=[query, doc], outputs=[out])
