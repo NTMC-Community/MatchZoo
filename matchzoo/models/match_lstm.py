@@ -1,13 +1,13 @@
 """Match LSTM model."""
 import keras
 import keras.backend as K
-from matchzoo import engine, preprocessors
+from matchzoo import engine
 
 
 class MatchLSTM(engine.BaseModel):
     """
     Match LSTM model.
-A
+
     Examples:
         >>> model = MatchLSTM()
         >>> model.guess_and_fill_missing_params(verbose=0)
@@ -45,6 +45,7 @@ A
                                      return_sequences=True)
         doc_encoded = lstm_doc(doc_embed)
         query_encoded = lstm_query(query_embed)
+
         def attention(tensors):
             query, doc = tensors
             tensor_left = K.expand_dims(query, axis=2)
