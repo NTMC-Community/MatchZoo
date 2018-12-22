@@ -16,11 +16,6 @@ A
     """
 
     @classmethod
-    def get_default_preprocessor(cls):
-        """Get default preprocessor."""
-        return preprocessors.NaivePreprocessor()
-
-    @classmethod
     def get_default_params(cls):
         """Get default parameters."""
         params = super().get_default_params(with_embedding=True)
