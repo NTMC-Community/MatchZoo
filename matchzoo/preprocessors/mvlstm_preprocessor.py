@@ -56,7 +56,6 @@ class MVLSTMPreprocessor(engine.BasePreprocessor):
                                             verbose=verbose)
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
 
-        self._context.update(vocab_unit.state)
         self._context['embedding_input_dim'] = len(
                     vocab_unit.state['term_index']) + 1 
         self._context['vocab_unit'] = vocab_unit
@@ -78,18 +77,13 @@ class MVLSTMPreprocessor(engine.BasePreprocessor):
         units = self._default_processor_units()
         data_pack.apply_on_text(chain_transform(units), inplace=True,
                                 verbose=verbose)
-        data_pack.apply_on_text(self._context['vocab_unit'].transform,
-                                mode='both', inplace=True, verbose=verbose)
 
         data_pack.append_text_length(inplace=True)
         data_pack.apply_on_text(self._left_fixedlength_unit.transform,
-                                mode='left', inplace=True, verbose=verbose)
-        data_pack.apply_on_text(self._right_fixedlength_unit.transform,
-                                mode='right', inplace=True, verbose=verbose)
+                                mode='both', inplace=True, verbose=verbose)
+
         data_pack.apply_on_text(self._context['vocab_unit'].transform,
-                                mode='left', inplace=True, verbose=verbose)
-        data_pack.apply_on_text(self._context['vocab_unit'].transform,
-                                mode='right', inplace=True, verbose=verbose)
+                                mode='both', inplace=True, verbose=verbose)
         return data_pack
 
     @classmethod

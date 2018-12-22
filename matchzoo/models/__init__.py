@@ -7,8 +7,5 @@ from .knrm_model import KNRMModel
 from .conv_knrm_model import ConvKNRMModel
 from .duet_model import DUETModel
 from .drmmtks_model import DRMMTKSModel
+from .drmm import DRMM
 from .mvlstm_model import MVLSTMModel
-
-import matchzoo
-def list_available():
-    return matchzoo.engine.BaseModel.__subclasses__()
