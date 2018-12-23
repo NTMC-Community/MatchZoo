@@ -33,9 +33,13 @@ def load_data(stage='train', task='ranking', filter=False):
     if filter and stage in ('dev', 'test'):
         ref_path = data_root.joinpath(f'WikiQA-{stage}.ref')
         filter_ref_path = data_root.joinpath(f'WikiQA-{stage}-filtered.ref')
-        filtered_ids = set([line.split()[0] for line in open(filter_ref_path)])
-        filtered_lines = [idx for idx, line in enumerate(open(ref_path)) if
-                          line.split()[0] in filtered_ids]
+        with open(filter_ref_path, mode='r') as f:
+            filtered_ids = set([line.split()[0] for line in f])
+        filtered_lines = []
+        with open(ref_path, mode='r') as f:
+            for idx, line in enumerate(f.readlines()):
+                if line.split()[0] in filtered_ids:
+                    filtered_lines.append(idx)
         data_pack = data_pack[filtered_lines]
 
     if task == 'ranking':
