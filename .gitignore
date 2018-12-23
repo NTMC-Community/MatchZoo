@@ -24,4 +24,3 @@ MatchZoo.egg-info/
 notebooks/wikiqa/.ipynb_checkpoints/*
 .cache
 .tmpdir
-sandbox.py
