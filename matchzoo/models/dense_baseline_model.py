@@ -1,4 +1,3 @@
-
 """A simple densely connected baseline model."""
 
 import keras.layers
