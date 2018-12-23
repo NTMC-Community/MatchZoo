@@ -64,6 +64,8 @@ class BaseModel(abc.ABC):
                                                    self._batch_size, verbose=0)
                 logger.info('Validation: ' + ' - '.join(
                     f'{k}:{v:f}' for k, v in val_logs.items()))
+                for k, v in val_logs.items():
+                    logs[k] = v
 
     def __init__(
         self,

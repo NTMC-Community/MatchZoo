@@ -12,9 +12,15 @@ class ArcIModel(engine.BaseModel):
     ArcI Model.
 
     Examples:
-        >>> import matchzoo as mz
-        >>> train_pack = mz.datasets.toy.load_data()
         >>> model = ArcIModel()
+        >>> model.params['num_blocks'] = 1
+        >>> model.params['left_filters'] = [32]
+        >>> model.params['right_filters'] = [32]
+        >>> model.params['left_kernel_sizes'] = [3]
+        >>> model.params['right_kernel_sizes'] = [3]
+        >>> model.params['left_pool_sizes'] = [2]
+        >>> model.params['right_pool_sizes'] = [4]
+        >>> model.params['conv_activation_func'] = 'relu'
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -27,13 +33,12 @@ class ArcIModel(engine.BaseModel):
         params['optimizer'] = 'adam'
         opt_space = engine.hyper_spaces.choice(['adam', 'rmsprop', 'adagrad'])
         params.get('optimizer').hyper_space = opt_space
-        params['embedding_output_dim'] = 300
         params.add(engine.Param('num_blocks', 1))
-        params.add(engine.Param('left_kernel_count', [32]))
+        params.add(engine.Param('left_filters', [32]))
         params.add(engine.Param('left_kernel_sizes', [3]))
-        params.add(engine.Param('right_kernel_count', [32]))
+        params.add(engine.Param('right_filters', [32]))
         params.add(engine.Param('right_kernel_sizes', [3]))
-        params.add(engine.Param('activation', 'relu'))
+        params.add(engine.Param('conv_activation_func', 'relu'))
         params.add(engine.Param('left_pool_sizes', [2]))
         params.add(engine.Param('right_pool_sizes', [2]))
         params.add(engine.Param(
@@ -67,18 +72,18 @@ class ArcIModel(engine.BaseModel):
         for i in range(self._params['num_blocks']):
             embed_left = self._conv_pool_block(
                 embed_left,
-                self._params['left_kernel_count'][i],
+                self._params['left_filters'][i],
                 self._params['left_kernel_sizes'][i],
                 self._params['padding'],
-                self._params['activation'],
+                self._params['conv_activation_func'],
                 self._params['left_pool_sizes'][i]
             )
             embed_right = self._conv_pool_block(
                 embed_right,
-                self._params['right_kernel_count'][i],
+                self._params['right_filters'][i],
                 self._params['right_kernel_sizes'][i],
                 self._params['padding'],
-                self._params['activation'],
+                self._params['conv_activation_func'],
                 self._params['right_pool_sizes'][i]
             )
 
@@ -93,17 +98,17 @@ class ArcIModel(engine.BaseModel):
     def _conv_pool_block(
         self,
         input_: typing.Any,
-        kernel_count: int,
+        filters: int,
         kernel_size: int,
         padding: str,
-        activation: str,
+        conv_activation_func: str,
         pool_size: int
     ) -> typing.Any:
         output = keras.layers.Conv1D(
-            kernel_count,
+            filters,
             kernel_size,
             padding=padding,
-            activation=activation
+            activation=conv_activation_func
         )(input_)
         output = keras.layers.MaxPooling1D(pool_size=pool_size)(output)
         return output
