@@ -13,4 +13,3 @@ from .anmm_model import ANMMModel
 import matchzoo
 def list_available():
     return matchzoo.engine.BaseModel.__subclasses__()
-
