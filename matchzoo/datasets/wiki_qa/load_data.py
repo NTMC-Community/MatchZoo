@@ -22,25 +22,6 @@ def load_data(stage='train', task='ranking', filter=False):
     :param filter: Whether remove the questions without correct answers.
     :return: A DataPack if `ranking`, a tuple of (DataPack, classes) if
         `classification`.
-
-    Examples:
-        >>> import matchzoo as mz
-        >>> train_data = mz.datasets.wiki_qa.load_data('train')
-        >>> len(train_data)
-        20360
-        >>> dev_data = mz.datasets.wiki_qa.load_data('dev')
-        >>> len(dev_data)
-        2733
-        >>> dev_data = mz.datasets.wiki_qa.load_data('dev', filter=True)
-        >>> len(dev_data)
-        1126
-        >>> test_data = mz.datasets.wiki_qa.load_data('test')
-        >>> len(test_data)
-        6165
-        >>> test_data = mz.datasets.wiki_qa.load_data('test', filter=True)
-        >>> len(test_data)
-        2341
-
     """
     if stage not in ('train', 'dev', 'test'):
         raise ValueError(f"{stage} is not a valid stage."
