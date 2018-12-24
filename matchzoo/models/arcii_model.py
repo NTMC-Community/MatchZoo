@@ -2,11 +2,9 @@
 import typing
 
 import keras
-from keras.layers import Conv1D, Conv2D, MaxPooling2D, Dropout, Flatten
 
+import matchzoo
 from matchzoo import engine
-from matchzoo import layers
-from matchzoo import preprocessors
 
 
 class ArcIIModel(engine.BaseModel):
@@ -34,7 +32,6 @@ class ArcIIModel(engine.BaseModel):
         params['optimizer'] = 'adam'
         opt_space = engine.hyper_spaces.choice(['adam', 'rmsprop', 'adagrad'])
         params.get('optimizer').hyper_space = opt_space
-        params['embedding_output_dim'] = 300
         params.add(engine.Param('num_blocks', 1))
         params.add(engine.Param('kernel_1d_count', 32))
         params.add(engine.Param('kernel_1d_size', 3))
@@ -43,20 +40,14 @@ class ArcIIModel(engine.BaseModel):
         params.add(engine.Param('activation', 'relu'))
         params.add(engine.Param('pool_2d_size', [[2, 2]]))
         params.add(engine.Param(
-            'padding',
-            'same',
+            name='padding', value='same',
             hyper_space=engine.hyper_spaces.choice(['same', 'valid', 'causal'])
         ))
         params.add(engine.Param(
-            'dropout_rate', 0.0,
+            name='dropout_rate', value=0.0,
             hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8, q=0.01)
         ))
         return params
-
-    @classmethod
-    def get_default_preprocessor(cls):
-        """:return: Instance of :class:`NaivePreprocessor`."""
-        return preprocessors.NaivePreprocessor()
 
     def build(self):
         """
@@ -72,17 +63,20 @@ class ArcIIModel(engine.BaseModel):
         embed_right = embedding(input_right)
 
         # Phrase level representations
-        conv_1d_left = Conv1D(self._params['kernel_1d_count'],
-                              self._params['kernel_1d_size'],
-                              padding=self._params['padding'])(embed_left)
-        conv_1d_right = Conv1D(self._params['kernel_1d_count'],
-                               self._params['kernel_1d_size'],
-                               padding=self._params['padding'])(embed_right)
+        conv_1d_left = keras.layers.Conv1D(
+            self._params['kernel_1d_count'],
+            self._params['kernel_1d_size'],
+            padding=self._params['padding']
+        )(embed_left)
+        conv_1d_right = keras.layers.Conv1D(
+            self._params['kernel_1d_count'],
+            self._params['kernel_1d_size'],
+            padding=self._params['padding']
+        )(embed_right)
 
         # Interaction
-        embed_cross = layers.MatchingLayer(matching_type='plus')([
-            conv_1d_left,
-            conv_1d_right])
+        matching_layer = matchzoo.layers.MatchingLayer(matching_type='plus')
+        embed_cross = matching_layer([conv_1d_left, conv_1d_right])
 
         for i in range(self._params['num_blocks']):
             embed_cross = self._conv_pool_block(
@@ -94,25 +88,25 @@ class ArcIIModel(engine.BaseModel):
                 self._params['pool_2d_size'][i]
             )
 
-        embed_flat = Flatten()(embed_cross)
-        x = Dropout(rate=self._params['dropout_rate'])(embed_flat)
+        embed_flat = keras.layers.Flatten()(embed_cross)
+        x = keras.layers.Dropout(rate=self._params['dropout_rate'])(embed_flat)
 
         inputs = [input_left, input_right]
         x_out = self._make_output_layer()(x)
         self._backend = keras.Model(inputs=inputs, outputs=x_out)
 
+    @classmethod
     def _conv_pool_block(
-        self,
-        input: typing.Any,
+        cls, x,
         kernel_count: int,
         kernel_size: int,
         padding: str,
         activation: str,
         pool_size: int
     ) -> typing.Any:
-        output = Conv2D(kernel_count,
-                        kernel_size,
-                        padding=padding,
-                        activation=activation)(input)
-        output = MaxPooling2D(pool_size=pool_size)(output)
+        output = keras.layers.Conv2D(kernel_count,
+                                     kernel_size,
+                                     padding=padding,
+                                     activation=activation)(x)
+        output = keras.layers.MaxPooling2D(pool_size=pool_size)(output)
         return output

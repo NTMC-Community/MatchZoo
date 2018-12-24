@@ -29,15 +29,21 @@ class MatchingLayer(Layer):
     def __init__(self, normalize: bool = False,
                  matching_type: str = 'dot', **kwargs):
         """:class:`MatchingLayer` constructor."""
-        super(MatchingLayer, self).__init__(**kwargs)
-        self.normalize = normalize
-        self.matching_type = matching_type
+        super().__init__(**kwargs)
         self.supports_masking = True
-        self.valid_matching_type = ['dot', 'mul', 'plus', 'minus', 'concat']
-        if matching_type not in self.valid_matching_type:
-            raise ValueError("{} is not a valid matching type,"
-                             " {} expected.".format(self.matching_type,
-                                                    self.valid_matching_type))
+
+        self._normalize = normalize
+        self._validate_matching_type(matching_type)
+        self._matching_type = matching_type
+        self._shape1 = None
+        self._shape2 = None
+
+    @classmethod
+    def _validate_matching_type(cls, matching_type):
+        valid_matching_type = ['dot', 'mul', 'plus', 'minus', 'concat']
+        if matching_type not in valid_matching_type:
+            raise ValueError(f"{matching_type} is not a valid matching type, "
+                             f"{valid_matching_type} expected.")
 
     def build(self, input_shape: list):
         """
@@ -50,24 +56,17 @@ class MatchingLayer(Layer):
         if not isinstance(input_shape, list) or len(input_shape) != 2:
             raise ValueError('A `MatchingLayer` layer should be called '
                              'on a list of 2 inputs.')
-        self.shape1 = input_shape[0]
-        self.shape2 = input_shape[1]
-        if self.shape1[0] != self.shape2[0]:
-            raise ValueError(
-                'Incompatible dimensions '
-                '{} != {}. Layer shapes: {}, {}.'.format(self.shape1[0],
-                                                         self.shape2[0],
-                                                         self.shape1,
-                                                         self.shape2))
-        if self.shape1[2] != self.shape2[2]:
-            raise ValueError(
-                'Incompatible dimensions '
-                '{} != {}. Layer shapes: {}, {}.'.format(self.shape1[2],
-                                                         self.shape2[2],
-                                                         self.shape1,
-                                                         self.shape2))
+        self._shape1 = input_shape[0]
+        self._shape2 = input_shape[1]
+        for idx in 0, 2:
+            if self._shape1[idx] != self._shape2[idx]:
+                raise ValueError(
+                    'Incompatible dimensions: '
+                    f'{self._shape1[idx]} != {self._shape2[idx]}.'
+                    f'Layer shapes: {self._shape1}, {self._shape2}.'
+                )
 
-    def call(self, inputs: list) -> typing.Any:
+    def call(self, inputs: list, **kwargs) -> typing.Any:
         """
         The computation logic of MatchingLayer.
 
@@ -75,27 +74,29 @@ class MatchingLayer(Layer):
         """
         x1 = inputs[0]
         x2 = inputs[1]
-        if self.matching_type in ['dot']:
-            if self.normalize:
+        if self._matching_type == 'dot':
+            if self._normalize:
                 x1 = K.l2_normalize(x1, axis=2)
                 x2 = K.l2_normalize(x2, axis=2)
-            output = K.tf.einsum('abd,acd->abc', x1, x2)
-            output = K.tf.expand_dims(output, 3)
-        elif self.matching_type in ['mul', 'plus', 'minus']:
-            x1_exp = K.tf.stack([x1] * self.shape2[1], 2)
-            x2_exp = K.tf.stack([x2] * self.shape1[1], 1)
-            if self.matching_type == 'mul':
-                output = x1_exp * x2_exp
-            elif self.matching_type == 'plus':
-                output = x1_exp + x2_exp
-            elif self.matching_type == 'minus':
-                output = x1_exp - x2_exp
-        elif self.matching_type in ['concat']:
-            x1_exp = K.tf.stack([x1] * self.shape2[1], axis=2)
-            x2_exp = K.tf.stack([x2] * self.shape1[1], axis=1)
-            output = K.tf.concat([x1_exp, x2_exp], axis=3)
-
-        return output
+            return K.tf.expand_dims(K.tf.einsum('abd,acd->abc', x1, x2), 3)
+        else:
+            if self._matching_type == 'mul':
+                def func(x, y):
+                    return x * y
+            elif self._matching_type == 'plus':
+                def func(x, y):
+                    return x + y
+            elif self._matching_type == 'minus':
+                def func(x, y):
+                    return x - y
+            elif self._matching_type == 'concat':
+                def func(x, y):
+                    return K.tf.concat([x, y], axis=3)
+            else:
+                raise ValueError
+            x1_exp = K.tf.stack([x1] * self._shape2[1], 2)
+            x2_exp = K.tf.stack([x2] * self._shape1[1], 1)
+            return func(x1_exp, x2_exp)
 
     def compute_output_shape(self, input_shape: list) -> tuple:
         """
@@ -116,25 +117,20 @@ class MatchingLayer(Layer):
             raise ValueError('A `MatchingLayer` layer should be called '
                              'on 2 inputs with same 0,2 dimensions.')
 
-        if self.matching_type in ['dot']:
-            output_shape = [shape1[0], shape1[1], shape2[1], 1]
-        elif self.matching_type in ['mul', 'plus', 'minus']:
-            output_shape = [shape1[0], shape1[1], shape2[1], shape1[2]]
-        elif self.matching_type in ['concat']:
-            output_shape = [shape1[0], shape1[1], shape2[1],
-                            shape1[2] + shape2[2]]
-
-        return tuple(output_shape)
-
-    def compute_mask(self, inputs: list, mask: list = None) -> typing.Any:
-        """Compute input mask. Undefine in this layer."""
-        return None
+        if self._matching_type in ['mul', 'plus', 'minus']:
+            return shape1[0], shape1[1], shape2[1], shape1[2]
+        elif self._matching_type == 'dot':
+            return shape1[0], shape1[1], shape2[1], 1
+        elif self._matching_type == 'concat':
+            return shape1[0], shape1[1], shape2[1], shape1[2] + shape2[2]
+        else:
+            raise ValueError
 
     def get_config(self) -> dict:
         """Get the config dict of MatchingLayer."""
         config = {
-            'normalize': self.normalize,
-            'matching_type': self.matching_type,
+            'normalize': self._normalize,
+            'matching_type': self._matching_type,
         }
         base_config = super(MatchingLayer, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
