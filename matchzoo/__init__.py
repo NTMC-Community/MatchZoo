@@ -36,3 +36,4 @@ from . import auto
 
 from .engine import load_model
 from .engine import load_preprocessor
+from .engine import callbacks
