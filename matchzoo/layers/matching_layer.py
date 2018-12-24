@@ -30,8 +30,6 @@ class MatchingLayer(Layer):
                  matching_type: str = 'dot', **kwargs):
         """:class:`MatchingLayer` constructor."""
         super().__init__(**kwargs)
-        self.supports_masking = True
-
         self._normalize = normalize
         self._validate_matching_type(matching_type)
         self._matching_type = matching_type
