@@ -33,6 +33,8 @@ from . import models
 from . import embedding
 from . import datasets
 from . import auto
+from . import layers
 
 from .engine import load_model
 from .engine import load_preprocessor
+from .engine import callbacks

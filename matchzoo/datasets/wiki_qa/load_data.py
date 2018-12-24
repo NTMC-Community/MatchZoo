@@ -1,5 +1,6 @@
 """WikiQA data loader."""
 
+import csv
 from pathlib import Path
 
 import keras
@@ -11,13 +12,14 @@ _url = "https://download.microsoft.com/download/E/5/F/" \
        "E5FCFCEE-7005-4814-853D-DAA7C66507E0/WikiQACorpus.zip"
 
 
-def load_data(stage='train', task='ranking'):
+def load_data(stage='train', task='ranking', filter=False):
     """
     Load WikiQA data.
 
     :param stage: One of `train`, `dev`, and `test`.
     :param task: Could be one of `ranking`, `classification` or a
         :class:`matchzoo.engine.BaseTask` instance.
+    :param filter: Whether remove the questions without correct answers.
     :return: A DataPack if `ranking`, a tuple of (DataPack, classes) if
         `classification`.
     """
@@ -28,6 +30,17 @@ def load_data(stage='train', task='ranking'):
     data_root = _download_data()
     file_path = data_root.joinpath(f'WikiQA-{stage}.tsv')
     data_pack = _read_data(file_path)
+    if filter and stage in ('dev', 'test'):
+        ref_path = data_root.joinpath(f'WikiQA-{stage}.ref')
+        filter_ref_path = data_root.joinpath(f'WikiQA-{stage}-filtered.ref')
+        with open(filter_ref_path, mode='r') as f:
+            filtered_ids = set([line.split()[0] for line in f])
+        filtered_lines = []
+        with open(ref_path, mode='r') as f:
+            for idx, line in enumerate(f.readlines()):
+                if line.split()[0] in filtered_ids:
+                    filtered_lines.append(idx)
+        data_pack = data_pack[filtered_lines]
 
     if task == 'ranking':
         task = matchzoo.tasks.Ranking()
@@ -53,7 +66,7 @@ def _download_data():
 
 
 def _read_data(path):
-    table = pd.read_table(path)
+    table = pd.read_csv(path, sep='\t', header=0, quoting=csv.QUOTE_NONE)
     df = pd.DataFrame({
         'text_left': table['Question'],
         'text_right': table['Sentence'],
