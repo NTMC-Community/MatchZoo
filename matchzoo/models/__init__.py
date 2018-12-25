@@ -12,3 +12,7 @@ from .drmm import DRMM
 from .anmm_model import ANMMModel
 from .match_lstm import MatchLSTM
 from .mvlstm_model import MVLSTM
+
+import matchzoo
+def list_available():
+    return matchzoo.engine.BaseModel.__subclasses__()
