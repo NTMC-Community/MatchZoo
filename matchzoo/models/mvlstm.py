@@ -11,9 +11,11 @@ class MVLSTM(engine.BaseModel):
     """
     MVLSTM Model.
     Examples:
-        >>> model = MVLSTMModel()
-        >>> model.guess_and_fill_missing_params()
-        >>> model.build()
+        >>> model = matchzoo.models.MVLSTM()
+        >>> model.params['mlp_num_layers'] = 2
+        >>> model.params['top_k'] = 10
+        >>> model.guess_and_fill_missing_params(verbose=0)
+        >>> model.build() 
     """
 
     @classmethod
