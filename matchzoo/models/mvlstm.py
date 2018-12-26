@@ -1,21 +1,26 @@
 """An implementation of MVLSTM Model."""
 import typing
+import logging
 
 import keras
 import keras.backend as K
 
 from matchzoo import engine
 
+logger = logging.getLogger(__name__)
+
 
 class MVLSTM(engine.BaseModel):
     """
     MVLSTM Model.
+
     Examples:
-        >>> model = matchzoo.models.MVLSTM()
-        >>> model.params['mlp_num_layers'] = 2
+        >>> model = MVLSTM()
+        >>> model.params['mlp_num_layers']=2
         >>> model.params['top_k'] = 10
         >>> model.guess_and_fill_missing_params(verbose=0)
-        >>> model.build() 
+        >>> model.build()
+
     """
 
     @classmethod
@@ -45,7 +50,7 @@ class MVLSTM(engine.BaseModel):
         # Process query & document input.
         bi_lstm = keras.layers.Bidirectional(keras.layers.LSTM(
             self._params['hidden_size'],
-            return_sequences=True,dropout=self._params['dropout_rate']))
+            return_sequences=True, dropout=self._params['dropout_rate']))
 
         rep_query = bi_lstm(embed_query)
         rep_doc = bi_lstm(embed_doc)
@@ -59,7 +64,7 @@ class MVLSTM(engine.BaseModel):
         )(matching_matrix)
         mlp = self._make_multi_layer_perceptron_layer()(matching_topk)
         mlp = keras.layers.Dropout(
-                    rate=self._params['dropout_rate'])(mlp)
+            rate=self._params['dropout_rate'])(mlp)
 
         x_out = self._make_output_layer()(mlp)
         self._backend = keras.Model(inputs=[query, doc], outputs=x_out)
