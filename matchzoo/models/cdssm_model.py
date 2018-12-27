@@ -2,11 +2,13 @@
 import typing
 
 from matchzoo import engine
+from matchzoo import tasks
 from matchzoo import TensorType
 from matchzoo import preprocessors
 
 from keras.models import Model
-from keras.layers import Input, Conv1D, Dot, Dropout, GlobalMaxPool1D
+from keras.layers import Input, Conv1D, Dense, Dot
+from keras.layers import Dropout, GlobalMaxPool1D
 
 
 class CDSSMModel(engine.BaseModel):
@@ -20,13 +22,10 @@ class CDSSMModel(engine.BaseModel):
 
     Examples:
         >>> model = CDSSMModel()
+        >>> model.params['optimizer'] = 'adam'
         >>> model.params['filters'] =  32
         >>> model.params['kernel_size'] = 3
-        >>> model.params['strides'] = 2
-        >>> model.params['padding'] = 'same'
-        >>> model.params['mlp_num_layers'] = 2
-        >>> model.params['mlp_num_units'] = 300
-        >>> model.params['mlp_num_fan_out'] = 128
+        >>> model.params['mlp_hidden_units'] = [300, 300, 128]
         >>> model.params['conv_activation_func'] = 'relu'
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
@@ -36,31 +35,30 @@ class CDSSMModel(engine.BaseModel):
     @classmethod
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
-        params = super().get_default_params(with_multi_layer_perceptron=True)
-        params['optimizer'] = 'adam'
-        params['input_shapes'] = [(10, 900), (10, 900)]
-        params.add(engine.Param('w_initializer', 'glorot_normal'))
-        params.add(engine.Param('b_initializer', 'zeros'))
+        # set :attr:`with_multi_layer_perceptron` to False to support
+        # user-defined variable dense layer units
+        params = super().get_default_params()
         params.add(engine.Param('filters', 32))
         params.add(engine.Param('kernel_size', 3))
         params.add(engine.Param('strides', 1))
         params.add(engine.Param('padding', 'same'))
-        params.add(engine.Param('conv_activation_func', 'tanh'))
-        params.add(engine.Param('dropout_rate', 0))
+        params.add(engine.Param('conv_activation_func', 'relu'))
+        params.add(engine.Param('w_initializer', 'glorot_normal'))
+        params.add(engine.Param('b_initializer', 'zeros'))
+        params.add(engine.Param('dropout_rate', 0.3))
+        params.add(engine.Param('mlp_activation_func', 'relu'))
+        params.add(engine.Param('mlp_hidden_units', [64, 32]))
         return params
 
     def _create_base_network(self) -> typing.Callable:
         """
-        Apply conv and maxpooling operation towards to each tri-letter.
+        Apply conv and maxpooling operation towards to each letter-ngram.
 
-        The input shape is `num_word_ngrams`*(`contextual_window`*
-        `dim_triletter`), as described in the paper, `contextual_window`
-        is 3, according to their observation, `dim_triletter` is about
-        30,000, so each `word_ngram` is a 1 by 90,000 matrix.
+        The input shape is `fixed_text_length`*`number of letter-ngram`,
+        as described in the paper, `n` is 3, `number of letter-trigram`
+        is about 30,000 according to their observation.
 
-        :param input_shape: tuple of input shapes.
-        :return: Keras `Model`, input 1 by n dimension tensor, output
-                 128d tensor.
+        :return: Wrapped Keras `Layer` as CDSSM network, tensor in tensor out.
         """
         def _wrapper(x: TensorType):
             # Apply 1d convolutional on each word_ngram (lt).
@@ -78,7 +76,10 @@ class CDSSMModel(engine.BaseModel):
             x = Dropout(self._params['dropout_rate'])(x)
             x = GlobalMaxPool1D()(x)
             # Apply a none-linear transformation use a tanh layer.
-            x = self._make_multi_layer_perceptron_layer()(x)
+            hidden_units = self._params['mlp_hidden_units']
+            activation = self._params['mlp_activation_func']
+            for unit in hidden_units:
+                x = Dense(unit, activation=activation)(x)
             return x
 
         return _wrapper
@@ -87,7 +88,7 @@ class CDSSMModel(engine.BaseModel):
         """
         Build model structure.
 
-        CDSSM use Siamese arthitecture.
+        CDSSM use Siamese architecture.
         """
         input_shape = self._params['input_shapes'][0]
         base_network = self._create_base_network()
@@ -107,3 +108,21 @@ class CDSSMModel(engine.BaseModel):
     def get_default_preprocessor(cls):
         """:return: Default preprocessor."""
         return preprocessors.CDSSMPreprocessor()
+
+    def guess_and_fill_missing_params(self, verbose=1):
+        """
+        Guess and fill missing parameters in :attr:`params`.
+
+        Use this method to automatically fill-in hyper parameters.
+        This involves some guessing so the parameter it fills could be
+        wrong. For example, the default task is `Ranking`, and if we do not
+        set it to `Classification` manually for data packs prepared for
+        classification, then the shape of the model output and the data will
+        mismatch.
+
+        :param verbose: Verbosity.
+        """
+        self._params.get('name').set_default(self.__class__.__name__, verbose)
+        self._params.get('task').set_default(tasks.Ranking(), verbose)
+        self._params.get('input_shapes').set_default([(10, 30), (10, 30)], verbose)
+        self._params.get('optimizer').set_default('adam', verbose)

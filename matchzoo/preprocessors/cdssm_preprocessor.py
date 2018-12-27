@@ -22,10 +22,12 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         CDSSM Model preprocessor.
 
         The word hashing step could eats up a lot of memory. To workaround
-        this problem, set `with_word_hashing` to `False` and use  a
+        this problem, set `with_word_hashing` to `False` and use a
         :class:`matchzoo.DynamicDataGenerator` with a
         :class:`matchzoo.processor_units.WordHashingUnit`.
 
+        :param text_len: Fixed text length, cut original text if it is longer
+         or pad if shorter.
         :param with_word_hashing: Include a word hashing step if `True`.
 
         Example:
@@ -52,8 +54,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         Fit pre-processing context for transformation.
 
         :param verbose: Verbosity.
-        :param data_pack: data_pack to be preprocessed.
-        :return: class:`DSSMPreprocessor` instance.
+        :param data_pack: Data_pack to be preprocessed.
+        :return: class:`CDSSMPreprocessor` instance.
         """
         units = self._default_processor_units()
         units.append(processor_units.NgramLetterUnit())
@@ -70,7 +72,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
     @engine.validate_context
     def transform(self, data_pack: DataPack, verbose=1) -> DataPack:
         """
-        Apply transformation on data, create `tri-letter` representation.
+        Apply transformation on data, create `letter-ngram` representation.
 
         :param data_pack: Inputs to be preprocessed.
         :param verbose: Verbosity.

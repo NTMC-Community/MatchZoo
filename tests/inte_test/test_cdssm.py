@@ -49,14 +49,15 @@ def test_generator(request, test_data_processed):
 
 
 @pytest.mark.slow
-def test_dssm(train_data_processed,
-              task,
-              train_generator,
-              test_generator,
-              cdssm_preprocessor):
-    """Test DSSM model."""
+def test_cdssm(task,
+               train_generator,
+               test_generator,
+               cdssm_preprocessor):
+    """Test CDSSM model."""
     # Create a cdssm model
     cdssm_model = mz.models.CDSSMModel()
+    assert isinstance(cdssm_model.get_default_preprocessor(),
+                      mz.preprocessors.CDSSMPreprocessor)
     input_shapes =cdssm_preprocessor.context['input_shapes']
     cdssm_model.params['input_shapes'] = input_shapes
     cdssm_model.params['task'] = task
