@@ -4,9 +4,11 @@ import logging
 
 from tqdm import tqdm
 
-from matchzoo import engine, processor_units
+from matchzoo import build_vocab_unit
+from matchzoo import chain_transform
 from matchzoo import DataPack
-from matchzoo import chain_transform, build_vocab_unit
+from matchzoo import engine
+from matchzoo import processor_units
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
@@ -17,7 +19,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
 
     def __init__(self, text_len: int = 10, with_word_hashing=True):
         """
-        DSSM Model preprocessor.
+        CDSSM Model preprocessor.
 
         The word hashing step could eats up a lot of memory. To workaround
         this problem, set `with_word_hashing` to `False` and use  a
@@ -30,13 +32,13 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             >>> import matchzoo as mz
             >>> train_data = mz.datasets.toy.load_data()
             >>> test_data = mz.datasets.toy.load_data(stage='test')
-            >>> dssm_preprocessor = mz.preprocessors.DSSMPreprocessor()
-            >>> train_data_processed = dssm_preprocessor.fit_transform(
+            >>> cdssm_preprocessor = mz.preprocessors.CDSSMPreprocessor()
+            >>> train_data_processed = cdssm_preprocessor.fit_transform(
             ...     train_data
             ... )
             >>> type(train_data_processed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
-            >>> test_data_transformed = dssm_preprocessor.transform(test_data)
+            >>> test_data_transformed = cdssm_preprocessor.transform(test_data)
             >>> type(test_data_transformed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
 

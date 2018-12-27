@@ -5,19 +5,18 @@ from matchzoo import engine
 from matchzoo import TensorType
 from matchzoo import preprocessors
 
-from keras import backend as K
 from keras.models import Model
-from keras.layers import Input, Conv1D, GlobalMaxPool1D, Dot, Dropout
+from keras.layers import Input, Conv1D, Dot, Dropout, GlobalMaxPool1D
 
 
 class CDSSMModel(engine.BaseModel):
     """
     CDSSM Model implementation.
 
-    A Latent Semantic Model with Convolutional-Pooling Structure for
-    Information Retrieval.
     Learning Semantic Representations Using Convolutional Neural Networks
-    for Web Search.
+    for Web Search. (2014a)
+    A Latent Semantic Model with Convolutional-Pooling Structure for
+    Information Retrieval. (2014b)
 
     Examples:
         >>> model = CDSSMModel()
