@@ -393,18 +393,14 @@ class FrequencyFilterUnit(StatefulProcessorUnit):
 
 class WordHashingUnit(ProcessorUnit):
     """
-    Create word-hashing layer for :class:`DSSMModel`.
+    Word-hashing layer for DSSM-based models.
 
-    The input of :class:`WordHashingUnit` should be a list
-    of `tri-letters` extracted from one document. The output
-    of :class:`WordHashingUnit` is the word-hashing representation
-    of this document.
+    The input of :class:`WordHashingUnit` should be a list of word
+    sub-letter list extracted from one document. The output of is
+    the word-hashing representation of this document.
 
     :class:`NgramLetterUnit` and :class:`VocabularyUnit` are two
     essential prerequisite of :class:`WordHashingUnit`.
-
-    TODO Update :class:`WordHashingUnit` to generalize more `DSSM`
-    like models such as `CDSSM` and `LSTM-DSSM`.
 
     Examples:
        >>> letters = [['#te', 'tes','est', 'st#'], ['oov']]
