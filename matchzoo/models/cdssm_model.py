@@ -124,5 +124,6 @@ class CDSSMModel(engine.BaseModel):
         """
         self._params.get('name').set_default(self.__class__.__name__, verbose)
         self._params.get('task').set_default(tasks.Ranking(), verbose)
-        self._params.get('input_shapes').set_default([(10, 30), (10, 30)], verbose)
+        self._params.get('input_shapes').set_default([(10, 30), (10, 30)],
+                                                     verbose)
         self._params.get('optimizer').set_default('adam', verbose)
