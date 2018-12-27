@@ -75,6 +75,9 @@ def test_ngram_unit(list_input):
     ngram = NgramLetterUnit()
     out = ngram.transform(list_input)
     assert '#a#' in out
+    ngram = NgramLetterUnit(reduce_dim=False)
+    out = ngram.transform(list_input)
+    assert len(out) == 9
 
 
 def test_fixedlength_unit(list_input):
