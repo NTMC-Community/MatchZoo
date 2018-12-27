@@ -1,9 +1,13 @@
 """An implementation of CDSSM (CLSM) model."""
+import typing
 
 from matchzoo import engine
+from matchzoo import TensorType
+from matchzoo import preprocessors
 
+from keras import backend as K
 from keras.models import Model
-from keras.layers import Input, Conv1D, GlobalMaxPool1D, Dot
+from keras.layers import Input, Conv1D, GlobalMaxPool1D, Dot, Dropout
 
 
 class CDSSMModel(engine.BaseModel):
@@ -43,9 +47,10 @@ class CDSSMModel(engine.BaseModel):
         params.add(engine.Param('strides', 1))
         params.add(engine.Param('padding', 'same'))
         params.add(engine.Param('conv_activation_func', 'tanh'))
+        params.add(engine.Param('dropout_rate', 0))
         return params
 
-    def _create_base_network(self, input_shape: tuple) -> Model:
+    def _create_base_network(self) -> typing.Callable:
         """
         Apply conv and maxpooling operation towards to each tri-letter.
 
@@ -58,24 +63,26 @@ class CDSSMModel(engine.BaseModel):
         :return: Keras `Model`, input 1 by n dimension tensor, output
                  128d tensor.
         """
-        # Input word hashing layer.
-        x_in = Input(shape=input_shape)
-        # Apply 1d convolutional on each word_ngram (lt).
-        # Input shape: (batch_size, num_tri_letters, 90000)
-        # Sequence of num_tri_letters vectors of 90000d vectors.
-        x = Conv1D(filters=self._params['filters'],
-                   kernel_size=self._params['kernel_size'],
-                   strides=self._params['strides'],
-                   padding=self._params['padding'],
-                   activation=self._params['conv_activation_func'],
-                   kernel_initializer=self._params['w_initializer'],
-                   bias_initializer=self._params['b_initializer'])(x_in)
-        # Apply max pooling by take max at each dimension across
-        # all word_trigram features.
-        x = GlobalMaxPool1D()(x)
-        # Apply a none-linear transformation use a tanh layer.
-        x = self._make_multi_layer_perceptron_layer()(x)
-        return Model(inputs=x_in, outputs=x)
+        def _wrapper(x: TensorType):
+            # Apply 1d convolutional on each word_ngram (lt).
+            # Input shape: (batch_size, num_tri_letters, 90000)
+            # Sequence of num_tri_letters vectors of 90000d vectors.
+            x = Conv1D(filters=self._params['filters'],
+                       kernel_size=self._params['kernel_size'],
+                       strides=self._params['strides'],
+                       padding=self._params['padding'],
+                       activation=self._params['conv_activation_func'],
+                       kernel_initializer=self._params['w_initializer'],
+                       bias_initializer=self._params['b_initializer'])(x)
+            # Apply max pooling by take max at each dimension across
+            # all word_trigram features.
+            x = Dropout(self._params['dropout_rate'])(x)
+            x = GlobalMaxPool1D()(x)
+            # Apply a none-linear transformation use a tanh layer.
+            x = self._make_multi_layer_perceptron_layer()(x)
+            return x
+
+        return _wrapper
 
     def build(self):
         """
@@ -84,8 +91,7 @@ class CDSSMModel(engine.BaseModel):
         CDSSM use Siamese arthitecture.
         """
         input_shape = self._params['input_shapes'][0]
-        base_network = self._create_base_network(
-            input_shape=input_shape)
+        base_network = self._create_base_network()
         # Left input and right input.
         input_left = Input(name='text_left', shape=input_shape)
         input_right = Input(name='text_right', shape=input_shape)
@@ -97,3 +103,8 @@ class CDSSMModel(engine.BaseModel):
         x_out = self._make_output_layer()(x)
         self._backend = Model(inputs=[input_left, input_right],
                               outputs=x_out)
+
+    @classmethod
+    def get_default_preprocessor(cls):
+        """:return: Default preprocessor."""
+        return preprocessors.CDSSMPreprocessor()
