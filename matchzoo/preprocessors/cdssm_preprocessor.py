@@ -65,8 +65,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
 
         self._context['vocab_unit'] = vocab_unit
         num_letter = len(vocab_unit.state['term_index']) + 1
-        self._context['input_shapes'] = [(self._text_len, num_letter),
-                                         (self._text_len, num_letter)]
+        self._context['input_shapes'] = (self._text_len, num_letter)
         return self
 
     @engine.validate_context
@@ -81,11 +80,9 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         """
         data_pack = data_pack.copy()
         units = self._default_processor_units()
-        units.extend([
-            processor_units.FixedLengthUnit(text_length=self._text_len,
-                                            pad_value='0'),
-            processor_units.NgramLetterUnit(reduce_dim=False)
-        ])
+        units.append(processor_units.FixedLengthUnit(
+            text_length=self._text_len, pad_value='0'))
+        units.append(processor_units.NgramLetterUnit(reduce_dim=False))
         if self._with_word_hashing:
             term_index = self._context['vocab_unit'].state['term_index']
             units.append(processor_units.WordHashingUnit(term_index))
