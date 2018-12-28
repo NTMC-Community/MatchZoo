@@ -83,11 +83,9 @@ class CDSSMModel(engine.BaseModel):
 
         CDSSM use Siamese architecture.
         """
-        input_shape = self._params['input_shapes'][0]
         base_network = self._create_base_network()
         # Left input and right input.
-        input_left = keras.layers.Input(name='text_left', shape=input_shape)
-        input_right = keras.layers.Input(name='text_right', shape=input_shape)
+        input_left, input_right = self._make_inputs()
         # Process left & right input.
         x = [base_network(input_left),
              base_network(input_right)]
