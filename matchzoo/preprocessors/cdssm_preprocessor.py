@@ -65,7 +65,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
 
         self._context['vocab_unit'] = vocab_unit
         num_letter = len(vocab_unit.state['term_index']) + 1
-        self._context['input_shapes'] = (self._text_len, num_letter)
+        self._context['input_shapes'] = [(self._text_len, num_letter),
+                                         (self._text_len, num_letter)]
         return self
 
     @engine.validate_context

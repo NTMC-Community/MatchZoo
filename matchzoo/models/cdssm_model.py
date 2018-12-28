@@ -83,7 +83,7 @@ class CDSSMModel(engine.BaseModel):
 
         CDSSM use Siamese architecture.
         """
-        input_shape = self._params['input_shapes']
+        input_shape = self._params['input_shapes'][0]
         base_network = self._create_base_network()
         # Left input and right input.
         input_left = keras.layers.Input(name='text_left', shape=input_shape)
@@ -115,5 +115,6 @@ class CDSSMModel(engine.BaseModel):
 
         :param verbose: Verbosity.
         """
-        self._params.get('input_shapes').set_default((10, 30), verbose)
-        super().guess_and_fill_missing_params()
+        self._params.get('input_shapes').set_default([(10, 30),
+                                                      (10, 30)], verbose)
+        super().guess_and_fill_missing_params(verbose)
