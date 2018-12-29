@@ -54,11 +54,14 @@ def test_cdssm(task,
                test_generator,
                cdssm_preprocessor):
     """Test CDSSM model."""
+    # cdssm_preprocessor = mz.preprocessors.CDSSMPreprocessor()
+    # data = cdssm_preprocessor.fit_transform(train_data)
+    # assert data.left['text_left'][4].shape == 1
     # Create a cdssm model
     cdssm_model = mz.models.CDSSMModel()
     assert isinstance(cdssm_model.get_default_preprocessor(),
                       mz.preprocessors.CDSSMPreprocessor)
-    input_shapes =cdssm_preprocessor.context['input_shapes']
+    input_shapes = cdssm_preprocessor.context['input_shapes']
     cdssm_model.params['input_shapes'] = input_shapes
     cdssm_model.params['task'] = task
     cdssm_model.guess_and_fill_missing_params()
