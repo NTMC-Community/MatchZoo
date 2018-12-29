@@ -73,8 +73,13 @@ class BaseModel(abc.ABC):
 
         """
         params = engine.ParamTable()
-        params.add(engine.Param('name'))
-        params.add(engine.Param('model_class', cls))
+        params.add(engine.Param(
+            'name', desc=''
+        ))
+        params.add(engine.Param(
+            'model_class', cls,
+            desc='Model class. Used internally for save/load. '
+        ))
         params.add(engine.Param('input_shapes'))
         params.add(engine.Param('task'))
         params.add(engine.Param('optimizer'))
