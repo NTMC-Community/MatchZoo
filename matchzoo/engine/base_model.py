@@ -12,6 +12,7 @@ import pandas as pd
 import matchzoo
 from matchzoo import DataGenerator
 from matchzoo import engine
+from matchzoo.engine import hyper_spaces
 from matchzoo import tasks
 
 
@@ -74,26 +75,68 @@ class BaseModel(abc.ABC):
         """
         params = engine.ParamTable()
         params.add(engine.Param(
-            'name', desc=''
+            name='name',
+            desc="Not related to the model\'s behavior."
         ))
         params.add(engine.Param(
-            'model_class', cls,
-            desc='Model class. Used internally for save/load. '
+            name='model_class', value=cls,
+            desc="Model class. Used internally for save/load. "
+                 "Changing this may cause unexpected behaviors."
         ))
-        params.add(engine.Param('input_shapes'))
-        params.add(engine.Param('task'))
-        params.add(engine.Param('optimizer'))
+        params.add(engine.Param(
+            name='input_shapes',
+            desc="Dependent on the model and data. Should be set manually."
+        ))
+        params.add(engine.Param(
+            name='task',
+            desc="Decides model output shape, loss, and metrics."
+        ))
+        params.add(engine.Param(
+            name='optimizer',
+            hyper_space=hyper_spaces.choice(['adam', 'adgrad', 'rmsprop'])
+        ))
         if with_embedding:
-            params.add(engine.Param('with_embedding', True))
-            params.add(engine.Param('embedding_input_dim'))
-            params.add(engine.Param('embedding_output_dim'))
-            params.add(engine.Param('embedding_trainable'))
+            params.add(engine.Param(
+                name='with_embedding', value=True,
+                desc="A flag used help `auto` module. Shouldn't be changed."
+            ))
+            params.add(engine.Param(
+                name='embedding_input_dim',
+                desc='Usually equals vocab size + 1. Should be set manually.'
+            ))
+            params.add(engine.Param(
+                name='embedding_output_dim',
+                desc='Should be set manually.'
+            ))
+            params.add(engine.Param(
+                name='embedding_trainable',
+                desc='`True` to enable embedding layer training, '
+                     '`False` to freeze embedding parameters.'
+            ))
         if with_multi_layer_perceptron:
-            params.add(engine.Param('with_multi_layer_perceptron', True))
-            params.add(engine.Param('mlp_num_units'))
-            params.add(engine.Param('mlp_num_layers'))
-            params.add(engine.Param('mlp_num_fan_out'))
-            params.add(engine.Param('mlp_activation_func'))
+            params.add(engine.Param(
+                name='with_multi_layer_perceptron', value=True,
+                desc="A flag of whether a multiple layer perceptron is used. "
+                     "Shouldn't be changed."
+            ))
+            params.add(engine.Param(
+                name='mlp_num_units',
+                desc="Number of units in first `mlp_num_layers` layers."
+            ))
+            params.add(engine.Param(
+                name='mlp_num_layers',
+                desc="Number of layers of the multiple layer percetron."
+            ))
+            params.add(engine.Param(
+                name='mlp_num_fan_out',
+                desc="Number of units of the layer that connects the multiple "
+                     "layer percetron and the output."
+            ))
+            params.add(engine.Param(
+                name='mlp_activation_func',
+                desc='Activation function used in the multiple '
+                     'layer perceptron.'
+            ))
         return params
 
     @classmethod

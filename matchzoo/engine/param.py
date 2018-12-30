@@ -181,6 +181,10 @@ class Param(object):
     def desc(self):
         return self._desc
 
+    @desc.setter
+    def desc(self, value):
+        self._desc = value
+
     def _infer_pre_assignment_hook(self):
         if isinstance(self._value, numbers.Number):
             self._pre_assignment_hook = lambda x: type(self._value)(x)
