@@ -2,7 +2,6 @@
 
 import abc
 import typing
-import logging
 from pathlib import Path
 
 import dill
@@ -15,57 +14,12 @@ from matchzoo import DataGenerator
 from matchzoo import engine
 from matchzoo import tasks
 
-logger = logging.getLogger(__name__)
-
 
 class BaseModel(abc.ABC):
     """Abstract base class of all matchzoo models."""
 
     BACKEND_WEIGHTS_FILENAME = 'backend_weights.h5'
     PARAMS_FILENAME = 'params.dill'
-
-    class EvaluateOnCall(keras.callbacks.Callback):
-        """:class:`EvaluateOncall` evaluate validation datasets on callback."""
-
-        def __init__(self,
-                     matchzoo_model: 'BaseModel',
-                     x: typing.Union[np.ndarray, typing.List[np.ndarray]],
-                     y: np.ndarray,
-                     valid_steps=3,
-                     batch_size: int = 32):
-            """
-            :class:`EvaluateOnCall` constructor.
-
-            :param matchzoo_model: model to evaluate.
-            :param x: input data.
-            :param y: labels.
-            :param valid_steps: integer, skipping steps(number of batches) to
-                call the :class:`EvaluateOnCall`.
-            :param batch_size: integer, number of instances in a batch.
-
-            """
-            super().__init__()
-            self._mz_model = matchzoo_model
-            self._dev_x = x
-            self._dev_y = y
-            self._valid_steps = valid_steps
-            self._batch_size = batch_size
-
-        def on_epoch_end(self, epoch, logs=None):
-            """
-            Called at the end of en epoch.
-
-            :param epoch: integer, index of epoch.
-            :param logs: dictionary of logs.
-            :return: dictionary of logs.
-            """
-            if epoch % self._valid_steps == 0:
-                val_logs = self._mz_model.evaluate(self._dev_x, self._dev_y,
-                                                   self._batch_size, verbose=0)
-                logger.info('Validation: ' + ' - '.join(
-                    f'{k}:{v:f}' for k, v in val_logs.items()))
-                for k, v in val_logs.items():
-                    logs[k] = v
 
     def __init__(
         self,
