@@ -153,6 +153,11 @@ class choice(HyperoptProxy):
         :param options: options to search from
         """
         super().__init__(hyperopt_func=hyperopt.hp.choice, options=options)
+        self._options = options
+
+    def __str__(self):
+        """:return: `str` representation of the hyper space."""
+        return f'choice in {self._options}'
 
 
 class quniform(HyperoptProxy):
@@ -176,6 +181,14 @@ class quniform(HyperoptProxy):
         super().__init__(hyperopt_func=hyperopt.hp.quniform,
                          low=low,
                          high=high, q=q)
+        self._low = low
+        self._high = high
+        self._q = q
+
+    def __str__(self):
+        """:return: `str` representation of the hyper space."""
+        return f'quantitative uniform distribution in  ' \
+               f'[{self._low}, {self._high}), with a step size of {self._q}'
 
 
 class uniform(HyperoptProxy):
@@ -193,3 +206,9 @@ class uniform(HyperoptProxy):
         :param high: upper bound of the space
         """
         super().__init__(hyperopt_func=hyperopt.hp.uniform, low=low, high=high)
+        self._low = low
+        self._high = high
+
+    def __str__(self):
+        """:return: `str` representation of the hyper space."""
+        return f'uniform distribution in  [{self._low}, {self._high})'
