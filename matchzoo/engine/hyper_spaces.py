@@ -156,6 +156,7 @@ class choice(HyperoptProxy):
         self._options = options
 
     def __str__(self):
+        """:return: `str` representation of the hyper space."""
         return f'choice in {self._options}'
 
 
@@ -185,6 +186,7 @@ class quniform(HyperoptProxy):
         self._q = q
 
     def __str__(self):
+        """:return: `str` representation of the hyper space."""
         return f'quantitative uniform distribution in  ' \
                f'[{self._low}, {self._high}), with a step size of {self._q}'
 
@@ -208,4 +210,5 @@ class uniform(HyperoptProxy):
         self._high = high
 
     def __str__(self):
+        """:return: `str` representation of the hyper space."""
         return f'uniform distribution in  [{self._low}, {self._high})'

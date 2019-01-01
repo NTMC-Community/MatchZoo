@@ -57,7 +57,7 @@ class Param(object):
         ...     hyper_space=quniform(low=1, high=5)
         ... )
         >>> param.hyper_space  # doctest: +ELLIPSIS
-        <hyperopt.pyll.base.Apply object at 0x...>
+        <matchzoo.engine.hyper_spaces.quniform object at ...>
         >>> from hyperopt.pyll.stochastic import sample
         >>> samples = [sample(param.hyper_space) for _ in range(64)]
         >>> set(samples) == {1, 2, 3, 4, 5}
@@ -179,10 +179,12 @@ class Param(object):
 
     @property
     def desc(self):
+        """:return: Parameter description."""
         return self._desc
 
     @desc.setter
-    def desc(self, value):
+    def desc(self, value: str):
+        """:param value: New description of the parameter."""
         self._desc = value
 
     def _infer_pre_assignment_hook(self):
