@@ -59,7 +59,8 @@ class Param(object):
         >>> param.hyper_space  # doctest: +ELLIPSIS
         <matchzoo.engine.hyper_spaces.quniform object at ...>
         >>> from hyperopt.pyll.stochastic import sample
-        >>> samples = [sample(param.hyper_space) for _ in range(64)]
+        >>> hyperopt_space = param.hyper_space.convert(param.name)
+        >>> samples = [sample(hyperopt_space) for _ in range(64)]
         >>> set(samples) == {1, 2, 3, 4, 5}
         True
 
@@ -156,7 +157,7 @@ class Param(object):
             self._infer_pre_assignment_hook()
 
     @property
-    def hyper_space(self) -> hyperopt.pyll.Apply:
+    def hyper_space(self):
         """:return: Hyper space of the parameter."""
         return self._hyper_space
 
