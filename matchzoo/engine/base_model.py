@@ -2,7 +2,6 @@
 
 import abc
 import typing
-import logging
 from pathlib import Path
 
 import dill
@@ -13,9 +12,8 @@ import pandas as pd
 import matchzoo
 from matchzoo import DataGenerator
 from matchzoo import engine
+from matchzoo.engine import hyper_spaces
 from matchzoo import tasks
-
-logger = logging.getLogger(__name__)
 
 
 class BaseModel(abc.ABC):
@@ -23,49 +21,6 @@ class BaseModel(abc.ABC):
 
     BACKEND_WEIGHTS_FILENAME = 'backend_weights.h5'
     PARAMS_FILENAME = 'params.dill'
-
-    class EvaluateOnCall(keras.callbacks.Callback):
-        """:class:`EvaluateOncall` evaluate validation datasets on callback."""
-
-        def __init__(self,
-                     matchzoo_model: 'BaseModel',
-                     x: typing.Union[np.ndarray, typing.List[np.ndarray]],
-                     y: np.ndarray,
-                     valid_steps=3,
-                     batch_size: int = 32):
-            """
-            :class:`EvaluateOnCall` constructor.
-
-            :param matchzoo_model: model to evaluate.
-            :param x: input data.
-            :param y: labels.
-            :param valid_steps: integer, skipping steps(number of batches) to
-                call the :class:`EvaluateOnCall`.
-            :param batch_size: integer, number of instances in a batch.
-
-            """
-            super().__init__()
-            self._mz_model = matchzoo_model
-            self._dev_x = x
-            self._dev_y = y
-            self._valid_steps = valid_steps
-            self._batch_size = batch_size
-
-        def on_epoch_end(self, epoch, logs=None):
-            """
-            Called at the end of en epoch.
-
-            :param epoch: integer, index of epoch.
-            :param logs: dictionary of logs.
-            :return: dictionary of logs.
-            """
-            if epoch % self._valid_steps == 0:
-                val_logs = self._mz_model.evaluate(self._dev_x, self._dev_y,
-                                                   self._batch_size, verbose=0)
-                logger.info('Validation: ' + ' - '.join(
-                    f'{k}:{v:f}' for k, v in val_logs.items()))
-                for k, v in val_logs.items():
-                    logs[k] = v
 
     def __init__(
         self,
@@ -119,22 +74,69 @@ class BaseModel(abc.ABC):
 
         """
         params = engine.ParamTable()
-        params.add(engine.Param('name'))
-        params.add(engine.Param('model_class', cls))
-        params.add(engine.Param('input_shapes'))
-        params.add(engine.Param('task'))
-        params.add(engine.Param('optimizer'))
+        params.add(engine.Param(
+            name='name',
+            desc="Not related to the model\'s behavior."
+        ))
+        params.add(engine.Param(
+            name='model_class', value=cls,
+            desc="Model class. Used internally for save/load. "
+                 "Changing this may cause unexpected behaviors."
+        ))
+        params.add(engine.Param(
+            name='input_shapes',
+            desc="Dependent on the model and data. Should be set manually."
+        ))
+        params.add(engine.Param(
+            name='task',
+            desc="Decides model output shape, loss, and metrics."
+        ))
+        params.add(engine.Param(
+            name='optimizer',
+            hyper_space=hyper_spaces.choice(['adam', 'adgrad', 'rmsprop'])
+        ))
         if with_embedding:
-            params.add(engine.Param('with_embedding', True))
-            params.add(engine.Param('embedding_input_dim'))
-            params.add(engine.Param('embedding_output_dim'))
-            params.add(engine.Param('embedding_trainable'))
+            params.add(engine.Param(
+                name='with_embedding', value=True,
+                desc="A flag used help `auto` module. Shouldn't be changed."
+            ))
+            params.add(engine.Param(
+                name='embedding_input_dim',
+                desc='Usually equals vocab size + 1. Should be set manually.'
+            ))
+            params.add(engine.Param(
+                name='embedding_output_dim',
+                desc='Should be set manually.'
+            ))
+            params.add(engine.Param(
+                name='embedding_trainable',
+                desc='`True` to enable embedding layer training, '
+                     '`False` to freeze embedding parameters.'
+            ))
         if with_multi_layer_perceptron:
-            params.add(engine.Param('with_multi_layer_perceptron', True))
-            params.add(engine.Param('mlp_num_units'))
-            params.add(engine.Param('mlp_num_layers'))
-            params.add(engine.Param('mlp_num_fan_out'))
-            params.add(engine.Param('mlp_activation_func'))
+            params.add(engine.Param(
+                name='with_multi_layer_perceptron', value=True,
+                desc="A flag of whether a multiple layer perceptron is used. "
+                     "Shouldn't be changed."
+            ))
+            params.add(engine.Param(
+                name='mlp_num_units',
+                desc="Number of units in first `mlp_num_layers` layers."
+            ))
+            params.add(engine.Param(
+                name='mlp_num_layers',
+                desc="Number of layers of the multiple layer percetron."
+            ))
+            params.add(engine.Param(
+                name='mlp_num_fan_out',
+                desc="Number of units of the layer that connects the multiple "
+                     "layer percetron and the output."
+            ))
+            params.add(engine.Param(
+                name='mlp_activation_func',
+                desc='Activation function used in the multiple '
+                     'layer perceptron.'
+            ))
         return params
 
     @classmethod
