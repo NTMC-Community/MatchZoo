@@ -17,11 +17,11 @@ class PairDataGenerator(DataGenerator):
         >>> np.random.seed(111)
         >>> import matchzoo as mz
         >>> raw_data = mz.datasets.toy.load_data()
-        >>> data_generator = PairDataGenerator(raw_data, 2, 1, 2, False)
+        >>> data_generator = PairDataGenerator(raw_data, 2, 1, 3, False)
         >>> data_generator.num_instance
         10
         >>> len(data_generator)
-        5
+        4
         >>> x, y = data_generator[0]
         >>> type(x)
         <class 'dict'>
@@ -36,9 +36,9 @@ class PairDataGenerator(DataGenerator):
         >>> type(x['text_right'])
         <class 'numpy.ndarray'>
         >>> len(x['id_left'])
-        4
+        6
         >>> len(x['id_right'])
-        4
+        6
         >>> type(y)
         <class 'numpy.ndarray'>
 

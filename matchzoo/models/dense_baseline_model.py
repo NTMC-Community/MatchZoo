@@ -11,37 +11,31 @@ class DenseBaselineModel(engine.BaseModel):
 
     Examples:
         >>> model = DenseBaselineModel()
-        >>> model.params['input_shapes'] = [(30,), (30,)]
-        >>> model.params['num_dense_units'] = 1024
+        >>> model.params['mlp_num_layers'] = 2
+        >>> model.params['mlp_num_units'] = 300
+        >>> model.params['mlp_num_fan_out'] = 128
+        >>> model.params['mlp_activation_func'] = 'relu'
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
+        >>> model.compile()
 
     """
 
     @classmethod
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
-        params = super().get_default_params()
-        params.add(engine.param.Param(
-            name='num_dense_layers',
-            value=1,
-            hyper_space=engine.hyper_spaces.quniform(low=1, high=6),
-            validator=lambda x: 0 < x < 2048
-        ))
-        params.add(engine.param.Param(
-            name='num_dense_units',
-            value=512,
-            hyper_space=engine.hyper_spaces.quniform(low=32, high=1024),
-            validator=lambda x: 0 < x < 2048
-        ))
+        params = super().get_default_params(with_multi_layer_perceptron=True)
+        params['mlp_num_units'] = 256
+        params.get('mlp_num_units').hyper_space = \
+            engine.hyper_spaces.quniform(16, 512)
+        params.get('mlp_num_layers').hyper_space = \
+            engine.hyper_spaces.quniform(1, 5)
         return params
 
     def build(self):
         """Model structure."""
         x_in = self._make_inputs()
         x = keras.layers.concatenate(x_in)
-        for _ in range(self._params['num_dense_layers']):
-            x = keras.layers.Dense(self._params['num_dense_units'],
-                                   activation='relu')(x)
+        x = self._make_multi_layer_perceptron_layer()(x)
         x_out = self._make_output_layer()(x)
         self._backend = keras.models.Model(inputs=x_in, outputs=x_out)

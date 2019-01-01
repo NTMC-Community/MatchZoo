@@ -1,6 +1,6 @@
 """An implementation of DSSM, Deep Structured Semantic Model."""
 from keras.models import Model
-from keras.layers import Dense, Input, Dot
+from keras.layers import Input, Dot
 
 from matchzoo import engine
 from matchzoo import preprocessors
@@ -12,6 +12,10 @@ class DSSMModel(engine.BaseModel):
 
     Examples:
         >>> model = DSSMModel()
+        >>> model.params['mlp_num_layers'] = 3
+        >>> model.params['mlp_num_units'] = 300
+        >>> model.params['mlp_num_fan_out'] = 128
+        >>> model.params['mlp_activation_func'] = 'relu'
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -20,17 +24,8 @@ class DSSMModel(engine.BaseModel):
     @classmethod
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
-        params = super().get_default_params()
+        params = super().get_default_params(with_multi_layer_perceptron=True)
         params['optimizer'] = 'adam'
-        params.add(engine.Param('w_initializer', 'glorot_normal'))
-        params.add(engine.Param('b_initializer', 'zeros'))
-        params.add(engine.Param('dim_fan_out', 128))
-        params.add(engine.Param(
-            'dim_hidden', 300,
-            hyper_space=engine.hyper_spaces.quniform(low=32, high=512)
-        ))
-        params.add(engine.Param('activation_hidden', 'tanh'))
-        params.add(engine.Param('num_hidden_layers', 2))
         return params
 
     def build(self):
@@ -41,7 +36,7 @@ class DSSMModel(engine.BaseModel):
         """
         dim_triletter = self._params['input_shapes'][0][0]
         input_shape = (dim_triletter,)
-        base_network = self._create_base_network(input_shape=input_shape)
+        base_network = self._make_multi_layer_perceptron_layer()
         # Left input and right input.
         input_left = Input(name='text_left', shape=input_shape)
         input_right = Input(name='text_right', shape=input_shape)
@@ -54,29 +49,6 @@ class DSSMModel(engine.BaseModel):
         self._backend = Model(
             inputs=[input_left, input_right],
             outputs=x_out)
-
-    def _create_base_network(self, input_shape: tuple) -> Model:
-        """
-        Build base to be shared.
-
-        Word-hashing layer, hidden layer * 2,  out layer.
-
-        :param: input_shape: shape of the input.
-
-        :return: x: 128d vector(tensor) representation.
-        """
-        # TODO: use sparse input in the future.
-        input_ = Input(shape=input_shape)
-        x = Dense(self._params['dim_hidden'],
-                  kernel_initializer=self._params['w_initializer'],
-                  bias_initializer=self._params['b_initializer'])(input_)
-        for _ in range(0, self._params['num_hidden_layers']):
-            x = Dense(self._params['dim_hidden'],
-                      activation=self._params['activation_hidden'])(x)
-        # Out layer, map tri-letters into 128d representation.
-        x = Dense(self._params['dim_fan_out'],
-                  activation=self._params['activation_hidden'])(x)
-        return Model(input_, x)
 
     @classmethod
     def get_default_preprocessor(cls):
