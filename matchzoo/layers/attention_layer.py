@@ -23,24 +23,29 @@ class AttentionLayer(Layer):
     def __init__(self,
                  att_dim: int,
                  att_type: str = 'default',
-                 remove_diagnoal: bool = False,
+                 remove_diagonal: bool = False,
                  **kwargs):
         """
         class: `AttentionLayer` constructor.
 
         :param att_dim: int
         :param att_type: int
-        :param remove_diagnoal: bool
+        :param remove_diagonal: bool
         """
-        self.att_dim = att_dim
-        self.att_type = att_type
-        self.remove_diagnoal = remove_diagnoal
+        self._att_dim = att_dim
+        self._att_type = att_type
+        self._remove_diagonal = remove_diagonal
         super(AttentionLayer, self).__init__(**kwargs)
 
     @property
-    def get_att_type(cls):
-        """Get the number of perspsectives that is True."""
-        return cls.att_type
+    def att_dim(self):
+        """Get the attention dimension"""
+        return self._att_dim
+
+    @property
+    def att_type(self):
+        """Get the attention type."""
+        return self._att_type
 
     def build(self, input_shapes):
         """
@@ -55,13 +60,13 @@ class AttentionLayer(Layer):
         hidden_dim = input_shapes[0][2]
         self.attn_kernel = self.add_weight(name='attn_kernel',
                                            shape=(hidden_dim,
-                                                  self.att_dim),
+                                                  self._att_dim),
                                            initializer='uniform',
                                            trainable=True)
-        self.diagnoal_W = self.add_weight(name='diagnoal_W',
+        self.diagonal_W = self.add_weight(name='diagnoal_W',
                                           shape=(1,
                                                  1,
-                                                 self.att_dim),
+                                                 self._att_dim),
                                           initializer='uniform',
                                           trainable=True)
         super(AttentionLayer, self).build(input_shapes)
@@ -96,7 +101,7 @@ class AttentionLayer(Layer):
         attn_reps_rt = K.tanh(attn_reps_rt)
 
         # diagnoal_W
-        attn_reps_lt = attn_reps_lt * self.diagnoal_W  # [b, s, 20]
+        attn_reps_lt = attn_reps_lt * self.diagonal_W  # [b, s, 20]
         attn_reps_rt = K.permute_dimensions(attn_reps_rt, (0, 2, 1))
 
         # [batch_size, s, s]

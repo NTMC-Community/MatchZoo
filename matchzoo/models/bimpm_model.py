@@ -28,15 +28,17 @@ class BimpmModel(engine.BaseModel):
 
         params.add(engine.Param('dim_word_embedding', 50))
         params.add(engine.Param('dim_char_embedding', 50))
-        params.add(engine.Param('word_embedding_mat', None))
-        params.add(engine.Param('char_embedding_mat', None))
+        params.add(engine.Param('word_embedding_mat'))
+        params.add(engine.Param('char_embedding_mat'))
         params.add(engine.Param('embedding_random_scale', 0.2))
         params.add(engine.Param('activation_embedding', 'softmax'))
+
         # Bimpm Setting
-        params.add(engine.Param('perspective', {'full': True,
-                                                'max-pooling': True,
-                                                'attentive': True,
-                                                'max-attentive': True}))
+        params.add(engine.Param('perspective_full', True))
+        params.add(engine.Param('perspective_max_pooling', True))
+        params.add(engine.Param('perspective_attentive', True))
+        params.add(engine.Param('perspective_max_attentive', True))
+
         params.add(engine.Param('mp_dim', 20))
         params.add(engine.Param('att_dim', 20))
         params.add(engine.Param('hidden_size', 128))
@@ -105,6 +107,9 @@ class BimpmModel(engine.BaseModel):
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
 
+        embed_left = Dropout(self._params['dropout_rate'])(embed_left)
+        embed_right = Dropout(self._params['dropout_rate'])(embed_right)
+
         # ~ Encoding Layer
         # Note: When merge_mode = None, output will be [forward, backward],
         # The default merge_mode is concat, and the output will be [lstm].
@@ -121,6 +126,9 @@ class BimpmModel(engine.BaseModel):
         x_left = bi_lstm(embed_left)
         x_right = bi_lstm(embed_right)
 
+        x_left = Dense(self._params['dropout_rate'])(x_left)
+        x_right = Dense(self._params['dropout_rate'])(x_right)
+
         # ~ Word Level Matching Layer
         # Reference:
         # https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L207-L223
@@ -130,10 +138,9 @@ class BimpmModel(engine.BaseModel):
         # ~ Multi-Perspective Matching layer.
         # Output is two sequence of vectors.
         # Cons: Haven't support multiple context layer
-        multi_perspective = MultiPerspectiveLayer(
-            att_dim=self._params['att_dim'],
-            mp_dim=self._params['mp_dim'],
-            perspective=self._params['perspective'])
+        multi_perspective = MultiPerspectiveLayer(self._params['att_dim'],
+                                                  self._params['mp_dim'],
+                                                  self._params['perspective'])
         # Note: input to `keras layer` must be list of tensors.
         mp_left = multi_perspective(x_left + x_right)
         mp_right = multi_perspective(x_right + x_left)
