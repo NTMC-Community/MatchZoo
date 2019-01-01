@@ -1,4 +1,3 @@
-import os
 import shutil
 
 import numpy as np
@@ -64,10 +63,11 @@ def test_drmmtks(train_data_processed,
     # Create a drmmtks model
     drmmtks_model = mz.models.DRMMTKSModel()
     input_shapes = preprocessor.context['input_shapes']
+    embed_dimension = preprocessor.context['vocab_size'] + 1
     drmmtks_model.params['input_shapes'] = input_shapes
     drmmtks_model.params['task'] = task
     drmmtks_model.params['top_k'] = 10
-    drmmtks_model.params['embedding_input_dim'] = preprocessor.context['vocab_size'] + 1
+    drmmtks_model.params['embedding_input_dim'] = embed_dimension
     drmmtks_model.params['embedding_output_dim'] = 10
     drmmtks_model.params['mlp_num_layers'] = 1
     drmmtks_model.params['mlp_num_units'] = 5
@@ -78,8 +78,11 @@ def test_drmmtks(train_data_processed,
     drmmtks_model.compile()
 
     x_valid, y_valid = valid_data_processed.unpack()
-    valid_eval = drmmtks_model.EvaluateOnCall(drmmtks_model, x_valid, y_valid)
-    drmmtks_model.fit_generator(train_generator, epochs=1, callbacks=[valid_eval])
+    valid_eval = mz.callbacks.EvaluateAllMetrics(drmmtks_model,
+                                                 x_valid,
+                                                 y_valid)
+    drmmtks_model.fit_generator(train_generator, epochs=1,
+                                callbacks=[valid_eval])
     drmmtks_model.save('.tmpdir')
 
     try:
