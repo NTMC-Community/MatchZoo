@@ -27,6 +27,7 @@ class BimpmModel(engine.BaseModel):
         params['optimizer'] = 'adam'
 
         params.add(engine.Param('dim_word_embedding', 50))
+        # TODO(tjf): remove the unused params in the final version
         params.add(engine.Param('dim_char_embedding', 50))
         params.add(engine.Param('word_embedding_mat'))
         params.add(engine.Param('char_embedding_mat'))

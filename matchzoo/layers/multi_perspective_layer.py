@@ -132,9 +132,9 @@ class MpFullMatch(Layer):
         reps_lt, rep_rt = x
         reps_rt = K.expand_dims(rep_rt, 1)
         # match_tensor: [batch, steps_lt, mp_dim+1]
-        match_tensor, match_dim = multi_perspective_match(self.mp_dim,
-                                                          reps_lt,
-                                                          reps_rt)
+        match_tensor, match_dim = _multi_perspective_match(self.mp_dim,
+                                                           reps_lt,
+                                                           reps_rt)
         return match_tensor
 
     def compute_output_shape(self, input_shape):
@@ -212,9 +212,9 @@ class MpAttentiveMatch(Layer):
         # attention reps
         reps_lt = K.batch_dot(attn_prob, reps_lt)
         # mp match
-        attn_match_tensor, match_dim = multi_perspective_match(self.mp_dim,
-                                                               reps_lt,
-                                                               reps_rt)
+        attn_match_tensor, match_dim = _multi_perspective_match(self.mp_dim,
+                                                                reps_lt,
+                                                                reps_rt)
         return attn_match_tensor
 
     def compute_output_shape(self, input_shape):
@@ -240,9 +240,9 @@ class MpMaxAttentiveMatch(Layer):
         reps_lt, reps_rt = x[0], x[1]
         relevancy_matrix = x[3]
         max_att_lt = cal_max_question_representation(reps_lt, relevancy_matrix)
-        max_attentive_tensor, match_dim = multi_perspective_match(self.mp_dim,
-                                                                  reps_rt,
-                                                                  max_att_lt)
+        max_attentive_tensor, match_dim = _multi_perspective_match(self.mp_dim,
+                                                                   reps_rt,
+                                                                   max_att_lt)
         return max_attentive_tensor
 
 
@@ -310,8 +310,8 @@ def collect_probs(probs, positions):
     return pair_probs
 
 
-def multi_perspective_match(mp_dim, reps_lt, reps_rt,
-                            with_cosine=True, with_mp_cosine=True):
+def _multi_perspective_match(mp_dim, reps_lt, reps_rt,
+                             with_cosine=True, with_mp_cosine=True):
     """
     The core function of zhiguowang's implementation.
 
