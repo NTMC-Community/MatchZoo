@@ -65,10 +65,8 @@ class DynamicPoolingLayer(Layer):
                                      suggestion1, suggestion2))
 
         x_pool = K.tf.nn.max_pool(x_expand,
-                                  [1, self._msize1 / self._psize1,
-                                   self._msize2 / self._psize2, 1],
-                                  [1, self._msize1 / self._psize1,
-                                   self._msize2 / self._psize2, 1],
+                                  [1, stride1, stride2, 1],
+                                  [1, stride1, stride2, 1],
                                   "VALID")
         return x_pool
 
