@@ -23,7 +23,8 @@ install_requires = [
     'pandas >= 0.23.1',
     'networkx >= 2.1',
     'h5py >= 2.8.0',
-    'hyperopt >= 0.1.1'
+    'hyperopt >= 0.1.1',
+    'markdown_generator >= 0.1.3'
 ]
 
 extras_requires = {
@@ -32,7 +33,7 @@ extras_requires = {
         'codecov >= 2.0.15',
         'pytest >= 3.0.3',
         'pytest-cov >= 2.4.0',
-        'flake8 >= 3.2.1',
+        'flake8 >= 3.6.0',
         'flake8_docstrings >= 1.0.2'],
 }
 
