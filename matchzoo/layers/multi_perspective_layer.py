@@ -22,13 +22,12 @@ class MultiPerspectiveLayer(Layer):
     def __init__(self,
                  att_dim: int,
                  mp_dim: int,
-                 perspective: dict,
-                 **kwargs):
+                 perspective: dict):
         """Class initialization."""
+        super(MultiPerspectiveLayer, self).__init__()
         self._att_dim = att_dim
         self._mp_dim = mp_dim
         self._perspective = perspective
-        super(MultiPerspectiveLayer, self).__init__(**kwargs)
 
     @classmethod
     def list_available_perspectives(cls) -> list:
@@ -36,9 +35,9 @@ class MultiPerspectiveLayer(Layer):
         return ['full', 'max-pooling', 'attentive', 'max-attentive']
 
     @property
-    def num_perspective(cls):
+    def num_perspective(self):
         """Get the number of perspectives that is True."""
-        return sum(cls._perspective.values())
+        return sum(self._perspective.values())
 
     def build(self, input_shape: list):
         """Input shape."""
@@ -57,7 +56,7 @@ class MultiPerspectiveLayer(Layer):
             self.max_attentive_match = MpAttentiveMatch(self._att_dim,
                                                         self._mp_dim)
 
-        super(MultiPerspectiveLayer, self).build(input_shape)
+        self.built = True
 
     def call(self, x: list, **kwargs):
         """Call."""

@@ -39,7 +39,7 @@ class AttentionLayer(Layer):
 
     @property
     def att_dim(self):
-        """Get the attention dimension"""
+        """Get the attention dimension."""
         return self._att_dim
 
     @property
@@ -63,13 +63,13 @@ class AttentionLayer(Layer):
                                                   self._att_dim),
                                            initializer='uniform',
                                            trainable=True)
-        self.diagonal_W = self.add_weight(name='diagnoal_W',
+        self.diagonal_W = self.add_weight(name='diagonal_W',
                                           shape=(1,
                                                  1,
                                                  self._att_dim),
                                           initializer='uniform',
                                           trainable=True)
-        super(AttentionLayer, self).build(input_shapes)
+        self.built = True
 
     def call(self, x: list, **kwargs):
         """
@@ -100,7 +100,7 @@ class AttentionLayer(Layer):
         attn_reps_lt = K.tanh(attn_reps_lt)  # [b, s, 20]
         attn_reps_rt = K.tanh(attn_reps_rt)
 
-        # diagnoal_W
+        # diagonal_W
         attn_reps_lt = attn_reps_lt * self.diagonal_W  # [b, s, 20]
         attn_reps_rt = K.permute_dimensions(attn_reps_rt, (0, 2, 1))
 
@@ -108,11 +108,11 @@ class AttentionLayer(Layer):
         attn_value = K.batch_dot(attn_reps_lt, attn_reps_rt)
 
         # TODO(tjf) or remove: normalize
-        # if self.remove_diagnoal:
-        #     diagnoal = K.ones([len_1], tf.float32)  # [len1]
-        #     diagnoal = 1.0 - tf.diag(diagnoal)  # [len1, len1]
-        #     diagnoal = tf.expand_dims(diagnoal, axis=0)  # ['x', len1, len1]
-        #     atten_value = atten_value * diagnoal
+        # if self.remove_diagonal:
+        #     diagonal = K.ones([len_1], tf.float32)  # [len1]
+        #     diagonal = 1.0 - tf.diag(diagonal)  # [len1, len1]
+        #     diagonal = tf.expand_dims(diagonal, axis=0)  # ['x', len1, len1]
+        #     attn_value = attn_value * diagonal
 
         if len(x) == 4:
             mask_lt = x[2]
@@ -123,7 +123,7 @@ class AttentionLayer(Layer):
         # softmax
         attn_prob = K.softmax(attn_value)  # [batch_size, len_1, len_2]
 
-        # if remove_diagnoal: attn_value = attn_value * diagnoal
+        # if remove_diagonal: attn_value = attn_value * diagonal
         if len(x) == 4:
             mask_lt = x[2]
             mask_rt = x[3]
