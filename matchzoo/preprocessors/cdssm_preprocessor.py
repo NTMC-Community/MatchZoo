@@ -76,10 +76,10 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
 
         self._context['vocab_unit'] = vocab_unit
-        num_letter = len(vocab_unit.state['term_index']) + 1
+        vocab_size = len(vocab_unit.state['term_index']) + 1
         self._context['input_shapes'] = [
-            (self._fixed_length_left, num_letter),
-            (self._fixed_length_right, num_letter)
+            (self._fixed_length_left, vocab_size),
+            (self._fixed_length_right, vocab_size)
         ]
         return self
 
