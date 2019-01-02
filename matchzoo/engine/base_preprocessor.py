@@ -1,6 +1,7 @@
 """:class:`BasePreprocessor` define input and ouutput for processors."""
 
 import abc
+import functools
 import typing
 from pathlib import Path
 
@@ -12,10 +13,11 @@ from matchzoo import processor_units
 
 def validate_context(func):
     """Validate context in the preprocessor."""
+
+    @functools.wraps(func)
     def transform_wrapper(self, *args, **kwargs):
         if not self.context:
-            raise ValueError(
-                'Please fit parameters before transformation.')
+            raise ValueError('Please call `fit` before calling `transform`.')
         return func(self, *args, **kwargs)
 
     return transform_wrapper

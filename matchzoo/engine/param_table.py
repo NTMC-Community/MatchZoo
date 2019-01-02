@@ -2,7 +2,7 @@
 
 import typing
 
-from matchzoo.engine import Param
+from matchzoo.engine import Param, hyper_spaces
 
 
 class ParamTable(object):
@@ -56,11 +56,14 @@ class ParamTable(object):
     @property
     def hyper_space(self) -> dict:
         """:return: Hyper space of the table, a valid `hyperopt` graph."""
-        return {
-            param.name: param.hyper_space
-            for param in self._params.values()
-            if param.hyper_space is not None
-        }
+        full_space = {}
+        for param in self:
+            if param.hyper_space is not None:
+                param_space = param.hyper_space
+                if isinstance(param_space, hyper_spaces.HyperoptProxy):
+                    param_space = param_space.convert(param.name)
+                full_space[param.name] = param_space
+        return full_space
 
     def __getitem__(self, key: str) -> typing.Any:
         """:return: The value of the parameter in the table named `key`."""
