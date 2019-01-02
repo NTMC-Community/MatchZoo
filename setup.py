@@ -33,7 +33,7 @@ extras_requires = {
         'codecov >= 2.0.15',
         'pytest >= 3.0.3',
         'pytest-cov >= 2.4.0',
-        'flake8 >= 3.2.1',
+        'flake8 >= 3.6.0',
         'flake8_docstrings >= 1.0.2'],
 }
 
