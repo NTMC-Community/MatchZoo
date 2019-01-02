@@ -23,7 +23,8 @@ install_requires = [
     'pandas >= 0.23.1',
     'networkx >= 2.1',
     'h5py >= 2.8.0',
-    'hyperopt >= 0.1.1'
+    'hyperopt >= 0.1.1',
+    'markdown_generator >= 0.1.3'
 ]
 
 extras_requires = {
