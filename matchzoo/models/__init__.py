@@ -6,7 +6,7 @@ from .arci_model import ArcIModel
 from .arcii_model import ArcIIModel
 from .knrm_model import KNRMModel
 from .conv_knrm_model import ConvKNRMModel
-from .duet_model import DUETModel
+from .duet import DUET
 from .drmmtks_model import DRMMTKSModel
 from .drmm import DRMM
 from .anmm_model import ANMMModel

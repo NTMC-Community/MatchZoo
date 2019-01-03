@@ -8,12 +8,12 @@ from matchzoo import engine
 from matchzoo import preprocessors
 
 
-class DUETModel(engine.BaseModel):
+class DUET(engine.BaseModel):
     """
     DUET Model.
 
     Examples:
-        >>> model = DUETModel()
+        >>> model = DUET()
         >>> model.params['embedding_input_dim'] = 1000
         >>> model.params['embedding_output_dim'] = 300
         >>> model.params['lm_filters'] = 32
