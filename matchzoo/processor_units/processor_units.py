@@ -408,9 +408,9 @@ class WordHashingUnit(ProcessorUnit):
        ...     term_index={'': 0,'st#': 1, '#te': 2, 'est': 3, 'tes': 4})
        >>> hashing = word_hashing.transform(letters)
        >>> hashing[0]
-       array([ 0.,  1.,  1.,  1.,  1.,  0.])
+       array([0., 1., 1., 1., 1., 0.])
        >>> hashing[1]
-       array([ 1.,  0.,  0.,  0.,  0.,  0.])
+       array([1., 0., 0., 0., 0., 0.])
        >>> hashing.shape
        (2, 6)
 
@@ -457,7 +457,7 @@ class SumRepresentUnit(ProcessorUnit):
         >>> result.shape
         (3,)
         >>> result
-        array([ 4.,  4.,  4.])
+        array([4., 4., 4.])
 
     """
 
