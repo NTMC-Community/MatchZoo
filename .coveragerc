@@ -5,6 +5,7 @@ exclude_lines =
   if __name__ == .__main__.:
   ValueError
   TypeError
+  NotImplementedError
 omit = 
   matchzoo/__init__.py
   matchzoo/version.py
