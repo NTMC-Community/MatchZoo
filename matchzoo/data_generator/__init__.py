@@ -1,3 +1,5 @@
 from .data_generator import DataGenerator
 from .pair_data_generator import PairDataGenerator
 from .dynamic_data_generator import DynamicDataGenerator
+from .dpool_data_generator import DPoolDataGenerator
+from .dpool_data_generator import DPoolPairDataGenerator
