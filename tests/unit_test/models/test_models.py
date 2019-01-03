@@ -82,6 +82,10 @@ def y(compiled_model, num_samples):
     task = model.params['task']
     return np.random.randn(num_samples, *task.output_shape)
 
+@pytest.mark.slow
+def test_get_default_preprocessor(raw_model):
+    model, _ = raw_model
+    assert model.get_default_preprocessor()
 
 @pytest.mark.slow
 def test_model_fit(compiled_model, x, y):
