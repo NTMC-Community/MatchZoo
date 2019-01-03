@@ -335,7 +335,7 @@ class FrequencyFilterUnit(StatefulProcessorUnit):
         >>> tf_filter.fit([['A', 'B'], ['B', 'C']])
         >>> tf_filter.transform(['A', 'B', 'C'])
         ['B']
-    
+
     To filter based on inverse document frequency (idf):
         >>> idf_filter = mz.processor_units.FrequencyFilterUnit(
         ...     low=1.2, mode='idf')
