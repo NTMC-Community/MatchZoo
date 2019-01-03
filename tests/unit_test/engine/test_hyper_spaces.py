@@ -10,4 +10,5 @@ from matchzoo import engine
     (engine.hyper_spaces.quniform, dict(low=0, high=10, q=2))
 ])
 def test_choice(api, kwargs):
-    assert isinstance(api(**kwargs)('dummpy_label'), hyperopt.pyll.base.Apply)
+    hyperopt_space = api(**kwargs).convert('dummpy_label')
+    assert isinstance(hyperopt_space, hyperopt.pyll.base.Apply)
