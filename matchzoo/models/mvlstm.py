@@ -33,11 +33,15 @@ class MVLSTM(engine.BaseModel):
         """:return: model default parameters."""
         params = super().get_default_params(
             with_embedding=True, with_multi_layer_perceptron=True)
-        params.add(engine.Param('lstm_units', 32))
-        params.add(engine.Param('dropout_rate', 0.0))
+        params.add(engine.Param(name='lstm_units', value=32,
+                                desc="Integer, the hidden size in the "
+                                     "bi-directional LSTM layer."))
+        params.add(engine.Param(name='dropout_rate', value=0.0,
+                                desc="Float, the dropout rate."))
         params.add(engine.Param(
             'top_k', value=10,
-            hyper_space=engine.hyper_spaces.quniform(low=2, high=100)
+            hyper_space=engine.hyper_spaces.quniform(low=2, high=100),
+            desc="Integer, the size of top-k pooling layer."
         ))
         params['optimizer'] = 'adam'
         return params
