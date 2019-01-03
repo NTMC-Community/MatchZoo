@@ -9,3 +9,5 @@ exclude_lines =
 omit = 
   matchzoo/__init__.py
   matchzoo/version.py
+  matchzoo/models/parameter_readme_generator.py
+  matchzoo/*/__init__.py
