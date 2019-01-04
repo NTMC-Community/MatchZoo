@@ -16,8 +16,13 @@ class MVLSTM(engine.BaseModel):
 
     Examples:
         >>> model = MVLSTM()
-        >>> model.params['mlp_num_layers'] = 1
-        >>> model.params['top_k'] = 10
+        >>> model.params['lstm_units'] = 32
+        >>> model.params['top_k'] = 50
+        >>> model.params['mlp_num_layers'] = 2
+        >>> model.params['mlp_num_units'] = 20
+        >>> model.params['mlp_num_fan_out'] = 10
+        >>> model.params['mlp_activation_func'] = 'relu'
+        >>> model.params['dropout_rate'] = 0.5
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -28,40 +33,49 @@ class MVLSTM(engine.BaseModel):
         """:return: model default parameters."""
         params = super().get_default_params(
             with_embedding=True, with_multi_layer_perceptron=True)
-        params['optimizer'] = 'adam'
-        params.add(engine.Param('vocab_size', 100))
-        params.add(engine.Param('hidden_size', 32))
-        params.add(engine.Param('padding', 'same'))
-        params.add(engine.Param('dropout_rate', 0.0))
+        params.add(engine.Param(name='lstm_units', value=32,
+                                desc="Integer, the hidden size in the "
+                                     "bi-directional LSTM layer."))
+        params.add(engine.Param(name='dropout_rate', value=0.0,
+                                desc="Float, the dropout rate."))
         params.add(engine.Param(
             'top_k', value=10,
-            hyper_space=engine.hyper_spaces.quniform(low=2, high=100)
+            hyper_space=engine.hyper_spaces.quniform(low=2, high=100),
+            desc="Integer, the size of top-k pooling layer."
         ))
+        params['optimizer'] = 'adam'
         return params
 
     def build(self):
         """Build model structure."""
-
         query, doc = self._make_inputs()
 
+        # Embedding layer
         embedding = self._make_embedding_layer()
         embed_query = embedding(query)
         embed_doc = embedding(doc)
-        # Process query & document input.
-        bi_lstm = keras.layers.Bidirectional(keras.layers.LSTM(
-            self._params['hidden_size'],
-            return_sequences=True, dropout=self._params['dropout_rate']))
 
-        rep_query = bi_lstm(embed_query)
-        rep_doc = bi_lstm(embed_doc)
+        # Bi-directional LSTM layer
+        rep_query = keras.layers.Bidirectional(keras.layers.LSTM(
+            self._params['lstm_units'],
+            return_sequences=True,
+            dropout=self._params['dropout_rate']
+        ))(embed_query)
+        rep_doc = keras.layers.Bidirectional(keras.layers.LSTM(
+            self._params['lstm_units'],
+            return_sequences=True,
+            dropout=self._params['dropout_rate']
+        ))(embed_doc)
 
+        # Top-k matching layer
         matching_matrix = keras.layers.Dot(
-            axes=[1, 1], normalize=False)([rep_query, rep_doc])
-        matching_matrix = keras.layers.Reshape((-1, ))(matching_matrix)
-
+            axes=[2, 2], normalize=False)([rep_query, rep_doc])
+        matching_signals = keras.layers.Reshape((-1, ))(matching_matrix)
         matching_topk = keras.layers.Lambda(
             lambda x: K.tf.nn.top_k(x, k=self._params['top_k'], sorted=True)[0]
-        )(matching_matrix)
+        )(matching_signals)
+
+        # Multilayer perceptron layer.
         mlp = self._make_multi_layer_perceptron_layer()(matching_topk)
         mlp = keras.layers.Dropout(
             rate=self._params['dropout_rate'])(mlp)

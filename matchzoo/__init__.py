@@ -23,6 +23,8 @@ from .data_pack import build_vocab_unit
 from .data_generator import DataGenerator
 from .data_generator import PairDataGenerator
 from .data_generator import DynamicDataGenerator
+from .data_generator import DPoolDataGenerator
+from .data_generator import DPoolPairDataGenerator
 
 from . import tasks
 from . import metrics

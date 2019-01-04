@@ -336,6 +336,13 @@ class FrequencyFilterUnit(StatefulProcessorUnit):
         >>> tf_filter.transform(['A', 'B', 'C'])
         ['B']
 
+    To filter based on inverse document frequency (idf):
+        >>> idf_filter = mz.processor_units.FrequencyFilterUnit(
+        ...     low=1.2, mode='idf')
+        >>> idf_filter.fit([['A', 'B'], ['B', 'C', 'D']])
+        >>> idf_filter.transform(['A', 'B', 'C'])
+        ['A', 'C']
+
     """
 
     def __init__(self, low=0, high=float('inf'), mode='df'):
@@ -386,7 +393,7 @@ class FrequencyFilterUnit(StatefulProcessorUnit):
     def _idf(cls, list_of_tokens):
         num_docs = len(list_of_tokens)
         stats = cls._df(list_of_tokens)
-        for key, val in stats:
+        for key, val in stats.most_common():
             stats[key] = np.log((1 + num_docs) / (1 + val)) + 1
         return stats
 
@@ -408,9 +415,9 @@ class WordHashingUnit(ProcessorUnit):
        ...     term_index={'': 0,'st#': 1, '#te': 2, 'est': 3, 'tes': 4})
        >>> hashing = word_hashing.transform(letters)
        >>> hashing[0]
-       array([ 0.,  1.,  1.,  1.,  1.,  0.])
+       array([0., 1., 1., 1., 1., 0.])
        >>> hashing[1]
-       array([ 1.,  0.,  0.,  0.,  0.,  0.])
+       array([1., 0., 0., 0., 0., 0.])
        >>> hashing.shape
        (2, 6)
 
@@ -457,7 +464,7 @@ class SumRepresentUnit(ProcessorUnit):
         >>> result.shape
         (3,)
         >>> result
-        array([ 4.,  4.,  4.])
+        array([4., 4., 4.])
 
     """
 

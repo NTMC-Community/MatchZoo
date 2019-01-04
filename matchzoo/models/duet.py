@@ -8,12 +8,12 @@ from matchzoo import engine
 from matchzoo import preprocessors
 
 
-class DUETModel(engine.BaseModel):
+class DUET(engine.BaseModel):
     """
     DUET Model.
 
     Examples:
-        >>> model = DUETModel()
+        >>> model = DUET()
         >>> model.params['embedding_input_dim'] = 1000
         >>> model.params['embedding_output_dim'] = 300
         >>> model.params['lm_filters'] = 32
@@ -40,6 +40,8 @@ class DUETModel(engine.BaseModel):
         params.add(engine.Param('dm_q_hidden_size', 32))
         params.add(engine.Param('dm_d_mpool', 3))
         params.add(engine.Param('dm_hidden_sizes', [32]))
+        params.add(engine.Param('padding', 'same'))
+        params.add(engine.Param('activation_func', 'relu'))
         params.add(engine.Param(
             'lm_dropout_rate', 0.5,
             hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8, q=0.02)
@@ -64,25 +66,31 @@ class DUETModel(engine.BaseModel):
         d_embed = embedding(doc)
 
         lm_xor = keras.layers.Lambda(self._xor_match)([query, doc])
-        lm_conv = keras.layers.Conv1D(self._params['lm_filters'],
-                                      self._params['input_shapes'][1][0],
-                                      padding='same',
-                                      activation='tanh')(lm_xor)
+        lm_conv = keras.layers.Conv1D(
+            self._params['lm_filters'],
+            self._params['input_shapes'][1][0],
+            padding=self._params['padding'],
+            activation=self._params['activation_func']
+        )(lm_xor)
 
         lm_conv = keras.layers.Dropout(self._params['lm_dropout_rate'])(
             lm_conv)
         lm_feat = keras.layers.Reshape((-1,))(lm_conv)
         for hidden_size in self._params['lm_hidden_sizes']:
-            lm_feat = keras.layers.Dense(hidden_size, activation='tanh')(
-                lm_feat)
+            lm_feat = keras.layers.Dense(
+                hidden_size,
+                activation=self._params['activation_func']
+            )(lm_feat)
         lm_drop = keras.layers.Dropout(self._params['lm_dropout_rate'])(
             lm_feat)
         lm_score = keras.layers.Dense(1)(lm_drop)
 
-        dm_q_conv = keras.layers.Conv1D(self._params['dm_filters'],
-                                        self._params['dm_kernel_size'],
-                                        padding='same',
-                                        activation='tanh')(q_embed)
+        dm_q_conv = keras.layers.Conv1D(
+            self._params['dm_filters'],
+            self._params['dm_kernel_size'],
+            padding=self._params['padding'],
+            activation=self._params['activation_func']
+        )(q_embed)
         dm_q_conv = keras.layers.Dropout(self._params['dm_dropout_rate'])(
             dm_q_conv)
         dm_q_mp = keras.layers.MaxPooling1D(
@@ -93,17 +101,21 @@ class DUETModel(engine.BaseModel):
         dm_q_rep = keras.layers.Lambda(lambda x: tf.expand_dims(x, 1))(
             dm_q_rep)
 
-        dm_d_conv1 = keras.layers.Conv1D(self._params['dm_filters'],
-                                         self._params['dm_kernel_size'],
-                                         padding='same',
-                                         activation='tanh')(d_embed)
+        dm_d_conv1 = keras.layers.Conv1D(
+            self._params['dm_filters'],
+            self._params['dm_kernel_size'],
+            padding=self._params['padding'],
+            activation=self._params['activation_func']
+        )(d_embed)
         dm_d_conv1 = keras.layers.Dropout(self._params['dm_dropout_rate'])(
             dm_d_conv1)
         dm_d_mp = keras.layers.MaxPooling1D(
             pool_size=self._params['dm_d_mpool'])(dm_d_conv1)
-        dm_d_conv2 = keras.layers.Conv1D(self._params['dm_filters'], 1,
-                                         padding='same',
-                                         activation='tanh')(dm_d_mp)
+        dm_d_conv2 = keras.layers.Conv1D(
+            self._params['dm_filters'], 1,
+            padding=self._params['padding'],
+            activation=self._params['activation_func']
+        )(dm_d_mp)
         dm_d_conv2 = keras.layers.Dropout(self._params['dm_dropout_rate'])(
             dm_d_conv2)
 

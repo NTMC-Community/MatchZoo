@@ -17,7 +17,10 @@ tqdm.pandas()
 class CDSSMPreprocessor(engine.BasePreprocessor):
     """CDSSM Model preprocessor."""
 
-    def __init__(self, text_len: int = 10, with_word_hashing=True):
+    def __init__(self,
+                 fixed_length_left: int = 10,
+                 fixed_length_right: int = 40,
+                 with_word_hashing=True):
         """
         CDSSM Model preprocessor.
 
@@ -46,7 +49,16 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
 
         """
         super().__init__()
-        self._text_len = text_len
+        self._fixed_length_left = fixed_length_left
+        self._fixed_length_right = fixed_length_right
+        self._left_fixedlength_unit = processor_units.FixedLengthUnit(
+            self._fixed_length_left,
+            pad_value='0', pad_mode='post'
+        )
+        self._right_fixedlength_unit = processor_units.FixedLengthUnit(
+            self._fixed_length_right,
+            pad_value='0', pad_mode='post'
+        )
         self._with_word_hashing = with_word_hashing
 
     def fit(self, data_pack: DataPack, verbose=1):
@@ -64,9 +76,11 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
 
         self._context['vocab_unit'] = vocab_unit
-        num_letter = len(vocab_unit.state['term_index']) + 1
-        self._context['input_shapes'] = [(self._text_len, num_letter),
-                                         (self._text_len, num_letter)]
+        vocab_size = len(vocab_unit.state['term_index']) + 1
+        self._context['input_shapes'] = [
+            (self._fixed_length_left, vocab_size),
+            (self._fixed_length_right, vocab_size)
+        ]
         return self
 
     @engine.validate_context
@@ -81,14 +95,18 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         """
         data_pack = data_pack.copy()
         units = self._default_processor_units()
-        units.append(processor_units.FixedLengthUnit(
-            text_length=self._text_len, pad_value='0'))
-        units.append(processor_units.NgramLetterUnit(reduce_dim=False))
-        if self._with_word_hashing:
-            term_index = self._context['vocab_unit'].state['term_index']
-            units.append(processor_units.WordHashingUnit(term_index))
         data_pack.apply_on_text(chain_transform(units), inplace=True,
                                 verbose=verbose)
+        data_pack.apply_on_text(self._left_fixedlength_unit.transform,
+                                mode='left', inplace=True, verbose=verbose)
+        data_pack.apply_on_text(self._right_fixedlength_unit.transform,
+                                mode='right', inplace=True, verbose=verbose)
+        post_units = [processor_units.NgramLetterUnit(reduce_dim=False)]
+        if self._with_word_hashing:
+            term_index = self._context['vocab_unit'].state['term_index']
+            post_units.append(processor_units.WordHashingUnit(term_index))
+        data_pack.apply_on_text(chain_transform(post_units),
+                                inplace=True, verbose=verbose)
         return data_pack
 
     @classmethod

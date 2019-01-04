@@ -61,7 +61,7 @@ class ParamTable(object):
             if param.hyper_space is not None:
                 param_space = param.hyper_space
                 if isinstance(param_space, hyper_spaces.HyperoptProxy):
-                    param_space = param_space(param.name)
+                    param_space = param_space.convert(param.name)
                 full_space[param.name] = param_space
         return full_space
 

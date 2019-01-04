@@ -58,7 +58,7 @@ class HyperoptProxy(object):
         self._func = hyperopt_func
         self._kwargs = kwargs
 
-    def __call__(self, name: str) -> hyperopt.pyll.Apply:
+    def convert(self, name: str) -> hyperopt.pyll.Apply:
         """
         Attach `name` as :module:`hyperopt.hp`'s `label`.
 

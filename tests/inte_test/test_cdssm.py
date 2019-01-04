@@ -58,7 +58,7 @@ def test_cdssm(task,
     cdssm_model = mz.models.CDSSMModel()
     assert isinstance(cdssm_model.get_default_preprocessor(),
                       mz.preprocessors.CDSSMPreprocessor)
-    input_shapes =cdssm_preprocessor.context['input_shapes']
+    input_shapes = cdssm_preprocessor.context['input_shapes']
     cdssm_model.params['input_shapes'] = input_shapes
     cdssm_model.params['task'] = task
     cdssm_model.guess_and_fill_missing_params()

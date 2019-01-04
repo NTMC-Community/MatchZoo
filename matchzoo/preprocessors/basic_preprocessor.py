@@ -132,9 +132,10 @@ class BasicPreprocessor(engine.BasePreprocessor):
         data_pack.apply_on_text(self._context['vocab_unit'].transform,
                                 mode='both', inplace=True, verbose=verbose)
 
-        data_pack.append_text_length(inplace=True)
         data_pack.apply_on_text(self._left_fixedlength_unit.transform,
                                 mode='left', inplace=True, verbose=verbose)
         data_pack.apply_on_text(self._right_fixedlength_unit.transform,
                                 mode='right', inplace=True, verbose=verbose)
+        data_pack.append_text_length(inplace=True)
+
         return data_pack
