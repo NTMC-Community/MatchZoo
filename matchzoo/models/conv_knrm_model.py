@@ -38,7 +38,7 @@ class ConvKNRM(models.KNRM):
                                 desc="The activation function in the "
                                      "convolution layer."))
         params.add(engine.Param(name='max_ngram', value=3,
-                                desc="The maximize length of n-grams for the "
+                                desc="The maximum length of n-grams for the "
                                      "convolution layer."))
         params.add(engine.Param(name='use_crossmatch', value=True,
                                 desc="Whether to match left n-grams and right "
