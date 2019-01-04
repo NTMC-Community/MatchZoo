@@ -39,8 +39,6 @@ class ArcI(engine.BaseModel):
             with_multi_layer_perceptron=True
         )
         params['optimizer'] = 'adam'
-        opt_space = engine.hyper_spaces.choice(['adam', 'rmsprop', 'adagrad'])
-        params.get('optimizer').hyper_space = opt_space
         params.add(engine.Param(name='num_blocks', value=1,
                                 desc="Number of convolution blocks."))
         params.add(engine.Param(name='left_filters', value=[32],
@@ -65,15 +63,17 @@ class ArcI(engine.BaseModel):
                                 desc="The pooling size of each convolution "
                                      "blocks for the right input."))
         params.add(engine.Param(
-            'padding',
-            'same',
-            hyper_space=engine.hyper_spaces.choice(['same', 'valid', 'causal']),
+            name='padding',
+            value='same',
+            hyper_space=engine.hyper_spaces.choice(
+                ['same', 'valid', 'causal']),
             desc="The padding mode in the convolution layer. It should be one"
-                 " of `same`, `valid`, and `causal`."
+                 "of `same`, `valid`, and `causal`."
         ))
         params.add(engine.Param(
             'dropout_rate', 0.0,
-            hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8, q=0.01),
+            hyper_space=engine.hyper_spaces.quniform(
+                low=0.0, high=0.8, q=0.01),
             desc="The dropout rate."
         ))
         return params
@@ -116,7 +116,8 @@ class ArcI(engine.BaseModel):
         rep_left = keras.layers.Flatten()(embed_left)
         rep_right = keras.layers.Flatten()(embed_right)
         concat = keras.layers.Concatenate(axis=1)([rep_left, rep_right])
-        dropout = keras.layers.Dropout(rate=self._params['dropout_rate'])(concat)
+        dropout = keras.layers.Dropout(
+            rate=self._params['dropout_rate'])(concat)
         mlp = self._make_multi_layer_perceptron_layer()(dropout)
 
         inputs = [input_left, input_right]
