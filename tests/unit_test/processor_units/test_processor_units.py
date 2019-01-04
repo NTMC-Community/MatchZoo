@@ -22,7 +22,7 @@ def vec_input():
                      [1, 0, 0, 0, 0]])
 
 def test_list_available():
-    assert len(list_available()) == 12
+    assert len(list_available()) == 11
 
 def test_tokenize_unit(raw_input):
     tu = TokenizeUnit()
