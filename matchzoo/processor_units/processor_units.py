@@ -437,23 +437,23 @@ class WordHashingUnit(ProcessorUnit):
             :class:`NgramLetterUnit`.
         :return: Word hashing representation of `tri-letters`.
         """
-        # the input shape for DSSM model [ngram, ngram, ...]
-        if isinstance(letters[0], str):
+        if any(isinstance(elem, list) for elem in letters):
+            # the input shape for CDSSM is
+            # [[word1 ngram, ngram], [word2, ngram, ngram], ...]
+            hashing = np.zeros((len(letters), len(self._term_index) + 1))
+            for idx, word in enumerate(letters):
+                counted_letters = collections.Counter(word)
+                for key, value in counted_letters.items():
+                    letter_id = self._term_index.get(key, 0)
+                    hashing[idx, letter_id] = value
+        else:
+            # the input shape for DSSM model [ngram, ngram, ...]
             hashing = np.zeros((len(self._term_index) + 1))
             counted_letters = collections.Counter(letters)
             for key, value in counted_letters.items():
                 letter_id = self._term_index.get(key, 0)
                 hashing[letter_id] = value
-        else:
-            # the input shape for CDSSM is
-            # [[word1 ngram, ngram], [word2, ngram, ngram], ...]
-            assert isinstance(letters[0], list)
-            hashing = np.zeros((len(letters), len(self._term_index) + 1))
-            for idx in range(len(letters)):
-                counted_letters = collections.Counter(letters[idx])
-                for key, value in counted_letters.items():
-                    letter_id = self._term_index.get(key, 0)
-                    hashing[idx, letter_id] = value
+
         return hashing
 
 
