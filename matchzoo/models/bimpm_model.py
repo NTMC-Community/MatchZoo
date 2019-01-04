@@ -35,11 +35,10 @@ class BimpmModel(engine.BaseModel):
         params.add(engine.Param('activation_embedding', 'softmax'))
 
         # Bimpm Setting
-        params.add(engine.Param('perspective_full', True))
-        params.add(engine.Param('perspective_max_pooling', True))
-        params.add(engine.Param('perspective_attentive', True))
-        params.add(engine.Param('perspective_max_attentive', True))
-
+        params.add(engine.Param('perspective', {'full': True,
+                                                'max-pooling': True,
+                                                'attentive': True,
+                                                'max-attentive': True}))
         params.add(engine.Param('mp_dim', 20))
         params.add(engine.Param('att_dim', 20))
         params.add(engine.Param('hidden_size', 128))
@@ -127,8 +126,8 @@ class BimpmModel(engine.BaseModel):
         x_left = bi_lstm(embed_left)
         x_right = bi_lstm(embed_right)
 
-        x_left = Dense(self._params['dropout_rate'])(x_left)
-        x_right = Dense(self._params['dropout_rate'])(x_right)
+        x_left = Dropout(self._params['dropout_rate'])(x_left)
+        x_right = Dropout(self._params['dropout_rate'])(x_right)
 
         # ~ Word Level Matching Layer
         # Reference:
