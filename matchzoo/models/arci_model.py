@@ -7,12 +7,12 @@ from matchzoo import engine
 from matchzoo import preprocessors
 
 
-class ArcIModel(engine.BaseModel):
+class ArcI(engine.BaseModel):
     """
     ArcI Model.
 
     Examples:
-        >>> model = ArcIModel()
+        >>> model = ArcI()
         >>> model.params['num_blocks'] = 1
         >>> model.params['left_filters'] = [32]
         >>> model.params['right_filters'] = [32]
@@ -21,6 +21,11 @@ class ArcIModel(engine.BaseModel):
         >>> model.params['left_pool_sizes'] = [2]
         >>> model.params['right_pool_sizes'] = [4]
         >>> model.params['conv_activation_func'] = 'relu'
+        >>> model.params['mlp_num_layers'] = 1
+        >>> model.params['mlp_num_units'] = 64
+        >>> model.params['mlp_num_fan_out'] = 32
+        >>> model.params['mlp_activation_func'] = 'relu'
+        >>> model.params['dropout_rate'] = 0.5
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -29,26 +34,47 @@ class ArcIModel(engine.BaseModel):
     @classmethod
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
-        params = super().get_default_params(with_embedding=True)
+        params = super().get_default_params(
+            with_embedding=True,
+            with_multi_layer_perceptron=True
+        )
         params['optimizer'] = 'adam'
-        opt_space = engine.hyper_spaces.choice(['adam', 'rmsprop', 'adagrad'])
-        params.get('optimizer').hyper_space = opt_space
-        params.add(engine.Param('num_blocks', 1))
-        params.add(engine.Param('left_filters', [32]))
-        params.add(engine.Param('left_kernel_sizes', [3]))
-        params.add(engine.Param('right_filters', [32]))
-        params.add(engine.Param('right_kernel_sizes', [3]))
-        params.add(engine.Param('conv_activation_func', 'relu'))
-        params.add(engine.Param('left_pool_sizes', [2]))
-        params.add(engine.Param('right_pool_sizes', [2]))
+        params.add(engine.Param(name='num_blocks', value=1,
+                                desc="Number of convolution blocks."))
+        params.add(engine.Param(name='left_filters', value=[32],
+                                desc="The filter size of each convolution "
+                                     "blocks for the left input."))
+        params.add(engine.Param(name='left_kernel_sizes', value=[3],
+                                desc="The kernel size of each convolution "
+                                     "blocks for the left input."))
+        params.add(engine.Param(name='right_filters', value=[32],
+                                desc="The filter size of each convolution "
+                                     "blocks for the right input."))
+        params.add(engine.Param(name='right_kernel_sizes', value=[3],
+                                desc="The kernel size of each convolution "
+                                     "blocks for the right input."))
+        params.add(engine.Param(name='conv_activation_func', value='relu',
+                                desc="The activation function in the "
+                                     "convolution layer."))
+        params.add(engine.Param(name='left_pool_sizes', value=[2],
+                                desc="The pooling size of each convolution "
+                                     "blocks for the left input."))
+        params.add(engine.Param(name='right_pool_sizes', value=[2],
+                                desc="The pooling size of each convolution "
+                                     "blocks for the right input."))
         params.add(engine.Param(
-            'padding',
-            'same',
-            hyper_space=engine.hyper_spaces.choice(['same', 'valid', 'causal'])
+            name='padding',
+            value='same',
+            hyper_space=engine.hyper_spaces.choice(
+                ['same', 'valid', 'causal']),
+            desc="The padding mode in the convolution layer. It should be one"
+                 "of `same`, `valid`, and `causal`."
         ))
         params.add(engine.Param(
             'dropout_rate', 0.0,
-            hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8, q=0.01)
+            hyper_space=engine.hyper_spaces.quniform(
+                low=0.0, high=0.8, q=0.01),
+            desc="The dropout rate."
         ))
         return params
 
@@ -87,12 +113,15 @@ class ArcIModel(engine.BaseModel):
                 self._params['right_pool_sizes'][i]
             )
 
-        concat = keras.layers.Concatenate(axis=1)([embed_left, embed_right])
-        embed_flat = keras.layers.Flatten()(concat)
-        x = keras.layers.Dropout(rate=self._params['dropout_rate'])(embed_flat)
+        rep_left = keras.layers.Flatten()(embed_left)
+        rep_right = keras.layers.Flatten()(embed_right)
+        concat = keras.layers.Concatenate(axis=1)([rep_left, rep_right])
+        dropout = keras.layers.Dropout(
+            rate=self._params['dropout_rate'])(concat)
+        mlp = self._make_multi_layer_perceptron_layer()(dropout)
 
         inputs = [input_left, input_right]
-        x_out = self._make_output_layer()(x)
+        x_out = self._make_output_layer()(mlp)
         self._backend = keras.Model(inputs=inputs, outputs=x_out)
 
     def _conv_pool_block(
