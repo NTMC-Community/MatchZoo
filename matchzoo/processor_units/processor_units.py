@@ -437,49 +437,24 @@ class WordHashingUnit(ProcessorUnit):
             :class:`NgramLetterUnit`.
         :return: Word hashing representation of `tri-letters`.
         """
-        hashing = np.zeros((len(letters), len(self._term_index) + 1))
-        for idx in range(len(letters)):
-            counted_letters = collections.Counter(letters[idx])
+        # the input shape for DSSM model [ngram, ngram, ...]
+        if isinstance(letters[0], str):
+            hashing = np.zeros((len(self._term_index) + 1))
+            counted_letters = collections.Counter(letters)
             for key, value in counted_letters.items():
                 letter_id = self._term_index.get(key, 0)
-                hashing[idx, letter_id] = value
+                hashing[letter_id] = value
+        else:
+            # the input shape for CDSSM is
+            # [[word1 ngram, ngram], [word2, ngram, ngram], ...]
+            assert isinstance(letters[0], list)
+            hashing = np.zeros((len(letters), len(self._term_index) + 1))
+            for idx in range(len(letters)):
+                counted_letters = collections.Counter(letters[idx])
+                for key, value in counted_letters.items():
+                    letter_id = self._term_index.get(key, 0)
+                    hashing[idx, letter_id] = value
         return hashing
-
-
-class SumRepresentUnit(ProcessorUnit):
-    """
-    Aggregate fine-grained representation by summation.
-
-    Examples:
-        >>> s = SumRepresentUnit()
-        >>> rep = np.array([[1., 2., 3.], [3., 2., 1.]])
-        >>> result = s.transform(rep)
-        >>> result.shape
-        (3,)
-        >>> result
-        array([4., 4., 4.])
-
-    """
-
-    def __init__(self, axis: int = 0, keepdims: bool = False):
-        """
-        Class initialization.
-
-        :param axis: Axis along which a sum is performed.
-        :param keepdims: If true, the axes which are reduced are left
-         in result as dimensions with size one.
-        """
-        self._axis = axis
-        self._keep_dims = keepdims
-
-    def transform(self, represent: np.ndarray) -> np.ndarray:
-        """
-        Transform fine-grained representation to integrated representation.
-
-        :param represent: Fine-grained representation, e.g. word embedding.
-        :return: Integrated representation, e.g. sentence embedding.
-        """
-        return np.sum(represent, axis=self._axis, keepdims=self._keep_dims)
 
 
 class FixedLengthUnit(ProcessorUnit):

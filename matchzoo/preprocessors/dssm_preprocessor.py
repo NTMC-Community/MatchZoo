@@ -77,7 +77,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         if self._with_word_hashing:
             term_index = self._context['vocab_unit'].state['term_index']
             units.append(processor_units.WordHashingUnit(term_index))
-            units.append(processor_units.SumRepresentUnit())
         data_pack.apply_on_text(chain_transform(units), inplace=True,
                                 verbose=verbose)
         return data_pack
