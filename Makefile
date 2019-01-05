@@ -1,15 +1,17 @@
 init:
 	pip install -r requirements.txt
 
+TEST_ARGS = --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-report html --cov-config .coveragerc matchzoo/ tests/
+
 test:
-	pytest --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-config .coveragerc matchzoo/ tests/
+	pytest $(TEST_ARGS)
 	flake8 ./matchzoo --exclude __init__.py
 
 quick:
-	pytest -m 'not slow' --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-config .coveragerc matchzoo/ tests/unit_test
+	pytest -m 'not slow' $(TEST_ARGS)
 
 slow:
-	pytest -m 'slow' --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-config .coveragerc matchzoo/ tests/unit_test
+	pytest -m 'slow' $(TEST_ARGS)
 
 flake:
 	flake8 ./matchzoo --exclude __init__.py
