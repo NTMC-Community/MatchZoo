@@ -7,12 +7,12 @@ import matchzoo
 from matchzoo import engine
 
 
-class ArcIIModel(engine.BaseModel):
+class ArcII(engine.BaseModel):
     """
     ArcII Model.
 
     Examples:
-        >>> model = ArcIIModel()
+        >>> model = ArcII()
         >>> model.params['embedding_output_dim'] = 300
         >>> model.params['num_blocks'] = 2
         >>> model.params['kernel_1d_count'] = 32
