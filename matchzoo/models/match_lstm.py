@@ -12,12 +12,13 @@ class MatchLSTM(engine.BaseModel):
     Examples:
         >>> model = MatchLSTM()
         >>> model.guess_and_fill_missing_params(verbose=0)
-        >>> model.build()
         >>> model.params['embedding_input_dim'] = 10000
         >>> model.params['embedding_output_dim'] = 100
         >>> model.params['embedding_trainable'] = True
         >>> model.params['fc_num_units'] = 200
         >>> model.params['lstm_num_units'] = 256
+        >>> model.params['dropout_rate'] = 0.5
+        >>> model.build()
 
     """
 
@@ -27,12 +28,20 @@ class MatchLSTM(engine.BaseModel):
         params = super().get_default_params(with_embedding=True)
         params.add(engine.Param(
             'lstm_num_units', 256,
-            hyper_space=engine.hyper_spaces.quniform(low=128, high=384, q=32)
+            hyper_space=engine.hyper_spaces.quniform(low=128, high=384, q=32),
+            desc="The hidden size in the LSTM layer."
         ))
         params.add(engine.Param(
             'fc_num_units', 200,
             hyper_space=engine.hyper_spaces.quniform(
-                low=100, high=300, q=20)
+                low=100, high=300, q=20),
+            desc="The hidden size in the full connection layer."
+        ))
+        params.add(engine.Param(
+            'dropout_rate', 0.0,
+            hyper_space=engine.hyper_spaces.quniform(
+                low=0.0, high=0.9, q=0.01),
+            desc="The dropout rate."
         ))
         return params
 
@@ -78,11 +87,14 @@ class MatchLSTM(engine.BaseModel):
         concat = keras.layers.Concatenate(axis=1)(
             [left_attn_vec, encoded_right])
         lstm_merge = keras.layers.LSTM(self._params['lstm_num_units'] * 2,
-                                       return_sequences=True,
+                                       return_sequences=False,
                                        name='lstm_merge')
         merged = lstm_merge(concat)
+        dropout = keras.layers.Dropout(
+            rate=self._params['dropout_rate'])(merged)
+
         phi = keras.layers.Dense(self._params['fc_num_units'],
-                                 activation='tanh')(merged)
+                                 activation='tanh')(dropout)
         inputs = [input_left, input_right]
         out = self._make_output_layer()(phi)
         self._backend = keras.Model(inputs=inputs, outputs=[out])
