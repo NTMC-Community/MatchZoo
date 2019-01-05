@@ -8,7 +8,7 @@ test:
 	flake8 ./matchzoo --exclude __init__.py
 
 quick:
-	python3 -m pytest -m 'not slow' $(TEST_ARGS)
+	pytest -m 'not slow' $(TEST_ARGS)
 
 slow:
 	pytest -m 'slow' $(TEST_ARGS)
