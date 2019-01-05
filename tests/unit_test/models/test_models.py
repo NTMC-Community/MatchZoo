@@ -22,7 +22,7 @@ model_setups = [
     (models.DSSMModel, None, [np.float32, np.float32]),
     (models.CDSSMModel, None, [np.float32, np.float32]),
     (models.ArcI, None, [np.int32, np.int32]),
-    (models.ArcIIModel, None, [np.int32, np.int32])
+    (models.ArcII, None, [np.int32, np.int32])
 ]
 
 
