@@ -7,16 +7,22 @@ from matchzoo import engine
 from matchzoo import models
 
 
-class ConvKNRMModel(models.KNRMModel):
+class ConvKNRM(models.KNRM):
     """
     ConvKNRM model.
 
     Examples:
-        >>> model = ConvKNRMModel()
+        >>> model = ConvKNRM()
+        >>> model.params['embedding_input_dim'] = 10000
+        >>> model.params['embedding_output_dim'] = 300
+        >>> model.params['embedding_trainable'] = True
         >>> model.params['filters'] = 128
         >>> model.params['conv_activation_func'] = 'tanh'
         >>> model.params['max_ngram'] = 3
         >>> model.params['use_crossmatch'] = True
+        >>> model.params['kernel_num'] = 11
+        >>> model.params['sigma'] = 0.1
+        >>> model.params['exact_sigma'] = 0.001
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -25,10 +31,18 @@ class ConvKNRMModel(models.KNRMModel):
     def get_default_params(cls):
         """Get default parameters."""
         params = super().get_default_params()
-        params.add(engine.Param('filters', 128))
-        params.add(engine.Param('conv_activation_func', 'relu'))
-        params.add(engine.Param('max_ngram', 3))
-        params.add(engine.Param('use_crossmatch', True))
+        params.add(engine.Param(name='filters', value=128,
+                                desc="The filter size in the convolution"
+                                     " layer."))
+        params.add(engine.Param(name='conv_activation_func', value='relu',
+                                desc="The activation function in the "
+                                     "convolution layer."))
+        params.add(engine.Param(name='max_ngram', value=3,
+                                desc="The maximum length of n-grams for the "
+                                     "convolution layer."))
+        params.add(engine.Param(name='use_crossmatch', value=True,
+                                desc="Whether to match left n-grams and right "
+                                     "n-grams of different lengths"))
         return params
 
     def build(self):

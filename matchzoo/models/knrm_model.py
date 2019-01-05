@@ -5,12 +5,15 @@ import keras.backend as K
 from matchzoo import engine, preprocessors
 
 
-class KNRMModel(engine.BaseModel):
+class KNRM(engine.BaseModel):
     """
     KNRM model.
 
     Examples:
-        >>> model = KNRMModel()
+        >>> model = KNRM()
+        >>> model.params['embedding_input_dim'] =  10000
+        >>> model.params['embedding_output_dim'] =  10
+        >>> model.params['embedding_trainable'] = True
         >>> model.params['kernel_num'] = 11
         >>> model.params['sigma'] = 0.1
         >>> model.params['exact_sigma'] = 0.001
@@ -30,14 +33,18 @@ class KNRMModel(engine.BaseModel):
         params = super().get_default_params(with_embedding=True)
         params.add(engine.Param(
             'kernel_num', 11,
-            hyper_space=engine.hyper_spaces.quniform(low=5, high=20)
+            hyper_space=engine.hyper_spaces.quniform(low=5, high=20),
+            desc="The number of RBF kernels."
         ))
         params.add(engine.Param(
             'sigma', 0.1,
             hyper_space=engine.hyper_spaces.quniform(
-                low=0.01, high=0.2, q=0.01)
+                low=0.01, high=0.2, q=0.01),
+            desc="The `sigma` defines the kernel width."
         ))
-        params.add(engine.Param('exact_sigma', 0.001))
+        params.add(engine.Param('exact_sigma', value=0.001,
+                                desc="The `exact_sigma` denotes the `sigma` "
+                                     "for exact match."))
         return params
 
     def build(self):
