@@ -29,9 +29,3 @@ def test_hyper_space(param_table):
     param_table.add(new_param)
     hyper_space = param_table.hyper_space
     assert hyper_space
-
-    
-
-
-
-    
