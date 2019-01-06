@@ -110,6 +110,12 @@ class BimpmModel(engine.BaseModel):
         embed_left = Dropout(self._params['dropout_rate'])(embed_left)
         embed_right = Dropout(self._params['dropout_rate'])(embed_right)
 
+        # ~ Word Level Matching Layer
+        # Reference:
+        # https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L207-L223
+        # TODO
+        pass
+
         # ~ Encoding Layer
         # Note: When merge_mode = None, output will be [forward, backward],
         # The default merge_mode is concat, and the output will be [lstm].
@@ -125,15 +131,6 @@ class BimpmModel(engine.BaseModel):
         # x_left = [lstm_lt, forward_h_lt, _, backward_h_lt, _ ]
         x_left = bi_lstm(embed_left)
         x_right = bi_lstm(embed_right)
-
-        x_left = Dropout(self._params['dropout_rate'])(x_left)
-        x_right = Dropout(self._params['dropout_rate'])(x_right)
-
-        # ~ Word Level Matching Layer
-        # Reference:
-        # https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L207-L223
-        # TODO
-        pass
 
         # ~ Multi-Perspective Matching layer.
         # Output is two sequence of vectors.

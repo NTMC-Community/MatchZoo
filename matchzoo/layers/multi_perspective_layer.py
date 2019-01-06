@@ -53,8 +53,7 @@ class MultiPerspectiveLayer(Layer):
                                                     self._mp_dim)
 
         if self._perspective.get('max-attentive'):
-            self.max_attentive_match = MpAttentiveMatch(self._att_dim,
-                                                        self._mp_dim)
+            self.max_attentive_match = MpMaxAttentiveMatch(self._att_dim)
 
         self.built = True
 
@@ -97,8 +96,10 @@ class MultiPerspectiveLayer(Layer):
         if self._perspective.get('max-attentive'):
             # Each contextual embedding compare with each contextual embedding.
             # retain max of weighted mean of each dimension.
+            relevancy_matrix = _calc_relevancy_matrix(lstm_reps_lt, lstm_reps_rt)
             max_attentive_tensor = self.max_attentive_match([lstm_reps_lt,
-                                                             lstm_reps_rt])
+                                                             lstm_reps_rt,
+                                                             relevancy_matrix])
             match_tensor_list.append(max_attentive_tensor)
             match_dim += self._mp_dim + 1
 
@@ -116,15 +117,15 @@ class MultiPerspectiveLayer(Layer):
 class MpFullMatch(Layer):
     """Mp Full Match Layer."""
 
-    def __init__(self, mp_dim, **kwargs):
+    def __init__(self, mp_dim):
         """Init."""
+        super(MpFullMatch, self).__init__()
         self.mp_dim = mp_dim
-        super(MpFullMatch, self).__init__(**kwargs)
 
     def build(self, input_shapes):
         """Build."""
         input_shape = input_shapes[0]
-        super(MpFullMatch, self).build(input_shape)
+        self.built = True
 
     def call(self, x, **kwargs):
         """Call."""
@@ -144,10 +145,10 @@ class MpFullMatch(Layer):
 class MpMaxPoolingMatch(Layer):
     """MpMaxPoolingMatch."""
 
-    def __init__(self, mp_dim, **kwargs):
+    def __init__(self, mp_dim):
         """Init."""
+        super(MpMaxPoolingMatch, self).__init__()
         self.mp_dim = mp_dim
-        super(MpMaxPoolingMatch, self).__init__(**kwargs)
 
     def build(self, input_shapes):
         """Build."""
@@ -156,7 +157,7 @@ class MpMaxPoolingMatch(Layer):
                                              self.mp_dim, input_shapes[0][-1]),
                                       initializer='uniform',
                                       trainable=True)
-        super(MpMaxPoolingMatch, self).build(input_shapes)
+        self.built = True
 
     def call(self, x, **kwargs):
         """Call."""
@@ -191,23 +192,23 @@ class MpAttentiveMatch(Layer):
 
     """
 
-    def __init__(self, att_dim, mp_dim, **kwargs):
+    def __init__(self, att_dim, mp_dim):
         """Init."""
+        super(MpAttentiveMatch, self).__init__()
         self.att_dim = att_dim
         self.mp_dim = mp_dim
-        super(MpAttentiveMatch, self).__init__(**kwargs)
 
     def build(self, input_shapes):
         """Build."""
         input_shape = input_shapes[0]
-        super(MpAttentiveMatch, self).build(input_shape)
+        self.built = True
 
     def call(self, x, **kwargs):
         """Call."""
         reps_lt, reps_rt = x[0], x[1]
         # attention prob matrix
         attention_layer = AttentionLayer(self.att_dim)
-        attn_prob = attention_layer([reps_lt, reps_rt])
+        attn_prob = attention_layer([reps_rt, reps_lt])
         # attention reps
         reps_lt = K.batch_dot(attn_prob, reps_lt)
         # mp match
@@ -224,20 +225,20 @@ class MpAttentiveMatch(Layer):
 class MpMaxAttentiveMatch(Layer):
     """MpMaxAttentiveMatch."""
 
-    def __init__(self, mp_dim, **kwargs):
+    def __init__(self, mp_dim):
         """Init."""
+        super(MpMaxAttentiveMatch, self).__init__()
         self.mp_dim = mp_dim
-        super(MpMaxAttentiveMatch, self).__init__(**kwargs)
 
     def build(self, input_shapes):
         """Build."""
         input_shape = input_shapes[0]
-        super(MpMaxAttentiveMatch, self).build(input_shape)
+        self.built = True
 
-    def call(self, x, **kwargs):
+    def call(self, x):
         """Call."""
         reps_lt, reps_rt = x[0], x[1]
-        relevancy_matrix = x[3]
+        relevancy_matrix = x[2]
         max_att_lt = cal_max_question_representation(reps_lt, relevancy_matrix)
         max_attentive_tensor, match_dim = _multi_perspective_match(self.mp_dim,
                                                                    reps_rt,
@@ -245,12 +246,11 @@ class MpMaxAttentiveMatch(Layer):
         return max_attentive_tensor
 
 
-def cal_max_question_representation(question_representation, attn_scores):
+def cal_max_question_representation(reps_lt, attn_scores):
     """Return [batch_size, passage_len]."""
-    attn_positions = K.tf.argmax(attn_scores, axis=2)
-    max_question_reps = collect_representation(question_representation,
-                                               attn_positions)
-    return max_question_reps
+    attn_positions = K.argmax(attn_scores, axis=2)
+    max_reps_lt = collect_representation(reps_lt, attn_positions)
+    return max_reps_lt
 
 
 def collect_representation(representation, positions):
@@ -293,17 +293,20 @@ def collect_probs(probs, positions):
     :param positions: [batch_size, pair_size]
     :return:
     """
-    batch_size = K.tf.shape(probs)[0]
-    pair_size = K.tf.shape(positions)[1]
+    batch_size = K.shape(probs)[0]
+    pair_size = K.shape(positions)[1]
     # shape (batch_size)
-    batch_nums = K.tf.range(0, limit=batch_size)
+    batch_nums = K.arange(0, batch_size)
     # [batch_size, 1]
-    batch_nums = K.tf.reshape(batch_nums, shape=[-1, 1])
+    batch_nums = K.reshape(batch_nums, shape=[-1, 1])
     # [batch_size, pair_size]
-    batch_nums = K.tf.tile(batch_nums, multiples=[1, pair_size])
+    batch_nums = K.tile(batch_nums, [1, pair_size])
 
     # shape (batch_size, pair_size, 2)
-    indices = K.tf.stack((batch_nums, positions), axis=2)
+    # alert: to solve error message
+    positions = K.tf.to_int32(positions)
+    indices = K.stack([batch_nums, positions], axis=2)
+
     pair_probs = K.tf.gather_nd(probs, indices)
     # pair_probs = tf.reshape(pair_probs, shape=[batch_size, pair_size])
     return pair_probs
@@ -377,6 +380,25 @@ class MpCosineLayer(Layer):
     def compute_output_shape(self, input_shape):
         """Compute output shape."""
         return input_shape[0][0], input_shape[0][1], self.mp_dim
+
+
+def _calc_relevancy_matrix(reps_lt, reps_rt):
+    # -> [batch_size, 1, len_lt, dim]
+    reps_lt = K.expand_dims(reps_lt, 1)
+    # -> [batch_size, len_rt, 1, dim]
+    in_passage_repres_tmp = K.expand_dims(reps_rt, 2)
+    relevancy_matrix = _cosine_distance(reps_lt, reps_rt)
+    return relevancy_matrix
+
+
+def _mask_relevancy_matrix(relevancy_matrix, question_mask, passage_mask):
+    # relevancy_matrix: [batch_size, passage_len, question_len]
+    # question_mask: [batch_size, question_len]
+    # passage_mask: [batch_size, passsage_len]
+    if question_mask is not None:
+        relevancy_matrix = relevancy_matrix * K.expand_dims(question_mask, 1)
+    relevancy_matrix = relevancy_matrix * K.expand_dims(passage_mask, 2)
+    return relevancy_matrix
 
 
 def _cosine_distance(v1, v2, cosine_norm=True, eps=1e-6):

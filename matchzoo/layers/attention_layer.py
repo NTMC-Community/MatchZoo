@@ -24,7 +24,7 @@ class AttentionLayer(Layer):
                  att_dim: int,
                  att_type: str = 'default',
                  remove_diagonal: bool = False,
-                 **kwargs):
+                 dropout_rate: float = 0.0):
         """
         class: `AttentionLayer` constructor.
 
@@ -32,10 +32,11 @@ class AttentionLayer(Layer):
         :param att_type: int
         :param remove_diagonal: bool
         """
+        super(AttentionLayer, self).__init__()
         self._att_dim = att_dim
         self._att_type = att_type
         self._remove_diagonal = remove_diagonal
-        super(AttentionLayer, self).__init__(**kwargs)
+        self._dropout_rate = dropout_rate
 
     @property
     def att_dim(self):
@@ -57,12 +58,22 @@ class AttentionLayer(Layer):
             raise ValueError('A attention layer should be called '
                              'on a list of inputs.')
         # input_shapes[0]: batch, time_steps, d
-        hidden_dim = input_shapes[0][2]
-        self.attn_kernel = self.add_weight(name='attn_kernel',
-                                           shape=(hidden_dim,
+        hidden_dim_lt = input_shapes[0][2]
+        hidden_dim_rt = input_shapes[1][2]
+        self.attn_w1 = self.add_weight(name='attn_w1',
+                                       shape=(hidden_dim_lt,
+                                              self._att_dim),
+                                       initializer='uniform',
+                                       trainable=True)
+        if hidden_dim_lt == hidden_dim_rt:
+            self.attn_w2 = self.attn_w1
+        else:
+            self.attn_w2 = self.add_weight(name='attn_w2',
+                                           shape=(hidden_dim_rt,
                                                   self._att_dim),
                                            initializer='uniform',
                                            trainable=True)
+
         self.diagonal_W = self.add_weight(name='diagonal_W',
                                           shape=(1,
                                                  1,
@@ -86,15 +97,18 @@ class AttentionLayer(Layer):
         reps_lt, reps_rt = x
 
         # [1, 1, d, 20]
-        attn_kernel = self.attn_kernel
-
-        attn_kernel = K.expand_dims(attn_kernel, axis=0)
-        attn_kernel = K.expand_dims(attn_kernel, axis=1)
+        attn_w1 = self.attn_w1
+        attn_w1 = K.expand_dims(K.expand_dims(attn_w1, axis=0), axis=0)
         # [b, s, d, -1]
         reps_lt = K.expand_dims(reps_lt, axis=-1)
-        attn_reps_lt = K.sum(reps_lt * attn_kernel, axis=2)
+        attn_reps_lt = K.sum(reps_lt * attn_w1, axis=2)
+
+        # [1, 1, d, 20]
+        attn_w2 = self.attn_w2
+        attn_w2 = K.expand_dims(K.expand_dims(attn_w2, axis=0), axis=0)
+        # [b, s, d, -1]
         reps_rt = K.expand_dims(reps_rt, axis=-1)
-        attn_reps_rt = K.sum(reps_rt * attn_kernel, axis=2)
+        attn_reps_rt = K.sum(reps_rt * attn_w2, axis=2)
 
         # Tanh
         attn_reps_lt = K.tanh(attn_reps_lt)  # [b, s, 20]
