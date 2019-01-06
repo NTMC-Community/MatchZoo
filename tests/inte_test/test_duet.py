@@ -93,6 +93,5 @@ def test_duet(train_data_processed,
         x, y = test_data_processed.unpack()
         results = duet.evaluate(x, y)
         assert len(results) > 0
-        assert type(results['loss']) == np.float64
     finally:
         shutil.rmtree('.tmpdir')
