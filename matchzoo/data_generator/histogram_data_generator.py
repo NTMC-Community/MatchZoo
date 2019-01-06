@@ -19,6 +19,7 @@ def match_histogram_generator(x: dict,
     Generator the matching hisogram for input.
 
     :param x: The input `dict`.
+    :param match_hist_unit: The histogram unit :class:`MatchingHistogramUnit`.
     :return: The matching histogram.
     """
     match_hist = []
@@ -144,9 +145,7 @@ class HistogramPairDataGenerator(PairDataGenerator):
                  num_neg: int = 1,
                  batch_size: int = 32,
                  shuffle: bool = True):
-        """:class:`DPoolPairDataGenerator` constructor.
-
-        """
+        """:class:`HistogramPairDataGenerator` constructor."""
         self._match_hist_unit = MatchingHistogramUnit(hist_bins=hist_bins,
                                                       embedding=embedding,
                                                       normalize=True,

@@ -551,6 +551,7 @@ class MatchingHistogramUnit(ProcessorUnit):
         >>> histogram = MatchingHistogramUnit(3, embedding, True, 'CH')
         >>> histogram.transform([text_left, text_right])
         [[3.0, 1.0, 1.0], [1.0, 2.0, 2.0]]
+
     """
 
     def __init__(self, hist_bins: int = 30, embedding=None, normalize=True,

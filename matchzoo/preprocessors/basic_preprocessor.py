@@ -141,7 +141,7 @@ class BasicPreprocessor(engine.BasePreprocessor):
         data_pack.left['length_left'] = data_pack.left['length_left'].apply(
             lambda val: val if val <= max_len_left else max_len_left
         )
-        data_pack.right['length_right'] = data_pack.right['length_right'].apply(
-            lambda val: val if val <= max_len_right else max_len_right
-        )
+        data_pack.right['length_right'] = data_pack.right[
+            'length_right'].apply(
+            lambda val: val if val <= max_len_right else max_len_right)
         return data_pack
