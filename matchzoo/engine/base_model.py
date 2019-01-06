@@ -315,6 +315,7 @@ class BaseModel(abc.ABC):
             <class 'dict'>
 
         """
+        self._backend.metrics_names.remove('loss')
         result = self._evaluate_backend(x, y, batch_size, verbose)
         matchzoo_metrics, _ = self._separate_metrics()
         if matchzoo_metrics:
@@ -323,6 +324,7 @@ class BaseModel(abc.ABC):
             df = self._build_data_frame_for_eval(x, y, batch_size)
             for metric in matchzoo_metrics:
                 result[metric] = self._eval_metric_on_data_frame(metric, df)
+        self._backend.metrics_names.append('loss')
         return result
 
     def _evaluate_backend(self, x, y, batch_size, verbose):
