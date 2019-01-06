@@ -131,11 +131,17 @@ class BasicPreprocessor(engine.BasePreprocessor):
 
         data_pack.apply_on_text(self._context['vocab_unit'].transform,
                                 mode='both', inplace=True, verbose=verbose)
-
+        data_pack.append_text_length(inplace=True)
         data_pack.apply_on_text(self._left_fixedlength_unit.transform,
                                 mode='left', inplace=True, verbose=verbose)
         data_pack.apply_on_text(self._right_fixedlength_unit.transform,
                                 mode='right', inplace=True, verbose=verbose)
-        data_pack.append_text_length(inplace=True)
-
+        max_len_left = self._fixed_length_left
+        max_len_right = self._fixed_length_right
+        data_pack.left['length_left'] = data_pack.left['length_left'].apply(
+            lambda val: val if val <= max_len_left else max_len_left
+        )
+        data_pack.right['length_right'] = data_pack.right['length_right'].apply(
+            lambda val: val if val <= max_len_right else max_len_right
+        )
         return data_pack

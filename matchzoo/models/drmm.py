@@ -48,7 +48,14 @@ class DRMM(engine.BaseModel):
         # doc: shape = [B, L, H]
         # Note here, the doc is the matching histogram between original query
         # and original document.
-        query, doc = self._make_inputs()
+        query = keras.layers.Input(
+            name='text_left',
+            shape=self._params['input_shapes'][0]
+        )
+        match_hist = keras.layers.Input(
+            name='match_histogram',
+            shape=self._params['input_shapes'][1]
+        )
 
         embedding = self._make_embedding_layer()
         # Process left input.
@@ -59,7 +66,7 @@ class DRMM(engine.BaseModel):
 
         # Process right input.
         # shape = [B, L, 1]
-        dense_output = self._make_multi_layer_perceptron_layer()(doc)
+        dense_output = self._make_multi_layer_perceptron_layer()(match_hist)
 
         # shape = [B, 1, 1]
         dot_score = keras.layers.Dot(axes=[1, 1])(
@@ -68,7 +75,7 @@ class DRMM(engine.BaseModel):
         flatten_score = keras.layers.Flatten()(dot_score)
 
         x_out = self._make_output_layer()(flatten_score)
-        self._backend = keras.Model(inputs=[query, doc], outputs=x_out)
+        self._backend = keras.Model(inputs=[query, match_hist], outputs=x_out)
 
     @classmethod
     def attention_layer(cls, attention_input: typing.Any,
