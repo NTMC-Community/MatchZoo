@@ -312,19 +312,22 @@ class BaseModel(abc.ABC):
             <class 'dict'>
 
         """
-        df = self._build_data_frame_for_eval(x, y, batch_size)
-        matchzoo_metrics, keras_metrics = self._separate_metrics()
         result = {}
-        if keras_metrics:
-            for metric in keras_metrics:
-                metric_func = keras.metrics.get(metric)
-                pred = K.cast(df['pred'].values, dtype='float64')
-                result[metric] = K.eval(metric_func(df['true'].values, pred))
+        matchzoo_metrics, keras_metrics = self._separate_metrics()
+        y_pred = self.predict(x, batch_size)
+
+        for metric in keras_metrics:
+            metric_func = keras.metrics.get(metric)
+            result[metric] = K.eval(
+                metric_func(K.variable(y), K.variable(y_pred)))
+
         if matchzoo_metrics:
             if not isinstance(self.params['task'], tasks.Ranking):
                 raise ValueError("Matchzoo metrics only works on ranking.")
             for metric in matchzoo_metrics:
-                result[metric] = self._eval_metric_on_data_frame(metric, df)
+                result[metric] = self._eval_metric_on_data_frame(
+                    metric, x['id_left'], y, y_pred)
+
         return result
 
     def _separate_metrics(self):
@@ -338,33 +341,35 @@ class BaseModel(abc.ABC):
         return matchzoo_metrics, keras_metrics
 
     def _remap_keras_metric(self, metric: str) -> str:
-        task = self._params['task']
-        if metric in ('accuracy', 'acc', 'crossentropy', 'ce'):
-            if isinstance(task, tasks.Classification):
-                if metric in ['acc', 'accuracy']:
-                    return 'sparse_categorical_accuracy'
-                else:
-                    return 'sparse_categorical_crossentropy'
-            elif isinstance(task, tasks.Ranking):
-                if metric in ['acc', 'accuracy']:
-                    return 'binary_accuracy'
-                else:
-                    return 'binary_crossentropy'
-            else:
-                raise ValueError("Invalid task type.")
-        else:
-            return metric
+        lookup = {
+            tasks.Classification: {
+                'acc': 'sparse_categorical_accuracy',
+                'accuracy': 'sparse_categorical_accuracy',
+                'crossentropy': 'sparse_categorical_crossentropy',
+                'ce': 'sparse_categorical_crossentropy',
+            },
+            tasks.Ranking: {
+                'acc': 'binary_accuracy',
+                'accuracy': 'binary_accuracy',
+                'crossentropy': 'binary_crossentropy',
+                'ce': 'binary_crossentropy',
+            }
+        }
+        return lookup[type(self._params['task'])].get(metric, metric)
 
-    def _build_data_frame_for_eval(self, x, y, batch_size):
-        y_pred = self.predict(x, batch_size)
-        return pd.DataFrame(data={
-            'id': x['id_left'],
+    @classmethod
+    def _eval_metric_on_data_frame(
+        cls,
+        metric: engine.BaseMetric,
+        id_left,
+        y,
+        y_pred
+    ):
+        eval_df = pd.DataFrame(data={
+            'id': id_left,
             'true': y.squeeze(),
             'pred': y_pred.squeeze()
         })
-
-    @classmethod
-    def _eval_metric_on_data_frame(cls, metric: engine.BaseMetric, eval_df):
         assert isinstance(metric, engine.BaseMetric)
         val = eval_df.groupby(by='id').apply(
             lambda df: metric(df['true'].values, df['pred'].values)
