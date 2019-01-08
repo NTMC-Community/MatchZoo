@@ -341,12 +341,13 @@ class BaseModel(abc.ABC):
         return matchzoo_metrics, keras_metrics
 
     def _remap_keras_metric(self, metric: str) -> str:
+        # TODO: note here, we do not support sparse label in classification.
         lookup = {
             tasks.Classification: {
-                'acc': 'sparse_categorical_accuracy',
-                'accuracy': 'sparse_categorical_accuracy',
-                'crossentropy': 'sparse_categorical_crossentropy',
-                'ce': 'sparse_categorical_crossentropy',
+                'acc': 'categorical_accuracy',
+                'accuracy': 'categorical_accuracy',
+                'crossentropy': 'categorical_crossentropy',
+                'ce': 'categorical_crossentropy',
             },
             tasks.Ranking: {
                 'acc': 'binary_accuracy',
