@@ -12,9 +12,13 @@ class MatchLSTM(engine.BaseModel):
     Examples:
         >>> model = MatchLSTM()
         >>> model.guess_and_fill_missing_params(verbose=0)
+        >>> model.params['embedding_input_dim'] = 10000
+        >>> model.params['embedding_output_dim'] = 100
+        >>> model.params['embedding_trainable'] = True
+        >>> model.params['fc_num_units'] = 200
+        >>> model.params['lstm_num_units'] = 256
+        >>> model.params['dropout_rate'] = 0.5
         >>> model.build()
-        >>> model.params['fc_hidden_size'] = 200
-        >>> model.params['rnn_hidden_size'] = 256
 
     """
 
@@ -23,43 +27,51 @@ class MatchLSTM(engine.BaseModel):
         """Get default parameters."""
         params = super().get_default_params(with_embedding=True)
         params.add(engine.Param(
-            'rnn_hidden_size', 256,
-            hyper_space=engine.hyper_spaces.quniform(low=128, high=384, q=32)
+            'lstm_num_units', 256,
+            hyper_space=engine.hyper_spaces.quniform(low=128, high=384, q=32),
+            desc="The hidden size in the LSTM layer."
         ))
         params.add(engine.Param(
-            'fc_hidden_size', 200,
+            'fc_num_units', 200,
             hyper_space=engine.hyper_spaces.quniform(
-                low=100, high=300, q=20)
+                low=100, high=300, q=20),
+            desc="The hidden size in the full connection layer."
+        ))
+        params.add(engine.Param(
+            'dropout_rate', 0.0,
+            hyper_space=engine.hyper_spaces.quniform(
+                low=0.0, high=0.9, q=0.01),
+            desc="The dropout rate."
         ))
         return params
 
     def build(self):
         """Build model."""
-        query, doc = self._make_inputs()
-        query_len = query.shape[1]
-        doc_len = doc.shape[1]
+        input_left, input_right = self._make_inputs()
+        len_left = input_left.shape[1]
+        len_right = input_right.shape[1]
         embedding = self._make_embedding_layer()
-        query_embed = embedding(query)
-        doc_embed = embedding(doc)
+        embed_left = embedding(input_left)
+        embed_right = embedding(input_right)
 
-        lstm_query = keras.layers.LSTM(self._params['rnn_hidden_size'],
+        lstm_left = keras.layers.LSTM(self._params['lstm_num_units'],
+                                      return_sequences=True,
+                                      name='lstm_left')
+        lstm_right = keras.layers.LSTM(self._params['lstm_num_units'],
                                        return_sequences=True,
-                                       name='lstm_query')
-        lstm_doc = keras.layers.LSTM(self._params['rnn_hidden_size'],
-                                     return_sequences=True,
-                                     name='lstm_doc')
-        doc_encoded = lstm_doc(doc_embed)
-        query_encoded = lstm_query(query_embed)
+                                       name='lstm_right')
+        encoded_left = lstm_left(embed_left)
+        encoded_right = lstm_right(embed_right)
 
         def attention(tensors):
             """Attention layer."""
-            query, doc = tensors
-            tensor_left = K.expand_dims(query, axis=2)
-            tensor_right = K.expand_dims(doc, axis=1)
-            tensor_left = K.repeat_elements(tensor_left, doc_len, 2)
-            tensor_right = K.repeat_elements(tensor_right, query_len, 1)
+            left, right = tensors
+            tensor_left = K.expand_dims(left, axis=2)
+            tensor_right = K.expand_dims(right, axis=1)
+            tensor_left = K.repeat_elements(tensor_left, len_right, 2)
+            tensor_right = K.repeat_elements(tensor_right, len_left, 1)
             tensor_merged = K.concatenate([tensor_left, tensor_right], axis=-1)
-            middle_output = keras.layers.Dense(self._params['fc_hidden_size'],
+            middle_output = keras.layers.Dense(self._params['fc_num_units'],
                                                activation='tanh')(
                 tensor_merged)
             attn_scores = keras.layers.Dense(1)(middle_output)
@@ -68,17 +80,21 @@ class MatchLSTM(engine.BaseModel):
                 attn_scores - K.max(attn_scores, axis=-1, keepdims=True))
             exp_sum = K.sum(exp_attn_scores, axis=-1, keepdims=True)
             attention_weights = exp_attn_scores / exp_sum
-            return K.batch_dot(attention_weights, doc)
+            return K.batch_dot(attention_weights, right)
 
         attn_layer = keras.layers.Lambda(attention)
-        query_attn_vec = attn_layer([query_encoded, doc_encoded])
-        concat = keras.layers.Concatenate(axis=2)(
-            [query_attn_vec, doc_encoded])
-        lstm_merge = keras.layers.LSTM(self._params['rnn_hidden_size'] * 2,
-                                       return_sequences=True,
+        left_attn_vec = attn_layer([encoded_left, encoded_right])
+        concat = keras.layers.Concatenate(axis=1)(
+            [left_attn_vec, encoded_right])
+        lstm_merge = keras.layers.LSTM(self._params['lstm_num_units'] * 2,
+                                       return_sequences=False,
                                        name='lstm_merge')
         merged = lstm_merge(concat)
-        phi = keras.layers.Dense(self._params['fc_hidden_size'],
-                                 activation='tanh')(merged)
+        dropout = keras.layers.Dropout(
+            rate=self._params['dropout_rate'])(merged)
+
+        phi = keras.layers.Dense(self._params['fc_num_units'],
+                                 activation='tanh')(dropout)
+        inputs = [input_left, input_right]
         out = self._make_output_layer()(phi)
-        self._backend = keras.Model(inputs=[query, doc], outputs=[out])
+        self._backend = keras.Model(inputs=inputs, outputs=[out])
