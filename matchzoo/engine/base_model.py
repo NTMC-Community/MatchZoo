@@ -318,8 +318,8 @@ class BaseModel(abc.ABC):
         if keras_metrics:
             for metric in keras_metrics:
                 metric_func = keras.metrics.get(metric)
-                result[metric] = K.eval(metric_func(df['true'].values,
-                                                    df['pred'].values))
+                pred = K.cast(df['pred'].values, dtype='float64')
+                result[metric] = K.eval(metric_func(df['true'].values, pred))
         if matchzoo_metrics:
             if not isinstance(self.params['task'], tasks.Ranking):
                 raise ValueError("Matchzoo metrics only works on ranking.")
