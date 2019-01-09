@@ -47,7 +47,6 @@ def prepare(
     if not params['task']:
         params['task'] = _guess_task(data_pack)
 
-    context = {}
     if 'input_shapes' in new_preprocessor.context:
         params['input_shapes'] = new_preprocessor.context['input_shapes']
 
