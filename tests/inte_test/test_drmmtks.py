@@ -90,6 +90,5 @@ def test_drmmtks(train_data_processed,
         x, y = test_data_processed.unpack()
         results = drmmtks_model.evaluate(x, y)
         assert len(results) > 0
-        assert type(results['loss']) == np.float64
     finally:
         shutil.rmtree('.tmpdir')

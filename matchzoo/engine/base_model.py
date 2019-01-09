@@ -7,6 +7,7 @@ from pathlib import Path
 import dill
 import numpy as np
 import keras
+import keras.backend as K
 import pandas as pd
 
 import matchzoo
@@ -198,14 +199,10 @@ class BaseModel(abc.ABC):
             ['mse', mean_average_precision(0)]
             >>> model.build()
             >>> model.compile()
-            >>> model.backend.metrics_names
-            ['loss', 'mean_squared_error']
 
         """
-        _, keras_metrics = self._separate_metrics()
         self._backend.compile(optimizer=self._params['optimizer'],
-                              loss=self._params['task'].loss,
-                              metrics=keras_metrics)
+                              loss=self._params['task'].loss)
 
     def fit(
         self,
@@ -294,7 +291,7 @@ class BaseModel(abc.ABC):
             >>> m = mz.models.DenseBaselineModel()
             >>> m.params['task'] = mz.tasks.Ranking()
             >>> m.params['task'].metrics = [
-            ...     'acc', 'mse', 'mae',
+            ...     'acc', 'mse', 'mae', 'ce',
             ...     'average_precision', 'precision', 'dcg', 'ndcg',
             ...     'mean_reciprocal_rank', 'mean_average_precision', 'mrr',
             ...     'map', 'MAP',
@@ -315,23 +312,23 @@ class BaseModel(abc.ABC):
             <class 'dict'>
 
         """
-        result = self._evaluate_backend(x, y, batch_size, verbose)
-        matchzoo_metrics, _ = self._separate_metrics()
+        result = {}
+        matchzoo_metrics, keras_metrics = self._separate_metrics()
+        y_pred = self.predict(x, batch_size)
+
+        for metric in keras_metrics:
+            metric_func = keras.metrics.get(metric)
+            result[metric] = K.eval(
+                metric_func(K.variable(y), K.variable(y_pred)))
+
         if matchzoo_metrics:
             if not isinstance(self.params['task'], tasks.Ranking):
                 raise ValueError("Matchzoo metrics only works on ranking.")
-            df = self._build_data_frame_for_eval(x, y, batch_size)
             for metric in matchzoo_metrics:
-                result[metric] = self._eval_metric_on_data_frame(metric, df)
-        return result
+                result[metric] = self._eval_metric_on_data_frame(
+                    metric, x['id_left'], y, y_pred)
 
-    def _evaluate_backend(self, x, y, batch_size, verbose):
-        vals = self._backend.evaluate(x=x, y=y,
-                                      batch_size=batch_size,
-                                      verbose=verbose)
-        if not isinstance(vals, list):
-            vals = [vals]
-        return dict(zip(self._backend.metrics_names, vals))
+        return result
 
     def _separate_metrics(self):
         matchzoo_metrics = []
@@ -340,19 +337,40 @@ class BaseModel(abc.ABC):
             if isinstance(metric, engine.BaseMetric):
                 matchzoo_metrics.append(metric)
             else:
-                keras_metrics.append(metric)
+                keras_metrics.append(self._remap_keras_metric(metric))
         return matchzoo_metrics, keras_metrics
 
-    def _build_data_frame_for_eval(self, x, y, batch_size):
-        y_pred = self.predict(x, batch_size)
-        return pd.DataFrame(data={
-            'id': x['id_left'],
+    def _remap_keras_metric(self, metric: str) -> str:
+        # TODO: note here, we do not support sparse label in classification.
+        lookup = {
+            tasks.Classification: {
+                'acc': 'categorical_accuracy',
+                'accuracy': 'categorical_accuracy',
+                'crossentropy': 'categorical_crossentropy',
+                'ce': 'categorical_crossentropy',
+            },
+            tasks.Ranking: {
+                'acc': 'binary_accuracy',
+                'accuracy': 'binary_accuracy',
+                'crossentropy': 'binary_crossentropy',
+                'ce': 'binary_crossentropy',
+            }
+        }
+        return lookup[type(self._params['task'])].get(metric, metric)
+
+    @classmethod
+    def _eval_metric_on_data_frame(
+        cls,
+        metric: engine.BaseMetric,
+        id_left,
+        y,
+        y_pred
+    ):
+        eval_df = pd.DataFrame(data={
+            'id': id_left,
             'true': y.squeeze(),
             'pred': y_pred.squeeze()
         })
-
-    @classmethod
-    def _eval_metric_on_data_frame(cls, metric: engine.BaseMetric, eval_df):
         assert isinstance(metric, engine.BaseMetric)
         val = eval_df.groupby(by='id').apply(
             lambda df: metric(df['true'].values, df['pred'].values)
