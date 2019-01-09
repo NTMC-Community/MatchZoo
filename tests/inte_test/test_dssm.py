@@ -56,7 +56,7 @@ def test_dssm(train_data_processed,
               dssm_preprocessor):
     """Test DSSM model."""
     # Create a dssm model
-    dssm_model = mz.models.DSSMModel()
+    dssm_model = mz.models.DSSM()
     input_shapes = dssm_preprocessor.context['input_shapes']
     dssm_model.params['input_shapes'] = input_shapes
     dssm_model.params['task'] = task

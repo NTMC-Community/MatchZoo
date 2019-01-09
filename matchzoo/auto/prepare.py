@@ -49,10 +49,7 @@ def prepare(
 
     context = {}
     if 'input_shapes' in new_preprocessor.context:
-        context['input_shapes'] = new_preprocessor.context['input_shapes']
-
-    if isinstance(model, models.DSSMModel):
-        params['input_shapes'] = context['input_shapes']
+        params['input_shapes'] = new_preprocessor.context['input_shapes']
 
     if 'with_embedding' in params:
         term_index = new_preprocessor.context['vocab_unit'].state['term_index']

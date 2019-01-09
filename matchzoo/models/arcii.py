@@ -32,20 +32,34 @@ class ArcII(engine.BaseModel):
         params['optimizer'] = 'adam'
         opt_space = engine.hyper_spaces.choice(['adam', 'rmsprop', 'adagrad'])
         params.get('optimizer').hyper_space = opt_space
-        params.add(engine.Param('num_blocks', 1))
-        params.add(engine.Param('kernel_1d_count', 32))
-        params.add(engine.Param('kernel_1d_size', 3))
-        params.add(engine.Param('kernel_2d_count', [32]))
-        params.add(engine.Param('kernel_2d_size', [[3, 3]]))
-        params.add(engine.Param('activation', 'relu'))
-        params.add(engine.Param('pool_2d_size', [[2, 2]]))
+        params.add(engine.Param(name='num_blocks', value=1,
+                                desc="Number of 2D convolution blocks."))
+        params.add(engine.Param(name='kernel_1d_count', value=32,
+                                desc="Kernel count of 1D convolution layer."))
+        params.add(engine.Param(name='kernel_1d_size', value=3,
+                                desc="Kernel size of 1D convolution layer."))
+        params.add(engine.Param(name='kernel_2d_count', value=[32],
+                                desc="Kernel count of 2D convolution layer in"
+                                     "each block"))
+        params.add(engine.Param(name='kernel_2d_size', value=[[3, 3]],
+                                desc="Kernel size of 2D convolution layer in"
+                                     " each block."))
+        params.add(engine.Param(name='activation', value='relu',
+                                desc="Activation function."))
+        params.add(engine.Param(name='pool_2d_size', value=[[2, 2]],
+                                desc="Size of pooling layer in each block."))
         params.add(engine.Param(
             name='padding', value='same',
-            hyper_space=engine.hyper_spaces.choice(['same', 'valid', 'causal'])
+            hyper_space=engine.hyper_spaces.choice(
+                ['same', 'valid', 'causal']),
+            desc="The padding mode in the convolution layer. It should be one"
+                 "of `same`, `valid`, and `causal`."
         ))
         params.add(engine.Param(
             name='dropout_rate', value=0.0,
-            hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8, q=0.01)
+            hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8,
+                                                     q=0.01),
+            desc="The dropout rate."
         ))
         return params
 

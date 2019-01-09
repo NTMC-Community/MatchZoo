@@ -10,12 +10,12 @@ from matchzoo import engine
 logger = logging.getLogger(__name__)
 
 
-class DRMMTKSModel(engine.BaseModel):
+class DRMMTKS(engine.BaseModel):
     """
     DRMMTKS Model.
 
     Examples:
-        >>> model = DRMMTKSModel()
+        >>> model = DRMMTKS()
         >>> model.params['embedding_input_dim'] = 10000
         >>> model.params['embedding_output_dim'] = 100
         >>> model.params['top_k'] = 20
@@ -39,7 +39,8 @@ class DRMMTKSModel(engine.BaseModel):
         params['input_shapes'] = [(5,), (300,)]
         params.add(engine.Param(
             'top_k', value=10,
-            hyper_space=engine.hyper_spaces.quniform(low=2, high=100)
+            hyper_space=engine.hyper_spaces.quniform(low=2, high=100),
+            desc="Size of top-k pooling layer."
         ))
         return params
 
