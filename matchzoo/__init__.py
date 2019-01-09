@@ -36,6 +36,7 @@ from . import embedding
 from . import datasets
 from . import auto
 from . import layers
+from . import contrib
 
 from .engine import hyper_spaces
 from .engine import load_model

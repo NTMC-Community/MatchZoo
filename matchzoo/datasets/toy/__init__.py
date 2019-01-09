@@ -36,6 +36,8 @@ def load_data(stage='train', task='ranking'):
     data_pack = matchzoo.pack(pd.read_csv(path, index_col=0))
 
     if isinstance(task, matchzoo.tasks.Ranking):
+        data_pack.relation['label'] = \
+            data_pack.relation['label'].astype('float32')
         return data_pack
     elif isinstance(task, matchzoo.tasks.Classification):
         data_pack.relation['label'] = data_pack.relation['label'].astype(int)

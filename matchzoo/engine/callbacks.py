@@ -59,6 +59,6 @@ class EvaluateAllMetrics(keras.callbacks.Callback):
                                             self._batch_size, verbose=0)
             if self._verbose:
                 print('Validation: ' + ' - '.join(
-                    f'{k}:{v:f}' for k, v in val_logs.items()))
+                    f'{k}: {v}' for k, v in val_logs.items()))
             for k, v in val_logs.items():
                 logs[k] = v
