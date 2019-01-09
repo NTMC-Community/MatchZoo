@@ -93,7 +93,7 @@ class DataPack(object):
         the right dataframe and the relation data frame. Use `[]` to access
         an item or a slice of items.
 
-        :return: A :class:`FrameView instance.
+        :return: A :class:`DataPack.FrameView` instance.
 
         Example:
             >>> import matchzoo as mz
