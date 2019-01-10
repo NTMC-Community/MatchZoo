@@ -537,7 +537,7 @@ class MatchingHistogramUnit(ProcessorUnit):
     """
     MatchingHistogramUnit Class.
 
-    :param hist_bin_size: The number of bins of the matching histogram.
+    :param bin_size: The number of bins of the matching histogram.
     :param embedding_matrix: The word embedding matrix applied to calculate
                              the matching histogram.
     :param normalize: Boolean, normalize the embedding or not.
@@ -554,10 +554,10 @@ class MatchingHistogramUnit(ProcessorUnit):
 
     """
 
-    def __init__(self, hist_bin_size: int = 30, embedding_matrix=None,
+    def __init__(self, bin_size: int = 30, embedding_matrix=None,
                  normalize=True, mode: str = 'LCH'):
         """The constructor."""
-        self._hist_bin_size = hist_bin_size
+        self._hist_bin_size = bin_size
         self._embedding_matrix = embedding_matrix
         if normalize:
             self._normalize_embedding()

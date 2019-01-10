@@ -45,7 +45,7 @@ class HistogramDataGenerator(DataGenerator):
     :param data_pack: The input data pack.
     :param embedding_matrix: The embedding matrix used to generator match
                              histogram.
-    :param hist_bin_size: The number of bin size of the histogram.
+    :param bin_size: The number of bin size of the histogram.
     :param hist_mode: The mode of the :class:`MatchingHistogramUnit`, one of
                      `CH`, `NH`, and `LCH`.
     :param batch_size: The batch size.
@@ -84,13 +84,13 @@ class HistogramDataGenerator(DataGenerator):
     def __init__(self,
                  data_pack: DataPack,
                  embedding_matrix: np.ndarray,
-                 hist_bin_size: int = 30,
+                 bin_size: int = 30,
                  hist_mode: str = 'CH',
                  batch_size: int = 32,
                  shuffle: bool = True):
         """:class:`HistogramDataGenerator` constructor."""
         self._match_hist_unit = MatchingHistogramUnit(
-            hist_bin_size=hist_bin_size,
+            bin_size=bin_size,
             embedding_matrix=embedding_matrix,
             normalize=True,
             mode=hist_mode)
@@ -112,7 +112,7 @@ class HistogramPairDataGenerator(PairDataGenerator):
     :param data_pack: The input data pack.
     :param embedding_matrix: The embedding matrix used to generator match
                              histogram.
-    :param hist_bin_size: The number of bin size of the histogram.
+    :param bin_size: The number of bin size of the histogram.
     :param hist_mode: The mode of the :class:`MatchingHistogramUnit`, one of
                      `CH`, `NH`, and `LCH`.
     :param batch_size: The batch size.
@@ -153,7 +153,7 @@ class HistogramPairDataGenerator(PairDataGenerator):
     def __init__(self,
                  data_pack: DataPack,
                  embedding_matrix: np.ndarray,
-                 hist_bin_size: int = 30,
+                 bin_size: int = 30,
                  hist_mode: str = 'CH',
                  num_dup: int = 1,
                  num_neg: int = 1,
@@ -161,7 +161,7 @@ class HistogramPairDataGenerator(PairDataGenerator):
                  shuffle: bool = True):
         """:class:`HistogramPairDataGenerator` constructor."""
         self._match_hist_unit = MatchingHistogramUnit(
-            hist_bin_size=hist_bin_size,
+            bin_size=bin_size,
             embedding_matrix=embedding_matrix,
             normalize=True,
             mode=hist_mode
