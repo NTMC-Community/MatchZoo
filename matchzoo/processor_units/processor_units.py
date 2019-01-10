@@ -537,53 +537,54 @@ class MatchingHistogramUnit(ProcessorUnit):
     """
     MatchingHistogramUnit Class.
 
-    :param hist_bins: The number of bins of the matching histogram.
-    :param embedding: The word embedding matrix applied to calculate the
-                     matching histogram.
+    :param hist_bin_size: The number of bins of the matching histogram.
+    :param embedding_matrix: The word embedding matrix applied to calculate
+                             the matching histogram.
     :param normalize: Boolean, normalize the embedding or not.
     :param mode: The type of the historgram, it should be one of 'CH', 'NG',
                  or 'LCH'.
 
     Examples:
-        >>> embedding = np.array([[1.0, -1.0], [1.0, 2.0], [1.0, 3.0]])
+        >>> embedding_matrix = np.array([[1.0, -1.0], [1.0, 2.0], [1.0, 3.0]])
         >>> text_left = [0, 1]
         >>> text_right = [1, 2]
-        >>> histogram = MatchingHistogramUnit(3, embedding, True, 'CH')
+        >>> histogram = MatchingHistogramUnit(3, embedding_matrix, True, 'CH')
         >>> histogram.transform([text_left, text_right])
         [[3.0, 1.0, 1.0], [1.0, 2.0, 2.0]]
 
     """
 
-    def __init__(self, hist_bins: int = 30, embedding=None, normalize=True,
-                 mode: str = 'LCH'):
+    def __init__(self, hist_bin_size: int = 30, embedding_matrix=None,
+                 normalize=True, mode: str = 'LCH'):
         """The constructor."""
-        self._hist_bins = hist_bins
-        self._embedding = embedding
+        self._hist_bin_size = hist_bin_size
+        self._embedding_matrix = embedding_matrix
         if normalize:
-            self._embedding = self.normalize_embedding(embedding)
+            self._embedding_matrix = self.normalize_embedding(embedding_matrix)
         self._mode = mode
 
     @classmethod
-    def normalize_embedding(cls, embedding: np.ndarray = None) -> np.ndarray:
+    def normalize_embedding(cls,
+                            embedding_matrix: np.ndarray = None) -> np.ndarray:
         """
-        Normalize the embdding matric.
+        Normalize the embedding matrix.
 
         :param embedding: The input embedding matrix.
         :return: The normalized embedding matrix.
         """
-        l2_norm = np.sqrt((embedding * embedding).sum(axis=1))
-        return embedding / l2_norm[:, np.newaxis]
+        l2_norm = np.sqrt((embedding_matrix * embedding_matrix).sum(axis=1))
+        return embedding_matrix / l2_norm[:, np.newaxis]
 
     def transform(self, text_pair: list) -> list:
         """Transform the input text."""
         text_left, text_right = text_pair
-        matching_hist = np.ones((len(text_left), self._hist_bins),
+        matching_hist = np.ones((len(text_left), self._hist_bin_size),
                                 dtype=np.float32)
-        rep_left = self._embedding[text_left]
-        rep_right = self._embedding[text_right]
+        rep_left = self._embedding_matrix[text_left]
+        rep_right = self._embedding_matrix[text_right]
         matching_matrix = rep_left.dot(np.transpose(rep_right))
         for (i, j), value in np.ndenumerate(matching_matrix):
-            bin_index = int((value + 1.) / 2. * (self._hist_bins - 1.))
+            bin_index = int((value + 1.) / 2. * (self._hist_bin_size - 1.))
             matching_hist[i][bin_index] += 1.0
         if self._mode in ['NH']:
             matching_sum = matching_hist.sum(axis=1)

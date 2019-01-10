@@ -8,13 +8,20 @@ from matchzoo.data_generator import DataGenerator
 from matchzoo.data_generator import PairDataGenerator
 
 
-def trunc_text(text: list, length: list) -> list:
-    """Truncating the input text according to the input length."""
-    return [row[:length[idx]] for idx, row in enumerate(text)]
+def trunc_text(input_text: list, length: list) -> list:
+    """
+    Truncating the input text according to the input length.
+
+    :param input_text: The input text need to be truncated.
+    :param length: The length used to truncated the text.
+    :return: The truncated text.
+    """
+    return [row[:length[idx]] for idx, row in enumerate(input_text)]
 
 
 def match_histogram_generator(x: dict,
-                              match_hist_unit: MatchingHistogramUnit) -> list:
+                              match_hist_unit: MatchingHistogramUnit
+                              ) -> np.ndarray:
     """
     Generator the matching hisogram for input.
 
@@ -23,7 +30,7 @@ def match_histogram_generator(x: dict,
     :return: The matching histogram.
     """
     match_hist = []
-    text_left = trunc_text(x['text_left'].tolist(), x['length_left'].tolist())
+    text_left = x['text_left'].tolist()
     text_right = trunc_text(x['text_right'].tolist(),
                             x['length_right'].tolist())
     for pair in zip(text_left, text_right):
@@ -36,8 +43,9 @@ class HistogramDataGenerator(DataGenerator):
     Generate data with matching histogram.
 
     :param data_pack: The input data pack.
-    :param embedding: The embedding matrix used to generator match histogram.
-    :param hist_bins: The number of bin size of the histogram.
+    :param embedding_matrix: The embedding matrix used to generator match
+                             histogram.
+    :param hist_bin_size: The number of bin size of the histogram.
     :param hist_mode: The mode of the :class:`MatchingHistogramUnit`, one of
                      `CH`, `NH`, and `LCH`.
     :param batch_size: The batch size.
@@ -66,6 +74,8 @@ class HistogramDataGenerator(DataGenerator):
 'text_right', 'length_right', 'match_histogram'])
         >>> type(x['match_histogram'])
         <class 'numpy.ndarray'>
+        >>> x['match_histogram'].shape
+        (1, 30, 3)
         >>> type(y)
         <class 'numpy.ndarray'>
 
@@ -73,24 +83,25 @@ class HistogramDataGenerator(DataGenerator):
 
     def __init__(self,
                  data_pack: DataPack,
-                 embedding: np.ndarray,
-                 hist_bins: int = 30,
+                 embedding_matrix: np.ndarray,
+                 hist_bin_size: int = 30,
                  hist_mode: str = 'CH',
                  batch_size: int = 32,
                  shuffle: bool = True):
         """:class:`HistogramDataGenerator` constructor."""
-        self._match_hist_unit = MatchingHistogramUnit(hist_bins=hist_bins,
-                                                      embedding=embedding,
-                                                      normalize=True,
-                                                      mode=hist_mode)
+        self._match_hist_unit = MatchingHistogramUnit(
+            hist_bin_size=hist_bin_size,
+            embedding_matrix=embedding_matrix,
+            normalize=True,
+            mode=hist_mode)
         # Here the super().__init_ must be after the self._data_pack
         super().__init__(data_pack, batch_size, shuffle)
 
     def _get_batch_of_transformed_samples(self, indices: np.array):
         """Get a batch of instances."""
         x, y = super()._get_batch_of_transformed_samples(indices)
-        x['match_histogram'] = np.array(
-            match_histogram_generator(x, self._match_hist_unit))
+        match_hist = match_histogram_generator(x, self._match_hist_unit)
+        x['match_histogram'] = np.asarray(match_hist)
         return (x, y)
 
 
@@ -99,8 +110,8 @@ class HistogramPairDataGenerator(PairDataGenerator):
     Generate pair-wise data with matching histogram.
 
     :param data_pack: The input data pack.
-    :param embedding: The embedding matrix used to generator match histogram.
-    :param hist_bins: The number of bin size of the histogram.
+    :param embedding_matrix: The embedding matrix used to generator match histogram.
+    :param hist_bin_size: The number of bin size of the histogram.
     :param hist_mode: The mode of the :class:`MatchingHistogramUnit`, one of
                      `CH`, `NH`, and `LCH`.
     :param batch_size: The batch size.
@@ -131,6 +142,8 @@ class HistogramPairDataGenerator(PairDataGenerator):
 'text_right', 'length_right', 'match_histogram'])
         >>> type(x['match_histogram'])
         <class 'numpy.ndarray'>
+        >>> x['match_histogram'].shape
+        (6, 30, 3)
         >>> type(y)
         <class 'numpy.ndarray'>
 
@@ -138,24 +151,26 @@ class HistogramPairDataGenerator(PairDataGenerator):
 
     def __init__(self,
                  data_pack: DataPack,
-                 embedding: np.ndarray,
-                 hist_bins: int = 30,
+                 embedding_matrix: np.ndarray,
+                 hist_bin_size: int = 30,
                  hist_mode: str = 'CH',
                  num_dup: int = 1,
                  num_neg: int = 1,
                  batch_size: int = 32,
                  shuffle: bool = True):
         """:class:`HistogramPairDataGenerator` constructor."""
-        self._match_hist_unit = MatchingHistogramUnit(hist_bins=hist_bins,
-                                                      embedding=embedding,
-                                                      normalize=True,
-                                                      mode=hist_mode)
+        self._match_hist_unit = MatchingHistogramUnit(
+            hist_bin_size=hist_bin_size,
+            embedding_matrix=embedding_matrix,
+            normalize=True,
+            mode=hist_mode
+        )
         # Here the super().__init__ must be after the self._data_pack
         super().__init__(data_pack, num_dup, num_neg, batch_size, shuffle)
 
     def _get_batch_of_transformed_samples(self, indices: np.array):
         """Get a batch of paired instances."""
         x, y = super()._get_batch_of_transformed_samples(indices)
-        x['match_histogram'] = np.array(
-            match_histogram_generator(x, self._match_hist_unit))
+        match_hist = match_histogram_generator(x, self._match_hist_unit)
+        x['match_histogram'] = np.asarray(match_hist)
         return (x, y)

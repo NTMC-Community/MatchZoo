@@ -25,6 +25,8 @@ from .data_generator import PairDataGenerator
 from .data_generator import DynamicDataGenerator
 from .data_generator import DPoolDataGenerator
 from .data_generator import DPoolPairDataGenerator
+from .data_generator import HistogramDataGenerator
+from .data_generator import HistogramPairDataGenerator
 
 from . import tasks
 from . import metrics
