@@ -36,7 +36,7 @@ valid_pack_processed = preprocessor.transform(valid_pack)
 predict_pack_processed = preprocessor.transform(predict_pack)
 ```
 
-Use MatchZoo customized loss function, define evaluation metrics:
+Make use of MatchZoo customized loss functions and evaluation metrics:
 
 ```python
 ranking_task = mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=4))
@@ -73,7 +73,7 @@ evaluate = mz.callbacks.EvaluateAllMetrics(model, x=pred_x, y=pred_y, batch_size
 history = model.fit_generator(train_generator, epochs=20, callbacks=[evaluate], workers=5, use_multiprocessing=False)
 ```
 
-For detailed usage, such as hyper-parameters, model persistence, evaluation, please check out our [tutorials](https://github.com/NTMC-Community/MatchZoo/tree/2.0/tutorials) and documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
+For detailed usage, such as hyper-parameters tunning, model persistence, evaluation, please check out our [tutorials](https://github.com/NTMC-Community/MatchZoo/tree/2.0/tutorials) and documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
 
 If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match).
 
