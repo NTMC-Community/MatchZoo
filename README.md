@@ -17,7 +17,7 @@
 
 ## Get Started in 60 Seconds
 
-To train a [Deep Semantic Structured Model](https://www.microsoft.com/en-us/research/project/dssm/), first, import modules and prepare input data.
+To train a [Deep Semantic Structured Model](https://www.microsoft.com/en-us/research/project/dssm/), import matchzoo and prepare input data.
 
 ```python
 import matchzoo as mz
