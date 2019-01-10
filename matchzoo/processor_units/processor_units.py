@@ -560,35 +560,31 @@ class MatchingHistogramUnit(ProcessorUnit):
         self._hist_bin_size = hist_bin_size
         self._embedding_matrix = embedding_matrix
         if normalize:
-            self._embedding_matrix = self.normalize_embedding(embedding_matrix)
+            self._normalize_embedding()
         self._mode = mode
 
-    @classmethod
-    def normalize_embedding(cls,
-                            embedding_matrix: np.ndarray = None) -> np.ndarray:
-        """
-        Normalize the embedding matrix.
-
-        :param embedding: The input embedding matrix.
-        :return: The normalized embedding matrix.
-        """
-        l2_norm = np.sqrt((embedding_matrix * embedding_matrix).sum(axis=1))
-        return embedding_matrix / l2_norm[:, np.newaxis]
+    def _normalize_embedding(self):
+        """Normalize the embedding matrix."""
+        l2_norm = np.sqrt(
+            (self._embedding_matrix * self._embedding_matrix).sum(axis=1)
+        )
+        self._embedding_matrix = \
+            self._embedding_matrix / l2_norm[:, np.newaxis]
 
     def transform(self, text_pair: list) -> list:
         """Transform the input text."""
         text_left, text_right = text_pair
         matching_hist = np.ones((len(text_left), self._hist_bin_size),
                                 dtype=np.float32)
-        rep_left = self._embedding_matrix[text_left]
-        rep_right = self._embedding_matrix[text_right]
-        matching_matrix = rep_left.dot(np.transpose(rep_right))
+        embed_left = self._embedding_matrix[text_left]
+        embed_right = self._embedding_matrix[text_right]
+        matching_matrix = embed_left.dot(np.transpose(embed_right))
         for (i, j), value in np.ndenumerate(matching_matrix):
             bin_index = int((value + 1.) / 2. * (self._hist_bin_size - 1.))
             matching_hist[i][bin_index] += 1.0
-        if self._mode in ['NH']:
+        if self._mode == 'NH':
             matching_sum = matching_hist.sum(axis=1)
             matching_hist = matching_hist / matching_sum[:, np.newaxis]
-        elif self._mode in ['LCH']:
+        elif self._mode == 'LCH':
             matching_hist = np.log(matching_hist)
         return matching_hist.tolist()

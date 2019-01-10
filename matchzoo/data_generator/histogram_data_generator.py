@@ -23,7 +23,7 @@ def match_histogram_generator(x: dict,
                               match_hist_unit: MatchingHistogramUnit
                               ) -> np.ndarray:
     """
-    Generator the matching hisogram for input.
+    Generate the matching hisogram for input.
 
     :param x: The input `dict`.
     :param match_hist_unit: The histogram unit :class:`MatchingHistogramUnit`.

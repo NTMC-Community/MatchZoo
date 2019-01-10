@@ -104,7 +104,7 @@ class DRMM(engine.BaseModel):
 
             # shape = [B, L, 1]
             dense_input = keras.layers.Lambda(
-                lambda x: x + (1.0 - attention_mask) * -1000.0,
+                lambda x: x + (1.0 - attention_mask) * -10000.0,
                 name="attention_mask"
             )(dense_input)
         # shape = [B, L, 1]
