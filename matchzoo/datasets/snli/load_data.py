@@ -10,7 +10,7 @@ import matchzoo
 _url = "https://nlp.stanford.edu/projects/snli/snli_1.0.zip"
 
 
-def load_data(stage='train', task='ranking', target_label='entailment'):
+def load_data(stage='train', task='classification', target_label='entailment'):
     """
     Load SNLI data.
 
