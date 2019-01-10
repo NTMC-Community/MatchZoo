@@ -28,6 +28,8 @@ class DRMM(engine.BaseModel):
         """:return: model default parameters."""
         params = super().get_default_params(with_embedding=True,
                                             with_multi_layer_perceptron=True)
+        params.add(engine.Param(name='mask_value', value=-1,
+                                desc="The value to be masked from inputs."))
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(5,), (5, 30,)]
         return params
@@ -61,8 +63,13 @@ class DRMM(engine.BaseModel):
         # Process left input.
         # shape = [B, L, D]
         embed_query = embedding(query)
+        # shape = [B, L]
+        atten_mask = K.any(K.not_equal(query, self._params['mask_value']),
+                           axis=-1, keepdims=True)
+        atten_mask = K.cast(atten_mask, K.floatx())
+        atten_mask = K.expand_dims(atten_mask, axis=2)
         # shape = [B, L, D]
-        attention_probs = self.attention_layer(embed_query)
+        attention_probs = self.attention_layer(embed_query, atten_mask)
 
         # Process right input.
         # shape = [B, L, 1]
@@ -89,19 +96,21 @@ class DRMM(engine.BaseModel):
         """
         # shape = [B, L, 1]
         dense_input = keras.layers.Dense(1, use_bias=False)(attention_input)
-        if attention_mask:
+        if attention_mask is not None:
             # Since attention_mask is 1.0 for positions we want to attend and
             # 0.0 for masked positions, this operation will create a tensor
             # which is 0.0 for positions we want to attend and -10000.0 for
             # masked positions.
 
             # shape = [B, L, 1]
-            adder = (1.0 - K.tf.cast(attention_mask, K.tf.float32)) * -1000.0
-            # shape = [B, L, 1]
-            dense_input += adder
+            dense_input = keras.layers.Lambda(
+                lambda x: x + (1.0 - attention_mask) * -1000.0,
+                name="attention_mask"
+            )(dense_input)
         # shape = [B, L, 1]
         attention_probs = keras.layers.Lambda(
             lambda x: keras.layers.activations.softmax(x, axis=1),
-            output_shape=lambda s: (s[0], s[1], s[2])
+            output_shape=lambda s: (s[0], s[1], s[2]),
+            name="attention_probs"
         )(dense_input)
         return attention_probs
