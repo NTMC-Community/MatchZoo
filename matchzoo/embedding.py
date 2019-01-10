@@ -59,19 +59,22 @@ class Embedding(object):
         self,
         term_index: typing.Union[
             dict, processor_units.VocabularyUnit.TermIndex],
-        initialize_range: tuple = (-0.2, 0.2)
+        initializer=lambda: np.random.uniform(-0.2, 0.2)
     ) -> np.ndarray:
         """
         Build a matrix using `term_index`.
 
         :param term_index: A `dict` or `TermIndex` to build with.
-        :param initialize_range: The range of random uniform distribution.
+        :param initializer: A callable that returns a default value for missing
+            terms in data. (default: a random uniform distribution in range)
+            `(-0.2, 0.2)`).
         :return: A matrix.
         """
         input_dim = len(term_index) + 1
 
-        low, high = initialize_range
-        matrix = np.random.uniform(low, high, (input_dim, self.output_dim))
+        matrix = np.empty((input_dim, self.output_dim))
+        for index in np.ndindex(*matrix.shape):
+            matrix[index] = initializer()
 
         valid_keys = set(self._data.index)
         for term, index in term_index.items():
