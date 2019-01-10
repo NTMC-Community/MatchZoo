@@ -17,57 +17,63 @@
 
 ## Get Started in 60 Seconds
 
-First, import modules and prepare input data.
+To train a [Deep Semantic Structured Model](https://www.microsoft.com/en-us/research/project/dssm/), first, import modules and prepare input data.
 
 ```python
-from matchzoo import preprocessor
-from matchzoo import generators
-from matchzoo import models
+import matchzoo as mz
 
-train = [
-    ("id0", "id1", "beijing", "Beijing is capital of China", 1),
-    ("id0", "id2", "beijing", "China is in east Asia", 0),
-    ("id0", "id3", "beijing", "Summer in Beijing is hot.", 1)
-]
-predict = [
-    ("id0", "id4", "beijing", "I visted beijing yesterday.")
-]
+train_pack = mz.datasets.wiki_qa.load_data('train', task='ranking')
+valid_pack = mz.datasets.wiki_qa.load_data('dev', task='ranking')
+predict_pack = mz.datasets.wiki_qa.load_data('test', task='ranking')
 ```
 
 Preprocess your input data in three lines of code, keep track parameters to be passed into the model.
 
 ```python
-dssm_preprocessor = preprocessor.DSSMPreprocessor()
-processed_tr = dssm_preprocessor.fit_transform(train, stage='train')
-processed_pr = dssm_preprocessor.fit_transform(predict, stage='predict')
-# DSSM expect dimensionality of letter-trigrams as input shape.
-# The fitted parameters has been stored in `context` during preprocessing on training data.
-input_shapes = processed_tr.context['input_shapes']
+preprocessor = mz.preprocessors.DSSMPreprocessor()
+train_pack_processed = preprocessor.fit_transform(train_pack)
+valid_pack_processed = preprocessor.transform(valid_pack)
+predict_pack_processed = preprocessor.transform(predict_pack)
 ```
 
-Use MatchZoo `generators` module to generate `point-wise`, `pair-wise` or `list-wise` inputs into batches.
+Use MatchZoo customized loss function, define evaluation metrics:
 
 ```python
-generator_tr = generators.PointGenerator(processed_tr)
-generator_pr = generators.PointGenerator(processed_pr)
-# Example, train with generator, test with the first batch.
-X_te, y_te = generator_pr[0]
+ranking_task = mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=4))
+ranking_task.metrics = [
+    mz.metrics.NormalizedDiscountedCumulativeGain(k=3),
+    mz.metrics.NormalizedDiscountedCumulativeGain(k=5),
+    mz.metrics.MeanAveragePrecision()
+]
 ```
 
-Train a [Deep Semantic Structured Model](https://www.microsoft.com/en-us/research/project/dssm/), make predictions on test data.
+Initialize the model, fine-tune the hyper-parameters.
 
 ```python
-dssm_model = models.DSSMModel()
-dssm_model.params['input_shapes'] = input_shapes
-dssm_model.guess_and_fill_missing_params()
-dssm_model.build()
-dssm_model.compile()
-dssm_model.fit_generator(generator_tr)
-# Make predictions
-predictions = dssm_model.predict([X_te.text_left, X_te.text_right])
+model = mz.models.DSSM()
+model.params['input_shapes'] = preprocessor.context['input_shapes']
+model.params['task'] = ranking_task
+model.params['mlp_num_layers'] = 3
+model.params['mlp_num_units'] = 300
+model.params['mlp_num_fan_out'] = 128
+model.params['mlp_activation_func'] = 'relu'
+model.guess_and_fill_missing_params()
+model.build()
+model.compile()
 ```
 
-For detailed usage, such as hyper-parameters, model persistence, evaluation, please check out our [tutorials](https://github.com/NTMC-Community/MatchZoo/tree/2.0/notebooks) and documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
+Generate pair-wise training data on-the-fly, evaluate model performance using customized callbacks on prediction data.
+
+```python
+train_generator = mz.PairDataGenerator(train_pack_processed, num_dup=1, num_neg=4, batch_size=64, shuffle=True)
+
+pred_x, pred_y = predict_pack_processed[:].unpack()
+evaluate = mz.callbacks.EvaluateAllMetrics(model, x=pred_x, y=pred_y, batch_size=len(pred_x))
+
+history = model.fit_generator(train_generator, epochs=20, callbacks=[evaluate], workers=5, use_multiprocessing=False)
+```
+
+For detailed usage, such as hyper-parameters, model persistence, evaluation, please check out our [tutorials](https://github.com/NTMC-Community/MatchZoo/tree/2.0/tutorials) and documention: [English](https://matchzoo.readthedocs.io/en/2.0/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
 
 If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match).
 
