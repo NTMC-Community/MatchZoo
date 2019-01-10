@@ -118,7 +118,6 @@ def test_matchinghistogram_unit(hist_mode):
     histogram = MatchingHistogramUnit(3, embedding, True, hist_mode)
     out = histogram.transform([text_left, text_right])
     out = [[round(elem, 2) for elem in list_val] for list_val in out]
-    print(out)
     if hist_mode == 'CH':
         assert out == [[3.0, 1.0, 1.0], [1.0, 2.0, 2.0]]
     elif hist_mode == 'NH':
