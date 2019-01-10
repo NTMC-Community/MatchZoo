@@ -6,12 +6,12 @@ from matchzoo import engine
 from matchzoo import preprocessors
 
 
-class DSSMModel(engine.BaseModel):
+class DSSM(engine.BaseModel):
     """
     Deep structured semantic model.
 
     Examples:
-        >>> model = DSSMModel()
+        >>> model = DSSM()
         >>> model.params['mlp_num_layers'] = 3
         >>> model.params['mlp_num_units'] = 300
         >>> model.params['mlp_num_fan_out'] = 128

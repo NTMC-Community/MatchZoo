@@ -1,16 +1,16 @@
 from .naive_model import NaiveModel
-from .dssm_model import DSSMModel
-from .cdssm_model import CDSSMModel
+from .dssm import DSSM
+from .cdssm import CDSSM
 from .dense_baseline_model import DenseBaselineModel
-from .arci_model import ArcI
+from .arci import ArcI
 from .arcii import ArcII
 from .match_pyramid import MatchPyramid
-from .knrm_model import KNRM
-from .conv_knrm_model import ConvKNRM
+from .knrm import KNRM
+from .conv_knrm import ConvKNRM
 from .duet import DUET
-from .drmmtks_model import DRMMTKSModel
+from .drmmtks import DRMMTKS
 from .drmm import DRMM
-from .anmm_model import ANMMModel
+from .anmm import ANMM
 from .mvlstm import MVLSTM
 
 import matchzoo

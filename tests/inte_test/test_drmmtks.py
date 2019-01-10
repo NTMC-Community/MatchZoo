@@ -61,7 +61,7 @@ def test_drmmtks(train_data_processed,
                  preprocessor):
     """Test DRMMTKS model."""
     # Create a drmmtks model
-    drmmtks_model = mz.models.DRMMTKSModel()
+    drmmtks_model = mz.models.DRMMTKS()
     input_shapes = preprocessor.context['input_shapes']
     embed_dimension = preprocessor.context['vocab_size'] + 1
     drmmtks_model.params['input_shapes'] = input_shapes

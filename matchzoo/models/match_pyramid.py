@@ -30,18 +30,30 @@ class MatchPyramid(engine.BaseModel):
         params['optimizer'] = 'adam'
         opt_space = engine.hyper_spaces.choice(['adam', 'rmsprop', 'adagrad'])
         params.get('optimizer').hyper_space = opt_space
-        params.add(engine.Param('num_blocks', 1))
-        params.add(engine.Param('kernel_count', [32]))
-        params.add(engine.Param('kernel_size', [[3, 3]]))
-        params.add(engine.Param('activation', 'relu'))
-        params.add(engine.Param('dpool_size', [3, 10]))
+        params.add(engine.Param(name='num_blocks', value=1,
+                                desc="Number of convolution blocks."))
+        params.add(engine.Param(name='kernel_count', value=[32],
+                                desc="The kernel count of the 2D convolution "
+                                     "of each block."))
+        params.add(engine.Param(name='kernel_size', value=[[3, 3]],
+                                desc="The kernel size of the 2D convolution "
+                                     "of each block."))
+        params.add(engine.Param(name='activation', value='relu',
+                                desc="The activation function."))
+        params.add(engine.Param(name='dpool_size', value=[3, 10],
+                                desc="The max-pooling size of each block."))
         params.add(engine.Param(
             name='padding', value='same',
-            hyper_space=engine.hyper_spaces.choice(['same', 'valid', 'causal'])
+            hyper_space=engine.hyper_spaces.choice(
+                ['same', 'valid', 'causal']),
+            desc="The padding mode in the convolution layer. It should be one"
+                 "of `same`, `valid`, and `causal`."
         ))
         params.add(engine.Param(
             name='dropout_rate', value=0.0,
-            hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8, q=0.01)
+            hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8,
+                                                     q=0.01),
+            desc="The dropout rate."
         ))
         return params
 

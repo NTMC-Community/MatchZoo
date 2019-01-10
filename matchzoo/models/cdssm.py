@@ -9,7 +9,7 @@ import keras
 from keras.models import Model
 
 
-class CDSSMModel(engine.BaseModel):
+class CDSSM(engine.BaseModel):
     """
     CDSSM Model implementation.
 
@@ -19,7 +19,7 @@ class CDSSMModel(engine.BaseModel):
     Information Retrieval. (2014b)
 
     Examples:
-        >>> model = CDSSMModel()
+        >>> model = CDSSM()
         >>> model.params['optimizer'] = 'adam'
         >>> model.params['filters'] =  32
         >>> model.params['kernel_size'] = 3
@@ -35,14 +35,25 @@ class CDSSMModel(engine.BaseModel):
         # set :attr:`with_multi_layer_perceptron` to False to support
         # user-defined variable dense layer units
         params = super().get_default_params(with_multi_layer_perceptron=True)
-        params.add(engine.Param('filters', 32))
-        params.add(engine.Param('kernel_size', 3))
-        params.add(engine.Param('strides', 1))
-        params.add(engine.Param('padding', 'same'))
-        params.add(engine.Param('conv_activation_func', 'relu'))
-        params.add(engine.Param('w_initializer', 'glorot_normal'))
-        params.add(engine.Param('b_initializer', 'zeros'))
-        params.add(engine.Param('dropout_rate', 0.3))
+        params.add(engine.Param(name='filters', value=32,
+                                desc="Number of filters in the 1D convolution "
+                                     "layer."))
+        params.add(engine.Param(name='kernel_size', value=3,
+                                desc="Number of kernel size in the 1D "
+                                     "convolution layer."))
+        params.add(engine.Param(name='strides', value=1,
+                                desc="Strides in the 1D convolution layer."))
+        params.add(engine.Param(name='padding', value='same',
+                                desc="The padding mode in the convolution "
+                                     "layer. It should be one of `same`, "
+                                     "`valid`, ""and `causal`."))
+        params.add(engine.Param(name='conv_activation_func', value='relu',
+                                desc="Activation function in the convolution"
+                                     " layer."))
+        params.add(engine.Param(name='w_initializer', value='glorot_normal'))
+        params.add(engine.Param(name='b_initializer', value='zeros'))
+        params.add(engine.Param(name='dropout_rate', value=0.3,
+                                desc="The dropout rate."))
         return params
 
     def _create_base_network(self) -> typing.Callable:
