@@ -1,4 +1,4 @@
-"""DSSM Preprocessor."""
+"""Naive Preprocessor."""
 
 import logging
 
@@ -36,7 +36,7 @@ class NaivePreprocessor(engine.BasePreprocessor):
 
         :param data_pack: data_pack to be preprocessed.
         :param verbose: Verbosity.
-        :return: class:`DSSMPreprocessor` instance.
+        :return: class:`NaivePreprocessor` instance.
         """
         units = self._default_processor_units()
         data_pack = data_pack.apply_on_text(chain_transform(units),

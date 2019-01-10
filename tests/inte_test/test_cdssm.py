@@ -55,7 +55,7 @@ def test_cdssm(task,
                cdssm_preprocessor):
     """Test CDSSM model."""
     # Create a cdssm model
-    cdssm_model = mz.models.CDSSMModel()
+    cdssm_model = mz.models.CDSSM()
     assert isinstance(cdssm_model.get_default_preprocessor(),
                       mz.preprocessors.CDSSMPreprocessor)
     input_shapes = cdssm_preprocessor.context['input_shapes']

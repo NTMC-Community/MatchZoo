@@ -32,17 +32,19 @@ class KNRM(engine.BaseModel):
         """Get default parameters."""
         params = super().get_default_params(with_embedding=True)
         params.add(engine.Param(
-            'kernel_num', 11,
+            name='kernel_num',
+            value=11,
             hyper_space=engine.hyper_spaces.quniform(low=5, high=20),
             desc="The number of RBF kernels."
         ))
         params.add(engine.Param(
-            'sigma', 0.1,
+            name='sigma',
+            value=0.1,
             hyper_space=engine.hyper_spaces.quniform(
                 low=0.01, high=0.2, q=0.01),
             desc="The `sigma` defines the kernel width."
         ))
-        params.add(engine.Param('exact_sigma', value=0.001,
+        params.add(engine.Param(name='exact_sigma', value=0.001,
                                 desc="The `exact_sigma` denotes the `sigma` "
                                      "for exact match."))
         return params
