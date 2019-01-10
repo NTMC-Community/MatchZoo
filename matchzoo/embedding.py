@@ -70,7 +70,6 @@ class Embedding(object):
         """
         input_dim = len(term_index) + 1
 
-
         low, high = initialize_range
         matrix = np.random.uniform(low, high, (input_dim, self.output_dim))
 

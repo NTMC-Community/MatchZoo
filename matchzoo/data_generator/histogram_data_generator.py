@@ -110,7 +110,8 @@ class HistogramPairDataGenerator(PairDataGenerator):
     Generate pair-wise data with matching histogram.
 
     :param data_pack: The input data pack.
-    :param embedding_matrix: The embedding matrix used to generator match histogram.
+    :param embedding_matrix: The embedding matrix used to generator match
+                             histogram.
     :param hist_bin_size: The number of bin size of the histogram.
     :param hist_mode: The mode of the :class:`MatchingHistogramUnit`, one of
                      `CH`, `NH`, and `LCH`.
