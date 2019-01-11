@@ -80,6 +80,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">matchzoo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_reference.html">MatchZoo Model Reference</a></li>
 </ul>
 
             
@@ -154,6 +155,8 @@
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -173,9 +176,41 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable.add">add() (matchzoo.engine.param_table.ParamTable method)</a>
 </li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_metric.BaseMetric.ALIAS">ALIAS (matchzoo.engine.base_metric.BaseMetric attribute)</a>
+
+      <ul>
+        <li><a href="matchzoo.metrics.html#matchzoo.metrics.average_precision.AveragePrecision.ALIAS">(matchzoo.metrics.average_precision.AveragePrecision attribute)</a>
+</li>
+        <li><a href="matchzoo.metrics.html#matchzoo.metrics.discounted_cumulative_gain.DiscountedCumulativeGain.ALIAS">(matchzoo.metrics.discounted_cumulative_gain.DiscountedCumulativeGain attribute)</a>
+</li>
+        <li><a href="matchzoo.metrics.html#matchzoo.metrics.mean_average_precision.MeanAveragePrecision.ALIAS">(matchzoo.metrics.mean_average_precision.MeanAveragePrecision attribute)</a>
+</li>
+        <li><a href="matchzoo.metrics.html#matchzoo.metrics.mean_reciprocal_rank.MeanReciprocalRank.ALIAS">(matchzoo.metrics.mean_reciprocal_rank.MeanReciprocalRank attribute)</a>
+</li>
+        <li><a href="matchzoo.metrics.html#matchzoo.metrics.normalized_discounted_cumulative_gain.NormalizedDiscountedCumulativeGain.ALIAS">(matchzoo.metrics.normalized_discounted_cumulative_gain.NormalizedDiscountedCumulativeGain attribute)</a>
+</li>
+        <li><a href="matchzoo.metrics.html#matchzoo.metrics.precision.Precision.ALIAS">(matchzoo.metrics.precision.Precision attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.html#matchzoo.datapack.DataPack.append">append() (matchzoo.datapack.DataPack method)</a>
+      <li><a href="matchzoo.models.html#matchzoo.models.anmm.ANMM">ANMM (class in matchzoo.models.anmm)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.append_text_length">append_text_length() (matchzoo.data_pack.data_pack.DataPack method)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.apply_on_text">apply_on_text() (matchzoo.data_pack.data_pack.DataPack method)</a>
+</li>
+      <li><a href="matchzoo.models.html#matchzoo.models.arci.ArcI">ArcI (class in matchzoo.models.arci)</a>
+</li>
+      <li><a href="matchzoo.models.html#matchzoo.models.arcii.ArcII">ArcII (class in matchzoo.models.arcii)</a>
+</li>
+      <li><a href="matchzoo.models.html#matchzoo.models.drmm.DRMM.attention_layer">attention_layer() (matchzoo.models.drmm.DRMM class method)</a>
+
+      <ul>
+        <li><a href="matchzoo.models.html#matchzoo.models.drmmtks.DRMMTKS.attention_layer">(matchzoo.models.drmmtks.DRMMTKS class method)</a>
+</li>
+      </ul></li>
+      <li><a href="matchzoo.metrics.html#matchzoo.metrics.average_precision.AveragePrecision">AveragePrecision (class in matchzoo.metrics.average_precision)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -185,34 +220,82 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.backend">backend (matchzoo.engine.base_model.BaseModel attribute)</a>
 </li>
-      <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.BACKEND_FILENAME">BACKEND_FILENAME (matchzoo.engine.base_model.BaseModel attribute)</a>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.BACKEND_WEIGHTS_FILENAME">BACKEND_WEIGHTS_FILENAME (matchzoo.engine.base_model.BaseModel attribute)</a>
 </li>
-      <li><a href="matchzoo.engine.html#matchzoo.engine.base_generator.BaseGenerator">BaseGenerator (class in matchzoo.engine.base_generator)</a>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_metric.BaseMetric">BaseMetric (class in matchzoo.engine.base_metric)</a>
 </li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel">BaseModel (class in matchzoo.engine.base_model)</a>
 </li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_preprocessor.BasePreprocessor">BasePreprocessor (class in matchzoo.engine.base_preprocessor)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask">BaseTask (class in matchzoo.engine.base_task)</a>
 </li>
-      <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.build">build() (matchzoo.engine.base_model.BaseModel method)</a>
+      <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.basic_preprocessor.BasicPreprocessor">BasicPreprocessor (class in matchzoo.preprocessors.basic_preprocessor)</a>
+</li>
+      <li><a href="matchzoo.contrib.models.html#matchzoo.contrib.models.match_lstm.MatchLSTM.build">build() (matchzoo.contrib.models.match_lstm.MatchLSTM method)</a>
 
       <ul>
+        <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.build">(matchzoo.engine.base_model.BaseModel method)</a>
+</li>
+        <li><a href="matchzoo.layers.html#matchzoo.layers.dynamic_pooling_layer.DynamicPoolingLayer.build">(matchzoo.layers.dynamic_pooling_layer.DynamicPoolingLayer method)</a>
+</li>
+        <li><a href="matchzoo.layers.html#matchzoo.layers.matching_layer.MatchingLayer.build">(matchzoo.layers.matching_layer.MatchingLayer method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.anmm.ANMM.build">(matchzoo.models.anmm.ANMM method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.arci.ArcI.build">(matchzoo.models.arci.ArcI method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.arcii.ArcII.build">(matchzoo.models.arcii.ArcII method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.cdssm.CDSSM.build">(matchzoo.models.cdssm.CDSSM method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.conv_knrm.ConvKNRM.build">(matchzoo.models.conv_knrm.ConvKNRM method)</a>
+</li>
         <li><a href="matchzoo.models.html#matchzoo.models.dense_baseline_model.DenseBaselineModel.build">(matchzoo.models.dense_baseline_model.DenseBaselineModel method)</a>
 </li>
-        <li><a href="matchzoo.models.html#matchzoo.models.dssm_model.DSSMModel.build">(matchzoo.models.dssm_model.DSSMModel method)</a>
+        <li><a href="matchzoo.models.html#matchzoo.models.drmm.DRMM.build">(matchzoo.models.drmm.DRMM method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.drmmtks.DRMMTKS.build">(matchzoo.models.drmmtks.DRMMTKS method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.dssm.DSSM.build">(matchzoo.models.dssm.DSSM method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.duet.DUET.build">(matchzoo.models.duet.DUET method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.knrm.KNRM.build">(matchzoo.models.knrm.KNRM method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.match_pyramid.MatchPyramid.build">(matchzoo.models.match_pyramid.MatchPyramid method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.mvlstm.MVLSTM.build">(matchzoo.models.mvlstm.MVLSTM method)</a>
 </li>
         <li><a href="matchzoo.models.html#matchzoo.models.naive_model.NaiveModel.build">(matchzoo.models.naive_model.NaiveModel method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.html#matchzoo.embedding.Embedding.build_matrix">build_matrix() (matchzoo.embedding.Embedding method)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.build_unit_from_data_pack.build_unit_from_data_pack">build_unit_from_data_pack() (in module matchzoo.data_pack.build_unit_from_data_pack)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.build_vocab_unit.build_vocab_unit">build_vocab_unit() (in module matchzoo.data_pack.build_vocab_unit)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.layers.html#matchzoo.layers.dynamic_pooling_layer.DynamicPoolingLayer.call">call() (matchzoo.layers.dynamic_pooling_layer.DynamicPoolingLayer method)</a>
+
+      <ul>
+        <li><a href="matchzoo.layers.html#matchzoo.layers.matching_layer.MatchingLayer.call">(matchzoo.layers.matching_layer.MatchingLayer method)</a>
+</li>
+      </ul></li>
+      <li><a href="matchzoo.models.html#matchzoo.models.cdssm.CDSSM">CDSSM (class in matchzoo.models.cdssm)</a>
+</li>
+      <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.cdssm_preprocessor.CDSSMPreprocessor">CDSSMPreprocessor (class in matchzoo.preprocessors.cdssm_preprocessor)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.chain_transform.chain_transform">chain_transform() (in module matchzoo.processor_units.chain_transform)</a>
+</li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.hyper_spaces.choice">choice (class in matchzoo.engine.hyper_spaces)</a>
 </li>
       <li><a href="matchzoo.tasks.html#matchzoo.tasks.classification.Classification">Classification (class in matchzoo.tasks.classification)</a>
@@ -223,39 +306,69 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable.completed">completed() (matchzoo.engine.param_table.ParamTable method)</a>
 </li>
-      <li><a href="matchzoo.html#matchzoo.datapack.DataPack.context">context (matchzoo.datapack.DataPack attribute)</a>
+      <li><a href="matchzoo.layers.html#matchzoo.layers.dynamic_pooling_layer.DynamicPoolingLayer.compute_output_shape">compute_output_shape() (matchzoo.layers.dynamic_pooling_layer.DynamicPoolingLayer method)</a>
 
       <ul>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.dssm_preprocessor.DSSMPreprocessor.context">(matchzoo.preprocessor.dssm_preprocessor.DSSMPreprocessor attribute)</a>
+        <li><a href="matchzoo.layers.html#matchzoo.layers.matching_layer.MatchingLayer.compute_output_shape">(matchzoo.layers.matching_layer.MatchingLayer method)</a>
 </li>
       </ul></li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_preprocessor.BasePreprocessor.context">context (matchzoo.engine.base_preprocessor.BasePreprocessor attribute)</a>
+</li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.hyper_spaces.HyperoptProxy.convert">convert() (matchzoo.engine.hyper_spaces.HyperoptProxy method)</a>
+</li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask.convert_metrics">convert_metrics() (matchzoo.engine.base_task.BaseTask class method)</a>
+</li>
+      <li><a href="matchzoo.models.html#matchzoo.models.conv_knrm.ConvKNRM">ConvKNRM (class in matchzoo.models.conv_knrm)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.copy">copy() (matchzoo.data_pack.data_pack.DataPack method)</a>
+</li>
   </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.html#matchzoo.datapack.DataPack.DATA_FILENAME">DATA_FILENAME (matchzoo.datapack.DataPack attribute)</a>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.DATA_FILENAME">DATA_FILENAME (matchzoo.data_pack.data_pack.DataPack attribute)</a>
 
       <ul>
         <li><a href="matchzoo.engine.html#matchzoo.engine.base_preprocessor.BasePreprocessor.DATA_FILENAME">(matchzoo.engine.base_preprocessor.BasePreprocessor attribute)</a>
 </li>
       </ul></li>
-      <li><a href="matchzoo.html#matchzoo.datapack.DataPack.dataframe">dataframe (matchzoo.datapack.DataPack attribute)</a>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.data_generator.DataGenerator">DataGenerator (class in matchzoo.data_generator.data_generator)</a>
 </li>
-      <li><a href="matchzoo.html#matchzoo.datapack.DataPack">DataPack (class in matchzoo.datapack)</a>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack">DataPack (class in matchzoo.data_pack.data_pack)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.FrameView">DataPack.FrameView (class in matchzoo.data_pack.data_pack)</a>
+</li>
+      <li><a href="matchzoo.models.html#matchzoo.models.dense_baseline_model.DenseBaselineModel">DenseBaselineModel (class in matchzoo.models.dense_baseline_model)</a>
+</li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.param.Param.desc">desc (matchzoo.engine.param.Param attribute)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.DigitRemovalUnit">DigitRemovalUnit (class in matchzoo.processor_units.processor_units)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#matchzoo.metrics.discounted_cumulative_gain.DiscountedCumulativeGain">DiscountedCumulativeGain (class in matchzoo.metrics.discounted_cumulative_gain)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.models.html#matchzoo.models.dense_baseline_model.DenseBaselineModel">DenseBaselineModel (class in matchzoo.models.dense_baseline_model)</a>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.dpool_data_generator.DPoolDataGenerator">DPoolDataGenerator (class in matchzoo.data_generator.dpool_data_generator)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.DigitRemovalUnit">DigitRemovalUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.dpool_data_generator.DPoolPairDataGenerator">DPoolPairDataGenerator (class in matchzoo.data_generator.dpool_data_generator)</a>
 </li>
-      <li><a href="matchzoo.utils.html#matchzoo.utils.util.dotdict">dotdict (class in matchzoo.utils.util)</a>
+      <li><a href="matchzoo.models.html#matchzoo.models.drmm.DRMM">DRMM (class in matchzoo.models.drmm)</a>
 </li>
-      <li><a href="matchzoo.models.html#matchzoo.models.dssm_model.DSSMModel">DSSMModel (class in matchzoo.models.dssm_model)</a>
+      <li><a href="matchzoo.models.html#matchzoo.models.drmmtks.DRMMTKS">DRMMTKS (class in matchzoo.models.drmmtks)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.dssm_preprocessor.DSSMPreprocessor">DSSMPreprocessor (class in matchzoo.preprocessor.dssm_preprocessor)</a>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.drop_label">drop_label() (matchzoo.data_pack.data_pack.DataPack method)</a>
+</li>
+      <li><a href="matchzoo.models.html#matchzoo.models.dssm.DSSM">DSSM (class in matchzoo.models.dssm)</a>
+</li>
+      <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.dssm_preprocessor.DSSMPreprocessor">DSSMPreprocessor (class in matchzoo.preprocessors.dssm_preprocessor)</a>
+</li>
+      <li><a href="matchzoo.models.html#matchzoo.models.duet.DUET">DUET (class in matchzoo.models.duet)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.dynamic_data_generator.DynamicDataGenerator">DynamicDataGenerator (class in matchzoo.data_generator.dynamic_data_generator)</a>
+</li>
+      <li><a href="matchzoo.layers.html#matchzoo.layers.dynamic_pooling_layer.DynamicPoolingLayer">DynamicPoolingLayer (class in matchzoo.layers.dynamic_pooling_layer)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -263,7 +376,13 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.html#matchzoo.embedding.Embedding">Embedding (class in matchzoo.embedding)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.evaluate">evaluate() (matchzoo.engine.base_model.BaseModel method)</a>
+</li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.callbacks.EvaluateAllMetrics">EvaluateAllMetrics (class in matchzoo.engine.callbacks)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -276,11 +395,19 @@
       <ul>
         <li><a href="matchzoo.engine.html#matchzoo.engine.base_preprocessor.BasePreprocessor.fit">(matchzoo.engine.base_preprocessor.BasePreprocessor method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.dssm_preprocessor.DSSMPreprocessor.fit">(matchzoo.preprocessor.dssm_preprocessor.DSSMPreprocessor method)</a>
+        <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.basic_preprocessor.BasicPreprocessor.fit">(matchzoo.preprocessors.basic_preprocessor.BasicPreprocessor method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.StatefulProcessorUnit.fit">(matchzoo.preprocessor.process_units.StatefulProcessorUnit method)</a>
+        <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.cdssm_preprocessor.CDSSMPreprocessor.fit">(matchzoo.preprocessors.cdssm_preprocessor.CDSSMPreprocessor method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.VocabularyUnit.fit">(matchzoo.preprocessor.process_units.VocabularyUnit method)</a>
+        <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.dssm_preprocessor.DSSMPreprocessor.fit">(matchzoo.preprocessors.dssm_preprocessor.DSSMPreprocessor method)</a>
+</li>
+        <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.naive_preprocessor.NaivePreprocessor.fit">(matchzoo.preprocessors.naive_preprocessor.NaivePreprocessor method)</a>
+</li>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.FrequencyFilterUnit.fit">(matchzoo.processor_units.processor_units.FrequencyFilterUnit method)</a>
+</li>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.StatefulProcessorUnit.fit">(matchzoo.processor_units.processor_units.StatefulProcessorUnit method)</a>
+</li>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.VocabularyUnit.fit">(matchzoo.processor_units.processor_units.VocabularyUnit method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -289,7 +416,11 @@
 </li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_preprocessor.BasePreprocessor.fit_transform">fit_transform() (matchzoo.engine.base_preprocessor.BasePreprocessor method)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.FixedLengthUnit">FixedLengthUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.FixedLengthUnit">FixedLengthUnit (class in matchzoo.processor_units.processor_units)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.frame">frame (matchzoo.data_pack.data_pack.DataPack attribute)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.FrequencyFilterUnit">FrequencyFilterUnit (class in matchzoo.processor_units.processor_units)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -297,25 +428,75 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.get_default_params">get_default_params() (matchzoo.engine.base_model.BaseModel class method)</a>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable.get">get() (matchzoo.engine.param_table.ParamTable method)</a>
+</li>
+      <li><a href="matchzoo.layers.html#matchzoo.layers.dynamic_pooling_layer.DynamicPoolingLayer.get_config">get_config() (matchzoo.layers.dynamic_pooling_layer.DynamicPoolingLayer method)</a>
 
       <ul>
+        <li><a href="matchzoo.layers.html#matchzoo.layers.matching_layer.MatchingLayer.get_config">(matchzoo.layers.matching_layer.MatchingLayer method)</a>
+</li>
+      </ul></li>
+      <li><a href="matchzoo.contrib.models.html#matchzoo.contrib.models.match_lstm.MatchLSTM.get_default_params">get_default_params() (matchzoo.contrib.models.match_lstm.MatchLSTM class method)</a>
+
+      <ul>
+        <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.get_default_params">(matchzoo.engine.base_model.BaseModel class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.anmm.ANMM.get_default_params">(matchzoo.models.anmm.ANMM class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.arci.ArcI.get_default_params">(matchzoo.models.arci.ArcI class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.arcii.ArcII.get_default_params">(matchzoo.models.arcii.ArcII class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.cdssm.CDSSM.get_default_params">(matchzoo.models.cdssm.CDSSM class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.conv_knrm.ConvKNRM.get_default_params">(matchzoo.models.conv_knrm.ConvKNRM method)</a>
+</li>
         <li><a href="matchzoo.models.html#matchzoo.models.dense_baseline_model.DenseBaselineModel.get_default_params">(matchzoo.models.dense_baseline_model.DenseBaselineModel class method)</a>
 </li>
-        <li><a href="matchzoo.models.html#matchzoo.models.dssm_model.DSSMModel.get_default_params">(matchzoo.models.dssm_model.DSSMModel class method)</a>
+        <li><a href="matchzoo.models.html#matchzoo.models.drmm.DRMM.get_default_params">(matchzoo.models.drmm.DRMM class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.drmmtks.DRMMTKS.get_default_params">(matchzoo.models.drmmtks.DRMMTKS class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.dssm.DSSM.get_default_params">(matchzoo.models.dssm.DSSM class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.duet.DUET.get_default_params">(matchzoo.models.duet.DUET class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.knrm.KNRM.get_default_params">(matchzoo.models.knrm.KNRM class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.match_pyramid.MatchPyramid.get_default_params">(matchzoo.models.match_pyramid.MatchPyramid class method)</a>
+</li>
+        <li><a href="matchzoo.models.html#matchzoo.models.mvlstm.MVLSTM.get_default_params">(matchzoo.models.mvlstm.MVLSTM class method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.StopRemovalUnit.get_stopwords">get_stopwords() (matchzoo.preprocessor.process_units.StopRemovalUnit method)</a>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.get_default_preprocessor">get_default_preprocessor() (matchzoo.engine.base_model.BaseModel class method)</a>
+
+      <ul>
+        <li><a href="matchzoo.models.html#matchzoo.models.cdssm.CDSSM.get_default_preprocessor">(matchzoo.models.cdssm.CDSSM class method)</a>
 </li>
+        <li><a href="matchzoo.models.html#matchzoo.models.dssm.DSSM.get_default_preprocessor">(matchzoo.models.dssm.DSSM class method)</a>
+</li>
+      </ul></li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.guess_and_fill_missing_params">guess_and_fill_missing_params() (matchzoo.engine.base_model.BaseModel method)</a>
+
+      <ul>
+        <li><a href="matchzoo.models.html#matchzoo.models.cdssm.CDSSM.guess_and_fill_missing_params">(matchzoo.models.cdssm.CDSSM method)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.has_label">has_label (matchzoo.data_pack.data_pack.DataPack attribute)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.histogram_data_generator.HistogramDataGenerator">HistogramDataGenerator (class in matchzoo.data_generator.histogram_data_generator)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.histogram_data_generator.HistogramPairDataGenerator">HistogramPairDataGenerator (class in matchzoo.data_generator.histogram_data_generator)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.engine.html#matchzoo.engine.param.Param.hyper_space">hyper_space (matchzoo.engine.param.Param attribute)</a>
 
@@ -323,9 +504,27 @@
         <li><a href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable.hyper_space">(matchzoo.engine.param_table.ParamTable attribute)</a>
 </li>
       </ul></li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.hyper_spaces.HyperoptProxy">HyperoptProxy (class in matchzoo.engine.hyper_spaces)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.html#matchzoo.embedding.Embedding.input_dim">input_dim (matchzoo.embedding.Embedding attribute)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable.keys">keys() (matchzoo.engine.param_table.ParamTable method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.engine.html#matchzoo.engine.hyper_spaces.HyperoptProxy">HyperoptProxy (class in matchzoo.engine.hyper_spaces)</a>
+      <li><a href="matchzoo.models.html#matchzoo.models.knrm.KNRM">KNRM (class in matchzoo.models.knrm)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -333,8 +532,18 @@
 <h2 id="L">L</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.LemmatizationUnit">LemmatizationUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.left">left (matchzoo.data_pack.data_pack.DataPack attribute)</a>
 </li>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.LemmatizationUnit">LemmatizationUnit (class in matchzoo.processor_units.processor_units)</a>
+</li>
+      <li><a href="matchzoo.datasets.html#matchzoo.datasets.list_available">list_available() (in module matchzoo.datasets)</a>
+
+      <ul>
+        <li><a href="matchzoo.models.html#matchzoo.models.list_available">(in module matchzoo.models)</a>
+</li>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.list_available">(in module matchzoo.processor_units.processor_units)</a>
+</li>
+      </ul></li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask.list_available_losses">list_available_losses() (matchzoo.engine.base_task.BaseTask class method)</a>
 
       <ul>
@@ -351,19 +560,35 @@
         <li><a href="matchzoo.tasks.html#matchzoo.tasks.ranking.Ranking.list_available_metrics">(matchzoo.tasks.ranking.Ranking class method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.tasks.html#matchzoo.tasks.utils.list_available_task_types">list_available_task_types() (in module matchzoo.tasks.utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_task.list_available_tasks">list_available_tasks() (in module matchzoo.engine.base_task)</a>
 </li>
-      <li><a href="matchzoo.html#matchzoo.datapack.load_datapack">load_datapack() (in module matchzoo.datapack)</a>
+      <li><a href="matchzoo.datasets.snli.html#matchzoo.datasets.snli.load_data.load_data">load_data() (in module matchzoo.datasets.snli.load_data)</a>
+
+      <ul>
+        <li><a href="matchzoo.datasets.toy.html#matchzoo.datasets.toy.load_data">(in module matchzoo.datasets.toy)</a>
+</li>
+        <li><a href="matchzoo.datasets.wiki_qa.html#matchzoo.datasets.wiki_qa.load_data.load_data">(in module matchzoo.datasets.wiki_qa.load_data)</a>
+</li>
+      </ul></li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.load_data_pack">load_data_pack() (in module matchzoo.data_pack.data_pack)</a>
+</li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.load_embedding_matrix">load_embedding_matrix() (matchzoo.engine.base_model.BaseModel method)</a>
+</li>
+      <li><a href="matchzoo.html#matchzoo.embedding.load_from_file">load_from_file() (in module matchzoo.embedding)</a>
+</li>
+      <li><a href="matchzoo.datasets.embeddings.html#matchzoo.datasets.embeddings.load_glove_embedding.load_glove_embedding">load_glove_embedding() (in module matchzoo.datasets.embeddings.load_glove_embedding)</a>
 </li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.load_model">load_model() (in module matchzoo.engine.base_model)</a>
 </li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_preprocessor.load_preprocessor">load_preprocessor() (in module matchzoo.engine.base_preprocessor)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.LowercaseUnit">LowercaseUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask.loss">loss (matchzoo.engine.base_task.BaseTask attribute)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.LowercaseUnit">LowercaseUnit (class in matchzoo.processor_units.processor_units)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -371,13 +596,75 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.histogram_data_generator.match_histogram_generator">match_histogram_generator() (in module matchzoo.data_generator.histogram_data_generator)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.MatchingHistogramUnit">MatchingHistogramUnit (class in matchzoo.processor_units.processor_units)</a>
+</li>
+      <li><a href="matchzoo.layers.html#matchzoo.layers.matching_layer.MatchingLayer">MatchingLayer (class in matchzoo.layers.matching_layer)</a>
+</li>
+      <li><a href="matchzoo.contrib.models.html#matchzoo.contrib.models.match_lstm.MatchLSTM">MatchLSTM (class in matchzoo.contrib.models.match_lstm)</a>
+</li>
+      <li><a href="matchzoo.models.html#matchzoo.models.match_pyramid.MatchPyramid">MatchPyramid (class in matchzoo.models.match_pyramid)</a>
+</li>
       <li><a href="matchzoo.html#module-matchzoo">matchzoo (module)</a>
 </li>
-      <li><a href="matchzoo.html#module-matchzoo.datapack">matchzoo.datapack (module)</a>
+      <li><a href="matchzoo.auto.html#module-matchzoo.auto">matchzoo.auto (module)</a>
+</li>
+      <li><a href="matchzoo.auto.html#module-matchzoo.auto.prepare">matchzoo.auto.prepare (module)</a>
+</li>
+      <li><a href="matchzoo.auto.html#module-matchzoo.auto.tune">matchzoo.auto.tune (module)</a>
+</li>
+      <li><a href="matchzoo.contrib.html#module-matchzoo.contrib">matchzoo.contrib (module)</a>
+</li>
+      <li><a href="matchzoo.contrib.layers.html#module-matchzoo.contrib.layers">matchzoo.contrib.layers (module)</a>
+</li>
+      <li><a href="matchzoo.contrib.models.html#module-matchzoo.contrib.models">matchzoo.contrib.models (module)</a>
+</li>
+      <li><a href="matchzoo.contrib.models.html#module-matchzoo.contrib.models.match_lstm">matchzoo.contrib.models.match_lstm (module)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#module-matchzoo.data_generator">matchzoo.data_generator (module)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#module-matchzoo.data_generator.data_generator">matchzoo.data_generator.data_generator (module)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#module-matchzoo.data_generator.dpool_data_generator">matchzoo.data_generator.dpool_data_generator (module)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#module-matchzoo.data_generator.dynamic_data_generator">matchzoo.data_generator.dynamic_data_generator (module)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#module-matchzoo.data_generator.histogram_data_generator">matchzoo.data_generator.histogram_data_generator (module)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#module-matchzoo.data_generator.pair_data_generator">matchzoo.data_generator.pair_data_generator (module)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#module-matchzoo.data_pack">matchzoo.data_pack (module)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#module-matchzoo.data_pack.build_unit_from_data_pack">matchzoo.data_pack.build_unit_from_data_pack (module)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#module-matchzoo.data_pack.build_vocab_unit">matchzoo.data_pack.build_vocab_unit (module)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#module-matchzoo.data_pack.data_pack">matchzoo.data_pack.data_pack (module)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#module-matchzoo.data_pack.pack">matchzoo.data_pack.pack (module)</a>
+</li>
+      <li><a href="matchzoo.datasets.html#module-matchzoo.datasets">matchzoo.datasets (module)</a>
+</li>
+      <li><a href="matchzoo.datasets.embeddings.html#module-matchzoo.datasets.embeddings">matchzoo.datasets.embeddings (module)</a>
+</li>
+      <li><a href="matchzoo.datasets.embeddings.html#module-matchzoo.datasets.embeddings.load_glove_embedding">matchzoo.datasets.embeddings.load_glove_embedding (module)</a>
+</li>
+      <li><a href="matchzoo.datasets.snli.html#module-matchzoo.datasets.snli">matchzoo.datasets.snli (module)</a>
+</li>
+      <li><a href="matchzoo.datasets.snli.html#module-matchzoo.datasets.snli.load_data">matchzoo.datasets.snli.load_data (module)</a>
+</li>
+      <li><a href="matchzoo.datasets.toy.html#module-matchzoo.datasets.toy">matchzoo.datasets.toy (module)</a>
+</li>
+      <li><a href="matchzoo.datasets.wiki_qa.html#module-matchzoo.datasets.wiki_qa">matchzoo.datasets.wiki_qa (module)</a>
+</li>
+      <li><a href="matchzoo.datasets.wiki_qa.html#module-matchzoo.datasets.wiki_qa.load_data">matchzoo.datasets.wiki_qa.load_data (module)</a>
+</li>
+      <li><a href="matchzoo.html#module-matchzoo.embedding">matchzoo.embedding (module)</a>
 </li>
       <li><a href="matchzoo.engine.html#module-matchzoo.engine">matchzoo.engine (module)</a>
 </li>
-      <li><a href="matchzoo.engine.html#module-matchzoo.engine.base_generator">matchzoo.engine.base_generator (module)</a>
+      <li><a href="matchzoo.engine.html#module-matchzoo.engine.base_metric">matchzoo.engine.base_metric (module)</a>
 </li>
       <li><a href="matchzoo.engine.html#module-matchzoo.engine.base_model">matchzoo.engine.base_model (module)</a>
 </li>
@@ -385,33 +672,91 @@
 </li>
       <li><a href="matchzoo.engine.html#module-matchzoo.engine.base_task">matchzoo.engine.base_task (module)</a>
 </li>
+      <li><a href="matchzoo.engine.html#module-matchzoo.engine.callbacks">matchzoo.engine.callbacks (module)</a>
+</li>
       <li><a href="matchzoo.engine.html#module-matchzoo.engine.hyper_spaces">matchzoo.engine.hyper_spaces (module)</a>
 </li>
       <li><a href="matchzoo.engine.html#module-matchzoo.engine.param">matchzoo.engine.param (module)</a>
 </li>
       <li><a href="matchzoo.engine.html#module-matchzoo.engine.param_table">matchzoo.engine.param_table (module)</a>
 </li>
-      <li><a href="matchzoo.engine.html#module-matchzoo.engine.tune">matchzoo.engine.tune (module)</a>
+      <li><a href="matchzoo.layers.html#module-matchzoo.layers">matchzoo.layers (module)</a>
 </li>
-      <li><a href="matchzoo.generators.html#module-matchzoo.generators">matchzoo.generators (module)</a>
+      <li><a href="matchzoo.layers.html#module-matchzoo.layers.dynamic_pooling_layer">matchzoo.layers.dynamic_pooling_layer (module)</a>
 </li>
-      <li><a href="matchzoo.generators.html#module-matchzoo.generators.point_generator">matchzoo.generators.point_generator (module)</a>
+      <li><a href="matchzoo.layers.html#module-matchzoo.layers.matching_layer">matchzoo.layers.matching_layer (module)</a>
+</li>
+      <li><a href="matchzoo.html#module-matchzoo.logger">matchzoo.logger (module)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.losses.html#module-matchzoo.losses">matchzoo.losses (module)</a>
+</li>
+      <li><a href="matchzoo.losses.html#module-matchzoo.losses.rank_cross_entropy_loss">matchzoo.losses.rank_cross_entropy_loss (module)</a>
+</li>
+      <li><a href="matchzoo.losses.html#module-matchzoo.losses.rank_hinge_loss">matchzoo.losses.rank_hinge_loss (module)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#module-matchzoo.metrics">matchzoo.metrics (module)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#module-matchzoo.metrics.average_precision">matchzoo.metrics.average_precision (module)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#module-matchzoo.metrics.discounted_cumulative_gain">matchzoo.metrics.discounted_cumulative_gain (module)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#module-matchzoo.metrics.mean_average_precision">matchzoo.metrics.mean_average_precision (module)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#module-matchzoo.metrics.mean_reciprocal_rank">matchzoo.metrics.mean_reciprocal_rank (module)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#module-matchzoo.metrics.normalized_discounted_cumulative_gain">matchzoo.metrics.normalized_discounted_cumulative_gain (module)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#module-matchzoo.metrics.precision">matchzoo.metrics.precision (module)</a>
+</li>
       <li><a href="matchzoo.models.html#module-matchzoo.models">matchzoo.models (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.anmm">matchzoo.models.anmm (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.arci">matchzoo.models.arci (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.arcii">matchzoo.models.arcii (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.cdssm">matchzoo.models.cdssm (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.conv_knrm">matchzoo.models.conv_knrm (module)</a>
 </li>
       <li><a href="matchzoo.models.html#module-matchzoo.models.dense_baseline_model">matchzoo.models.dense_baseline_model (module)</a>
 </li>
-      <li><a href="matchzoo.models.html#module-matchzoo.models.dssm_model">matchzoo.models.dssm_model (module)</a>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.drmm">matchzoo.models.drmm (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.drmmtks">matchzoo.models.drmmtks (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.dssm">matchzoo.models.dssm (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.duet">matchzoo.models.duet (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.knrm">matchzoo.models.knrm (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.match_pyramid">matchzoo.models.match_pyramid (module)</a>
+</li>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.mvlstm">matchzoo.models.mvlstm (module)</a>
 </li>
       <li><a href="matchzoo.models.html#module-matchzoo.models.naive_model">matchzoo.models.naive_model (module)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#module-matchzoo.preprocessor">matchzoo.preprocessor (module)</a>
+      <li><a href="matchzoo.models.html#module-matchzoo.models.parameter_readme_generator">matchzoo.models.parameter_readme_generator (module)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#module-matchzoo.preprocessor.dssm_preprocessor">matchzoo.preprocessor.dssm_preprocessor (module)</a>
+      <li><a href="matchzoo.preprocessors.html#module-matchzoo.preprocessors">matchzoo.preprocessors (module)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#module-matchzoo.preprocessor.process_units">matchzoo.preprocessor.process_units (module)</a>
+      <li><a href="matchzoo.preprocessors.html#module-matchzoo.preprocessors.basic_preprocessor">matchzoo.preprocessors.basic_preprocessor (module)</a>
+</li>
+      <li><a href="matchzoo.preprocessors.html#module-matchzoo.preprocessors.cdssm_preprocessor">matchzoo.preprocessors.cdssm_preprocessor (module)</a>
+</li>
+      <li><a href="matchzoo.preprocessors.html#module-matchzoo.preprocessors.dssm_preprocessor">matchzoo.preprocessors.dssm_preprocessor (module)</a>
+</li>
+      <li><a href="matchzoo.preprocessors.html#module-matchzoo.preprocessors.naive_preprocessor">matchzoo.preprocessors.naive_preprocessor (module)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#module-matchzoo.processor_units">matchzoo.processor_units (module)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#module-matchzoo.processor_units.chain_transform">matchzoo.processor_units.chain_transform (module)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#module-matchzoo.processor_units.processor_units">matchzoo.processor_units.processor_units (module)</a>
 </li>
       <li><a href="matchzoo.tasks.html#module-matchzoo.tasks">matchzoo.tasks (module)</a>
 </li>
@@ -423,9 +768,19 @@
 </li>
       <li><a href="matchzoo.utils.html#module-matchzoo.utils">matchzoo.utils (module)</a>
 </li>
-      <li><a href="matchzoo.utils.html#module-matchzoo.utils.util">matchzoo.utils.util (module)</a>
+      <li><a href="matchzoo.utils.html#module-matchzoo.utils.one_hot">matchzoo.utils.one_hot (module)</a>
+</li>
+      <li><a href="matchzoo.utils.html#module-matchzoo.utils.tensor_type">matchzoo.utils.tensor_type (module)</a>
 </li>
       <li><a href="matchzoo.html#module-matchzoo.version">matchzoo.version (module)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#matchzoo.metrics.mean_average_precision.MeanAveragePrecision">MeanAveragePrecision (class in matchzoo.metrics.mean_average_precision)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#matchzoo.metrics.mean_reciprocal_rank.MeanReciprocalRank">MeanReciprocalRank (class in matchzoo.metrics.mean_reciprocal_rank)</a>
+</li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask.metrics">metrics (matchzoo.engine.base_task.BaseTask attribute)</a>
+</li>
+      <li><a href="matchzoo.models.html#matchzoo.models.mvlstm.MVLSTM">MVLSTM (class in matchzoo.models.mvlstm)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -435,22 +790,44 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.models.html#matchzoo.models.naive_model.NaiveModel">NaiveModel (class in matchzoo.models.naive_model)</a>
 </li>
+      <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.naive_preprocessor.NaivePreprocessor">NaivePreprocessor (class in matchzoo.preprocessors.naive_preprocessor)</a>
+</li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.param.Param.name">name (matchzoo.engine.param.Param attribute)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.NgramLetterUnit">NgramLetterUnit (class in matchzoo.processor_units.processor_units)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.NgramLetterUnit">NgramLetterUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.metrics.html#matchzoo.metrics.normalized_discounted_cumulative_gain.NormalizedDiscountedCumulativeGain">NormalizedDiscountedCumulativeGain (class in matchzoo.metrics.normalized_discounted_cumulative_gain)</a>
 </li>
       <li><a href="matchzoo.tasks.html#matchzoo.tasks.classification.Classification.num_classes">num_classes (matchzoo.tasks.classification.Classification attribute)</a>
 </li>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.data_generator.DataGenerator.num_instance">num_instance (matchzoo.data_generator.data_generator.DataGenerator attribute)</a>
+
+      <ul>
+        <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.pair_data_generator.PairDataGenerator.num_instance">(matchzoo.data_generator.pair_data_generator.PairDataGenerator attribute)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.engine.html#matchzoo.engine.base_generator.BaseGenerator.on_epoch_end">on_epoch_end() (matchzoo.engine.base_generator.BaseGenerator method)</a>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.data_generator.DataGenerator.on_epoch_end">on_epoch_end() (matchzoo.data_generator.data_generator.DataGenerator method)</a>
+
+      <ul>
+        <li><a href="matchzoo.engine.html#matchzoo.engine.callbacks.EvaluateAllMetrics.on_epoch_end">(matchzoo.engine.callbacks.EvaluateAllMetrics method)</a>
 </li>
+      </ul></li>
+      <li><a href="matchzoo.utils.html#matchzoo.utils.one_hot.one_hot">one_hot() (in module matchzoo.utils.one_hot)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.one_hot_encode_label">one_hot_encode_label() (matchzoo.data_pack.data_pack.DataPack method)</a>
+</li>
+      <li><a href="matchzoo.html#matchzoo.embedding.Embedding.output_dim">output_dim (matchzoo.embedding.Embedding attribute)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask.output_dtype">output_dtype (matchzoo.engine.base_task.BaseTask attribute)</a>
 
       <ul>
@@ -459,8 +836,6 @@
         <li><a href="matchzoo.tasks.html#matchzoo.tasks.ranking.Ranking.output_dtype">(matchzoo.tasks.ranking.Ranking attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask.output_shape">output_shape (matchzoo.engine.base_task.BaseTask attribute)</a>
 
       <ul>
@@ -475,6 +850,10 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.pack.pack">pack() (in module matchzoo.data_pack.pack)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.pair_data_generator.PairDataGenerator">PairDataGenerator (class in matchzoo.data_generator.pair_data_generator)</a>
+</li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.param.Param">Param (class in matchzoo.engine.param)</a>
 </li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.params">params (matchzoo.engine.base_model.BaseModel attribute)</a>
@@ -485,13 +864,17 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.generators.html#matchzoo.generators.point_generator.PointGenerator">PointGenerator (class in matchzoo.generators.point_generator)</a>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_metric.parse_metric">parse_metric() (in module matchzoo.engine.base_metric)</a>
+</li>
+      <li><a href="matchzoo.metrics.html#matchzoo.metrics.precision.Precision">Precision (class in matchzoo.metrics.precision)</a>
 </li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.predict">predict() (matchzoo.engine.base_model.BaseModel method)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.ProcessorUnit">ProcessorUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.auto.html#matchzoo.auto.prepare.prepare">prepare() (in module matchzoo.auto.prepare)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.PuncRemovalUnit">PuncRemovalUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.ProcessorUnit">ProcessorUnit (class in matchzoo.processor_units.processor_units)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.PuncRemovalUnit">PuncRemovalUnit (class in matchzoo.processor_units.processor_units)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -507,11 +890,21 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.losses.html#matchzoo.losses.rank_cross_entropy_loss.RankCrossEntropyLoss">RankCrossEntropyLoss (class in matchzoo.losses.rank_cross_entropy_loss)</a>
+</li>
+      <li><a href="matchzoo.losses.html#matchzoo.losses.rank_hinge_loss.RankHingeLoss">RankHingeLoss (class in matchzoo.losses.rank_hinge_loss)</a>
+</li>
       <li><a href="matchzoo.tasks.html#matchzoo.tasks.ranking.Ranking">Ranking (class in matchzoo.tasks.ranking)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.engine.html#matchzoo.engine.base_generator.BaseGenerator.reset">reset() (matchzoo.engine.base_generator.BaseGenerator method)</a>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.relation">relation (matchzoo.data_pack.data_pack.DataPack attribute)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.pair_data_generator.PairDataGenerator.reorganize_data_pack">reorganize_data_pack() (matchzoo.data_generator.pair_data_generator.PairDataGenerator class method)</a>
+</li>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.data_generator.DataGenerator.reset">reset() (matchzoo.data_generator.data_generator.DataGenerator method)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.right">right (matchzoo.data_pack.data_pack.DataPack attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -519,9 +912,7 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.html#matchzoo.datapack.DataPack.sample">sample() (matchzoo.datapack.DataPack method)</a>
-</li>
-      <li><a href="matchzoo.html#matchzoo.datapack.DataPack.save">save() (matchzoo.datapack.DataPack method)</a>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.save">save() (matchzoo.data_pack.data_pack.DataPack method)</a>
 
       <ul>
         <li><a href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel.save">(matchzoo.engine.base_model.BaseModel method)</a>
@@ -529,15 +920,25 @@
         <li><a href="matchzoo.engine.html#matchzoo.engine.base_preprocessor.BasePreprocessor.save">(matchzoo.engine.base_preprocessor.BasePreprocessor method)</a>
 </li>
       </ul></li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable.set">set() (matchzoo.engine.param_table.ParamTable method)</a>
+</li>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.param.Param.set_default">set_default() (matchzoo.engine.param.Param method)</a>
+</li>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.shuffle">shuffle() (matchzoo.data_pack.data_pack.DataPack method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.StatefulProcessorUnit.state">state (matchzoo.preprocessor.process_units.StatefulProcessorUnit attribute)</a>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_metric.sort_and_couple">sort_and_couple() (in module matchzoo.engine.base_metric)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.StatefulProcessorUnit">StatefulProcessorUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.StatefulProcessorUnit.state">state (matchzoo.processor_units.processor_units.StatefulProcessorUnit attribute)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.StemmingUnit">StemmingUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.StatefulProcessorUnit">StatefulProcessorUnit (class in matchzoo.processor_units.processor_units)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.StopRemovalUnit">StopRemovalUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.StemmingUnit">StemmingUnit (class in matchzoo.processor_units.processor_units)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.StopRemovalUnit">StopRemovalUnit (class in matchzoo.processor_units.processor_units)</a>
+</li>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.StopRemovalUnit.stopwords">stopwords (matchzoo.processor_units.processor_units.StopRemovalUnit attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -545,43 +946,53 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.TokenizeUnit">TokenizeUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.TokenizeUnit">TokenizeUnit (class in matchzoo.processor_units.processor_units)</a>
 </li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.base_preprocessor.BasePreprocessor.transform">transform() (matchzoo.engine.base_preprocessor.BasePreprocessor method)</a>
 
       <ul>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.dssm_preprocessor.DSSMPreprocessor.transform">(matchzoo.preprocessor.dssm_preprocessor.DSSMPreprocessor method)</a>
+        <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.basic_preprocessor.BasicPreprocessor.transform">(matchzoo.preprocessors.basic_preprocessor.BasicPreprocessor method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.DigitRemovalUnit.transform">(matchzoo.preprocessor.process_units.DigitRemovalUnit method)</a>
+        <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.cdssm_preprocessor.CDSSMPreprocessor.transform">(matchzoo.preprocessors.cdssm_preprocessor.CDSSMPreprocessor method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.FixedLengthUnit.transform">(matchzoo.preprocessor.process_units.FixedLengthUnit method)</a>
+        <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.dssm_preprocessor.DSSMPreprocessor.transform">(matchzoo.preprocessors.dssm_preprocessor.DSSMPreprocessor method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.LemmatizationUnit.transform">(matchzoo.preprocessor.process_units.LemmatizationUnit method)</a>
+        <li><a href="matchzoo.preprocessors.html#matchzoo.preprocessors.naive_preprocessor.NaivePreprocessor.transform">(matchzoo.preprocessors.naive_preprocessor.NaivePreprocessor method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.LowercaseUnit.transform">(matchzoo.preprocessor.process_units.LowercaseUnit method)</a>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.DigitRemovalUnit.transform">(matchzoo.processor_units.processor_units.DigitRemovalUnit method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.NgramLetterUnit.transform">(matchzoo.preprocessor.process_units.NgramLetterUnit method)</a>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.FixedLengthUnit.transform">(matchzoo.processor_units.processor_units.FixedLengthUnit method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.ProcessorUnit.transform">(matchzoo.preprocessor.process_units.ProcessorUnit method)</a>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.FrequencyFilterUnit.transform">(matchzoo.processor_units.processor_units.FrequencyFilterUnit method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.PuncRemovalUnit.transform">(matchzoo.preprocessor.process_units.PuncRemovalUnit method)</a>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.LemmatizationUnit.transform">(matchzoo.processor_units.processor_units.LemmatizationUnit method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.StemmingUnit.transform">(matchzoo.preprocessor.process_units.StemmingUnit method)</a>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.LowercaseUnit.transform">(matchzoo.processor_units.processor_units.LowercaseUnit method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.StopRemovalUnit.transform">(matchzoo.preprocessor.process_units.StopRemovalUnit method)</a>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.MatchingHistogramUnit.transform">(matchzoo.processor_units.processor_units.MatchingHistogramUnit method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.TokenizeUnit.transform">(matchzoo.preprocessor.process_units.TokenizeUnit method)</a>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.NgramLetterUnit.transform">(matchzoo.processor_units.processor_units.NgramLetterUnit method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.VocabularyUnit.transform">(matchzoo.preprocessor.process_units.VocabularyUnit method)</a>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.ProcessorUnit.transform">(matchzoo.processor_units.processor_units.ProcessorUnit method)</a>
 </li>
-        <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.WordHashingUnit.transform">(matchzoo.preprocessor.process_units.WordHashingUnit method)</a>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.PuncRemovalUnit.transform">(matchzoo.processor_units.processor_units.PuncRemovalUnit method)</a>
+</li>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.StemmingUnit.transform">(matchzoo.processor_units.processor_units.StemmingUnit method)</a>
+</li>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.StopRemovalUnit.transform">(matchzoo.processor_units.processor_units.StopRemovalUnit method)</a>
+</li>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.TokenizeUnit.transform">(matchzoo.processor_units.processor_units.TokenizeUnit method)</a>
+</li>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.VocabularyUnit.transform">(matchzoo.processor_units.processor_units.VocabularyUnit method)</a>
+</li>
+        <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.WordHashingUnit.transform">(matchzoo.processor_units.processor_units.WordHashingUnit method)</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.generators.html#matchzoo.generators.point_generator.PointGenerator.transform_data">transform_data() (matchzoo.generators.point_generator.PointGenerator method)</a>
+      <li><a href="matchzoo.data_generator.html#matchzoo.data_generator.histogram_data_generator.trunc_text">trunc_text() (in module matchzoo.data_generator.histogram_data_generator)</a>
 </li>
-      <li><a href="matchzoo.engine.html#matchzoo.engine.tune.tune">tune() (in module matchzoo.engine.tune)</a>
+      <li><a href="matchzoo.auto.html#matchzoo.auto.tune.tune">tune() (in module matchzoo.auto.tune)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -592,22 +1003,28 @@
       <li><a href="matchzoo.engine.html#matchzoo.engine.hyper_spaces.uniform">uniform (class in matchzoo.engine.hyper_spaces)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack.unpack">unpack() (matchzoo.data_pack.data_pack.DataPack method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="matchzoo.engine.html#matchzoo.engine.base_preprocessor.validate_context">validate_context() (in module matchzoo.engine.base_preprocessor)</a>
+</li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.param.Param.validator">validator (matchzoo.engine.param.Param attribute)</a>
 </li>
       <li><a href="matchzoo.engine.html#matchzoo.engine.param.Param.value">value (matchzoo.engine.param.Param attribute)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.VocabularyUnit">VocabularyUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.VocabularyUnit">VocabularyUnit (class in matchzoo.processor_units.processor_units)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.VocabularyUnit.IndexTerm">VocabularyUnit.IndexTerm (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.VocabularyUnit.IndexTerm">VocabularyUnit.IndexTerm (class in matchzoo.processor_units.processor_units)</a>
 </li>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.VocabularyUnit.TermIndex">VocabularyUnit.TermIndex (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.VocabularyUnit.TermIndex">VocabularyUnit.TermIndex (class in matchzoo.processor_units.processor_units)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -615,7 +1032,7 @@
 <h2 id="W">W</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="matchzoo.preprocessor.html#matchzoo.preprocessor.process_units.WordHashingUnit">WordHashingUnit (class in matchzoo.preprocessor.process_units)</a>
+      <li><a href="matchzoo.processor_units.html#matchzoo.processor_units.processor_units.WordHashingUnit">WordHashingUnit (class in matchzoo.processor_units.processor_units)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -665,7 +1082,7 @@
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
 
   
 
