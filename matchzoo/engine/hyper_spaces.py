@@ -31,7 +31,7 @@ class HyperoptProxy(object):
         >>> from hyperopt.pyll.stochastic import sample
 
     Basic Usage:
-        >>> model = mz.models.DenseBaselineModel()
+        >>> model = mz.models.DenseBaseline()
         >>> sample(model.params.hyper_space)  # doctest: +SKIP
          {'mlp_num_layers': 1.0, 'mlp_num_units': 274.0}
 
