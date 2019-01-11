@@ -8,13 +8,13 @@ def read(fname):
 
 setup(
     name="MatchZoo",
-    version="0.2.0",
+    version="1.0.0",
     author="Yixing Fan, Liang Pang, Jianpeng Hou, Jiafeng Guo, Yanyan Lan, Xueqi Cheng",
-    author_email="fanyixing@software.ict.ac.cn",
+    author_email="fanyixing@ict.ac.cn",
     description=("MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models."),
     license="BSD",
     keywords="text matching models",
-    url="https://github.com/faneshion/MatchZoo",
+    url="https://github.com/NTMC-Community/MatchZoo",
     packages=find_packages(),
     long_description='MatchZoo is a toolkit for text matching. '\
 	'It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models.'\
