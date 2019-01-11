@@ -11,7 +11,11 @@ from matchzoo import engine
 
 
 class Tuner(object):
+    """Tuner."""
+
     def __init__(self, **kwargs):
+        """Tuner."""
+
         self._params = engine.ParamTable()
 
         self._params.add(engine.Param(
@@ -68,9 +72,11 @@ class Tuner(object):
 
     @property
     def params(self):
+        """:return: tuner configuration paratmeters."""
         return self._params
 
     def tune(self):
+        """Tune."""
         orig_params = copy.deepcopy(self._params['model'].params)
 
         trials = hyperopt.Trials()
