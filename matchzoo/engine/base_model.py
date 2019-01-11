@@ -408,7 +408,7 @@ class BaseModel(abc.ABC):
         weights_path = dirpath.joinpath(self.BACKEND_WEIGHTS_FILENAME)
 
         if not dirpath.exists():
-            dirpath.mkdir()
+            dirpath.mkdir(parents=True)
         else:
             raise FileExistsError
 
