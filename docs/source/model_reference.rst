@@ -580,4 +580,3 @@ Model Hyper Parameters
   10  fc_num_units          The hidden size in the full connection layer.                                              200                                                     quantitative uniform distribution in  [100, 300), with a step size of 20
   11  dropout_rate          The dropout rate.                                                                          0.0                                                     quantitative uniform distribution in  [0.0, 0.9), with a step size of 0.01
 ====  ====================  =========================================================================================  ======================================================  ==========================================================================
-

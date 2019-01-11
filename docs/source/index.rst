@@ -25,7 +25,7 @@ MatchZoo is a toolkit for text matching. It was developed with a focus on facili
    :caption: Contents:
 
    modules
-
+   model_reference
 
 
 Indices and tables

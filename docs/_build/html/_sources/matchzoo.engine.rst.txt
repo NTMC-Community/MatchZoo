@@ -4,10 +4,10 @@ matchzoo.engine package
 Submodules
 ----------
 
-matchzoo.engine.base\_generator module
---------------------------------------
+matchzoo.engine.base\_metric module
+-----------------------------------
 
-.. automodule:: matchzoo.engine.base_generator
+.. automodule:: matchzoo.engine.base_metric
     :members:
     :undoc-members:
     :show-inheritance:
@@ -36,6 +36,14 @@ matchzoo.engine.base\_task module
     :undoc-members:
     :show-inheritance:
 
+matchzoo.engine.callbacks module
+--------------------------------
+
+.. automodule:: matchzoo.engine.callbacks
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matchzoo.engine.hyper\_spaces module
 ------------------------------------
 
@@ -56,14 +64,6 @@ matchzoo.engine.param\_table module
 -----------------------------------
 
 .. automodule:: matchzoo.engine.param_table
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matchzoo.engine.tune module
----------------------------
-
-.. automodule:: matchzoo.engine.tune
     :members:
     :undoc-members:
     :show-inheritance:
