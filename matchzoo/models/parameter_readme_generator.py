@@ -9,47 +9,47 @@ import pandas as pd
 import matchzoo
 
 
-def generate():
-    full = make_title()
+def _generate():
+    full = _make_title()
     for model_class in matchzoo.models.list_available():
-        full += make_model_class_subtitle(model_class)
-        full += make_doc_section_subsubtitle()
-        full += make_model_doc(model_class)
+        full += _make_model_class_subtitle(model_class)
+        full += _make_doc_section_subsubtitle()
+        full += _make_model_doc(model_class)
         model = model_class()
-        full += make_params_section_subsubtitle()
-        full += make_model_params_table(model)
-    write_to_files(full)
+        full += _make_params_section_subsubtitle()
+        full += _make_model_params_table(model)
+    _write_to_files(full)
 
 
-def make_title():
+def _make_title():
     title = 'MatchZoo Model Reference'
     line = '*' * len(title)
     return line + '\n' + title + '\n' + line + '\n\n'
 
 
-def make_model_class_subtitle(model_class):
+def _make_model_class_subtitle(model_class):
     subtitle = model_class.__name__
     line = '#' * len(subtitle)
     return subtitle + '\n' + line + '\n\n'
 
 
-def make_doc_section_subsubtitle():
+def _make_doc_section_subsubtitle():
     subsubtitle = 'Model Documentation'
     line = '*' * len(subsubtitle)
     return subsubtitle + '\n' + line + '\n\n'
 
 
-def make_params_section_subsubtitle():
+def _make_params_section_subsubtitle():
     subsubtitle = 'Model Hyper Parameters'
     line = '*' * len(subsubtitle)
     return subsubtitle + '\n' + line + '\n\n'
 
 
-def make_model_doc(model_class):
+def _make_model_doc(model_class):
     return inspect.getdoc(model_class) + '\n\n'
 
 
-def make_model_params_table(model):
+def _make_model_params_table(model):
     params = model.get_default_params()
     df = pd.DataFrame(data={
         'Name': [p.name for p in params],
@@ -60,7 +60,7 @@ def make_model_params_table(model):
     return tabulate.tabulate(df, tablefmt='rst', headers='keys') + '\n\n'
 
 
-def write_to_files(full):
+def _write_to_files(full):
     readme_file_path = Path(__file__).parent.joinpath('README.rst')
     doc_file_path = Path(__file__).parent.parent.parent. \
         joinpath('docs').joinpath('source').joinpath('model_reference.rst')
@@ -70,4 +70,4 @@ def write_to_files(full):
 
 
 if __name__ == '__main__':
-    generate()
+    _generate()
