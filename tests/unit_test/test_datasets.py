@@ -1,10 +1,14 @@
+import pytest
+
 import matchzoo as mz
 
 
+@pytest.mark.slow
 def test_load_data():
     train_data = mz.datasets.wiki_qa.load_data('train', task='ranking')
     assert len(train_data) == 20360
-    train_data, _ = mz.datasets.wiki_qa.load_data('train', task='classification')
+    train_data, _ = mz.datasets.wiki_qa.load_data('train',
+                                                  task='classification')
     assert len(train_data) == 20360
 
     dev_data = mz.datasets.wiki_qa.load_data('dev', task='ranking',
@@ -24,6 +28,8 @@ def test_load_data():
     assert len(test_data) == 2341
     assert tag == [False, True]
 
+
+@pytest.mark.slow
 def test_load_snli():
     train_data, classes = mz.datasets.snli.load_data('train', 'classification')
     assert len(train_data) == 550152
