@@ -17,34 +17,28 @@ class DataGenerator(keras.utils.Sequence):
 
     Examples:
         >>> import matchzoo as mz
-        >>> input = mz.datasets.toy.load_train_classify_data()
-        >>> data_generator = DataGenerator(input, 1, False)
+        >>> raw_data = mz.datasets.toy.load_data()
+        >>> data_generator = DataGenerator(raw_data, batch_size=3,
+        ...                                shuffle=False)
         >>> len(data_generator)
-        49
+        34
         >>> data_generator.num_instance
-        49
-        >>> x, y = data_generator[0]
-        >>> x['text_left'].tolist()
-        ['How can I increase the speed of my internet connection while using a\
- VPN?']
-        >>> x['text_right'].tolist()
-        ['How can Internet speed be increased by hacking through DNS?']
-        >>> x['id_left'].tolist()
-        ['q1']
-        >>> x['id_right'].tolist()
-        ['d1']
-        >>> y.tolist()
-        [[0.0]]
-        >>> data_generator.reset()
-        >>> x1, y1 = data_generator[:2]
-        >>> len(x1['text_left'])
-        2
-        >>> y1.tolist()
-        [[0.0], [1.0]]
-        >>> data_generator.on_epoch_end()
-        >>> x2, y2 = data_generator[0:2]
-        >>> y2.tolist()
-        [[0.0], [1.0]]
+        100
+        >>> x, y = data_generator[-1]
+        >>> type(x)
+        <class 'dict'>
+        >>> x.keys()
+        dict_keys(['id_left', 'text_left', 'id_right', 'text_right'])
+        >>> type(x['id_left'])
+        <class 'numpy.ndarray'>
+        >>> type(x['id_right'])
+        <class 'numpy.ndarray'>
+        >>> type(x['text_left'])
+        <class 'numpy.ndarray'>
+        >>> type(x['text_right'])
+        <class 'numpy.ndarray'>
+        >>> type(y)
+        <class 'numpy.ndarray'>
 
     """
 
@@ -119,7 +113,9 @@ class DataGenerator(keras.utils.Sequence):
         else:
             index_pool = list(range(self.num_instance))
         self._batch_indices = []
-        for i in range(len(self)):
+        for i in range(len(self) - 1):
             lower = self._batch_size * i
             upper = self._batch_size * (i + 1)
             self._batch_indices.append(index_pool[lower: upper])
+        lower = self._batch_size * (len(self) - 1)
+        self._batch_indices.append(index_pool[lower:])

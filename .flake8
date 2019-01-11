@@ -9,4 +9,6 @@ ignore =
     # D207 Docstring is under-indented
     D207,
     # D301 Use r""" if any backslashes in a docstring
-    D301
+    D301,
+    # F401 'blah blah' imported but unused
+    F401,

@@ -1,5 +1,6 @@
 """Ranking task."""
 
+import matchzoo as mz
 from matchzoo import engine
 
 
@@ -14,7 +15,7 @@ class Ranking(engine.BaseTask):
         >>> ranking_task.output_dtype
         <class 'float'>
         >>> print(ranking_task)
-        Ranking task
+        Ranking Task
 
     """
 
@@ -26,7 +27,7 @@ class Ranking(engine.BaseTask):
     @classmethod
     def list_available_metrics(cls) -> list:
         """:return: a list of available metrics."""
-        return ['mae']
+        return ['map']
 
     @property
     def output_shape(self) -> tuple:
@@ -40,4 +41,4 @@ class Ranking(engine.BaseTask):
 
     def __str__(self):
         """:return: Task name as string."""
-        return 'Ranking task'
+        return 'Ranking Task'

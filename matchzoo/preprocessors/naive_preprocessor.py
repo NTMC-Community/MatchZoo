@@ -1,4 +1,4 @@
-"""DSSM Preprocessor."""
+"""Naive Preprocessor."""
 
 import logging
 
@@ -18,8 +18,8 @@ class NaivePreprocessor(engine.BasePreprocessor):
 
     Example:
         >>> import matchzoo as mz
-        >>> train_data = mz.datasets.toy.load_train_classify_data()
-        >>> test_data = mz.datasets.toy.load_test_classify_data()
+        >>> train_data = mz.datasets.toy.load_data()
+        >>> test_data = mz.datasets.toy.load_data(stage='test')
         >>> preprocessor = mz.preprocessors.NaivePreprocessor()
         >>> train_data_processed = preprocessor.fit_transform(train_data)
         >>> type(train_data_processed)
@@ -36,7 +36,7 @@ class NaivePreprocessor(engine.BasePreprocessor):
 
         :param data_pack: data_pack to be preprocessed.
         :param verbose: Verbosity.
-        :return: class:`DSSMPreprocessor` instance.
+        :return: class:`NaivePreprocessor` instance.
         """
         units = self._default_processor_units()
         data_pack = data_pack.apply_on_text(chain_transform(units),
@@ -57,5 +57,6 @@ class NaivePreprocessor(engine.BasePreprocessor):
         """
         units = self._default_processor_units()
         units.append(self._context['vocab_unit'])
-        units.append(processor_units.FixedLengthUnit(text_length=30))
+        units.append(processor_units.FixedLengthUnit(text_length=30,
+                                                     pad_mode='post'))
         return data_pack.apply_on_text(chain_transform(units), verbose=verbose)

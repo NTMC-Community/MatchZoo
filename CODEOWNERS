@@ -14,28 +14,36 @@
 
 # third-party & project configuration
 .coveragerc             @bwanglzu
-.gitignore      	      @faneshion
-.travis.yml     	      @bwanglzu
-CONTRIBUTING.MD 	      @bwanglzu
-Makefile        	      @bwanglzu
-README.md       	      @yangliuy @pl8787
-readthedocs.yml 	      @wqh17101 @bwanglzu
+.gitignore      	    @faneshion
+.travis.yml     	    @bwanglzu
+CONTRIBUTING.MD 	    @bwanglzu
+Makefile        	    @uduse @bwanglzu
+README.md       	    @faneshion @pl8787
+readthedocs.yml 	    @wqh17101 @bwanglzu
 requirements.txt        @faneshion @pl8787
 setup.py                @faneshion @pl8787
 
 # artworks
 /artworks/              @faneshion
 
+# tutorials
+/tutorials/             @uduse @faneshion
+
 # docs
 /docs/                  @wqh17101 @bwanglzu
 
 # tests
-/tests/                 @faneshion @bwanglzu
+/tests/                 @faneshion @uduse @bwanglzu
 
 # matchzoo
-/matchzoo/engine/       @faneshion @bwanglzu @wqh17101
-/matchzoo/models/       @yangliuy @pl8787 @bwanglzu @wqh17101
-/matchzoo/preprocessor/ @bwanglzu @faneshion @wqh17101
-/matchzoo/tasks/        @faneshion @bwanglzu @wqh17101
-/matchzoo/generators/   @faneshion @pl8787 @yangliuy @wqh17101
-/matchzoo/*             @bwanglzu @faneshion @wqh17101
+/matchzoo/engine/       @faneshion @bwanglzu @uduse @pl8787
+/matchzoo/auto/         @uduse @bwanglzu
+/matchzoo/models/       @faneshion @pl8787 @bwanglzu @uduse
+/matchzoo/preprocessor/ @uduse @faneshion @pl8787
+/matchzoo/tasks/        @uduse @bwanglzu
+/matchzoo/data_generator/   @faneshion @uduse @pl8787 
+/matchzoo/data_pack/    @faneshion @uduse 
+/matchzoo/metrics/      @faneshion  @pl8787 @uduse
+/matchzoo/losses/       @faneshion @pl8787 @bwanglzu
+/matchzoo/layers/       @uduse @yangliuy
+/matchzoo/*             @faneshion @uduse @bwanglzu

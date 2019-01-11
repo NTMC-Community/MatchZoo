@@ -1,6 +1,7 @@
 """:class:`BasePreprocessor` define input and ouutput for processors."""
 
 import abc
+import functools
 import typing
 from pathlib import Path
 
@@ -12,17 +13,29 @@ from matchzoo import processor_units
 
 def validate_context(func):
     """Validate context in the preprocessor."""
+
+    @functools.wraps(func)
     def transform_wrapper(self, *args, **kwargs):
         if not self.context:
-            raise ValueError(
-                'Please fit parameters before transformation.')
+            raise ValueError('Please call `fit` before calling `transform`.')
         return func(self, *args, **kwargs)
 
     return transform_wrapper
 
 
 class BasePreprocessor(metaclass=abc.ABCMeta):
-    """:class:`BasePreprocessor` to input handle data."""
+    """
+    :class:`BasePreprocessor` to input handle data.
+
+    A preprocessor should be used in two steps. First, `fit`, then,
+    `transform`. `fit` collects information into `context`, which includes
+    everything the preprocessor needs to `transform` together with other
+    useful information for later use. `fit` will only change the
+    preprocessor's inner state but not the input data. In contrast,
+    `transform` returns a modified copy of the input data without changing
+    the preprocessor's inner state.
+
+    """
 
     DATA_FILENAME = 'preprocessor.dill'
 
@@ -98,7 +111,6 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             processor_units.TokenizeUnit(),
             processor_units.LowercaseUnit(),
             processor_units.PuncRemovalUnit(),
-            processor_units.StopRemovalUnit(),
         ]
 
 

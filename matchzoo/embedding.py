@@ -15,7 +15,7 @@ class Embedding(object):
 
     Examples::
         >>> import matchzoo as mz
-        >>> data_pack = mz.datasets.toy.load_train_rank_data()
+        >>> data_pack = mz.datasets.toy.load_data()
         >>> pp = mz.preprocessors.NaivePreprocessor()
         >>> vocab_unit = mz.build_vocab_unit(pp.fit_transform(data_pack),
         ...                                  verbose=0)
@@ -66,7 +66,7 @@ class Embedding(object):
 
         :param term_index: A `dict` or `TermIndex` to build with.
         :param initializer: A callable that returns a default value for missing
-            terms in data. (default: a random uniform distribution in range
+            terms in data. (default: a random uniform distribution in range)
             `(-0.2, 0.2)`).
         :return: A matrix.
         """

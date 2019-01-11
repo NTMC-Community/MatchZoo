@@ -29,7 +29,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="matchzoo.utils package" href="matchzoo.utils.html" />
-    <link rel="prev" title="matchzoo.preprocessor package" href="matchzoo.preprocessor.html" /> 
+    <link rel="prev" title="matchzoo.processor_units package" href="matchzoo.processor_units.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -83,22 +83,32 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">matchzoo</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="matchzoo.html">matchzoo package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="matchzoo.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.auto.html">matchzoo.auto package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.contrib.html">matchzoo.contrib package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.data_generator.html">matchzoo.data_generator package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.data_pack.html">matchzoo.data_pack package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.html">matchzoo.datasets package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.engine.html">matchzoo.engine package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.generators.html">matchzoo.generators package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.layers.html">matchzoo.layers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.losses.html">matchzoo.losses package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.metrics.html">matchzoo.metrics package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.models.html">matchzoo.models package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.preprocessor.html">matchzoo.preprocessor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.preprocessors.html">matchzoo.preprocessors package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.processor_units.html">matchzoo.processor_units package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">matchzoo.tasks package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.utils.html">matchzoo.utils package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.datapack">matchzoo.datapack module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.embedding">matchzoo.embedding module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.logger">matchzoo.logger module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.version">matchzoo.version module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="model_reference.html">MatchZoo Model Reference</a></li>
 </ul>
 
             
@@ -180,6 +190,19 @@
 <em class="property">class </em><code class="descclassname">matchzoo.tasks.classification.</code><code class="descname">Classification</code><span class="sig-paren">(</span><em>num_classes=2</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.classification.Classification" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask" title="matchzoo.engine.base_task.BaseTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_task.BaseTask</span></code></a></p>
 <p>Classification task.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">classification_task</span> <span class="o">=</span> <span class="n">Classification</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">classification_task</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;precision&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">classification_task</span><span class="o">.</span><span class="n">num_classes</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">classification_task</span><span class="o">.</span><span class="n">output_shape</span>
+<span class="go">(2,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">classification_task</span><span class="o">.</span><span class="n">output_dtype</span>
+<span class="go">&lt;class &#39;int&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">classification_task</span><span class="p">)</span>
+<span class="go">Classification Task with 2 classes</span>
+</pre></div>
+</div>
 <dl class="classmethod">
 <dt id="matchzoo.tasks.classification.Classification.list_available_losses">
 <em class="property">classmethod </em><code class="descname">list_available_losses</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.classification.Classification.list_available_losses" title="Permalink to this definition">¶</a></dt>
@@ -213,12 +236,14 @@
 <dl class="attribute">
 <dt id="matchzoo.tasks.classification.Classification.num_classes">
 <code class="descname">num_classes</code><a class="headerlink" href="#matchzoo.tasks.classification.Classification.num_classes" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – number of classes to classify.</p>
+<dd><p>number of classes to classify.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -227,18 +252,28 @@
 <dl class="attribute">
 <dt id="matchzoo.tasks.classification.Classification.output_dtype">
 <code class="descname">output_dtype</code><a class="headerlink" href="#matchzoo.tasks.classification.Classification.output_dtype" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – target data type, expect <cite>int</cite> as output.</p>
+<dd><p>target data type, expect <cite>int</cite> as output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="matchzoo.tasks.classification.Classification.output_shape">
 <code class="descname">output_shape</code><a class="headerlink" href="#matchzoo.tasks.classification.Classification.output_shape" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – output shape of a single sample of the task.</p>
+<dd><p>output shape of a single sample of the task.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -252,9 +287,20 @@
 <p>Ranking task.</p>
 <dl class="class">
 <dt id="matchzoo.tasks.ranking.Ranking">
-<em class="property">class </em><code class="descclassname">matchzoo.tasks.ranking.</code><code class="descname">Ranking</code><a class="headerlink" href="#matchzoo.tasks.ranking.Ranking" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matchzoo.tasks.ranking.</code><code class="descname">Ranking</code><span class="sig-paren">(</span><em>loss=None</em>, <em>metrics=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.ranking.Ranking" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_task.BaseTask" title="matchzoo.engine.base_task.BaseTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_task.BaseTask</span></code></a></p>
 <p>Ranking Task.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ranking_task</span> <span class="o">=</span> <span class="n">Ranking</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ranking_task</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;ndcg&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ranking_task</span><span class="o">.</span><span class="n">output_shape</span>
+<span class="go">(1,)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ranking_task</span><span class="o">.</span><span class="n">output_dtype</span>
+<span class="go">&lt;class &#39;float&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ranking_task</span><span class="p">)</span>
+<span class="go">Ranking Task</span>
+</pre></div>
+</div>
 <dl class="classmethod">
 <dt id="matchzoo.tasks.ranking.Ranking.list_available_losses">
 <em class="property">classmethod </em><code class="descname">list_available_losses</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.tasks.ranking.Ranking.list_available_losses" title="Permalink to this definition">¶</a></dt>
@@ -288,18 +334,28 @@
 <dl class="attribute">
 <dt id="matchzoo.tasks.ranking.Ranking.output_dtype">
 <code class="descname">output_dtype</code><a class="headerlink" href="#matchzoo.tasks.ranking.Ranking.output_dtype" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – target data type, expect <cite>float</cite> as output.</p>
+<dd><p>target data type, expect <cite>float</cite> as output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="matchzoo.tasks.ranking.Ranking.output_shape">
 <code class="descname">output_shape</code><a class="headerlink" href="#matchzoo.tasks.ranking.Ranking.output_shape" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – output shape of a single sample of the task.</p>
+<dd><p>output shape of a single sample of the task.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -342,7 +398,7 @@
         <a href="matchzoo.utils.html" class="btn btn-neutral float-right" title="matchzoo.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="matchzoo.preprocessor.html" class="btn btn-neutral" title="matchzoo.preprocessor package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="matchzoo.processor_units.html" class="btn btn-neutral" title="matchzoo.processor_units package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -384,7 +440,7 @@
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
 
   
 

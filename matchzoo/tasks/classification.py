@@ -1,5 +1,4 @@
 """Classification task."""
-import numpy as np
 
 from matchzoo import engine
 
@@ -17,7 +16,7 @@ class Classification(engine.BaseTask):
         >>> classification_task.output_dtype
         <class 'int'>
         >>> print(classification_task)
-        Classification task with 2 classes
+        Classification Task with 2 classes
 
     """
 
@@ -55,12 +54,6 @@ class Classification(engine.BaseTask):
         """:return: target data type, expect `int` as output."""
         return int
 
-    def one_hot_encode(self, arr) ->np.ndarray:
-        """:return: A one-hot encoded vector."""
-        vec = np.zeros((self._num_classes,), dtype=np.int64)
-        vec[arr] = 1
-        return vec
-
     def __str__(self):
         """:return: Task name as string."""
-        return f'Classification task with {self._num_classes} classes'
+        return f'Classification Task with {self._num_classes} classes'

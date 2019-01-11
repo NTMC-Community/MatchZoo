@@ -2,20 +2,19 @@
 
 import abc
 import typing
-import logging
 from pathlib import Path
 
 import dill
 import numpy as np
 import keras
+import keras.backend as K
 import pandas as pd
 
 import matchzoo
 from matchzoo import DataGenerator
 from matchzoo import engine
+from matchzoo.engine import hyper_spaces
 from matchzoo import tasks
-
-logger = logging.getLogger(__name__)
 
 
 class BaseModel(abc.ABC):
@@ -23,47 +22,6 @@ class BaseModel(abc.ABC):
 
     BACKEND_WEIGHTS_FILENAME = 'backend_weights.h5'
     PARAMS_FILENAME = 'params.dill'
-
-    class EvaluateOnCall(keras.callbacks.Callback):
-        """:class:`EvaluateOncall` evaluate validation datasets on callback."""
-
-        def __init__(self,
-                     matchzoo_model: 'BaseModel',
-                     x: typing.Union[np.ndarray, typing.List[np.ndarray]],
-                     y: np.ndarray,
-                     valid_steps=3,
-                     batch_size: int = 32):
-            """
-            :class:`EvaluateOnCall` constructor.
-
-            :param matchzoo_model: model to evaluate.
-            :param x: input data.
-            :param y: labels.
-            :param valid_steps: integer, skipping steps(number of batches) to
-                call the :class:`EvaluateOnCall`.
-            :param batch_size: integer, number of instances in a batch.
-
-            """
-            super().__init__()
-            self._mz_model = matchzoo_model
-            self._dev_x = x
-            self._dev_y = y
-            self._valid_steps = valid_steps
-            self._batch_size = batch_size
-
-        def on_epoch_end(self, epoch, logs=None):
-            """
-            Called at the end of en epoch.
-
-            :param epoch: integer, index of epoch.
-            :param logs: dictionary of logs.
-            :return: dictionary of logs.
-            """
-            if epoch % self._valid_steps == 0:
-                val_logs = self._mz_model.evaluate(self._dev_x, self._dev_y,
-                                                   self._batch_size, verbose=0)
-                logger.info('Validation: ' + ' - '.join(
-                    f'{k}:{v:f}' for k, v in val_logs.items()))
 
     def __init__(
         self,
@@ -81,7 +39,11 @@ class BaseModel(abc.ABC):
         self._backend = backend
 
     @classmethod
-    def get_default_params(cls, with_embedding=False) -> engine.ParamTable:
+    def get_default_params(
+        cls,
+        with_embedding=False,
+        with_multi_layer_perceptron=False
+    ) -> engine.ParamTable:
         """
         Model default parameters.
 
@@ -113,16 +75,69 @@ class BaseModel(abc.ABC):
 
         """
         params = engine.ParamTable()
-        params.add(engine.Param('name'))
-        params.add(engine.Param('model_class', cls))
-        params.add(engine.Param('input_shapes'))
-        params.add(engine.Param('task'))
-        params.add(engine.Param('optimizer'))
+        params.add(engine.Param(
+            name='name',
+            desc="Not related to the model\'s behavior."
+        ))
+        params.add(engine.Param(
+            name='model_class', value=cls,
+            desc="Model class. Used internally for save/load. "
+                 "Changing this may cause unexpected behaviors."
+        ))
+        params.add(engine.Param(
+            name='input_shapes',
+            desc="Dependent on the model and data. Should be set manually."
+        ))
+        params.add(engine.Param(
+            name='task',
+            desc="Decides model output shape, loss, and metrics."
+        ))
+        params.add(engine.Param(
+            name='optimizer',
+            hyper_space=hyper_spaces.choice(['adam', 'adgrad', 'rmsprop'])
+        ))
         if with_embedding:
-            params.add(engine.Param('with_embedding', True))
-            params.add(engine.Param('embedding_input_dim'))
-            params.add(engine.Param('embedding_output_dim'))
-            params.add(engine.Param('embedding_trainable'))
+            params.add(engine.Param(
+                name='with_embedding', value=True,
+                desc="A flag used help `auto` module. Shouldn't be changed."
+            ))
+            params.add(engine.Param(
+                name='embedding_input_dim',
+                desc='Usually equals vocab size + 1. Should be set manually.'
+            ))
+            params.add(engine.Param(
+                name='embedding_output_dim',
+                desc='Should be set manually.'
+            ))
+            params.add(engine.Param(
+                name='embedding_trainable',
+                desc='`True` to enable embedding layer training, '
+                     '`False` to freeze embedding parameters.'
+            ))
+        if with_multi_layer_perceptron:
+            params.add(engine.Param(
+                name='with_multi_layer_perceptron', value=True,
+                desc="A flag of whether a multiple layer perceptron is used. "
+                     "Shouldn't be changed."
+            ))
+            params.add(engine.Param(
+                name='mlp_num_units',
+                desc="Number of units in first `mlp_num_layers` layers."
+            ))
+            params.add(engine.Param(
+                name='mlp_num_layers',
+                desc="Number of layers of the multiple layer percetron."
+            ))
+            params.add(engine.Param(
+                name='mlp_num_fan_out',
+                desc="Number of units of the layer that connects the multiple "
+                     "layer percetron and the output."
+            ))
+            params.add(engine.Param(
+                name='mlp_activation_func',
+                desc='Activation function used in the multiple '
+                     'layer perceptron.'
+            ))
         return params
 
     @classmethod
@@ -137,12 +152,16 @@ class BaseModel(abc.ABC):
 
         :return: Default preprocessor.
         """
-        return matchzoo.preprocessors.NaivePreprocessor()
+        return matchzoo.preprocessors.BasicPreprocessor()
 
     @property
     def params(self) -> engine.ParamTable:
         """:return: model parameters."""
         return self._params
+
+    @params.setter
+    def params(self, val):
+        self._params = val
 
     @property
     def backend(self) -> keras.models.Model:
@@ -171,27 +190,23 @@ class BaseModel(abc.ABC):
         Compile model for training.
 
         Only `keras` native metrics are compiled together with backend.
-        MatchZoo metrics are evaluated only through :method:`evaluate`.
+        MatchZoo metrics are evaluated only through :meth:`evaluate`.
         Notice that `keras` count `loss` as one of the metrics while MatchZoo
         :class:`matchzoo.engine.BaseTask` does not.
 
         Examples:
             >>> from matchzoo import models
-            >>> model = models.NaiveModel()
+            >>> model = models.Naive()
             >>> model.guess_and_fill_missing_params(verbose=0)
             >>> model.params['task'].metrics = ['mse', 'map']
             >>> model.params['task'].metrics
             ['mse', mean_average_precision(0)]
             >>> model.build()
             >>> model.compile()
-            >>> model.backend.metrics_names
-            ['loss', 'mean_squared_error']
 
         """
-        _, keras_metrics = self._separate_metrics()
         self._backend.compile(optimizer=self._params['optimizer'],
-                              loss=self._params['task'].loss,
-                              metrics=keras_metrics)
+                              loss=self._params['task'].loss)
 
     def fit(
         self,
@@ -274,13 +289,13 @@ class BaseModel(abc.ABC):
 
         Examples::
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_rank_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> preprocessor = mz.preprocessors.NaivePreprocessor()
             >>> data_pack = preprocessor.fit_transform(data_pack)
-            >>> m = mz.models.DenseBaselineModel()
+            >>> m = mz.models.DenseBaseline()
             >>> m.params['task'] = mz.tasks.Ranking()
             >>> m.params['task'].metrics = [
-            ...     'acc', 'mse', 'mae',
+            ...     'acc', 'mse', 'mae', 'ce',
             ...     'average_precision', 'precision', 'dcg', 'ndcg',
             ...     'mean_reciprocal_rank', 'mean_average_precision', 'mrr',
             ...     'map', 'MAP',
@@ -301,23 +316,23 @@ class BaseModel(abc.ABC):
             <class 'dict'>
 
         """
-        result = self._evaluate_backend(x, y, batch_size, verbose)
-        matchzoo_metrics, _ = self._separate_metrics()
+        result = {}
+        matchzoo_metrics, keras_metrics = self._separate_metrics()
+        y_pred = self.predict(x, batch_size)
+
+        for metric in keras_metrics:
+            metric_func = keras.metrics.get(metric)
+            result[metric] = K.eval(
+                metric_func(K.variable(y), K.variable(y_pred)))
+
         if matchzoo_metrics:
             if not isinstance(self.params['task'], tasks.Ranking):
                 raise ValueError("Matchzoo metrics only works on ranking.")
-            df = self._build_data_frame_for_eval(x, y, batch_size)
             for metric in matchzoo_metrics:
-                result[metric] = self._eval_metric_on_data_frame(metric, df)
-        return result
+                result[metric] = self._eval_metric_on_data_frame(
+                    metric, x['id_left'], y, y_pred)
 
-    def _evaluate_backend(self, x, y, batch_size, verbose):
-        vals = self._backend.evaluate(x=x, y=y,
-                                      batch_size=batch_size,
-                                      verbose=verbose)
-        if not isinstance(vals, list):
-            vals = [vals]
-        return dict(zip(self._backend.metrics_names, vals))
+        return result
 
     def _separate_metrics(self):
         matchzoo_metrics = []
@@ -326,19 +341,40 @@ class BaseModel(abc.ABC):
             if isinstance(metric, engine.BaseMetric):
                 matchzoo_metrics.append(metric)
             else:
-                keras_metrics.append(metric)
+                keras_metrics.append(self._remap_keras_metric(metric))
         return matchzoo_metrics, keras_metrics
 
-    def _build_data_frame_for_eval(self, x, y, batch_size):
-        y_pred = self.predict(x, batch_size)
-        return pd.DataFrame(data={
-            'id': x['id_left'],
+    def _remap_keras_metric(self, metric: str) -> str:
+        # TODO: note here, we do not support sparse label in classification.
+        lookup = {
+            tasks.Classification: {
+                'acc': 'categorical_accuracy',
+                'accuracy': 'categorical_accuracy',
+                'crossentropy': 'categorical_crossentropy',
+                'ce': 'categorical_crossentropy',
+            },
+            tasks.Ranking: {
+                'acc': 'binary_accuracy',
+                'accuracy': 'binary_accuracy',
+                'crossentropy': 'binary_crossentropy',
+                'ce': 'binary_crossentropy',
+            }
+        }
+        return lookup[type(self._params['task'])].get(metric, metric)
+
+    @classmethod
+    def _eval_metric_on_data_frame(
+        cls,
+        metric: engine.BaseMetric,
+        id_left,
+        y,
+        y_pred
+    ):
+        eval_df = pd.DataFrame(data={
+            'id': id_left,
             'true': y.squeeze(),
             'pred': y_pred.squeeze()
         })
-
-    @classmethod
-    def _eval_metric_on_data_frame(cls, metric: engine.BaseMetric, eval_df):
         assert isinstance(metric, engine.BaseMetric)
         val = eval_df.groupby(by='id').apply(
             lambda df: metric(df['true'].values, df['pred'].values)
@@ -376,7 +412,7 @@ class BaseModel(abc.ABC):
         weights_path = dirpath.joinpath(self.BACKEND_WEIGHTS_FILENAME)
 
         if not dirpath.exists():
-            dirpath.mkdir()
+            dirpath.mkdir(parents=True)
         else:
             raise FileExistsError
 
@@ -414,17 +450,29 @@ class BaseModel(abc.ABC):
         """
         Guess and fill missing parameters in :attr:`params`.
 
+        Use this method to automatically fill-in hyper parameters.
+        This involves some guessing so the parameter it fills could be
+        wrong. For example, the default task is `Ranking`, and if we do not
+        set it to `Classification` manaully for data packs prepared for
+        classification, then the shape of the model output and the data will
+        mismatch.
+
         :param verbose: Verbosity.
         """
         self._params.get('name').set_default(self.__class__.__name__, verbose)
-        task = engine.list_available_tasks()[1]()
-        self._params.get('task').set_default(task, verbose)
+        self._params.get('task').set_default(tasks.Ranking(), verbose)
         self._params.get('input_shapes').set_default([(30,), (30,)], verbose)
         self._params.get('optimizer').set_default('adam', verbose)
         if 'with_embedding' in self._params:
             self._params.get('embedding_input_dim').set_default(300, verbose)
             self._params.get('embedding_output_dim').set_default(300, verbose)
             self._params.get('embedding_trainable').set_default(True, verbose)
+        if 'with_multi_layer_perceptron' in self._params:
+            self._params.get('mlp_num_layers').set_default(3, verbose)
+            self._params.get('mlp_num_units').set_default(64, verbose)
+            self._params.get('mlp_num_fan_out').set_default(32, verbose)
+            self._params.get('mlp_activation_func').set_default('relu',
+                                                                verbose)
 
     def _set_param_default(self, name, default_val, verbose):
         if self._params[name] is None:
@@ -460,6 +508,20 @@ class BaseModel(abc.ABC):
             trainable=self._params['embedding_trainable'],
             name=name
         )
+
+    def _make_multi_layer_perceptron_layer(self):
+        if not self._params['with_multi_layer_perceptron']:
+            raise AttributeError
+
+        def _wrapper(x):
+            activation = self._params['mlp_activation_func']
+            for _ in range(self._params['mlp_num_layers']):
+                x = keras.layers.Dense(self._params['mlp_num_units'],
+                                       activation=activation)(x)
+            return keras.layers.Dense(self._params['mlp_num_fan_out'],
+                                      activation=activation)(x)
+
+        return _wrapper
 
 
 def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:

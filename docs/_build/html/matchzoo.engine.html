@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="matchzoo.generators package" href="matchzoo.generators.html" />
-    <link rel="prev" title="matchzoo package" href="matchzoo.html" /> 
+    <link rel="next" title="matchzoo.layers package" href="matchzoo.layers.html" />
+    <link rel="prev" title="matchzoo.datasets.wiki_qa package" href="matchzoo.datasets.wiki_qa.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -83,22 +83,32 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">matchzoo</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="matchzoo.html">matchzoo package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="matchzoo.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.auto.html">matchzoo.auto package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.contrib.html">matchzoo.contrib package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.data_generator.html">matchzoo.data_generator package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.data_pack.html">matchzoo.data_pack package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.html">matchzoo.datasets package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">matchzoo.engine package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.generators.html">matchzoo.generators package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.layers.html">matchzoo.layers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.losses.html">matchzoo.losses package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.metrics.html">matchzoo.metrics package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.models.html">matchzoo.models package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.preprocessor.html">matchzoo.preprocessor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.preprocessors.html">matchzoo.preprocessors package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.processor_units.html">matchzoo.processor_units package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.tasks.html">matchzoo.tasks package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.utils.html">matchzoo.utils package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.datapack">matchzoo.datapack module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.embedding">matchzoo.embedding module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.logger">matchzoo.logger module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.version">matchzoo.version module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="model_reference.html">MatchZoo Model Reference</a></li>
 </ul>
 
             
@@ -172,28 +182,81 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-matchzoo.engine.base_generator">
-<span id="matchzoo-engine-base-generator-module"></span><h2>matchzoo.engine.base_generator module<a class="headerlink" href="#module-matchzoo.engine.base_generator" title="Permalink to this headline">¶</a></h2>
-<p>Base generator.</p>
+<div class="section" id="module-matchzoo.engine.base_metric">
+<span id="matchzoo-engine-base-metric-module"></span><h2>matchzoo.engine.base_metric module<a class="headerlink" href="#module-matchzoo.engine.base_metric" title="Permalink to this headline">¶</a></h2>
+<p>Metric base class and some related utilities.</p>
 <dl class="class">
-<dt id="matchzoo.engine.base_generator.BaseGenerator">
-<em class="property">class </em><code class="descclassname">matchzoo.engine.base_generator.</code><code class="descname">BaseGenerator</code><span class="sig-paren">(</span><em>batch_size=32</em>, <em>num_instances=0</em>, <em>shuffle=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_generator.BaseGenerator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">keras.utils.data_utils.Sequence</span></code></p>
-<p>Abstract base class of all matchzoo generators.</p>
-<p>Every generator must implement <code class="xref py py-meth docutils literal notranslate"><span class="pre">_get_batch_of_transformed_samples()</span></code>
-method.</p>
-<dl class="method">
-<dt id="matchzoo.engine.base_generator.BaseGenerator.on_epoch_end">
-<code class="descname">on_epoch_end</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_generator.BaseGenerator.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reorganize the index array while epoch is ended.</p>
+<dt id="matchzoo.engine.base_metric.BaseMetric">
+<em class="property">class </em><code class="descclassname">matchzoo.engine.base_metric.</code><code class="descname">BaseMetric</code><a class="headerlink" href="#matchzoo.engine.base_metric.BaseMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Metric base class.</p>
+<dl class="attribute">
+<dt id="matchzoo.engine.base_metric.BaseMetric.ALIAS">
+<code class="descname">ALIAS</code><em class="property"> = 'base_metric'</em><a class="headerlink" href="#matchzoo.engine.base_metric.BaseMetric.ALIAS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
-<dl class="method">
-<dt id="matchzoo.engine.base_generator.BaseGenerator.reset">
-<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_generator.BaseGenerator.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset the batch_index to generator from begin.</p>
+<dl class="function">
+<dt id="matchzoo.engine.base_metric.parse_metric">
+<code class="descclassname">matchzoo.engine.base_metric.</code><code class="descname">parse_metric</code><span class="sig-paren">(</span><em>metric</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_metric.parse_metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse input metric in any form into a <a class="reference internal" href="#matchzoo.engine.base_metric.BaseMetric" title="matchzoo.engine.base_metric.BaseMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMetric</span></code></a> instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>metric</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Type</span></code>[<a class="reference internal" href="#matchzoo.engine.base_metric.BaseMetric" title="matchzoo.engine.base_metric.BaseMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMetric</span></code></a>], <a class="reference internal" href="#matchzoo.engine.base_metric.BaseMetric" title="matchzoo.engine.base_metric.BaseMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMetric</span></code></a>]) – Input metric in any form.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <a class="reference internal" href="#matchzoo.engine.base_metric.BaseMetric" title="matchzoo.engine.base_metric.BaseMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMetric</span></code></a> instance</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Examples::</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matchzoo</span> <span class="k">import</span> <span class="n">engine</span><span class="p">,</span> <span class="n">metrics</span>
+</pre></div>
+</div>
+</dd>
+<dt>Use <cite>str</cite> as keras native metrics:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">engine</span><span class="o">.</span><span class="n">parse_metric</span><span class="p">(</span><span class="s1">&#39;mse&#39;</span><span class="p">)</span>
+<span class="go">&#39;mse&#39;</span>
+</pre></div>
+</div>
+</dd>
+<dt>Use <cite>str</cite> as MatchZoo metrics:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mz_metric</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">parse_metric</span><span class="p">(</span><span class="s1">&#39;map&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">mz_metric</span><span class="p">)</span>
+<span class="go">&lt;class &#39;matchzoo.metrics.mean_average_precision.MeanAveragePrecision&#39;&gt;</span>
+</pre></div>
+</div>
+</dd>
+<dt>Use <code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.BaseMetric</span></code> subclasses as MatchZoo metrics:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">parse_metric</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">AveragePrecision</span><span class="p">))</span>
+<span class="go">&lt;class &#39;matchzoo.metrics.average_precision.AveragePrecision&#39;&gt;</span>
+</pre></div>
+</div>
+</dd>
+<dt>Use <code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.BaseMetric</span></code> instances as MatchZoo metrics:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">parse_metric</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">AveragePrecision</span><span class="p">()))</span>
+<span class="go">&lt;class &#39;matchzoo.metrics.average_precision.AveragePrecision&#39;&gt;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="matchzoo.engine.base_metric.sort_and_couple">
+<code class="descclassname">matchzoo.engine.base_metric.</code><code class="descname">sort_and_couple</code><span class="sig-paren">(</span><em>labels</em>, <em>scores</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_metric.sort_and_couple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Zip the <cite>labels</cite> with <cite>scores</cite> into a single list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">&lt;built-in function array&gt;</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -206,8 +269,8 @@ method.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Abstract base class of all matchzoo models.</p>
 <dl class="attribute">
-<dt id="matchzoo.engine.base_model.BaseModel.BACKEND_FILENAME">
-<code class="descname">BACKEND_FILENAME</code><em class="property"> = 'backend.h5'</em><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.BACKEND_FILENAME" title="Permalink to this definition">¶</a></dt>
+<dt id="matchzoo.engine.base_model.BaseModel.BACKEND_WEIGHTS_FILENAME">
+<code class="descname">BACKEND_WEIGHTS_FILENAME</code><em class="property"> = 'backend_weights.h5'</em><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.BACKEND_WEIGHTS_FILENAME" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -234,15 +297,14 @@ method.</p>
 <code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build model, each sub class need to impelemnt this method.</p>
 <p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">BaseModel</span><span class="p">()</span>  
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">BaseModel</span><span class="p">()</span>  <span class="c1"># doctest: +ELLIPSIS</span>
 <span class="gt">Traceback (most recent call last):</span>
 <span class="c">...</span>
 <span class="gr">TypeError</span>: <span class="n">Can&#39;t instantiate abstract class BaseModel ...</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">pass</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">MyModel</span>
-<span class="go">&lt;class &#39;matchzoo.engine.base_model.MyModel&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">MyModel</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -251,6 +313,21 @@ method.</p>
 <dt id="matchzoo.engine.base_model.BaseModel.compile">
 <code class="descname">compile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.compile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compile model for training.</p>
+<p>Only <cite>keras</cite> native metrics are compiled together with backend.
+MatchZoo metrics are evaluated only through <a class="reference internal" href="#matchzoo.engine.base_model.BaseModel.evaluate" title="matchzoo.engine.base_model.BaseModel.evaluate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">evaluate()</span></code></a>.
+Notice that <cite>keras</cite> count <cite>loss</cite> as one of the metrics while MatchZoo
+<code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.BaseTask</span></code> does not.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matchzoo</span> <span class="k">import</span> <span class="n">models</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">NaiveModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;task&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mse&#39;</span><span class="p">,</span> <span class="s1">&#39;map&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;task&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">metrics</span>
+<span class="go">[&#39;mse&#39;, mean_average_precision(0)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -263,14 +340,14 @@ method.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>x</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]]) – input data</li>
+<li><strong>x</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]]) – input data</li>
 <li><strong>y</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – labels</li>
 <li><strong>batch_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – number of samples per gradient update</li>
 <li><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – verbosity mode, 0 or 1</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
 </td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">scalar test loss (if the model has a single output and no
@@ -281,18 +358,50 @@ give you the display labels for the scalar outputs.</p>
 </tr>
 </tbody>
 </table>
+<dl class="docutils">
+<dt>Examples::</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matchzoo</span> <span class="k">as</span> <span class="nn">mz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_pack</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">toy</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">preprocessor</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">preprocessors</span><span class="o">.</span><span class="n">NaivePreprocessor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_pack</span> <span class="o">=</span> <span class="n">preprocessor</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data_pack</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">DenseBaselineModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;task&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">Ranking</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;task&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="s1">&#39;acc&#39;</span><span class="p">,</span> <span class="s1">&#39;mse&#39;</span><span class="p">,</span> <span class="s1">&#39;mae&#39;</span><span class="p">,</span> <span class="s1">&#39;ce&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;average_precision&#39;</span><span class="p">,</span> <span class="s1">&#39;precision&#39;</span><span class="p">,</span> <span class="s1">&#39;dcg&#39;</span><span class="p">,</span> <span class="s1">&#39;ndcg&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;mean_reciprocal_rank&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_average_precision&#39;</span><span class="p">,</span> <span class="s1">&#39;mrr&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;MAP&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">mz</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">AveragePrecision</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">mz</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">Precision</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">mz</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">DiscountedCumulativeGain</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">mz</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">NormalizedDiscountedCumulativeGain</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">mz</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">MeanReciprocalRank</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">mz</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">MeanAveragePrecision</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">data_pack</span><span class="o">.</span><span class="n">unpack</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">evals</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">evals</span><span class="p">)</span>
+<span class="go">&lt;class &#39;dict&#39;&gt;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="matchzoo.engine.base_model.BaseModel.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>batch_size=128</em>, <em>epochs=1</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>batch_size=128</em>, <em>epochs=1</em>, <em>verbose=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the model.</p>
 <p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">keras.models.Model.fit()</span></code> for more details.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>x</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]]) – input data.</li>
 <li><strong>y</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – labels.</li>
 <li><strong>batch_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – number of samples per gradient update.</li>
@@ -302,12 +411,17 @@ give you the display labels for the scalar outputs.</p>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">History</span></code></p>
-</td>
+</tbody>
+</table>
+<p>Key word arguments not listed above will be propagated to keras’s fit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">History</span></code></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A <cite>keras.callbacks.History</cite> instance. Its history attribute
-contains all information collected during training.</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A <cite>keras.callbacks.History</cite> instance. Its history attribute
+contains all information collected during training.</td>
 </tr>
 </tbody>
 </table>
@@ -315,7 +429,7 @@ contains all information collected during training.</p>
 
 <dl class="method">
 <dt id="matchzoo.engine.base_model.BaseModel.fit_generator">
-<code class="descname">fit_generator</code><span class="sig-paren">(</span><em>generator</em>, <em>steps_per_epoch=None</em>, <em>epochs=1</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.fit_generator" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit_generator</code><span class="sig-paren">(</span><em>generator</em>, <em>epochs=1</em>, <em>verbose=1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.fit_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the model with matchzoo <cite>generator</cite>.</p>
 <p>See <code class="xref py py-meth docutils literal notranslate"><span class="pre">keras.models.Model.fit_generator()</span></code> for more details.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -323,10 +437,8 @@ contains all information collected during training.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>generator</strong> (<a class="reference internal" href="#matchzoo.engine.base_generator.BaseGenerator" title="matchzoo.engine.base_generator.BaseGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseGenerator</span></code></a>) – A generator, an instance of
-<code class="xref py py-class docutils literal notranslate"><span class="pre">engine.BaseGenerator</span></code>.</li>
-<li><strong>steps_per_epoch</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Total number of steps (batches of samples)
-to yield from <code class="xref py py-attr docutils literal notranslate"><span class="pre">generator</span></code> object.</li>
+<li><strong>generator</strong> (<a class="reference internal" href="matchzoo.data_generator.html#matchzoo.data_generator.data_generator.DataGenerator" title="matchzoo.data_generator.data_generator.DataGenerator"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataGenerator</span></code></a>) – A generator, an instance of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">engine.DataGenerator</span></code>.</li>
 <li><strong>epochs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of epochs to train the model.</li>
 <li><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – 0, 1, or 2. Verbosity mode. 0 = silent, 1 = verbose,
 2 = one log line per epoch.</li>
@@ -346,7 +458,7 @@ contains all information collected during training.</p>
 
 <dl class="classmethod">
 <dt id="matchzoo.engine.base_model.BaseModel.get_default_params">
-<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.get_default_params" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><em>with_embedding=False</em>, <em>with_multi_layer_perceptron=False</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.get_default_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model default parameters.</p>
 <dl class="docutils">
 <dt>The common usage is to instantiate <code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.ModelParams</span></code></dt>
@@ -385,22 +497,82 @@ native data types to store parameters.</p>
 </table>
 </dd></dl>
 
+<dl class="classmethod">
+<dt id="matchzoo.engine.base_model.BaseModel.get_default_preprocessor">
+<em class="property">classmethod </em><code class="descname">get_default_preprocessor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.get_default_preprocessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model default preprocessor.</p>
+<p>The preprocessor’s transform should produce a correctly shaped data
+pack that can be used for training. Some extra configuration (e.g.
+setting <cite>input_shapes</cite> in <code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.models.DSSMModel</span></code> may be
+required on the user’s end.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#matchzoo.engine.base_preprocessor.BasePreprocessor" title="matchzoo.engine.base_preprocessor.BasePreprocessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePreprocessor</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Default preprocessor.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="matchzoo.engine.base_model.BaseModel.guess_and_fill_missing_params">
-<code class="descname">guess_and_fill_missing_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.guess_and_fill_missing_params" title="Permalink to this definition">¶</a></dt>
+<code class="descname">guess_and_fill_missing_params</code><span class="sig-paren">(</span><em>verbose=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.guess_and_fill_missing_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Guess and fill missing parameters in <a class="reference internal" href="#matchzoo.engine.base_model.BaseModel.params" title="matchzoo.engine.base_model.BaseModel.params"><code class="xref py py-attr docutils literal notranslate"><span class="pre">params</span></code></a>.</p>
-<p>Note: likely to be moved to a higher level API in the future.</p>
+<p>Use this method to automatically fill-in hyper parameters.
+This involves some guessing so the parameter it fills could be
+wrong. For example, the default task is <cite>Ranking</cite>, and if we do not
+set it to <cite>Classification</cite> manaully for data packs prepared for
+classification, then the shape of the model output and the data will
+mismatch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verbose</strong> – Verbosity.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.base_model.BaseModel.load_embedding_matrix">
+<code class="descname">load_embedding_matrix</code><span class="sig-paren">(</span><em>embedding_matrix</em>, <em>name='embedding'</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.load_embedding_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load an embedding matrix.</p>
+<p>Load an embedding matrix into the model’s embedding layer. The name
+of the embedding layer is specified by <cite>name</cite>. For models with only
+one embedding layer, set <cite>name=’embedding’</cite> when creating the keras
+layer, and use the default <cite>name</cite> when load the matrix. For models
+with more than one embedding layers, initialize keras layer with
+different layer names, and set <cite>name</cite> accordingly to load a matrix
+to a chosen layer.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>embedding_matrix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Embedding matrix to be loaded.</li>
+<li><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the layer. (default: ‘embedding’)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="matchzoo.engine.base_model.BaseModel.params">
 <code class="descname">params</code><a class="headerlink" href="#matchzoo.engine.base_model.BaseModel.params" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – model parameters.</p>
+<dd><p>model parameters.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -482,9 +654,15 @@ h5 file saved by <cite>keras</cite>.</p>
 <code class="descname">DATA_FILENAME</code><em class="property"> = 'preprocessor.dill'</em><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.DATA_FILENAME" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="matchzoo.engine.base_preprocessor.BasePreprocessor.context">
+<code class="descname">context</code><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return context.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="matchzoo.engine.base_preprocessor.BasePreprocessor.fit">
-<code class="descname">fit</code><span class="sig-paren">(</span><em>inputs</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit</code><span class="sig-paren">(</span><em>data_pack</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit parameters on input data.</p>
 <p>This method is an abstract base method, need to be
 implemented in the child class.</p>
@@ -494,9 +672,14 @@ object.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – List of text-left, text-right, label triples.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>data_pack</strong> (<a class="reference internal" href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack" title="matchzoo.data_pack.data_pack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a>) – <code class="xref py py-class docutils literal notranslate"><span class="pre">Datapack</span></code> object to be fitted.</li>
+<li><strong>verbose</strong> – Verbosity.</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#matchzoo.engine.base_preprocessor.BasePreprocessor" title="matchzoo.engine.base_preprocessor.BasePreprocessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePreprocessor</span></code></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#matchzoo.engine.base_preprocessor.BasePreprocessor" title="matchzoo.engine.base_preprocessor.BasePreprocessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePreprocessor</span></code></a></p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -504,21 +687,15 @@ object.</p>
 
 <dl class="method">
 <dt id="matchzoo.engine.base_preprocessor.BasePreprocessor.fit_transform">
-<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>inputs</em>, <em>stage</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.fit_transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit_transform</code><span class="sig-paren">(</span><em>data_pack</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.fit_transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call fit-transform.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>inputs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – List of text-left, text-right, label triples.</li>
-<li><strong>stage</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – String indicate the pre-processing stage, <cite>train</cite> or
-<cite>test</cite> expected.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_pack</strong> (<a class="reference internal" href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack" title="matchzoo.data_pack.data_pack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a>) – <code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code> object to be processed.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="matchzoo.html#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a></p>
-</td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack" title="matchzoo.data_pack.data_pack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a></td>
 </tr>
 </tbody>
 </table>
@@ -543,7 +720,7 @@ be saved by <cite>pickle</cite>.</p>
 
 <dl class="method">
 <dt id="matchzoo.engine.base_preprocessor.BasePreprocessor.transform">
-<code class="descname">transform</code><span class="sig-paren">(</span><em>inputs</em>, <em>stage</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.transform" title="Permalink to this definition">¶</a></dt>
+<code class="descname">transform</code><span class="sig-paren">(</span><em>data_pack</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.BasePreprocessor.transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform input data to expected manner.</p>
 <p>This method is an abstract base method, need to be
 implemented in the child class.</p>
@@ -552,14 +729,13 @@ implemented in the child class.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>inputs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>) – List of text-left, text-right, label triples,
-or list of text-left, text-right tuples (test stage).</li>
-<li><strong>stage</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – String indicate the pre-processing stage, <cite>train</cite> or
-<cite>test</cite> expected.</li>
+<li><strong>data_pack</strong> (<a class="reference internal" href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack" title="matchzoo.data_pack.data_pack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a>) – <code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code> object to be transformed.</li>
+<li><strong>verbose</strong> – Verbosity.
+or list of text-left, text-right tuples.</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="matchzoo.html#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a></p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference internal" href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack" title="matchzoo.data_pack.data_pack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a></p>
 </td>
 </tr>
 </tbody>
@@ -578,12 +754,18 @@ or list of text-left, text-right tuples (test stage).</li>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – directory path of the saved model.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.html#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.data_pack.html#matchzoo.data_pack.data_pack.DataPack" title="matchzoo.data_pack.data_pack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a></td>
 </tr>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a <code class="xref py py-class docutils literal notranslate"><span class="pre">DSSMPreprocessor</span></code> instance.</td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="function">
+<dt id="matchzoo.engine.base_preprocessor.validate_context">
+<code class="descclassname">matchzoo.engine.base_preprocessor.</code><code class="descname">validate_context</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_preprocessor.validate_context" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate context in the preprocessor.</p>
 </dd></dl>
 
 </div>
@@ -592,9 +774,22 @@ or list of text-left, text-right tuples (test stage).</li>
 <p>Base task.</p>
 <dl class="class">
 <dt id="matchzoo.engine.base_task.BaseTask">
-<em class="property">class </em><code class="descclassname">matchzoo.engine.base_task.</code><code class="descname">BaseTask</code><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matchzoo.engine.base_task.</code><code class="descname">BaseTask</code><span class="sig-paren">(</span><em>loss=None</em>, <em>metrics=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base Task, shouldn’t be used directly.</p>
+<dl class="classmethod">
+<dt id="matchzoo.engine.base_task.BaseTask.convert_metrics">
+<em class="property">classmethod </em><code class="descname">convert_metrics</code><span class="sig-paren">(</span><em>metrics</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask.convert_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert <cite>metrics</cite> into properly formed list of metrics.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">BaseTask</span><span class="o">.</span><span class="n">convert_metrics</span><span class="p">([</span><span class="s1">&#39;mse&#39;</span><span class="p">])</span>
+<span class="go">[&#39;mse&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BaseTask</span><span class="o">.</span><span class="n">convert_metrics</span><span class="p">(</span><span class="s1">&#39;map&#39;</span><span class="p">)</span>
+<span class="go">[mean_average_precision(0)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="classmethod">
 <dt id="matchzoo.engine.base_task.BaseTask.list_available_losses">
 <em class="property">classmethod </em><code class="descname">list_available_losses</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask.list_available_losses" title="Permalink to this definition">¶</a></dt>
@@ -626,20 +821,58 @@ or list of text-left, text-right tuples (test stage).</li>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="matchzoo.engine.base_task.BaseTask.loss">
+<code class="descname">loss</code><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask.loss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loss used in the task.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.engine.base_task.BaseTask.metrics">
+<code class="descname">metrics</code><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask.metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Metrics used in the task.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="matchzoo.engine.base_task.BaseTask.output_dtype">
 <code class="descname">output_dtype</code><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask.output_dtype" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – output data type for specific task.</p>
+<dd><p>output data type for specific task.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="matchzoo.engine.base_task.BaseTask.output_shape">
 <code class="descname">output_shape</code><a class="headerlink" href="#matchzoo.engine.base_task.BaseTask.output_shape" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – output shape of a single sample of the task.</p>
+<dd><p>output shape of a single sample of the task.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -660,6 +893,70 @@ or list of text-left, text-right tuples (test stage).</li>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.engine.callbacks">
+<span id="matchzoo-engine-callbacks-module"></span><h2>matchzoo.engine.callbacks module<a class="headerlink" href="#module-matchzoo.engine.callbacks" title="Permalink to this headline">¶</a></h2>
+<p>Callbacks.</p>
+<dl class="class">
+<dt id="matchzoo.engine.callbacks.EvaluateAllMetrics">
+<em class="property">class </em><code class="descclassname">matchzoo.engine.callbacks.</code><code class="descname">EvaluateAllMetrics</code><span class="sig-paren">(</span><em>model</em>, <em>x</em>, <em>y</em>, <em>once_every=1</em>, <em>batch_size=32</em>, <em>model_save_path=None</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.callbacks.EvaluateAllMetrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">keras.callbacks.Callback</span></code></p>
+<p>Callback to evaluate all metrics.</p>
+<p>MatchZoo metrics can not be evaluated batch-wise since they require
+dataset-level information. As a result, MatchZoo metrics are not
+evaluated automatically when a Model <cite>fit</cite>. When this callback is used,
+all metrics, including MatchZoo metrics and Keras metrics, are evluated
+once every <cite>once_every</cite> epochs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model</strong> (<a class="reference internal" href="#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a>) – Model to evaluate.</li>
+<li><strong>x</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]]) – <ol class="upperalpha" start="24">
+<li></li>
+</ol>
+</li>
+<li><strong>y</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – <ol class="loweralpha" start="25">
+<li></li>
+</ol>
+</li>
+<li><strong>once_every</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Evaluation only triggers when <cite>epoch % once_every == 0</cite>.
+(default: 1, i.e. evaluate on every epoch’s end)</li>
+<li><strong>batch_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of samples per evaluation. This only affects the
+evaluation of Keras metrics, since MatchZoo metrics are always
+evaluated using the full data.</li>
+<li><strong>model_save_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Directory path to save the model after each
+evaluate callback, (default: None, i.e., no saving.)</li>
+<li><strong>verbose</strong> – Verbosity.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="matchzoo.engine.callbacks.EvaluateAllMetrics.on_epoch_end">
+<code class="descname">on_epoch_end</code><span class="sig-paren">(</span><em>epoch</em>, <em>logs=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.callbacks.EvaluateAllMetrics.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called at the end of en epoch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>epoch</strong> – integer, index of epoch.</li>
+<li><strong>logs</strong> – dictionary of logs.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dictionary of logs.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -685,15 +982,47 @@ done by asking the user always use the same name for a parameter and
 its hyper space, but typos can occur. As a result, these wrappers
 are created to hide hyper spaces’ <cite>label</cite>, and always correctly
 bind them with its parameter’s name.</div></blockquote>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hyperopt.pyll.stochastic</span> <span class="k">import</span> <span class="n">sample</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="p">(</span><span class="n">choice</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">numbers</span><span class="p">)(</span><span class="s1">&#39;numbers&#39;</span><span class="p">))</span> <span class="ow">in</span> <span class="n">numbers</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">sample</span><span class="p">(</span><span class="n">quniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">9</span><span class="p">)(</span><span class="s1">&#39;digit&#39;</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="mi">9</span>
-<span class="go">True</span>
+<dl class="docutils">
+<dt>Examples::</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matchzoo</span> <span class="k">as</span> <span class="nn">mz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hyperopt.pyll.stochastic</span> <span class="k">import</span> <span class="n">sample</span>
 </pre></div>
 </div>
+</dd>
+<dt>Basic Usage:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">DenseBaselineModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">hyper_space</span><span class="p">)</span>  <span class="c1"># doctest: +SKIP</span>
+<span class="go"> {&#39;mlp_num_layers&#39;: 1.0, &#39;mlp_num_units&#39;: 274.0}</span>
+</pre></div>
+</div>
+</dd>
+<dt>Arithmetic Operations:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">new_space</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">**</span> <span class="n">mz</span><span class="o">.</span><span class="n">hyper_spaces</span><span class="o">.</span><span class="n">quniform</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;mlp_num_layers&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">hyper_space</span> <span class="o">=</span> <span class="n">new_space</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">hyper_space</span><span class="p">)</span>  <span class="c1"># doctest: +SKIP</span>
+<span class="go">{&#39;mlp_num_layers&#39;: 8.0, &#39;mlp_num_units&#39;: 292.0}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="method">
+<dt id="matchzoo.engine.hyper_spaces.HyperoptProxy.convert">
+<code class="descname">convert</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.hyper_spaces.HyperoptProxy.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attach <cite>name</cite> as <cite>hyperopt.hp</cite>’s <cite>label</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – </td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Apply</span></code></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a <cite>hyperopt</cite> ready search space</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -723,7 +1052,7 @@ bind them with its parameter’s name.</div></blockquote>
 <p>Parameter class.</p>
 <dl class="class">
 <dt id="matchzoo.engine.param.Param">
-<em class="property">class </em><code class="descclassname">matchzoo.engine.param.</code><code class="descname">Param</code><span class="sig-paren">(</span><em>name</em>, <em>value=None</em>, <em>hyper_space=None</em>, <em>validator=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.param.Param" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">matchzoo.engine.param.</code><code class="descname">Param</code><span class="sig-paren">(</span><em>name</em>, <em>value=None</em>, <em>hyper_space=None</em>, <em>validator=None</em>, <em>desc=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.param.Param" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Parameter class.</p>
 <p>Basic usages with a name and  value:</p>
@@ -741,7 +1070,7 @@ value.</p>
 <span class="gp">... </span>    <span class="n">value</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">validator</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">20</span>
 <span class="gp">... </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">validator</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">validator</span>  <span class="c1"># doctest: +ELLIPSIS</span>
 <span class="go">&lt;function &lt;lambda&gt; at 0x...&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">value</span>
 <span class="go">5</span>
@@ -764,10 +1093,11 @@ parameter tunable in a <code class="xref py py-class docutils literal notranslat
 <span class="gp">... </span>    <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
 <span class="gp">... </span>    <span class="n">hyper_space</span><span class="o">=</span><span class="n">quniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 <span class="gp">... </span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">hyper_space</span>  
-<span class="go">&lt;hyperopt.pyll.base.Apply object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">param</span><span class="o">.</span><span class="n">hyper_space</span>  <span class="c1"># doctest: +ELLIPSIS</span>
+<span class="go">&lt;matchzoo.engine.hyper_spaces.quniform object at ...&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">hyperopt.pyll.stochastic</span> <span class="k">import</span> <span class="n">sample</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">sample</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">hyper_space</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hyperopt_space</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">hyper_space</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="n">sample</span><span class="p">(</span><span class="n">hyperopt_space</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">)]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">set</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">}</span>
 <span class="go">True</span>
 </pre></div>
@@ -798,14 +1128,28 @@ any number that inherits <code class="xref py py-class docutils literal notransl
 </pre></div>
 </div>
 <dl class="attribute">
-<dt id="matchzoo.engine.param.Param.hyper_space">
-<code class="descname">hyper_space</code><a class="headerlink" href="#matchzoo.engine.param.Param.hyper_space" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – Hyper space of the parameter.</p>
+<dt id="matchzoo.engine.param.Param.desc">
+<code class="descname">desc</code><a class="headerlink" href="#matchzoo.engine.param.Param.desc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parameter description.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Apply</span></code></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.engine.param.Param.hyper_space">
+<code class="descname">hyper_space</code><a class="headerlink" href="#matchzoo.engine.param.Param.hyper_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hyper space of the parameter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
 </tr>
 </tbody>
 </table>
@@ -814,12 +1158,32 @@ any number that inherits <code class="xref py py-class docutils literal notransl
 <dl class="attribute">
 <dt id="matchzoo.engine.param.Param.name">
 <code class="descname">name</code><a class="headerlink" href="#matchzoo.engine.param.Param.name" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – Name of the parameter.</p>
+<dd><p>Name of the parameter.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.param.Param.set_default">
+<code class="descname">set_default</code><span class="sig-paren">(</span><em>val</em>, <em>verbose=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.param.Param.set_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set default value, has no effect if already has a value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>val</strong> – Default value to set.</li>
+<li><strong>verbose</strong> – Verbosity.</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -828,12 +1192,14 @@ any number that inherits <code class="xref py py-class docutils literal notransl
 <dl class="attribute">
 <dt id="matchzoo.engine.param.Param.validator">
 <code class="descname">validator</code><a class="headerlink" href="#matchzoo.engine.param.Param.validator" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – Validator of the parameter.</p>
+<dd><p>Validator of the parameter.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]</td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]</td>
 </tr>
 </tbody>
 </table>
@@ -842,12 +1208,14 @@ any number that inherits <code class="xref py py-class docutils literal notransl
 <dl class="attribute">
 <dt id="matchzoo.engine.param.Param.value">
 <code class="descname">value</code><a class="headerlink" href="#matchzoo.engine.param.Param.value" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – Value of the parameter.</p>
+<dd><p>Value of the parameter.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -913,68 +1281,65 @@ any number that inherits <code class="xref py py-class docutils literal notransl
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">matchzoo</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">NaiveModel</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">completed</span><span class="p">()</span>
 <span class="go">False</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">completed</span><span class="p">()</span>
 <span class="go">True</span>
 </pre></div>
 </div>
 </dd></dl>
 
+<dl class="method">
+<dt id="matchzoo.engine.param_table.ParamTable.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.param_table.ParamTable.get" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#matchzoo.engine.param.Param" title="matchzoo.engine.param.Param"><code class="xref py py-class docutils literal notranslate"><span class="pre">Param</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The parameter in the table named <cite>key</cite>.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="matchzoo.engine.param_table.ParamTable.hyper_space">
 <code class="descname">hyper_space</code><a class="headerlink" href="#matchzoo.engine.param_table.ParamTable.hyper_space" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>return</em> – Hyper space of the table, a valid <cite>hyperopt</cite> graph.</p>
+<dd><p>Hyper space of the table, a valid <cite>hyperopt</cite> graph.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></td>
+<tr class="field-odd field"><th class="field-name">Type:</th><td class="field-body">return</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="module-matchzoo.engine.tune">
-<span id="matchzoo-engine-tune-module"></span><h2>matchzoo.engine.tune module<a class="headerlink" href="#module-matchzoo.engine.tune" title="Permalink to this headline">¶</a></h2>
-<p>Tuner class. Currently a minimum working demo.</p>
-<dl class="function">
-<dt id="matchzoo.engine.tune.tune">
-<code class="descclassname">matchzoo.engine.tune.</code><code class="descname">tune</code><span class="sig-paren">(</span><em>model</em>, <em>max_evals=32</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.tune.tune" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tune the <cite>model</cite> <cite>max_evals</cite> times.</p>
-<p>Construct a hyper parameter searching space by extracting all parameters
-in <cite>model</cite> that have a defined hyper space. Then, using <cite>hyperopt</cite> API,
-iteratively sample parameters and test for loss, and pick the best trial
-out of all. Currently a minimum working demo.</p>
-<table class="docutils field-list" frame="void" rules="none">
+<dl class="method">
+<dt id="matchzoo.engine.param_table.ParamTable.keys">
+<code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.param_table.ParamTable.keys" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>model</strong> (<a class="reference internal" href="#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a>) – </li>
-<li><strong>max_evals</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of evaluations of a single tuning process.</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">Keysview</span></code>[~KT]</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A list of trials of the tuning process.</p>
-</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Parameter table keys.</td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matchzoo.models</span> <span class="k">import</span> <span class="n">DenseBaselineModel</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DenseBaselineModel</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">max_evals</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">trials</span> <span class="o">=</span> <span class="n">tune</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">max_evals</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">trials</span><span class="p">)</span> <span class="o">==</span> <span class="n">max_evals</span>
-<span class="go">True</span>
-</pre></div>
-</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.engine.param_table.ParamTable.set">
+<code class="descname">set</code><span class="sig-paren">(</span><em>key</em>, <em>param</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.engine.param_table.ParamTable.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set <cite>key</cite> to parameter <cite>param</cite>.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -991,10 +1356,10 @@ out of all. Currently a minimum working demo.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="matchzoo.generators.html" class="btn btn-neutral float-right" title="matchzoo.generators package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="matchzoo.layers.html" class="btn btn-neutral float-right" title="matchzoo.layers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="matchzoo.html" class="btn btn-neutral" title="matchzoo package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="matchzoo.datasets.wiki_qa.html" class="btn btn-neutral" title="matchzoo.datasets.wiki_qa package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -1036,7 +1401,7 @@ out of all. Currently a minimum working demo.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
 
   
 

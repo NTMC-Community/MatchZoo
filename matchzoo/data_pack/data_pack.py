@@ -1,6 +1,7 @@
 """Matchzoo DataPack, pair-wise tuple (feature) and context as input."""
 
 import typing
+import inspect
 from pathlib import Path
 import functools
 
@@ -8,6 +9,8 @@ import dill
 from tqdm import tqdm
 import numpy as np
 import pandas as pd
+
+import matchzoo
 
 tqdm.pandas()
 
@@ -27,17 +30,26 @@ class DataPack(object):
     """
     Matchzoo :class:`DataPack` data structure, store dataframe and context.
 
+    `DataPack` is a MatchZoo native data structure that most MatchZoo data
+    handling processes build upon. A `DataPack` consists of three parts:
+    `left`, `right` and `relation`, each one of is a `pandas.DataFrame`.
+
+    :param relation: Store the relation between left document
+        and right document use ids.
+    :param left: Store the content or features for id_left.
+    :param right: Store the content or features for
+        id_right.
+
     Example:
         >>> left = [
-        ...     ['qid1', 'query 1', 'feature 1'],
-        ...     ['qid2', 'query 2', 'feature 2']
+        ...     ['qid1', 'query 1'],
+        ...     ['qid2', 'query 2']
         ... ]
         >>> right = [
         ...     ['did1', 'document 1'],
         ...     ['did2', 'document 2']
         ... ]
         >>> relation = [['qid1', 'did1', 1], ['qid2', 'did2', 1]]
-        >>> context = {'vocab_size': 2000}
         >>> relation_df = pd.DataFrame(relation)
         >>> left = pd.DataFrame(left)
         >>> right = pd.DataFrame(right)
@@ -58,15 +70,7 @@ class DataPack(object):
         left: pd.DataFrame,
         right: pd.DataFrame
     ):
-        """
-        Initialize :class:`DataPack`.
-
-        :param relation: Store the relation between left document
-            and right document use ids.
-        :param left: Store the content or features for id_left.
-        :param right: Store the content or features for
-            id_right.
-        """
+        """:class:`DataPack` initializer."""
         self._relation = relation
         self._left = left
         self._right = right
@@ -81,7 +85,7 @@ class DataPack(object):
         return self._relation.shape[0]
 
     @property
-    def frame(self) -> 'FrameView':
+    def frame(self) -> 'DataPack.FrameView':
         """
         View the data pack as a :class:`pandas.DataFrame`.
 
@@ -89,11 +93,11 @@ class DataPack(object):
         the right dataframe and the relation data frame. Use `[]` to access
         an item or a slice of items.
 
-        :return: A :class:`FrameView instance.
+        :return: A :class:`matchzoo.DataPack.FrameView` instance.
 
         Example:
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> type(data_pack.frame)
             <class 'matchzoo.data_pack.data_pack.DataPack.FrameView'>
             >>> frame_slice = data_pack.frame[0:5]
@@ -120,7 +124,7 @@ class DataPack(object):
 
         Example:
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> X, y = data_pack.unpack()
             >>> type(X)
             <class 'dict'>
@@ -138,7 +142,7 @@ class DataPack(object):
         columns = list(frame.columns)
         if self.has_label:
             columns.remove('label')
-            y = np.vstack(frame['label'])
+            y = np.vstack(np.asarray(frame['label']))
         else:
             y = None
 
@@ -215,11 +219,22 @@ class DataPack(object):
         Decorate any method that modifies inplace to make that inplace change
         optional.
         """
+        doc = ":param inplace: `True` to modify inplace, `False` to return " \
+              "a modified copy. (default: `False`)"
+
+        def _clean(s):
+            return s.replace(' ', '').replace('\n', '')
+
+        if _clean(doc) not in _clean(inspect.getdoc(func)):
+            raise NotImplementedError(
+                f"`inplace` parameter of {func} not documented.\n"
+                f"Please add the following line to its documentation:\n{doc}")
 
         @functools.wraps(func)
         def wrapper(
             self, *args, inplace: bool = False, **kwargs
         ) -> typing.Optional['DataPack']:
+
             if inplace:
                 target = self
             else:
@@ -238,13 +253,13 @@ class DataPack(object):
         Shuffle the data pack by shuffling the relation column.
 
         :param inplace: `True` to modify inplace, `False` to return a modified
-            copy. (default: False)
+            copy. (default: `False`)
 
         Example:
             >>> import matchzoo as mz
             >>> import numpy.random
             >>> numpy.random.seed(0)
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> orig_ids = data_pack.relation['id_left']
             >>> shuffled = data_pack.shuffle()
             >>> (shuffled.relation['id_left'] != orig_ids).any()
@@ -260,11 +275,11 @@ class DataPack(object):
         Remove `label` column from the data pack.
 
         :param inplace: `True` to modify inplace, `False` to return a modified
-            copy. (default: False)
+            copy. (default: `False`)
 
         Example:
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> data_pack.has_label
             True
             >>> data_pack.drop_label(inplace=True)
@@ -279,11 +294,11 @@ class DataPack(object):
         Append `length_left` and `length_right` columns.
 
         :param inplace: `True` to modify inplace, `False` to return a modified
-            copy. (default: False)
+            copy. (default: `False`)
 
         Example:
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_classify_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> 'length_left' in data_pack.frame[0].columns
             False
             >>> new_data_pack = data_pack.append_text_length()
@@ -315,13 +330,13 @@ class DataPack(object):
             the original columns. To set `rename` in "both" mode, use a tuple
             of `str`, e.g. ("text_left_new_name", "text_right_new_name").
         :param inplace: `True` to modify inplace, `False` to return a modified
-            copy. (default: False)
+            copy. (default: `False`)
         :param verbose: Verbosity.
         :return:
 
         Examples::
             >>> import matchzoo as mz
-            >>> data_pack = mz.datasets.toy.load_train_rank_data()
+            >>> data_pack = mz.datasets.toy.load_data()
             >>> frame = data_pack.frame
 
         To apply `len` on the left text and add the result as 'length_left':
@@ -383,6 +398,19 @@ class DataPack(object):
         self._apply_on_text_left(func, rename=left_name, verbose=verbose)
         self._apply_on_text_right(func, rename=right_name, verbose=verbose)
 
+    @_optional_inplace
+    def one_hot_encode_label(self, num_classes=2):
+        """
+        One-hot encode `label` column of `relation`.
+
+        :param num_classes: Number of classes.
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: `False`)
+        :return:
+        """
+        self._relation['label'] = self._relation['label'].apply(
+            lambda idx: matchzoo.one_hot(idx, num_classes))
+
     class FrameView(object):
         """FrameView."""
 
@@ -397,7 +425,7 @@ class DataPack(object):
 
             Examples::
                 >>> import matchzoo as mz
-                >>> data_pack = mz.datasets.toy.load_train_classify_data()
+                >>> data_pack = mz.datasets.toy.load_data()
                 >>> frame = data_pack.frame
 
             Use `()` to get a full copy of the frame:

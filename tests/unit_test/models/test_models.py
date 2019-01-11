@@ -14,14 +14,15 @@ from matchzoo import tasks
 # Notice that each of such tuple will go through a full testing procedure, so
 # it's quite time consuming. Don't add customized_kwargs unless you have to.
 # Examples:
-# with no kwargs: (models.DenseBaselineModel, None)
-# with kwargs: (models.DenseBaselineModel, {"num_dense_units": 512})
+# with no kwargs: (models.DenseBaseline, None)
+# with kwargs: (models.DenseBaseline, {"num_dense_units": 512})
 model_setups = [
-    (models.NaiveModel, None, [np.float32, np.float32]),
-    (models.DenseBaselineModel, None, [np.float32, np.float32]),
-    (models.DSSMModel, None, [np.float32, np.float32]),
-    (models.CDSSMModel, None, [np.float32, np.float32]),
-    (models.ArcIModel, None, [np.int32, np.int32])
+    (models.Naive, None, [np.float32, np.float32]),
+    (models.DenseBaseline, None, [np.float32, np.float32]),
+    (models.DSSM, None, [np.float32, np.float32]),
+    (models.CDSSM, None, [np.float32, np.float32]),
+    (models.ArcI, None, [np.int32, np.int32]),
+    (models.ArcII, None, [np.int32, np.int32])
 ]
 
 
@@ -81,6 +82,10 @@ def y(compiled_model, num_samples):
     task = model.params['task']
     return np.random.randn(num_samples, *task.output_shape)
 
+@pytest.mark.slow
+def test_get_default_preprocessor(raw_model):
+    model, _ = raw_model
+    assert model.get_default_preprocessor()
 
 @pytest.mark.slow
 def test_model_fit(compiled_model, x, y):

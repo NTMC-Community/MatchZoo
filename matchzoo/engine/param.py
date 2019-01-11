@@ -57,9 +57,10 @@ class Param(object):
         ...     hyper_space=quniform(low=1, high=5)
         ... )
         >>> param.hyper_space  # doctest: +ELLIPSIS
-        <hyperopt.pyll.base.Apply object at 0x...>
+        <matchzoo.engine.hyper_spaces.quniform object at ...>
         >>> from hyperopt.pyll.stochastic import sample
-        >>> samples = [sample(param.hyper_space) for _ in range(64)]
+        >>> hyperopt_space = param.hyper_space.convert(param.name)
+        >>> samples = [sample(hyperopt_space) for _ in range(64)]
         >>> set(samples) == {1, 2, 3, 4, 5}
         True
 
@@ -97,6 +98,7 @@ class Param(object):
         hyper_space: typing.Optional[SpaceType] = None,
         validator: typing.Optional[
             typing.Callable[[typing.Any], bool]] = None,
+        desc: typing.Optional[str] = None,
     ):
         """
         Parameter constructor.
@@ -115,6 +117,7 @@ class Param(object):
             occupies its own line for better readability.
         """
         self._name = name
+        self._desc = desc
 
         self._value = None
         self._hyper_space = None
@@ -154,15 +157,13 @@ class Param(object):
             self._infer_pre_assignment_hook()
 
     @property
-    def hyper_space(self) -> hyperopt.pyll.Apply:
+    def hyper_space(self):
         """:return: Hyper space of the parameter."""
         return self._hyper_space
 
     @hyper_space.setter
     def hyper_space(self, new_space: SpaceType):
         """:param new_space: New space of the parameter to set."""
-        if isinstance(new_space, engine.hyper_spaces.HyperoptProxy):
-            new_space = new_space(self.name)
         self._hyper_space = new_space
 
     @property
@@ -176,6 +177,16 @@ class Param(object):
         if new_validator and not callable(new_validator):
             raise TypeError("Validator must be a callable or None.")
         self._validator = new_validator
+
+    @property
+    def desc(self):
+        """:return: Parameter description."""
+        return self._desc
+
+    @desc.setter
+    def desc(self, value: str):
+        """:param value: New description of the parameter."""
+        self._desc = value
 
     def _infer_pre_assignment_hook(self):
         if isinstance(self._value, numbers.Number):

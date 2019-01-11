@@ -6,3 +6,4 @@ from .base_preprocessor import BasePreprocessor, load_preprocessor, \
     validate_context
 from .base_model import BaseModel, load_model
 from .base_task import BaseTask, list_available_tasks
+from . import callbacks

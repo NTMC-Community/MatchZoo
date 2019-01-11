@@ -9,12 +9,12 @@ import matchzoo as mz
 
 @pytest.fixture(scope='module')
 def train_data():
-    return mz.datasets.toy.load_train_rank_data()
+    return mz.datasets.toy.load_data()
 
 
 @pytest.fixture(scope='module')
 def test_data():
-    return mz.datasets.toy.load_test_rank_data()
+    return mz.datasets.toy.load_data(stage='test')
 
 
 @pytest.fixture(scope='module')
@@ -56,7 +56,7 @@ def test_dssm(train_data_processed,
               dssm_preprocessor):
     """Test DSSM model."""
     # Create a dssm model
-    dssm_model = mz.models.DSSMModel()
+    dssm_model = mz.models.DSSM()
     input_shapes = dssm_preprocessor.context['input_shapes']
     dssm_model.params['input_shapes'] = input_shapes
     dssm_model.params['task'] = task
@@ -69,7 +69,7 @@ def test_dssm(train_data_processed,
     X, y = test_generator[0]
     try:
         dssm_model = mz.load_model('.tmpdir')
-        predictions = dssm_model.predict(X, y)
+        predictions = dssm_model.predict(X)
         assert len(predictions) > 0
         assert type(predictions[0][0]) == np.float32
     finally:
