@@ -40,8 +40,7 @@ extras_requires = {
 setup(
     name="MatchZoo",
     version=__version__,
-    author="Yixing Fan, Bo Wang, Zeyi Wang, Liang Pang, Liu Yang, Qinghua Wang,
-    Zizhen Wang, etc.",
+    author="Yixing Fan, Bo Wang, Zeyi Wang, Liang Pang, Liu Yang, Qinghua Wang, etc.",
     author_email="fanyixing@ict.ac.cn",
     description=("MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models."),
     license="Apache 2.0",
