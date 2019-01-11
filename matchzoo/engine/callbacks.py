@@ -27,7 +27,7 @@ class EvaluateAllMetrics(keras.callbacks.Callback):
         evaluation of Keras metrics, since MatchZoo metrics are always
         evaluated using the full data.
     :param model_save_path: Directory path to save the model after each
-    evaluate callback, (default: None, i.e., no saving.)
+        evaluate callback, (default: None, i.e., no saving.)
     :param verbose: Verbosity.
     """
 
