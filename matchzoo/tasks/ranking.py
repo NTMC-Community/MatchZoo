@@ -1,5 +1,6 @@
 """Ranking task."""
 
+import matchzoo as mz
 from matchzoo import engine
 
 
@@ -26,7 +27,7 @@ class Ranking(engine.BaseTask):
     @classmethod
     def list_available_metrics(cls) -> list:
         """:return: a list of available metrics."""
-        return ['mae']
+        return ['map']
 
     @property
     def output_shape(self) -> tuple:

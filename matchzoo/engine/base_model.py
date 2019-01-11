@@ -152,7 +152,7 @@ class BaseModel(abc.ABC):
 
         :return: Default preprocessor.
         """
-        return matchzoo.preprocessors.NaivePreprocessor()
+        return matchzoo.preprocessors.BasicPreprocessor()
 
     @property
     def params(self) -> engine.ParamTable:
