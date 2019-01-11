@@ -23,8 +23,7 @@ install_requires = [
     'pandas >= 0.23.1',
     'networkx >= 2.1',
     'h5py >= 2.8.0',
-    'hyperopt >= 0.1.1',
-    'markdown_generator >= 0.1.3'
+    'hyperopt >= 0.1.1'
 ]
 
 extras_requires = {
@@ -41,12 +40,13 @@ extras_requires = {
 setup(
     name="MatchZoo",
     version=__version__,
-    author="Yixing Fan, Liang Pang, Jianpeng Hou, Jiafeng Guo, Yanyan Lan, Xueqi Cheng",
-    author_email="fanyixing@software.ict.ac.cn",
+    author="Yixing Fan, Bo Wang, Zeyi Wang, Liang Pang, Liu Yang, Qinghua Wang,
+    Zizhen Wang, etc.",
+    author_email="fanyixing@ict.ac.cn",
     description=("MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models."),
     license="Apache 2.0",
     keywords="text matching models",
-    url="https://github.com/faneshion/MatchZoo",
+    url="https://github.com/NTMC-Community/MatchZoo",
     packages=find_packages(),
     long_description=long_description,
     long_description_content_type='text/markdown',
