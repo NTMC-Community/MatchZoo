@@ -2,46 +2,72 @@
 
 from pathlib import Path
 
-import markdown_generator
+import tabulate
+import inspect
+import pandas as pd
 
 import matchzoo
 
 
-def _get_table_skeleton():
-    table = markdown_generator.Table()
-    table.add_column('name', markdown_generator.Alignment.RIGHT)
-    table.add_column('description')
-    table.add_column('default value')
-    table.add_column('default hyper space')
-    return table
+def generate():
+    full = make_title()
+    for model_class in matchzoo.models.list_available():
+        full += make_model_class_subtitle(model_class)
+        full += make_doc_section_subsubtitle()
+        full += make_model_doc(model_class)
+        model = model_class()
+        full += make_params_section_subsubtitle()
+        full += make_model_params_table(model)
+    write_to_files(full)
 
 
-def _make_table(params):
-    table = _get_table_skeleton()
-    for param in params:
-        name = param.name
-        desc = param.desc or ''
-        val = param.value or ''
-        if param.hyper_space is None:
-            hyper = ''
-        else:
-            hyper = str(param.hyper_space)
-        table.append(name, desc, val, hyper)
-    return str(table)
+def make_title():
+    title = 'MatchZoo Model Reference'
+    line = '*' * len(title)
+    return line + '\n' + title + '\n' + line + '\n\n'
+
+
+def make_model_class_subtitle(model_class):
+    subtitle = model_class.__name__
+    line = '#' * len(subtitle)
+    return subtitle + '\n' + line + '\n\n'
+
+
+def make_doc_section_subsubtitle():
+    subsubtitle = 'Model Documentation'
+    line = '*' * len(subsubtitle)
+    return subsubtitle + '\n' + line + '\n\n'
+
+
+def make_params_section_subsubtitle():
+    subsubtitle = 'Model Hyper Parameters'
+    line = '*' * len(subsubtitle)
+    return subsubtitle + '\n' + line + '\n\n'
+
+
+def make_model_doc(model_class):
+    return inspect.getdoc(model_class) + '\n\n'
+
+
+def make_model_params_table(model):
+    params = model.get_default_params()
+    df = pd.DataFrame(data={
+        'Name': [p.name for p in params],
+        'Description': [p.desc for p in params],
+        'Default Value': [p.value for p in params],
+        'Default Hyper-Space': [p.hyper_space for p in params]
+    }, columns=['Name', 'Description', 'Default Value', 'Default Hyper-Space'])
+    return tabulate.tabulate(df, tablefmt='rst', headers='keys') + '\n\n'
+
+
+def write_to_files(full):
+    readme_file_path = Path(__file__).parent.joinpath('README.rst')
+    doc_file_path = Path(__file__).parent.parent.parent. \
+        joinpath('docs').joinpath('source').joinpath('model_reference.rst')
+    for file_path in readme_file_path, doc_file_path:
+        with open(file_path, 'w', encoding='utf-8') as out_file:
+            out_file.write(full)
 
 
 if __name__ == '__main__':
-    full = '# MatchZoo Model Hyper-parameters Reference \n\n'
-    full += '## Shared Parameters \n\n'
-    shared = matchzoo.engine.BaseModel.get_default_params()
-    full += _make_table(shared)
-
-    for m in matchzoo.models.list_available():
-        m = m()
-        full += '## ' + str(m.__class__.__name__) + '\n\n'
-        full += _make_table([p for p in m.get_default_params()
-                             if p.name not in shared.keys()])
-
-    file_path = Path(__file__).parent.joinpath('README.md')
-    with open(file_path, 'w', encoding='utf-8') as out_file:
-        out_file.write(full)
+    generate()
