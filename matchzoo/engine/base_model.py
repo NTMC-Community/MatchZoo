@@ -159,6 +159,10 @@ class BaseModel(abc.ABC):
         """:return: model parameters."""
         return self._params
 
+    @params.setter
+    def params(self, val):
+        self._params = val
+
     @property
     def backend(self) -> keras.models.Model:
         """:return model backend, a keras model instance."""

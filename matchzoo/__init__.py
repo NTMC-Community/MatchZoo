@@ -6,6 +6,7 @@ if not USER_DIR.exists():
 USER_DATA_DIR = USER_DIR.joinpath('datasets')
 if not USER_DATA_DIR.exists():
     USER_DATA_DIR.mkdir()
+USER_TUNED_MODELS_DIR = USER_DIR.joinpath('tuned_models')
 
 from .logger import logger
 from .version import __version__

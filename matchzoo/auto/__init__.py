@@ -1,2 +1,2 @@
-from .tune import Tuner
+from .tuner import Tuner
 from .prepare import prepare
