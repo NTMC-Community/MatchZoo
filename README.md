@@ -124,6 +124,16 @@ If you use MatchZoo in your research, please use the following BibTex entry.
         ASST PROF, ICT</p>​
       </td>
       <td>
+         <a href="https://github.com/bwanglzu"><img width="40" height="40" src="https://github.com/bwanglzu.png?s=40" alt="bwanglzu"></a><br>
+         <a href="https://github.com/bwanglzu">Wang Bo</a> ​
+        <p>Core Dev<br> M.S. TU Delft</p>​
+      </td>
+      <td>
+        ​ <a href="https://github.com/uduse"><img width="40" height="40" src="https://github.com/uduse.png?s=36" alt="uduse"></a><br>
+         <a href="https://github.com/uduse">Wang Zeyi</a>
+         <p>Core Dev<br> B.S. UC Davis</p>​
+      </td>
+      <td>
         ​ <a href="https://github.com/pl8787"><img width="40" height="40" src="https://github.com/pl8787.png?s=40" alt="pl8787"></a><br>
         ​ <a href="https://github.com/pl8787">Pang Liang</a>
         <p>Core Dev<br>
@@ -134,18 +144,6 @@ If you use MatchZoo in your research, please use the following BibTex entry.
         ​ <a href="https://github.com/yangliuy">Yang Liu</a>
         <p>Core Dev<br>
         PhD. UMASS</p>​
-      </td>
-      <td>
-        ​ <a href="https://github.com/bwanglzu"><img width="40" height="40" src="https://github.com/bwanglzu.png?s=40" alt="bwanglzu"></a><br>
-        ​ <a href="https://github.com/bwanglzu">Wang Bo</a> ​
-        <p>Core Dev<br>
-        M.S. TU Delft</p>​
-      </td>
-      <td>
-        ​ <a href="https://github.com/uduse"><img width="40" height="40" src="https://github.com/uduse.png?s=36" alt="uduse"></a><br>
-        ​ <a href="https://github.com/uduse">Wang Zeyi</a>
-        <p>Core Dev<br>
-        B.S. UC Davis</p>​
       </td>
     </tr>
     <tr align="center">
