@@ -186,7 +186,7 @@ class BaseModel(abc.ABC):
         Compile model for training.
 
         Only `keras` native metrics are compiled together with backend.
-        MatchZoo metrics are evaluated only through :method:`evaluate`.
+        MatchZoo metrics are evaluated only through :meth:`evaluate`.
         Notice that `keras` count `loss` as one of the metrics while MatchZoo
         :class:`matchzoo.engine.BaseTask` does not.
 
