@@ -70,7 +70,6 @@ class ConvKNRM(models.KNRM):
             for di in range(self._params['max_ngram']):
                 # do not match n-gram with different length if use crossmatch
                 if not self._params['use_crossmatch'] and qi != di:
-                    print("non cross")
                     continue
                 q_ngram = q_convs[qi]
                 d_ngram = d_convs[di]

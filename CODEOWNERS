@@ -18,16 +18,13 @@
 .travis.yml     	    @bwanglzu
 CONTRIBUTING.MD 	    @bwanglzu
 Makefile        	    @uduse @bwanglzu
-README.md       	    @yangliuy @pl8787
+README.md       	    @faneshion @pl8787
 readthedocs.yml 	    @wqh17101 @bwanglzu
 requirements.txt        @faneshion @pl8787
 setup.py                @faneshion @pl8787
 
 # artworks
 /artworks/              @faneshion
-
-# notebooks
-/notebooks/             @faneshion @pl8787 @uduse @bwanglzu
 
 # tutorials
 /tutorials/             @uduse @faneshion
@@ -40,8 +37,13 @@ setup.py                @faneshion @pl8787
 
 # matchzoo
 /matchzoo/engine/       @faneshion @bwanglzu @uduse @pl8787
-/matchzoo/models/       @yangliuy @pl8787 @bwanglzu @uduse
+/matchzoo/auto/         @uduse @bwanglzu
+/matchzoo/models/       @faneshion @pl8787 @bwanglzu @uduse
 /matchzoo/preprocessor/ @uduse @faneshion @pl8787
 /matchzoo/tasks/        @uduse @bwanglzu
-/matchzoo/generators/   @faneshion @uduse @pl8787 
+/matchzoo/data_generator/   @faneshion @uduse @pl8787 
+/matchzoo/data_pack/    @faneshion @uduse 
+/matchzoo/metrics/      @faneshion  @pl8787 @uduse
+/matchzoo/losses/       @faneshion @pl8787 @bwanglzu
+/matchzoo/layers/       @uduse @yangliuy
 /matchzoo/*             @faneshion @uduse @bwanglzu
