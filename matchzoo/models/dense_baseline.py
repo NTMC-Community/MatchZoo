@@ -5,12 +5,12 @@ import keras.layers
 from matchzoo import engine
 
 
-class DenseBaselineModel(engine.BaseModel):
+class DenseBaseline(engine.BaseModel):
     """
     A simple densely connected baseline model.
 
     Examples:
-        >>> model = DenseBaselineModel()
+        >>> model = DenseBaseline()
         >>> model.params['mlp_num_layers'] = 2
         >>> model.params['mlp_num_units'] = 300
         >>> model.params['mlp_num_fan_out'] = 128

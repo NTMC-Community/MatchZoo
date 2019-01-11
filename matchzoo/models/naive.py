@@ -5,7 +5,7 @@ import keras
 from matchzoo import engine
 
 
-class NaiveModel(engine.BaseModel):
+class Naive(engine.BaseModel):
     """
     Naive model with a simplest structure for testing purposes.
 

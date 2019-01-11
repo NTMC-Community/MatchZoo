@@ -24,7 +24,18 @@ def validate_context(func):
 
 
 class BasePreprocessor(metaclass=abc.ABCMeta):
-    """:class:`BasePreprocessor` to input handle data."""
+    """
+    :class:`BasePreprocessor` to input handle data.
+
+    A preprocessor should be used in two steps. First, `fit`, then,
+    `transform`. `fit` collects information into `context`, which includes
+    everything the preprocessor needs to `transform` together with other
+    useful information for later use. `fit` will only change the
+    preprocessor's inner state but not the input data. In contrast,
+    `transform` returns a modified copy of the input data without changing
+    the preprocessor's inner state.
+
+    """
 
     DATA_FILENAME = 'preprocessor.dill'
 

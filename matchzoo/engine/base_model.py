@@ -196,7 +196,7 @@ class BaseModel(abc.ABC):
 
         Examples:
             >>> from matchzoo import models
-            >>> model = models.NaiveModel()
+            >>> model = models.Naive()
             >>> model.guess_and_fill_missing_params(verbose=0)
             >>> model.params['task'].metrics = ['mse', 'map']
             >>> model.params['task'].metrics
@@ -292,7 +292,7 @@ class BaseModel(abc.ABC):
             >>> data_pack = mz.datasets.toy.load_data()
             >>> preprocessor = mz.preprocessors.NaivePreprocessor()
             >>> data_pack = preprocessor.fit_transform(data_pack)
-            >>> m = mz.models.DenseBaselineModel()
+            >>> m = mz.models.DenseBaseline()
             >>> m.params['task'] = mz.tasks.Ranking()
             >>> m.params['task'].metrics = [
             ...     'acc', 'mse', 'mae', 'ce',

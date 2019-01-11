@@ -94,7 +94,7 @@ class ParamTable(object):
         Example:
 
             >>> import matchzoo
-            >>> model = matchzoo.models.NaiveModel()
+            >>> model = matchzoo.models.Naive()
             >>> model.params.completed()
             False
             >>> model.guess_and_fill_missing_params(verbose=0)
