@@ -16,7 +16,7 @@ pip install -r requirements.txt
 # Enter docs folder.
 cd docs
 # Use sphinx autodoc to generate rst.
-sphinx-autodoc -o source/ ../matchzoo/
+sphinx-apidoc -o source/ ../matchzoo/
 # Generate html from rst
 make clean
 make html
