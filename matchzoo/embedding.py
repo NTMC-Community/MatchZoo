@@ -66,7 +66,7 @@ class Embedding(object):
 
         :param term_index: A `dict` or `TermIndex` to build with.
         :param initializer: A callable that returns a default value for missing
-            terms in data. (default: a random uniform distribution in range
+            terms in data. (default: a random uniform distribution in range)
             `(-0.2, 0.2)`).
         :return: A matrix.
         """
