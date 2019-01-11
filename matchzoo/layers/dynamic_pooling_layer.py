@@ -11,7 +11,7 @@ class DynamicPoolingLayer(Layer):
 
     :param psize1: pooling size of dimension 1
     :param psize2: pooling size of dimension 2
-    :param **kwargs: Standard layer keyword arguments.
+    :param kwargs: Standard layer keyword arguments.
 
     Examples:
         >>> import matchzoo as mz

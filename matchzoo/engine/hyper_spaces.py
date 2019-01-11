@@ -51,7 +51,7 @@ class HyperoptProxy(object):
         """
         :class:`HyperoptProxy` constructor.
 
-        :param hyperopt_func: Target :module:`hyperopt.hp` function to proxy.
+        :param hyperopt_func: Target `hyperopt.hp` function to proxy.
         :param kwargs: Keyword arguments of the proxy function, must pass all
             parameters in `hyperopt_func`.
         """
@@ -60,10 +60,10 @@ class HyperoptProxy(object):
 
     def convert(self, name: str) -> hyperopt.pyll.Apply:
         """
-        Attach `name` as :module:`hyperopt.hp`'s `label`.
+        Attach `name` as `hyperopt.hp`'s `label`.
 
         :param name:
-        :return: a :module:`hyperopt` ready search space
+        :return: a `hyperopt` ready search space
         """
         return self._func(name, **self._kwargs)
 
