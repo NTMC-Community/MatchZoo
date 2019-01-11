@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="matchzoo.engine package" href="matchzoo.engine.html" />
+    <link rel="next" title="matchzoo.auto package" href="matchzoo.auto.html" />
     <link rel="prev" title="matchzoo" href="modules.html" /> 
 
   
@@ -83,22 +83,32 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">matchzoo</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">matchzoo package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.auto.html">matchzoo.auto package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.contrib.html">matchzoo.contrib package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.data_generator.html">matchzoo.data_generator package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.data_pack.html">matchzoo.data_pack package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.html">matchzoo.datasets package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.engine.html">matchzoo.engine package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.generators.html">matchzoo.generators package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.layers.html">matchzoo.layers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.losses.html">matchzoo.losses package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.metrics.html">matchzoo.metrics package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.models.html">matchzoo.models package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.preprocessor.html">matchzoo.preprocessor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.preprocessors.html">matchzoo.preprocessors package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.processor_units.html">matchzoo.processor_units package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.tasks.html">matchzoo.tasks package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.utils.html">matchzoo.utils package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-matchzoo.datapack">matchzoo.datapack module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-matchzoo.embedding">matchzoo.embedding module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-matchzoo.logger">matchzoo.logger module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-matchzoo.version">matchzoo.version module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-matchzoo">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="model_reference.html">MatchZoo Model Reference</a></li>
 </ul>
 
             
@@ -171,38 +181,150 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.auto.html">matchzoo.auto package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.auto.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.auto.html#module-matchzoo.auto.prepare">matchzoo.auto.prepare module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.auto.html#module-matchzoo.auto.tune">matchzoo.auto.tune module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.auto.html#module-matchzoo.auto">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.contrib.html">matchzoo.contrib package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.contrib.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.contrib.layers.html">matchzoo.contrib.layers package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.contrib.layers.html#module-matchzoo.contrib.layers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.contrib.models.html">matchzoo.contrib.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.contrib.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.contrib.models.html#module-matchzoo.contrib.models.match_lstm">matchzoo.contrib.models.match_lstm module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.contrib.models.html#module-matchzoo.contrib.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.contrib.html#module-matchzoo.contrib">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.data_generator.html">matchzoo.data_generator package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_generator.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_generator.html#module-matchzoo.data_generator.data_generator">matchzoo.data_generator.data_generator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_generator.html#module-matchzoo.data_generator.dpool_data_generator">matchzoo.data_generator.dpool_data_generator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_generator.html#module-matchzoo.data_generator.dynamic_data_generator">matchzoo.data_generator.dynamic_data_generator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_generator.html#module-matchzoo.data_generator.histogram_data_generator">matchzoo.data_generator.histogram_data_generator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_generator.html#module-matchzoo.data_generator.pair_data_generator">matchzoo.data_generator.pair_data_generator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_generator.html#module-matchzoo.data_generator">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.data_pack.html">matchzoo.data_pack package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_pack.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_pack.html#module-matchzoo.data_pack.build_unit_from_data_pack">matchzoo.data_pack.build_unit_from_data_pack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_pack.html#module-matchzoo.data_pack.build_vocab_unit">matchzoo.data_pack.build_vocab_unit module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_pack.html#module-matchzoo.data_pack.data_pack">matchzoo.data_pack.data_pack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_pack.html#module-matchzoo.data_pack.pack">matchzoo.data_pack.pack module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.data_pack.html#module-matchzoo.data_pack">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.datasets.html">matchzoo.datasets package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.datasets.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.datasets.embeddings.html">matchzoo.datasets.embeddings package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.embeddings.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.embeddings.html#module-matchzoo.datasets.embeddings.load_glove_embedding">matchzoo.datasets.embeddings.load_glove_embedding module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.embeddings.html#module-matchzoo.datasets.embeddings">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.datasets.snli.html">matchzoo.datasets.snli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.snli.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.snli.html#module-matchzoo.datasets.snli.load_data">matchzoo.datasets.snli.load_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.snli.html#module-matchzoo.datasets.snli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.datasets.toy.html">matchzoo.datasets.toy package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.toy.html#module-matchzoo.datasets.toy">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.datasets.wiki_qa.html">matchzoo.datasets.wiki_qa package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.wiki_qa.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.wiki_qa.html#module-matchzoo.datasets.wiki_qa.load_data">matchzoo.datasets.wiki_qa.load_data module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.wiki_qa.html#module-matchzoo.datasets.wiki_qa">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.datasets.html#module-matchzoo.datasets">Module contents</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="matchzoo.engine.html">matchzoo.engine package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.base_generator">matchzoo.engine.base_generator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.base_metric">matchzoo.engine.base_metric module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.base_model">matchzoo.engine.base_model module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.base_preprocessor">matchzoo.engine.base_preprocessor module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.base_task">matchzoo.engine.base_task module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.callbacks">matchzoo.engine.callbacks module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.hyper_spaces">matchzoo.engine.hyper_spaces module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.param">matchzoo.engine.param module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.param_table">matchzoo.engine.param_table module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine.tune">matchzoo.engine.tune module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.engine.html#module-matchzoo.engine">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="matchzoo.generators.html">matchzoo.generators package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.generators.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.generators.html#module-matchzoo.generators.point_generator">matchzoo.generators.point_generator module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.generators.html#module-matchzoo.generators">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.layers.html">matchzoo.layers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.layers.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.layers.html#module-matchzoo.layers.dynamic_pooling_layer">matchzoo.layers.dynamic_pooling_layer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.layers.html#module-matchzoo.layers.matching_layer">matchzoo.layers.matching_layer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.layers.html#module-matchzoo.layers">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.losses.html">matchzoo.losses package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.losses.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.losses.html#module-matchzoo.losses.rank_cross_entropy_loss">matchzoo.losses.rank_cross_entropy_loss module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.losses.html#module-matchzoo.losses.rank_hinge_loss">matchzoo.losses.rank_hinge_loss module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.losses.html#module-matchzoo.losses">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.metrics.html">matchzoo.metrics package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.metrics.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.metrics.html#module-matchzoo.metrics.average_precision">matchzoo.metrics.average_precision module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.metrics.html#module-matchzoo.metrics.discounted_cumulative_gain">matchzoo.metrics.discounted_cumulative_gain module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.metrics.html#module-matchzoo.metrics.mean_average_precision">matchzoo.metrics.mean_average_precision module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.metrics.html#module-matchzoo.metrics.mean_reciprocal_rank">matchzoo.metrics.mean_reciprocal_rank module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.metrics.html#module-matchzoo.metrics.normalized_discounted_cumulative_gain">matchzoo.metrics.normalized_discounted_cumulative_gain module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.metrics.html#module-matchzoo.metrics.precision">matchzoo.metrics.precision module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.metrics.html#module-matchzoo.metrics">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="matchzoo.models.html">matchzoo.models package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.anmm">matchzoo.models.anmm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.arci">matchzoo.models.arci module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.arcii">matchzoo.models.arcii module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.cdssm">matchzoo.models.cdssm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.conv_knrm">matchzoo.models.conv_knrm module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.dense_baseline_model">matchzoo.models.dense_baseline_model module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.dssm_model">matchzoo.models.dssm_model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.drmm">matchzoo.models.drmm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.drmmtks">matchzoo.models.drmmtks module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.dssm">matchzoo.models.dssm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.duet">matchzoo.models.duet module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.knrm">matchzoo.models.knrm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.match_pyramid">matchzoo.models.match_pyramid module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.mvlstm">matchzoo.models.mvlstm module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.naive_model">matchzoo.models.naive_model module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models.parameter_readme_generator">matchzoo.models.parameter_readme_generator module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.models.html#module-matchzoo.models">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="matchzoo.preprocessor.html">matchzoo.preprocessor package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.preprocessor.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.preprocessor.html#module-matchzoo.preprocessor.dssm_preprocessor">matchzoo.preprocessor.dssm_preprocessor module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.preprocessor.html#module-matchzoo.preprocessor.process_units">matchzoo.preprocessor.process_units module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.preprocessor.html#module-matchzoo.preprocessor">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.preprocessors.html">matchzoo.preprocessors package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.preprocessors.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.preprocessors.html#module-matchzoo.preprocessors.basic_preprocessor">matchzoo.preprocessors.basic_preprocessor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.preprocessors.html#module-matchzoo.preprocessors.cdssm_preprocessor">matchzoo.preprocessors.cdssm_preprocessor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.preprocessors.html#module-matchzoo.preprocessors.dssm_preprocessor">matchzoo.preprocessors.dssm_preprocessor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.preprocessors.html#module-matchzoo.preprocessors.naive_preprocessor">matchzoo.preprocessors.naive_preprocessor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.preprocessors.html#module-matchzoo.preprocessors">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matchzoo.processor_units.html">matchzoo.processor_units package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.processor_units.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.processor_units.html#module-matchzoo.processor_units.chain_transform">matchzoo.processor_units.chain_transform module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.processor_units.html#module-matchzoo.processor_units.processor_units">matchzoo.processor_units.processor_units module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.processor_units.html#module-matchzoo.processor_units">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="matchzoo.tasks.html">matchzoo.tasks package</a><ul>
@@ -215,7 +337,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="matchzoo.utils.html">matchzoo.utils package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.utils.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="matchzoo.utils.html#module-matchzoo.utils.util">matchzoo.utils.util module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.utils.html#module-matchzoo.utils.one_hot">matchzoo.utils.one_hot module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matchzoo.utils.html#module-matchzoo.utils.tensor_type">matchzoo.utils.tensor_type module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="matchzoo.utils.html#module-matchzoo.utils">Module contents</a></li>
 </ul>
 </li>
@@ -225,97 +348,93 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-matchzoo.datapack">
-<span id="matchzoo-datapack-module"></span><h2>matchzoo.datapack module<a class="headerlink" href="#module-matchzoo.datapack" title="Permalink to this headline">¶</a></h2>
-<p>Matchzoo DataPack, pair-wise tuple (feature) and context as input.</p>
+<div class="section" id="module-matchzoo.embedding">
+<span id="matchzoo-embedding-module"></span><h2>matchzoo.embedding module<a class="headerlink" href="#module-matchzoo.embedding" title="Permalink to this headline">¶</a></h2>
+<p>Matchzoo toolkit for token embedding.</p>
 <dl class="class">
-<dt id="matchzoo.datapack.DataPack">
-<em class="property">class </em><code class="descclassname">matchzoo.datapack.</code><code class="descname">DataPack</code><span class="sig-paren">(</span><em>data</em>, <em>context={}</em>, <em>columns=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack" title="Permalink to this definition">¶</a></dt>
+<dt id="matchzoo.embedding.Embedding">
+<em class="property">class </em><code class="descclassname">matchzoo.embedding.</code><code class="descname">Embedding</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.embedding.Embedding" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Matchzoo <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> data structure, store dataframe and context.</p>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">features</span> <span class="o">=</span> <span class="p">[([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]),</span> <span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">])]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">context</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;vocab_size&#39;</span><span class="p">:</span> <span class="mi">2000</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dp</span> <span class="o">=</span> <span class="n">DataPack</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">features</span><span class="p">,</span>
-<span class="gp">... </span>              <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">dp</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-<span class="go">&lt;class &#39;matchzoo.datapack.DataPack&#39;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span>
-<span class="go">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">features</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">dp</span><span class="o">.</span><span class="n">context</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">context</span>
-<span class="go">{&#39;vocab_size&#39;: 2000}</span>
+<p>Embedding class.</p>
+<dl class="docutils">
+<dt>Examples::</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matchzoo</span> <span class="k">as</span> <span class="nn">mz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data_pack</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">toy</span><span class="o">.</span><span class="n">load_data</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pp</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">preprocessors</span><span class="o">.</span><span class="n">NaivePreprocessor</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vocab_unit</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">build_vocab_unit</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data_pack</span><span class="p">),</span>
+<span class="gp">... </span>                                 <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">term_index</span> <span class="o">=</span> <span class="n">vocab_unit</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;term_index&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">embed_path</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">embeddings</span><span class="o">.</span><span class="n">EMBED_RANK</span>
 </pre></div>
 </div>
-<dl class="attribute">
-<dt id="matchzoo.datapack.DataPack.DATA_FILENAME">
-<code class="descname">DATA_FILENAME</code><em class="property"> = 'data.dill'</em><a class="headerlink" href="#matchzoo.datapack.DataPack.DATA_FILENAME" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+</dd>
+<dt>To load from a file:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">embedding</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">embedding</span><span class="o">.</span><span class="n">load_from_file</span><span class="p">(</span><span class="n">embed_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">build_matrix</span><span class="p">(</span><span class="n">term_index</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">term_index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+<dt>To build your own:</dt>
+<dd><div class="first last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">embedding</span> <span class="o">=</span> <span class="n">mz</span><span class="o">.</span><span class="n">embedding</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span> <span class="o">=</span> <span class="n">embedding</span><span class="o">.</span><span class="n">build_matrix</span><span class="p">({</span><span class="s1">&#39;A&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">matrix</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd>
+</dl>
 <dl class="method">
-<dt id="matchzoo.datapack.DataPack.append">
-<code class="descname">append</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.append" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append new <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> object to current <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a>.</p>
-<p>It should be noted that the context of the previous <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a>
-will be updated by the new one.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>other</strong> (<a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a>) – the <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> object to be appended.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="matchzoo.datapack.DataPack.context">
-<code class="descname">context</code><a class="headerlink" href="#matchzoo.datapack.DataPack.context" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get <a class="reference internal" href="#matchzoo.datapack.DataPack.context" title="matchzoo.datapack.DataPack.context"><code class="xref py py-meth docutils literal notranslate"><span class="pre">context()</span></code></a> of class – <cite>DataPack</cite>.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="matchzoo.datapack.DataPack.dataframe">
-<code class="descname">dataframe</code><a class="headerlink" href="#matchzoo.datapack.DataPack.dataframe" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get <a class="reference internal" href="#matchzoo.datapack.DataPack.dataframe" title="matchzoo.datapack.DataPack.dataframe"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dataframe()</span></code></a> of <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="matchzoo.datapack.DataPack.sample">
-<code class="descname">sample</code><span class="sig-paren">(</span><em>number</em>, <em>replace=True</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.sample" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sample records from <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> object, for generator.</p>
+<dt id="matchzoo.embedding.Embedding.build_matrix">
+<code class="descname">build_matrix</code><span class="sig-paren">(</span><em>term_index</em>, <em>initializer=&lt;function Embedding.&lt;lambda&gt;&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.embedding.Embedding.build_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a matrix using <cite>term_index</cite>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>number</strong> – number of records to be sampled, use <cite>batch_size</cite>.</li>
-<li><strong>replace</strong> – sample with replacement, default value is <cite>True</cite>.</li>
+<li><strong>term_index</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – A <cite>dict</cite> or <cite>TermIndex</cite> to build with.</li>
+<li><strong>initializer</strong> – A callable that returns a default value for missing
+terms in data. (default: a random uniform distribution in range)
+<cite>(-0.2, 0.2)</cite>).</li>
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name" colspan="2">Return data_pack:</th></tr>
-<tr class="field-even field"><td>&#160;</td><td class="field-body"><p class="first last">return <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> object including
-sampled data and context (shallow copy of
-the context`).</p>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A matrix.</p>
 </td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
-<dl class="method">
-<dt id="matchzoo.datapack.DataPack.save">
-<code class="descname">save</code><span class="sig-paren">(</span><em>dirpath</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.DataPack.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> object.</p>
-<p>A saved <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> is represented as a directory with a
-<a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> object (transformed user input as features and
-context), it will be saved by <cite>pickle</cite>.</p>
+<dl class="attribute">
+<dt id="matchzoo.embedding.Embedding.input_dim">
+<code class="descname">input_dim</code><a class="headerlink" href="#matchzoo.embedding.Embedding.input_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>return Embedding input dimension.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – directory path of the saved <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a>.</td>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="matchzoo.embedding.Embedding.output_dim">
+<code class="descname">output_dim</code><a class="headerlink" href="#matchzoo.embedding.Embedding.output_dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>return Embedding output dimension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -324,23 +443,34 @@ context), it will be saved by <cite>pickle</cite>.</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="matchzoo.datapack.load_datapack">
-<code class="descclassname">matchzoo.datapack.</code><code class="descname">load_datapack</code><span class="sig-paren">(</span><em>dirpath</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.datapack.load_datapack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load a <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a>. The reverse function of <code class="xref py py-meth docutils literal notranslate"><span class="pre">save()</span></code>.</p>
+<dt id="matchzoo.embedding.load_from_file">
+<code class="descclassname">matchzoo.embedding.</code><code class="descname">load_from_file</code><span class="sig-paren">(</span><em>file_path</em>, <em>mode='word2vec'</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.embedding.load_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load embedding from <cite>file_path</cite>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>dirpath</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – directory path of the saved model.</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>file_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Path to file.</li>
+<li><strong>mode</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Embedding file format mode, one of ‘word2vec’ or ‘glove’.
+(default: ‘word2vec’)</li>
+</ul>
+</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a></td>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><p class="first"><a class="reference internal" href="#matchzoo.embedding.Embedding" title="matchzoo.embedding.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">Embedding</span></code></a></p>
+</td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="#matchzoo.datapack.DataPack" title="matchzoo.datapack.DataPack"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataPack</span></code></a> instance.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">An <a class="reference internal" href="#matchzoo.embedding.Embedding" title="matchzoo.embedding.Embedding"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.embedding.Embedding</span></code></a> instance.</p>
+</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
+</div>
+<div class="section" id="module-matchzoo.logger">
+<span id="matchzoo-logger-module"></span><h2>matchzoo.logger module<a class="headerlink" href="#module-matchzoo.logger" title="Permalink to this headline">¶</a></h2>
+<p>MatchZoo Logging module.</p>
 </div>
 <div class="section" id="module-matchzoo.version">
 <span id="matchzoo-version-module"></span><h2>matchzoo.version module<a class="headerlink" href="#module-matchzoo.version" title="Permalink to this headline">¶</a></h2>
@@ -359,7 +489,7 @@ context), it will be saved by <cite>pickle</cite>.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="matchzoo.engine.html" class="btn btn-neutral float-right" title="matchzoo.engine package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="matchzoo.auto.html" class="btn btn-neutral float-right" title="matchzoo.auto package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="modules.html" class="btn btn-neutral" title="matchzoo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -404,7 +534,7 @@ context), it will be saved by <cite>pickle</cite>.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
 
   
 

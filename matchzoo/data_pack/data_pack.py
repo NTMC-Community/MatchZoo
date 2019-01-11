@@ -85,7 +85,7 @@ class DataPack(object):
         return self._relation.shape[0]
 
     @property
-    def frame(self) -> 'FrameView':
+    def frame(self) -> 'DataPack.FrameView':
         """
         View the data pack as a :class:`pandas.DataFrame`.
 
@@ -93,7 +93,7 @@ class DataPack(object):
         the right dataframe and the relation data frame. Use `[]` to access
         an item or a slice of items.
 
-        :return: A :class:`FrameView instance.
+        :return: A :class:`matchzoo.DataPack.FrameView` instance.
 
         Example:
             >>> import matchzoo as mz

@@ -16,12 +16,19 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 sys.path.insert(0, os.path.abspath('../../matchzoo'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/auto'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/data_generator'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/data_pack'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/datasets'))
 sys.path.insert(0, os.path.abspath('../../matchzoo/engine'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/layers'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/losses'))
 sys.path.insert(0, os.path.abspath('../../matchzoo/models'))
-sys.path.insert(0, os.path.abspath('../../matchzoo/tasks'))
-sys.path.insert(0, os.path.abspath('../../matchzoo/preprocessor'))
-sys.path.insert(0, os.path.abspath('../../matchzoo/generators'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/metrics'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/preprocessors'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/processor_units'))
 sys.path.insert(0, os.path.abspath('../../matchzoo/utils'))
+sys.path.insert(0, os.path.abspath('../../matchzoo/tasks'))
 
 # -- Project information -----------------------------------------------------
 
@@ -48,7 +55,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.napoleon',
-    'sphinx_autodoc_typehints'
+    'sphinx_autodoc_typehints',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -59,7 +66,10 @@ templates_path = ['_templates']
 #
 # source_suffix = ['.rst', '.md']
 source_suffix = '.rst'
-
+# from recommonmark.parser import CommonMarkParser
+# source_parsers = {
+#     '.md':CommonMarkParser
+# }
 # The master toctree document.
 master_doc = 'index'
 

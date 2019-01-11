@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="matchzoo.preprocessor package" href="matchzoo.preprocessor.html" />
-    <link rel="prev" title="matchzoo.generators package" href="matchzoo.generators.html" /> 
+    <link rel="next" title="matchzoo.preprocessors package" href="matchzoo.preprocessors.html" />
+    <link rel="prev" title="matchzoo.metrics package" href="matchzoo.metrics.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -83,22 +83,32 @@
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">matchzoo</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="matchzoo.html">matchzoo package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="matchzoo.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.auto.html">matchzoo.auto package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.contrib.html">matchzoo.contrib package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.data_generator.html">matchzoo.data_generator package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.data_pack.html">matchzoo.data_pack package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.datasets.html">matchzoo.datasets package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.engine.html">matchzoo.engine package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.generators.html">matchzoo.generators package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.layers.html">matchzoo.layers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.losses.html">matchzoo.losses package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.metrics.html">matchzoo.metrics package</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">matchzoo.models package</a></li>
-<li class="toctree-l4"><a class="reference internal" href="matchzoo.preprocessor.html">matchzoo.preprocessor package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.preprocessors.html">matchzoo.preprocessors package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="matchzoo.processor_units.html">matchzoo.processor_units package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.tasks.html">matchzoo.tasks package</a></li>
 <li class="toctree-l4"><a class="reference internal" href="matchzoo.utils.html">matchzoo.utils package</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#submodules">Submodules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.datapack">matchzoo.datapack module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.embedding">matchzoo.embedding module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.logger">matchzoo.logger module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo.version">matchzoo.version module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="matchzoo.html#module-matchzoo">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="model_reference.html">MatchZoo Model Reference</a></li>
 </ul>
 
             
@@ -172,6 +182,263 @@
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
+<div class="section" id="module-matchzoo.models.anmm">
+<span id="matchzoo-models-anmm-module"></span><h2>matchzoo.models.anmm module<a class="headerlink" href="#module-matchzoo.models.anmm" title="Permalink to this headline">¶</a></h2>
+<p>An implementation of aNMM Model.</p>
+<dl class="class">
+<dt id="matchzoo.models.anmm.ANMM">
+<em class="property">class </em><code class="descclassname">matchzoo.models.anmm.</code><code class="descname">ANMM</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.anmm.ANMM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>ANMM Model.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ANMM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="matchzoo.models.anmm.ANMM.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.anmm.ANMM.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model structure.</p>
+<p>aNMM model based on bin weighting and query term attentions</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.anmm.ANMM.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.anmm.ANMM.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.arci">
+<span id="matchzoo-models-arci-module"></span><h2>matchzoo.models.arci module<a class="headerlink" href="#module-matchzoo.models.arci" title="Permalink to this headline">¶</a></h2>
+<p>An implementation of ArcI Model.</p>
+<dl class="class">
+<dt id="matchzoo.models.arci.ArcI">
+<em class="property">class </em><code class="descclassname">matchzoo.models.arci.</code><code class="descname">ArcI</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.arci.ArcI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>ArcI Model.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ArcI</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;num_blocks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;left_filters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;right_filters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;left_kernel_sizes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;right_kernel_sizes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;left_pool_sizes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;right_pool_sizes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;conv_activation_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;relu&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_fan_out&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_activation_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;relu&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dropout_rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="matchzoo.models.arci.ArcI.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.arci.ArcI.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model structure.</p>
+<p>ArcI use Siamese arthitecture.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.arci.ArcI.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.arci.ArcI.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.arcii">
+<span id="matchzoo-models-arcii-module"></span><h2>matchzoo.models.arcii module<a class="headerlink" href="#module-matchzoo.models.arcii" title="Permalink to this headline">¶</a></h2>
+<p>An implementation of ArcII Model.</p>
+<dl class="class">
+<dt id="matchzoo.models.arcii.ArcII">
+<em class="property">class </em><code class="descclassname">matchzoo.models.arcii.</code><code class="descname">ArcII</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.arcii.ArcII" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>ArcII Model.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ArcII</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_output_dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;num_blocks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;kernel_1d_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;kernel_1d_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;kernel_2d_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;kernel_2d_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;pool_2d_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="matchzoo.models.arcii.ArcII.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.arcii.ArcII.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model structure.</p>
+<p>ArcII has the desirable property of letting two sentences meet before
+their own high-level representations mature.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.arcii.ArcII.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.arcii.ArcII.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.cdssm">
+<span id="matchzoo-models-cdssm-module"></span><h2>matchzoo.models.cdssm module<a class="headerlink" href="#module-matchzoo.models.cdssm" title="Permalink to this headline">¶</a></h2>
+<p>An implementation of CDSSM (CLSM) model.</p>
+<dl class="class">
+<dt id="matchzoo.models.cdssm.CDSSM">
+<em class="property">class </em><code class="descclassname">matchzoo.models.cdssm.</code><code class="descname">CDSSM</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.cdssm.CDSSM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>CDSSM Model implementation.</p>
+<p>Learning Semantic Representations Using Convolutional Neural Networks
+for Web Search. (2014a)
+A Latent Semantic Model with Convolutional-Pooling Structure for
+Information Retrieval. (2014b)</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">CDSSM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;optimizer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;adam&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;filters&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="mi">32</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;kernel_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;conv_activation_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;relu&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="matchzoo.models.cdssm.CDSSM.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.cdssm.CDSSM.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model structure.</p>
+<p>CDSSM use Siamese architecture.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.cdssm.CDSSM.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.cdssm.CDSSM.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.cdssm.CDSSM.get_default_preprocessor">
+<em class="property">classmethod </em><code class="descname">get_default_preprocessor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.cdssm.CDSSM.get_default_preprocessor" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Default preprocessor.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.models.cdssm.CDSSM.guess_and_fill_missing_params">
+<code class="descname">guess_and_fill_missing_params</code><span class="sig-paren">(</span><em>verbose=1</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.cdssm.CDSSM.guess_and_fill_missing_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Guess and fill missing parameters in <code class="xref py py-attr docutils literal notranslate"><span class="pre">params</span></code>.</p>
+<p>Use this method to automatically fill-in hyper parameters.
+This involves some guessing so the parameter it fills could be
+wrong. For example, the default task is <cite>Ranking</cite>, and if we do not
+set it to <cite>Classification</cite> manually for data packs prepared for
+classification, then the shape of the model output and the data will
+mismatch.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>verbose</strong> – Verbosity.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.conv_knrm">
+<span id="matchzoo-models-conv-knrm-module"></span><h2>matchzoo.models.conv_knrm module<a class="headerlink" href="#module-matchzoo.models.conv_knrm" title="Permalink to this headline">¶</a></h2>
+<p>ConvKNRM model.</p>
+<dl class="class">
+<dt id="matchzoo.models.conv_knrm.ConvKNRM">
+<em class="property">class </em><code class="descclassname">matchzoo.models.conv_knrm.</code><code class="descname">ConvKNRM</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.conv_knrm.ConvKNRM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#matchzoo.models.knrm.KNRM" title="matchzoo.models.knrm.KNRM"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.models.knrm.KNRM</span></code></a></p>
+<p>ConvKNRM model.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ConvKNRM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_input_dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_output_dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_trainable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;filters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;conv_activation_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;tanh&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_ngram&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;use_crossmatch&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;kernel_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;exact_sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="matchzoo.models.conv_knrm.ConvKNRM.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.conv_knrm.ConvKNRM.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.models.conv_knrm.ConvKNRM.get_default_params">
+<code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.conv_knrm.ConvKNRM.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default parameters.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-matchzoo.models.dense_baseline_model">
 <span id="matchzoo-models-dense-baseline-model-module"></span><h2>matchzoo.models.dense_baseline_model module<a class="headerlink" href="#module-matchzoo.models.dense_baseline_model" title="Permalink to this headline">¶</a></h2>
 <p>A simple densely connected baseline model.</p>
@@ -182,10 +449,13 @@
 <p>A simple densely connected baseline model.</p>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DenseBaselineModel</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;input_shapes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">30</span><span class="p">,),</span> <span class="p">(</span><span class="mi">30</span><span class="p">,)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;num_dense_units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1024</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_fan_out&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_activation_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;relu&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -212,30 +482,339 @@
 </dd></dl>
 
 </div>
-<div class="section" id="module-matchzoo.models.dssm_model">
-<span id="matchzoo-models-dssm-model-module"></span><h2>matchzoo.models.dssm_model module<a class="headerlink" href="#module-matchzoo.models.dssm_model" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-matchzoo.models.drmm">
+<span id="matchzoo-models-drmm-module"></span><h2>matchzoo.models.drmm module<a class="headerlink" href="#module-matchzoo.models.drmm" title="Permalink to this headline">¶</a></h2>
+<p>An implementation of DRMM Model.</p>
+<dl class="class">
+<dt id="matchzoo.models.drmm.DRMM">
+<em class="property">class </em><code class="descclassname">matchzoo.models.drmm.</code><code class="descname">DRMM</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.drmm.DRMM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>DRMM Model.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DRMM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_fan_out&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_activation_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;tanh&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="classmethod">
+<dt id="matchzoo.models.drmm.DRMM.attention_layer">
+<em class="property">classmethod </em><code class="descname">attention_layer</code><span class="sig-paren">(</span><em>attention_input</em>, <em>attention_mask=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.drmm.DRMM.attention_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs attention on the input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>attention_input</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – The input tensor for attention layer.</li>
+<li><strong>attention_mask</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – A tensor to mask the invalid values.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The masked output tensor.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.models.drmm.DRMM.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.drmm.DRMM.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model structure.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.drmm.DRMM.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.drmm.DRMM.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.drmmtks">
+<span id="matchzoo-models-drmmtks-module"></span><h2>matchzoo.models.drmmtks module<a class="headerlink" href="#module-matchzoo.models.drmmtks" title="Permalink to this headline">¶</a></h2>
+<p>An implementation of DRMMTKS Model.</p>
+<dl class="class">
+<dt id="matchzoo.models.drmmtks.DRMMTKS">
+<em class="property">class </em><code class="descclassname">matchzoo.models.drmmtks.</code><code class="descname">DRMMTKS</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.drmmtks.DRMMTKS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>DRMMTKS Model.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DRMMTKS</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_input_dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_output_dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;top_k&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_fan_out&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_activation_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;tanh&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="classmethod">
+<dt id="matchzoo.models.drmmtks.DRMMTKS.attention_layer">
+<em class="property">classmethod </em><code class="descname">attention_layer</code><span class="sig-paren">(</span><em>attention_input</em>, <em>attention_mask=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.drmmtks.DRMMTKS.attention_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs attention on the input.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>attention_input</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>) – The input tensor for attention layer.</li>
+<li><strong>attention_mask</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – A tensor to mask the invalid values.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The masked output tensor.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="matchzoo.models.drmmtks.DRMMTKS.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.drmmtks.DRMMTKS.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model structure.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.drmmtks.DRMMTKS.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.drmmtks.DRMMTKS.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.dssm">
+<span id="matchzoo-models-dssm-module"></span><h2>matchzoo.models.dssm module<a class="headerlink" href="#module-matchzoo.models.dssm" title="Permalink to this headline">¶</a></h2>
 <p>An implementation of DSSM, Deep Structured Semantic Model.</p>
 <dl class="class">
-<dt id="matchzoo.models.dssm_model.DSSMModel">
-<em class="property">class </em><code class="descclassname">matchzoo.models.dssm_model.</code><code class="descname">DSSMModel</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel" title="Permalink to this definition">¶</a></dt>
+<dt id="matchzoo.models.dssm.DSSM">
+<em class="property">class </em><code class="descclassname">matchzoo.models.dssm.</code><code class="descname">DSSM</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm.DSSM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
 <p>Deep structured semantic model.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DSSMModel</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DSSM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_fan_out&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_activation_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;relu&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="matchzoo.models.dssm_model.DSSMModel.build">
-<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel.build" title="Permalink to this definition">¶</a></dt>
+<dt id="matchzoo.models.dssm.DSSM.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm.DSSM.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build model structure.</p>
 <p>DSSM use Siamese arthitecture.</p>
 </dd></dl>
 
 <dl class="classmethod">
-<dt id="matchzoo.models.dssm_model.DSSMModel.get_default_params">
-<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm_model.DSSMModel.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dt id="matchzoo.models.dssm.DSSM.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm.DSSM.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.dssm.DSSM.get_default_preprocessor">
+<em class="property">classmethod </em><code class="descname">get_default_preprocessor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.dssm.DSSM.get_default_preprocessor" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Default preprocessor.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.duet">
+<span id="matchzoo-models-duet-module"></span><h2>matchzoo.models.duet module<a class="headerlink" href="#module-matchzoo.models.duet" title="Permalink to this headline">¶</a></h2>
+<p>DUET Model.</p>
+<dl class="class">
+<dt id="matchzoo.models.duet.DUET">
+<em class="property">class </em><code class="descclassname">matchzoo.models.duet.</code><code class="descname">DUET</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.duet.DUET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>DUET Model.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">DUET</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_input_dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_output_dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;lm_filters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;lm_hidden_sizes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dropout_rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dm_filters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dm_kernel_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dm_d_mpool&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dm_hidden_sizes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="matchzoo.models.duet.DUET.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.duet.DUET.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.duet.DUET.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.duet.DUET.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default parameters.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.knrm">
+<span id="matchzoo-models-knrm-module"></span><h2>matchzoo.models.knrm module<a class="headerlink" href="#module-matchzoo.models.knrm" title="Permalink to this headline">¶</a></h2>
+<p>KNRM model.</p>
+<dl class="class">
+<dt id="matchzoo.models.knrm.KNRM">
+<em class="property">class </em><code class="descclassname">matchzoo.models.knrm.</code><code class="descname">KNRM</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.knrm.KNRM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>KNRM model.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">KNRM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_input_dim&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="mi">10000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_output_dim&#39;</span><span class="p">]</span> <span class="o">=</span>  <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_trainable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;kernel_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">11</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;exact_sigma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.001</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="matchzoo.models.knrm.KNRM.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.knrm.KNRM.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.knrm.KNRM.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.knrm.KNRM.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get default parameters.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.match_pyramid">
+<span id="matchzoo-models-match-pyramid-module"></span><h2>matchzoo.models.match_pyramid module<a class="headerlink" href="#module-matchzoo.models.match_pyramid" title="Permalink to this headline">¶</a></h2>
+<p>An implementation of MatchPyramid Model.</p>
+<dl class="class">
+<dt id="matchzoo.models.match_pyramid.MatchPyramid">
+<em class="property">class </em><code class="descclassname">matchzoo.models.match_pyramid.</code><code class="descname">MatchPyramid</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.match_pyramid.MatchPyramid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>MatchPyramid Model.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">MatchPyramid</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;embedding_output_dim&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">300</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;num_blocks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;kernel_count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;kernel_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dpool_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="matchzoo.models.match_pyramid.MatchPyramid.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.match_pyramid.MatchPyramid.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model structure.</p>
+<p>MatchPyramid text matching as image recognition.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.match_pyramid.MatchPyramid.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.match_pyramid.MatchPyramid.get_default_params" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.param_table.ParamTable" title="matchzoo.engine.param_table.ParamTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamTable</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">model default parameters.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-matchzoo.models.mvlstm">
+<span id="matchzoo-models-mvlstm-module"></span><h2>matchzoo.models.mvlstm module<a class="headerlink" href="#module-matchzoo.models.mvlstm" title="Permalink to this headline">¶</a></h2>
+<p>An implementation of MVLSTM Model.</p>
+<dl class="class">
+<dt id="matchzoo.models.mvlstm.MVLSTM">
+<em class="property">class </em><code class="descclassname">matchzoo.models.mvlstm.</code><code class="descname">MVLSTM</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.mvlstm.MVLSTM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
+<p>MVLSTM Model.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">MVLSTM</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;lstm_units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;top_k&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_layers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_num_fan_out&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;mlp_activation_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;relu&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dropout_rate&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">guess_and_fill_missing_params</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="matchzoo.models.mvlstm.MVLSTM.build">
+<code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.mvlstm.MVLSTM.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build model structure.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="matchzoo.models.mvlstm.MVLSTM.get_default_params">
+<em class="property">classmethod </em><code class="descname">get_default_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.mvlstm.MVLSTM.get_default_params" title="Permalink to this definition">¶</a></dt>
 <dd><table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -259,6 +838,8 @@
 <em class="property">class </em><code class="descclassname">matchzoo.models.naive_model.</code><code class="descname">NaiveModel</code><span class="sig-paren">(</span><em>params=None</em>, <em>backend=None</em><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.naive_model.NaiveModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="matchzoo.engine.html#matchzoo.engine.base_model.BaseModel" title="matchzoo.engine.base_model.BaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">matchzoo.engine.base_model.BaseModel</span></code></a></p>
 <p>Naive model with a simplest structure for testing purposes.</p>
+<p>Bare minimum functioning model. The best choice to get things rolling.
+The worst choice to fit and evaluate performance.</p>
 <dl class="method">
 <dt id="matchzoo.models.naive_model.NaiveModel.build">
 <code class="descname">build</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.naive_model.NaiveModel.build" title="Permalink to this definition">¶</a></dt>
@@ -268,8 +849,17 @@
 </dd></dl>
 
 </div>
+<div class="section" id="module-matchzoo.models.parameter_readme_generator">
+<span id="matchzoo-models-parameter-readme-generator-module"></span><h2>matchzoo.models.parameter_readme_generator module<a class="headerlink" href="#module-matchzoo.models.parameter_readme_generator" title="Permalink to this headline">¶</a></h2>
+<p>matchzoo/models/README.md generater.</p>
+</div>
 <div class="section" id="module-matchzoo.models">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-matchzoo.models" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="matchzoo.models.list_available">
+<code class="descclassname">matchzoo.models.</code><code class="descname">list_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#matchzoo.models.list_available" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </div>
 </div>
 
@@ -281,10 +871,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="matchzoo.preprocessor.html" class="btn btn-neutral float-right" title="matchzoo.preprocessor package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="matchzoo.preprocessors.html" class="btn btn-neutral float-right" title="matchzoo.preprocessors package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="matchzoo.generators.html" class="btn btn-neutral" title="matchzoo.generators package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="matchzoo.metrics.html" class="btn btn-neutral" title="matchzoo.metrics package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -326,7 +916,7 @@
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+      <script type="text/javascript" src="_static/language_data.js"></script>
 
   
 
