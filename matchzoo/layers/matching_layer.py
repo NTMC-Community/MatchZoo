@@ -14,7 +14,7 @@ class MatchingLayer(Layer):
         If set to True, then the output of the dot product
         is the cosine proximity between the two samples.
     :param matching_type: the similarity function for matching
-    :param **kwargs: Standard layer keyword arguments.
+    :param kwargs: Standard layer keyword arguments.
 
     Examples:
         >>> import matchzoo as mz
