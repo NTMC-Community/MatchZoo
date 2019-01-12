@@ -216,3 +216,7 @@ class Param(object):
             self.value = val
             if verbose:
                 print(f"Parameter \"{self._name}\" set to {val}.")
+
+    def reset(self):
+        """Set the parameter to `None`."""
+        self._value = None
