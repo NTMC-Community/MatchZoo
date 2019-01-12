@@ -94,7 +94,7 @@ class BaseModel(abc.ABC):
         ))
         params.add(engine.Param(
             name='optimizer',
-            hyper_space=hyper_spaces.choice(['adam', 'adgrad', 'rmsprop'])
+            hyper_space=hyper_spaces.choice(['adam', 'adagrad', 'rmsprop'])
         ))
         if with_embedding:
             params.add(engine.Param(
