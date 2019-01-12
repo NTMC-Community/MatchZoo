@@ -26,7 +26,7 @@ setup(
         'Environment :: Console',
         'Operating System :: POSIX :: Linux',
         'Topic :: Scientific/Engineering :: Artificial Intelligence',
-        "License :: OSI Approved :: Apache License",
+        "License :: OSI Approved :: Apache Software License",
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
