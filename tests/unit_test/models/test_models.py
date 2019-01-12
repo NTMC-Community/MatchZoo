@@ -69,12 +69,16 @@ def x(compiled_model, num_samples):
                      lambda x: np.random.randint(low=0, high=100, size=x)
                  }
     input_shapes = model.params['input_shapes']
-    return [rand_func[dtype]([num_samples] + list(shape))
+
+    values = [rand_func[dtype]([num_samples] + list(shape))
             if None not in shape
             else rand_func[dtype]([num_samples] + [10, 900])
             for shape, dtype
             in zip(input_shapes, input_dtypes)]
-
+    return {'text_left': values[0],
+            'text_right': values[1],
+            'id_left': np.random.randint(low=0, high=1000, size=[num_samples])
+            }
 
 @pytest.fixture
 def y(compiled_model, num_samples):
