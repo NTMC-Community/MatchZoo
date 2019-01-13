@@ -126,7 +126,9 @@ class Param(object):
 
         self.validator = validator
         self.hyper_space = hyper_space
-        self.value = value
+
+        if value is not None:  # bypass checking if no default
+            self.value = value
 
     @property
     def name(self) -> str:
@@ -216,3 +218,27 @@ class Param(object):
             self.value = val
             if verbose:
                 print(f"Parameter \"{self._name}\" set to {val}.")
+
+    def reset(self):
+        """
+        Set the parameter's value to `None`, which means "not set".
+
+        This method bypasses validator.
+
+        Example:
+            >>> import matchzoo as mz
+            >>> param = mz.engine.Param(
+            ...     name='str', validator=lambda x: isinstance(x, str))
+            >>> param.value = 'hello'
+            >>> param.value = None
+            Traceback (most recent call last):
+                ...
+            ValueError: Validator not satifised.
+            The validator's definition is as follows:
+            name='str', validator=lambda x: isinstance(x, str))
+            >>> param.reset()
+            >>> param.value is None
+            True
+
+        """
+        self._value = None
