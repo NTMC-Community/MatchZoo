@@ -116,20 +116,23 @@ class BaseModel(abc.ABC):
                      "Shouldn't be changed."
             ))
             params.add(engine.Param(
-                name='mlp_num_units',
-                desc="Number of units in first `mlp_num_layers` layers."
+                name='mlp_num_units', value=64,
+                desc="Number of units in first `mlp_num_layers` layers.",
+                hyper_space=hyper_spaces.quniform(8, 256, 8)
             ))
             params.add(engine.Param(
-                name='mlp_num_layers',
-                desc="Number of layers of the multiple layer percetron."
+                name='mlp_num_layers', value=3,
+                desc="Number of layers of the multiple layer percetron.",
+                hyper_space=hyper_spaces.quniform(1, 6)
             ))
             params.add(engine.Param(
-                name='mlp_num_fan_out',
+                name='mlp_num_fan_out', value=32,
                 desc="Number of units of the layer that connects the multiple "
-                     "layer percetron and the output."
+                     "layer percetron and the output.",
+                hyper_space=hyper_spaces.quniform(4, 128, 4)
             ))
             params.add(engine.Param(
-                name='mlp_activation_func',
+                name='mlp_activation_func', value='relu',
                 desc='Activation function used in the multiple '
                      'layer perceptron.'
             ))
@@ -459,12 +462,6 @@ class BaseModel(abc.ABC):
         if 'with_embedding' in self._params:
             self._params.get('embedding_input_dim').set_default(300, verbose)
             self._params.get('embedding_output_dim').set_default(300, verbose)
-        if 'with_multi_layer_perceptron' in self._params:
-            self._params.get('mlp_num_layers').set_default(3, verbose)
-            self._params.get('mlp_num_units').set_default(64, verbose)
-            self._params.get('mlp_num_fan_out').set_default(32, verbose)
-            self._params.get('mlp_activation_func').set_default('relu',
-                                                                verbose)
 
     def _set_param_default(self, name, default_val, verbose):
         if self._params[name] is None:
