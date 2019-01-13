@@ -89,8 +89,7 @@ class BaseModel(abc.ABC):
             desc="Decides model output shape, loss, and metrics."
         ))
         params.add(engine.Param(
-            name='optimizer',
-            hyper_space=hyper_spaces.choice(['adam', 'adagrad', 'rmsprop'])
+            name='optimizer', value='adam',
         ))
         if with_embedding:
             params.add(engine.Param(
@@ -457,7 +456,6 @@ class BaseModel(abc.ABC):
         """
         self._params.get('task').set_default(tasks.Ranking(), verbose)
         self._params.get('input_shapes').set_default([(30,), (30,)], verbose)
-        self._params.get('optimizer').set_default('adam', verbose)
         if 'with_embedding' in self._params:
             self._params.get('embedding_input_dim').set_default(300, verbose)
             self._params.get('embedding_output_dim').set_default(300, verbose)
