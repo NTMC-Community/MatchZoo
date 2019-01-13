@@ -105,7 +105,7 @@ class BaseModel(abc.ABC):
                 desc='Should be set manually.'
             ))
             params.add(engine.Param(
-                name='embedding_trainable',
+                name='embedding_trainable', value=True,
                 desc='`True` to enable embedding layer training, '
                      '`False` to freeze embedding parameters.'
             ))
@@ -459,7 +459,6 @@ class BaseModel(abc.ABC):
         if 'with_embedding' in self._params:
             self._params.get('embedding_input_dim').set_default(300, verbose)
             self._params.get('embedding_output_dim').set_default(300, verbose)
-            self._params.get('embedding_trainable').set_default(True, verbose)
         if 'with_multi_layer_perceptron' in self._params:
             self._params.get('mlp_num_layers').set_default(3, verbose)
             self._params.get('mlp_num_units').set_default(64, verbose)
