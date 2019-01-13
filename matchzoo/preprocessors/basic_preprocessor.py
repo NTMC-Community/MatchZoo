@@ -45,7 +45,7 @@ class BasicPreprocessor(engine.BasePreprocessor):
         >>> preprocessor.context['input_shapes']
         [(10,), (20,)]
         >>> preprocessor.context['vocab_size']
-        284
+        285
         >>> processed_train_data = preprocessor.transform(train_data)
         >>> type(processed_train_data)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
