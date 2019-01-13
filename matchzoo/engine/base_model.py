@@ -76,10 +76,6 @@ class BaseModel(abc.ABC):
         """
         params = engine.ParamTable()
         params.add(engine.Param(
-            name='name',
-            desc="Not related to the model\'s behavior."
-        ))
-        params.add(engine.Param(
             name='model_class', value=cls,
             desc="Model class. Used internally for save/load. "
                  "Changing this may cause unexpected behaviors."
@@ -459,7 +455,6 @@ class BaseModel(abc.ABC):
 
         :param verbose: Verbosity.
         """
-        self._params.get('name').set_default(self.__class__.__name__, verbose)
         self._params.get('task').set_default(tasks.Ranking(), verbose)
         self._params.get('input_shapes').set_default([(30,), (30,)], verbose)
         self._params.get('optimizer').set_default('adam', verbose)
