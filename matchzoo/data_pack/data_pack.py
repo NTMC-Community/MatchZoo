@@ -289,7 +289,7 @@ class DataPack(object):
         self._relation = self._relation.drop(columns='label')
 
     @_optional_inplace
-    def append_text_length(self):
+    def append_text_length(self, verbose=1):
         """
         Append `length_left` and `length_right` columns.
 
@@ -312,7 +312,7 @@ class DataPack(object):
 
         """
         self.apply_on_text(len, rename=('length_left', 'length_right'),
-                           inplace=True)
+                           inplace=True, verbose=verbose)
 
     @_optional_inplace
     def apply_on_text(

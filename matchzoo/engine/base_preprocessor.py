@@ -81,8 +81,10 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         Call fit-transform.
 
         :param data_pack: :class:`DataPack` object to be processed.
+        :param verbose: Verbosity.
         """
-        return self.fit(data_pack, verbose).transform(data_pack, verbose)
+        return self.fit(data_pack, verbose=verbose) \
+            .transform(data_pack, verbose=verbose)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """

@@ -91,7 +91,8 @@ class BasicPreprocessor(engine.BasePreprocessor):
         :return: class:`BasicPreprocessor` instance.
         """
         units = self._default_processor_units()
-        data_pack = data_pack.apply_on_text(chain_transform(units))
+        data_pack = data_pack.apply_on_text(chain_transform(units),
+                                            verbose=verbose)
 
         fitted_filter_unit = build_unit_from_data_pack(self._filter_unit,
                                                        data_pack,
@@ -131,7 +132,7 @@ class BasicPreprocessor(engine.BasePreprocessor):
 
         data_pack.apply_on_text(self._context['vocab_unit'].transform,
                                 mode='both', inplace=True, verbose=verbose)
-        data_pack.append_text_length(inplace=True)
+        data_pack.append_text_length(inplace=True, verbose=verbose)
         data_pack.apply_on_text(self._left_fixedlength_unit.transform,
                                 mode='left', inplace=True, verbose=verbose)
         data_pack.apply_on_text(self._right_fixedlength_unit.transform,
