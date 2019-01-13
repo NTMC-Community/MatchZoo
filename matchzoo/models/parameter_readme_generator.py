@@ -51,12 +51,11 @@ def _make_model_doc(model_class):
 
 def _make_model_params_table(model):
     params = model.get_default_params()
-    df = pd.DataFrame(data={
-        'Name': [p.name for p in params],
-        'Description': [p.desc for p in params],
-        'Default Value': [p.value for p in params],
-        'Default Hyper-Space': [p.hyper_space for p in params]
-    }, columns=['Name', 'Description', 'Default Value', 'Default Hyper-Space'])
+    df = params.to_frame()
+    df = df.rename({
+        'Value': 'Default Value',
+        'Hyper-Space': 'Default Hyper-Space'
+    }, axis='columns')
     return tabulate.tabulate(df, tablefmt='rst', headers='keys') + '\n\n'
 
 
