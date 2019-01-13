@@ -218,5 +218,25 @@ class Param(object):
                 print(f"Parameter \"{self._name}\" set to {val}.")
 
     def reset(self):
-        """Set the parameter to `None`."""
+        """
+        Set the parameter's value to `None`, which means "not set".
+
+        This method bypasses validator.
+
+        Example:
+            >>> import matchzoo as mz
+            >>> param = mz.engine.Param(
+            ...     name='str', validator=lambda x: isinstance(x, str))
+            >>> param.value = 'hello'
+            >>> param.value = None
+            Traceback (most recent call last):
+                ...
+            ValueError: Validator not satifised.
+            The validator's definition is as follows:
+            name='str', validator=lambda x: isinstance(x, str))
+            >>> param.reset()
+            >>> param.value is None
+            True
+
+        """
         self._value = None
