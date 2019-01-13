@@ -105,7 +105,7 @@ class BasicPreprocessor(engine.BasePreprocessor):
 
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
         self._context['vocab_unit'] = vocab_unit
-        self._context['vocab_size'] = len(vocab_unit.state['term_index'])
+        self._context['vocab_size'] = len(vocab_unit.state['term_index']) + 1
 
         self._context['input_shapes'] = [(self._fixed_length_left,),
                                          (self._fixed_length_right,)]
