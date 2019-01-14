@@ -12,7 +12,7 @@ matrix:
           dist: trusty
           python: 3.6
         - os: osx
-          language: objective-c
+          language: generic
           env: PYTHON_VERSION=3.6
 
 install:
@@ -21,7 +21,9 @@ install:
   - "python3 -m nltk.downloader wordnet"
   - "python3 -m nltk.downloader stopwords"
 
-script: python3 -m pytest
+script:
+  - "python3 -m --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-report html --cov-config .coveragerc matchzoo/ tests/ -W ignore::DeprecationWarning"
+  - "flake8 ./matchzoo --exclude __init__.py"
 
 after_success:
       - codecov
