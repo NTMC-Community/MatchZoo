@@ -81,7 +81,6 @@ class ParamTable(object):
               Name Description  Value Hyper-Space
             0    x        my x     10        None
             1    y        my y     20        None
-            <BLANKLINE>
 
         """
         df = pd.DataFrame(data={

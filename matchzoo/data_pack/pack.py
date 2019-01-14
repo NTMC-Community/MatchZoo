@@ -37,7 +37,6 @@ def pack(df: pd.DataFrame) -> 'matchzoo.DataPack':
         1     L-0         A      R-1          b      1
         2     L-1         B      R-1          b      1
         3     L-2         C      R-2          c      0
-        <BLANKLINE>
 
     """
     if 'text_left' not in df or 'text_right' not in df:
