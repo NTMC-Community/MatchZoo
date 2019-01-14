@@ -13,7 +13,8 @@ matrix:
           python: 3.6
         - os: osx
           osx_image: xcode7.2
-          python: 3.6
+          language: generic
+          env: PYTHON_VERSION=3.6
 
 install:
   - "pip install -r requirements.txt"
