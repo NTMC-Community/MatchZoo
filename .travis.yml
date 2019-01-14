@@ -2,9 +2,6 @@ language: python
 
 sudo: true
 
-cache:
-    pip: true
-
 env:
     global:
         - PYTHONPATH=$PYTHONPATH:$TRAVIS_BUILD_DIR/tests:$TRAVIS_BUILD_DIR/matchzoo
@@ -13,6 +10,9 @@ matrix:
     include:
         - os: linux
           dist: trusty
+          python: 3.6
+        - os: osx
+          osx_image: xcode7.2
           python: 3.6
 
 install:
