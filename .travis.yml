@@ -1,14 +1,26 @@
 language: python
+
+dist: xenial
+sudo: true
+
+cache:
+    pip: true
+
+env:
+    global:
+        - PYTHONPATH=$PYTHONPATH:$TRAVIS_BUILD_DIR/tests:$TRAVIS_BUILD_DIR/matchzoo
+
 python:
       - 3.6
       - 3.7
-sudo: enabled
+
 install:
   - "pip install -r requirements.txt"
   - "python -m nltk.downloader punkt"
   - "python -m nltk.downloader wordnet"
   - "python -m nltk.downloader stopwords"
+
 script: make test
-env: PYTHONPATH=$PYTHONPATH:$TRAVIS_BUILD_DIR/tests:$TRAVIS_BUILD_DIR/matchzoo
+
 after_success:
       - codecov
