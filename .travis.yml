@@ -22,7 +22,7 @@ install:
   - "python3 -m nltk.downloader stopwords"
 
 script:
-  - "python3 -m --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-report html --cov-config .coveragerc matchzoo/ tests/ -W ignore::DeprecationWarning"
+  - "python3 -m pytest --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-report html --cov-config .coveragerc matchzoo/ tests/ -W ignore::DeprecationWarning"
   - "flake8 ./matchzoo --exclude __init__.py"
 
 after_success:
