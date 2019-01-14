@@ -31,7 +31,7 @@ def pack(df: pd.DataFrame) -> 'matchzoo.DataPack':
         >>> df = pd.DataFrame(data={'text_left': list('AABC'),
         ...                         'text_right': list('abbc'),
         ...                         'label': [0, 1, 1, 0]})
-        >>> mz.pack(df).frame() # doctest: +SKIP
+        >>> mz.pack(df).frame()
           id_left text_left id_right text_right  label
         0     L-0         A      R-0          a      0
         1     L-0         A      R-1          b      1

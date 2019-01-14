@@ -77,7 +77,7 @@ class ParamTable(object):
             >>> table = mz.engine.ParamTable()
             >>> table.add(mz.engine.Param(name='x', value=10, desc='my x'))
             >>> table.add(mz.engine.Param(name='y', value=20, desc='my y'))
-            >>> table.to_frame() # doctest: +SKIP
+            >>> table.to_frame()
               Name Description  Value Hyper-Space
             0    x        my x     10        None
             1    y        my y     20        None
