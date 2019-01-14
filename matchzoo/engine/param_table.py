@@ -137,3 +137,8 @@ class ParamTable(object):
     def __contains__(self, item):
         """:return: `True` if parameter in parameters."""
         return item in self._params
+
+    def update(self, other: dict):
+        for key in other:
+            if key in self:
+                self[key] = other[key]

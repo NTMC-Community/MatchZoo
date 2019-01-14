@@ -416,11 +416,9 @@ class WordHashingUnit(ProcessorUnit):
        ...     term_index={'': 0,'st#': 1, '#te': 2, 'est': 3, 'tes': 4})
        >>> hashing = word_hashing.transform(letters)
        >>> hashing[0]
-       array([0., 1., 1., 1., 1., 0.])
+       [0.0, 1.0, 1.0, 1.0, 1.0, 0.0]
        >>> hashing[1]
-       array([1., 0., 0., 0., 0., 0.])
-       >>> hashing.shape
-       (2, 6)
+       [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     """
 
@@ -437,7 +435,7 @@ class WordHashingUnit(ProcessorUnit):
         """
         self._term_index = term_index
 
-    def transform(self, terms: list) -> np.ndarray:
+    def transform(self, terms: list) -> list:
         """
         Transform list of :attr:`letters` into word hashing layer.
 
@@ -462,7 +460,7 @@ class WordHashingUnit(ProcessorUnit):
                 letter_id = self._term_index.get(key, 0)
                 hashing[letter_id] = value
 
-        return hashing
+        return hashing.tolist()
 
 
 class FixedLengthUnit(ProcessorUnit):
@@ -589,3 +587,5 @@ class MatchingHistogramUnit(ProcessorUnit):
         elif self._mode == 'LCH':
             matching_hist = np.log(matching_hist)
         return matching_hist.tolist()
+
+

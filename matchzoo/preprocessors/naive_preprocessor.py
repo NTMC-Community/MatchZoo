@@ -21,10 +21,10 @@ class NaivePreprocessor(engine.BasePreprocessor):
         >>> train_data = mz.datasets.toy.load_data()
         >>> test_data = mz.datasets.toy.load_data(stage='test')
         >>> preprocessor = mz.preprocessors.NaivePreprocessor()
-        >>> train_data_processed = preprocessor.fit_transform(train_data)
+        >>> train_data_processed = preprocessor.fit_transform(train_data, 0)
         >>> type(train_data_processed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
-        >>> test_data_transformed = preprocessor.transform(test_data)
+        >>> test_data_transformed = preprocessor.transform(test_data, 0)
         >>> type(test_data_transformed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
 

@@ -37,7 +37,6 @@ class DRMMTKS(engine.BaseModel):
         )
         params.add(engine.Param(name='mask_value', value=-1,
                                 desc="The value to be masked from inputs."))
-        params['optimizer'] = 'adam'
         params['input_shapes'] = [(5,), (300,)]
         params.add(engine.Param(
             'top_k', value=10,
@@ -81,8 +80,11 @@ class DRMMTKS(engine.BaseModel):
             [embed_query,
              embed_doc])
         # shape = [B, L, K]
+        effective_top_k = min(self._params['top_k'],
+                              self.params['input_shapes'][0][0],
+                              self.params['input_shapes'][1][0])
         matching_topk = keras.layers.Lambda(
-            lambda x: K.tf.nn.top_k(x, k=self._params['top_k'], sorted=True)[0]
+            lambda x: K.tf.nn.top_k(x, k=effective_top_k, sorted=True)[0]
         )(matching_matrix)
 
         # Process right input.

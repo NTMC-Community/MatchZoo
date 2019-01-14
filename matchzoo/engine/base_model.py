@@ -152,6 +152,10 @@ class BaseModel(abc.ABC):
         """
         return matchzoo.preprocessors.BasicPreprocessor()
 
+    @classmethod
+    def get_default_data_generator(cls, task, data_pack):
+        pass
+
     @property
     def params(self) -> engine.ParamTable:
         """:return: model parameters."""
@@ -208,7 +212,7 @@ class BaseModel(abc.ABC):
 
     def fit(
         self,
-        x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+        x: typing.Union[np.ndarray, typing.List[np.ndarray], dict],
         y: np.ndarray,
         batch_size: int = 128,
         epochs: int = 1,
@@ -318,8 +322,8 @@ class BaseModel(abc.ABC):
 
         for metric in keras_metrics:
             metric_func = keras.metrics.get(metric)
-            result[metric] = K.eval(
-                metric_func(K.variable(y), K.variable(y_pred)))
+            result[metric] = K.eval(K.mean(
+                metric_func(K.variable(y), K.variable(y_pred))))
 
         if matchzoo_metrics:
             if not isinstance(self.params['task'], tasks.Ranking):
@@ -330,6 +334,14 @@ class BaseModel(abc.ABC):
 
         return result
 
+    def evaluate_generator(
+        self,
+        generator: DataGenerator,
+        batch_size=32,
+    ):
+        x, y = generator[:]
+        return self.evaluate(x, y, batch_size=batch_size)
+
     def _separate_metrics(self):
         matchzoo_metrics = []
         keras_metrics = []
@@ -337,26 +349,8 @@ class BaseModel(abc.ABC):
             if isinstance(metric, engine.BaseMetric):
                 matchzoo_metrics.append(metric)
             else:
-                keras_metrics.append(self._remap_keras_metric(metric))
+                keras_metrics.append(metric)
         return matchzoo_metrics, keras_metrics
-
-    def _remap_keras_metric(self, metric: str) -> str:
-        # TODO: note here, we do not support sparse label in classification.
-        lookup = {
-            tasks.Classification: {
-                'acc': 'categorical_accuracy',
-                'accuracy': 'categorical_accuracy',
-                'crossentropy': 'categorical_crossentropy',
-                'ce': 'categorical_crossentropy',
-            },
-            tasks.Ranking: {
-                'acc': 'binary_accuracy',
-                'accuracy': 'binary_accuracy',
-                'crossentropy': 'binary_crossentropy',
-                'ce': 'binary_crossentropy',
-            }
-        }
-        return lookup[type(self._params['task'])].get(metric, metric)
 
     @classmethod
     def _eval_metric_on_data_frame(
@@ -416,6 +410,13 @@ class BaseModel(abc.ABC):
         with open(params_path, mode='wb') as params_file:
             dill.dump(self._params, params_file)
 
+    def get_embedding_layer(self, name: str = 'embedding'):
+        for layer in self._backend.layers:
+            if layer.name == name:
+                return layer
+        raise ValueError(f"Layer {name} not found. Initialize your embedding "
+                         f"layer with `name='{name}'`.")
+
     def load_embedding_matrix(
         self,
         embedding_matrix: np.ndarray,
@@ -435,12 +436,7 @@ class BaseModel(abc.ABC):
         :param embedding_matrix: Embedding matrix to be loaded.
         :param name: Name of the layer. (default: 'embedding')
         """
-        for layer in self._backend.layers:
-            if layer.name == name:
-                layer.set_weights([embedding_matrix])
-                return
-        raise ValueError(f"layer {name} not found. Initialize your embedding "
-                         f"layer with `name='{name}'`.")
+        self.get_embedding_layer(name).set_weights([embedding_matrix])
 
     def guess_and_fill_missing_params(self, verbose=1):
         """

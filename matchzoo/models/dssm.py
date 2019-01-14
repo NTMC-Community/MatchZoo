@@ -25,7 +25,6 @@ class DSSM(engine.BaseModel):
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params(with_multi_layer_perceptron=True)
-        params['optimizer'] = 'adam'
         return params
 
     def build(self):

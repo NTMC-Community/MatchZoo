@@ -27,9 +27,6 @@ class MatchPyramid(engine.BaseModel):
     def get_default_params(cls) -> engine.ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params(with_embedding=True)
-        params['optimizer'] = 'adam'
-        opt_space = engine.hyper_spaces.choice(['adam', 'rmsprop', 'adagrad'])
-        params.get('optimizer').hyper_space = opt_space
         params.add(engine.Param(name='num_blocks', value=1,
                                 desc="Number of convolution blocks."))
         params.add(engine.Param(name='kernel_count', value=[32],
@@ -44,10 +41,7 @@ class MatchPyramid(engine.BaseModel):
                                 desc="The max-pooling size of each block."))
         params.add(engine.Param(
             name='padding', value='same',
-            hyper_space=engine.hyper_spaces.choice(
-                ['same', 'valid', 'causal']),
-            desc="The padding mode in the convolution layer. It should be one"
-                 "of `same`, `valid`, and `causal`."
+            desc="The padding mode in the convolution layer."
         ))
         params.add(engine.Param(
             name='dropout_rate', value=0.0,

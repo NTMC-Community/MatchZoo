@@ -3,6 +3,7 @@
 import keras
 
 from matchzoo import engine
+from matchzoo.engine import hyper_spaces
 
 
 class Naive(engine.BaseModel):
@@ -12,6 +13,12 @@ class Naive(engine.BaseModel):
     Bare minimum functioning model. The best choice to get things rolling.
     The worst choice to fit and evaluate performance.
     """
+
+    def get_default_params(cls):
+        params = super().get_default_params()
+        params.get('optimizer').hyper_space = \
+            hyper_spaces.choice(['adam', 'adagrad', 'rmsprop'])
+        return params
 
     def build(self):
         """Build."""

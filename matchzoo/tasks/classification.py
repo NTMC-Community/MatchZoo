@@ -20,9 +20,9 @@ class Classification(engine.BaseTask):
 
     """
 
-    def __init__(self, num_classes: int = 2):
+    def __init__(self, num_classes: int = 2, **kwargs):
         """Classification task."""
-        super().__init__()
+        super().__init__(**kwargs)
         if not isinstance(num_classes, int):
             raise TypeError("Number of classes must be an integer.")
         if num_classes < 2:

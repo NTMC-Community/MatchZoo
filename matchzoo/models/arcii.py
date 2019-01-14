@@ -51,9 +51,9 @@ class ArcII(engine.BaseModel):
         params.add(engine.Param(
             name='padding', value='same',
             hyper_space=engine.hyper_spaces.choice(
-                ['same', 'valid', 'causal']),
+                ['same', 'valid']),
             desc="The padding mode in the convolution layer. It should be one"
-                 "of `same`, `valid`, and `causal`."
+                 "of `same`, `valid`."
         ))
         params.add(engine.Param(
             name='dropout_rate', value=0.0,

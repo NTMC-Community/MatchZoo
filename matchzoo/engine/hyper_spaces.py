@@ -212,3 +212,7 @@ class uniform(HyperoptProxy):
     def __str__(self):
         """:return: `str` representation of the hyper space."""
         return f'uniform distribution in  [{self._low}, {self._high})'
+
+
+def sample(space):
+    return hyperopt.pyll.stochastic.sample(space)

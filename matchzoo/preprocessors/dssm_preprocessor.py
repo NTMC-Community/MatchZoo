@@ -58,8 +58,10 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
 
         self._context['vocab_unit'] = vocab_unit
-        triletter_dim = len(vocab_unit.state['term_index']) + 1
-        self._context['input_shapes'] = [(triletter_dim,), (triletter_dim,)]
+        vocab_size = len(vocab_unit.state['term_index']) + 1
+        self._context['vocab_size'] = vocab_size
+        self._context['embedding_input_dim'] = vocab_size
+        self._context['input_shapes'] = [(vocab_size,), (vocab_size,)]
         return self
 
     @engine.validate_context

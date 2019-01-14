@@ -21,13 +21,8 @@ from .data_pack import load_data_pack
 from .data_pack import build_unit_from_data_pack
 from .data_pack import build_vocab_unit
 
+from . import data_generator
 from .data_generator import DataGenerator
-from .data_generator import PairDataGenerator
-from .data_generator import DynamicDataGenerator
-from .data_generator import DPoolDataGenerator
-from .data_generator import DPoolPairDataGenerator
-from .data_generator import HistogramDataGenerator
-from .data_generator import HistogramPairDataGenerator
 
 from . import tasks
 from . import metrics
@@ -37,7 +32,6 @@ from . import preprocessors
 from . import models
 from . import embedding
 from . import datasets
-from . import auto
 from . import layers
 from . import contrib
 
@@ -45,3 +39,10 @@ from .engine import hyper_spaces
 from .engine import load_model
 from .engine import load_preprocessor
 from .engine import callbacks
+
+from .embedding import Embedding
+
+from . import auto
+from .auto import tuner
+from .auto import ZooKeeper
+from .auto import Tuner

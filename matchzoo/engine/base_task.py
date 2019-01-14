@@ -9,27 +9,6 @@ from matchzoo import engine
 class BaseTask(abc.ABC):
     """Base Task, shouldn't be used directly."""
 
-    @classmethod
-    def convert_metrics(cls, metrics: typing.Union[list,
-                                                   str,
-                                                   engine.BaseMetric]
-                        ) -> typing.List[engine.BaseMetric]:
-        """
-        Convert `metrics` into properly formed list of metrics.
-
-        Examples:
-            >>> BaseTask.convert_metrics(['mse'])
-            ['mse']
-            >>> BaseTask.convert_metrics('map')
-            [mean_average_precision(0.0)]
-
-        """
-        if not metrics:
-            metrics = []
-        elif not isinstance(metrics, list):
-            metrics = [metrics]
-        return [engine.parse_metric(metric) for metric in metrics]
-
     def __init__(self, loss=None, metrics=None):
         """
         Base task constructor.
@@ -38,12 +17,18 @@ class BaseTask(abc.ABC):
         :param metrics:
         """
         self._loss = loss
-        self._metrics = metrics
-
+        self._metrics = self._convert_metrics(metrics)
         self._assure_loss()
         self._assure_metrics()
 
-        self._metrics = self.convert_metrics(self._metrics)
+    def _convert_metrics(self, metrics):
+        if not metrics:
+            metrics = []
+        elif not isinstance(metrics, list):
+            metrics = [metrics]
+        return [
+            engine.parse_metric(metric, self) for metric in metrics
+        ]
 
     def _assure_loss(self):
         if not self._loss:
@@ -51,7 +36,8 @@ class BaseTask(abc.ABC):
 
     def _assure_metrics(self):
         if not self._metrics:
-            self._metrics = [self.list_available_metrics()[0]]
+            first_available = self.list_available_metrics()[0]
+            self._metrics = self._convert_metrics(first_available)
 
     @property
     def loss(self):
@@ -65,7 +51,7 @@ class BaseTask(abc.ABC):
 
     @metrics.setter
     def metrics(self, new_metrics: typing.Union[list, str, engine.BaseMetric]):
-        self._metrics = self.convert_metrics(new_metrics)
+        self._metrics = self._convert_metrics(new_metrics)
 
     @classmethod
     @abc.abstractmethod
@@ -86,11 +72,3 @@ class BaseTask(abc.ABC):
     @abc.abstractmethod
     def output_dtype(self):
         """:return: output data type for specific task."""
-
-
-def list_available_tasks(base=BaseTask) -> typing.List[typing.Type[BaseTask]]:
-    """:return: a list of available task types."""
-    ret = [base]
-    for subclass in base.__subclasses__():
-        ret.extend(list_available_tasks(subclass))
-    return ret

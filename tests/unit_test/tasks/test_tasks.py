@@ -27,5 +27,3 @@ def test_classification_num_classes(arg):
     assert task.num_classes == arg
 
 
-def test_list_available_tasks():
-    assert tasks.list_available_task_types()
