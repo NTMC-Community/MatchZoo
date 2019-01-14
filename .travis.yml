@@ -16,12 +16,12 @@ matrix:
           env: PYTHON_VERSION=3.6
 
 install:
-  - "pip install -r requirements.txt"
-  - "python -m nltk.downloader punkt"
-  - "python -m nltk.downloader wordnet"
-  - "python -m nltk.downloader stopwords"
+  - "pip3 install -r requirements.txt"
+  - "python3 -m nltk.downloader punkt"
+  - "python3 -m nltk.downloader wordnet"
+  - "python3 -m nltk.downloader stopwords"
 
-script: make test
+script: python3 -m pytest
 
 after_success:
       - codecov
