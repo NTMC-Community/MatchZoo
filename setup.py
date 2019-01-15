@@ -10,6 +10,8 @@ here = os.path.abspath(os.path.dirname(__file__))
 __version__ = None
 exec(open('matchzoo/version.py').read())
 
+short_description = 'Facilitating the design, comparison and sharing of deep text matching models.'
+
 # Get the long description from the README file
 with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
@@ -42,7 +44,7 @@ setup(
     version=__version__,
     author="Yixing Fan, Bo Wang, Zeyi Wang, Liang Pang, Liu Yang, Qinghua Wang, etc.",
     author_email="fanyixing@ict.ac.cn",
-    description=("MatchZoo is a toolkit for text matching. It was developed with a focus on facilitating the designing, comparing and sharing of deep text matching models."),
+    description=(short_description),
     license="Apache 2.0",
     keywords="text matching models",
     url="https://github.com/NTMC-Community/MatchZoo",
