@@ -1,5 +1,5 @@
 <div align='center'>
-<img src="https://github.com/NTMC-Community/MatchZoo/blob/hotfix/pypi/artworks/matchzoo-logo.png?raw=true" width = "400"  alt="logo" align="center" />
+<img src="https://github.com/NTMC-Community/MatchZoo/blob/master/artworks/matchzoo-logo.png?raw=true" width = "400"  alt="logo" align="center" />
 </div>
 
 # MatchZoo
