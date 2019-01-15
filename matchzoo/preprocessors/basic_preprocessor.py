@@ -45,7 +45,7 @@ class BasicPreprocessor(engine.BasePreprocessor):
         >>> preprocessor.context['input_shapes']
         [(10,), (20,)]
         >>> preprocessor.context['vocab_size']
-        285
+        225
         >>> processed_train_data = preprocessor.transform(train_data)
         >>> type(processed_train_data)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
@@ -90,7 +90,7 @@ class BasicPreprocessor(engine.BasePreprocessor):
         :param verbose: Verbosity.
         :return: class:`BasicPreprocessor` instance.
         """
-        units = self._default_processor_units()
+        units = self._default_units
         data_pack = data_pack.apply_on_text(chain_transform(units),
                                             verbose=verbose)
 
@@ -123,7 +123,7 @@ class BasicPreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         data_pack = data_pack.copy()
-        units = self._default_processor_units()
+        units = self._default_units
         data_pack.apply_on_text(chain_transform(units), inplace=True,
                                 verbose=verbose)
 
