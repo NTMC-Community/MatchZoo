@@ -15,7 +15,7 @@ def _dynamic_pooling_index(length_left: np.array,
                            fixed_length_left: int,
                            fixed_length_right: int,
                            compress_ratio_left: float,
-                           compress_ratio_right: float):
+                           compress_ratio_right: float) -> np.array:
 
     def _dpool_index(batch_idx: int,
                      one_length_left: int,

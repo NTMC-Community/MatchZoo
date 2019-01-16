@@ -12,7 +12,8 @@ class BaseTask(abc.ABC):
     @classmethod
     def convert_metrics(cls, metrics: typing.Union[list,
                                                    str,
-                                                   engine.BaseMetric]):
+                                                   engine.BaseMetric]
+                        ) -> typing.List[engine.BaseMetric]:
         """
         Convert `metrics` into properly formed list of metrics.
 
@@ -63,7 +64,7 @@ class BaseTask(abc.ABC):
         return self._metrics
 
     @metrics.setter
-    def metrics(self, new_metrics):
+    def metrics(self, new_metrics: typing.Union[list, str, engine.BaseMetric]):
         self._metrics = self.convert_metrics(new_metrics)
 
     @classmethod

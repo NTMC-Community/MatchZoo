@@ -1,5 +1,6 @@
 """WikiQA data loader."""
 
+import typing
 import csv
 from pathlib import Path
 
@@ -12,7 +13,8 @@ _url = "https://download.microsoft.com/download/E/5/F/" \
        "E5FCFCEE-7005-4814-853D-DAA7C66507E0/WikiQACorpus.zip"
 
 
-def load_data(stage='train', task='ranking', filter=False):
+def load_data(stage: str = 'train', task: str = 'ranking', filter: str = False
+              ) -> typing.Union[matchzoo.DataPack, tuple]:
     """
     Load WikiQA data.
 

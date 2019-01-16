@@ -75,7 +75,14 @@ class KNRM(engine.BaseModel):
         self._backend = keras.Model(inputs=[query, doc], outputs=[out])
 
     @classmethod
-    def _kernel_layer(cls, mu, sigma):
+    def _kernel_layer(cls, mu: float, sigma: float) -> keras.layers.Layer:
+        """
+        Gaussian kernel layer in KNRM.
+
+        :param mu: Float, mean of the kernel.
+        :param sigma: Float, sigma of the kernel.
+        :return: `keras.layers.Layer`.
+        """
         def kernel(x):
             return K.tf.exp(-0.5 * (x - mu) * (x - mu) / sigma / sigma)
 

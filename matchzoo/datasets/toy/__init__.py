@@ -1,3 +1,4 @@
+import typing
 from pathlib import Path
 
 import pandas as pd
@@ -5,7 +6,8 @@ import pandas as pd
 import matchzoo
 
 
-def load_data(stage='train', task='ranking'):
+def load_data(stage: str = 'train', task: str = 'ranking'
+              ) -> typing.Union[matchzoo.DataPack, tuple]:
     """
     Load WikiQA data.
 

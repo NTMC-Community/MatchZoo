@@ -1,4 +1,6 @@
 """Mean average precision metric for ranking."""
+import numpy as np
+
 from matchzoo import engine
 
 
@@ -19,7 +21,7 @@ class MeanAveragePrecision(engine.BaseMetric):
         """:return: Formated string representation of the metric."""
         return f"{self.ALIAS[0]}({self._threshold})"
 
-    def __call__(self, y_true, y_pred):
+    def __call__(self, y_true: np.array, y_pred: np.array) -> float:
         """
         Calculate mean average precision.
 

@@ -21,7 +21,7 @@ class RankHingeLoss(object):
 
     """
 
-    def __init__(self, num_neg=1, margin=1.0):
+    def __init__(self, num_neg: int = 1, margin: float = 1.0):
         """
         :class:`RankHingeLoss` constructor.
 

@@ -1,9 +1,16 @@
 """Wrapper function organizes a number of transform functions."""
+import typing
 import functools
 
+from .processor_units import ProcessorUnit
 
-def chain_transform(units):
-    """Compose unit transformations into a single function."""
+
+def chain_transform(units: typing.List[ProcessorUnit]) -> typing.Callable:
+    """
+    Compose unit transformations into a single function.
+
+    :param units: List of :class:`matchzoo.ProcessorUnit`.
+    """
     @functools.wraps(chain_transform)
     def wrapper(arg):
         """Wrapper function of transformations composition."""

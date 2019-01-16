@@ -159,7 +159,7 @@ class Param(object):
             self._infer_pre_assignment_hook()
 
     @property
-    def hyper_space(self):
+    def hyper_space(self) -> SpaceType:
         """:return: Hyper space of the parameter."""
         return self._hyper_space
 
@@ -181,7 +181,7 @@ class Param(object):
         self._validator = new_validator
 
     @property
-    def desc(self):
+    def desc(self) -> str:
         """:return: Parameter description."""
         return self._desc
 

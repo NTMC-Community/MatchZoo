@@ -1,17 +1,11 @@
 """Convert list of input into class:`DataPack` expected format."""
 
+import typing
+
 import pandas as pd
+import numpy as np
 
 import matchzoo
-
-
-def _has_label(data: list):
-    if data and len(data[0]) == 5:
-        return True
-    elif len(data[0]) == 4:
-        return False
-    else:
-        raise ValueError('Invalid data format.')
 
 
 def pack(df: pd.DataFrame) -> 'matchzoo.DataPack':
@@ -65,7 +59,8 @@ def pack(df: pd.DataFrame) -> 'matchzoo.DataPack':
     return matchzoo.DataPack(relation, left, right)
 
 
-def _merge(data, ids, text_label, id_label):
+def _merge(data: pd.DataFrame, ids: typing.Union[list, np.array],
+           text_label: str, id_label: str):
     left = pd.DataFrame(data={
         text_label: data[text_label], id_label: ids
     })
@@ -74,7 +69,7 @@ def _merge(data, ids, text_label, id_label):
     return left
 
 
-def _gen_ids(data, col, prefix):
+def _gen_ids(data: pd.DataFrame, col: str, prefix: str):
     lookup = {}
     for text in data[col].unique():
         lookup[text] = prefix + str(len(lookup))

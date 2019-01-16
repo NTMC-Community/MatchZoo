@@ -100,7 +100,8 @@ class DRMMTKS(engine.BaseModel):
 
     @classmethod
     def attention_layer(cls, attention_input: typing.Any,
-                        attention_mask: typing.Any = None):
+                        attention_mask: typing.Any = None
+                        ) -> keras.layers.Layer:
         """
         Performs attention on the input.
 

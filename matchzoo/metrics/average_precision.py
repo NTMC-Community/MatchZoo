@@ -10,7 +10,7 @@ class AveragePrecision(engine.BaseMetric):
 
     ALIAS = ['average_precision', 'ap']
 
-    def __init__(self, threshold=0):
+    def __init__(self, threshold: float = 0):
         """
         :class:`AveragePrecision` constructor.
 
@@ -18,11 +18,11 @@ class AveragePrecision(engine.BaseMetric):
         """
         self._threshold = threshold
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """:return: Formated string representation of the metric."""
         return f"{self.ALIAS[0]}({self._threshold})"
 
-    def __call__(self, y_true, y_pred):
+    def __call__(self, y_true: np.array, y_pred: np.array) -> float:
         """
         Calculate average precision (area under PR curve).
 

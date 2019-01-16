@@ -42,7 +42,7 @@ def sort_and_couple(labels: np.array, scores: np.array) -> np.array:
 
 def parse_metric(metric: typing.Union[str,
                                       typing.Type[BaseMetric],
-                                      BaseMetric]):
+                                      BaseMetric]) -> 'BaseMetric':
     """
     Parse input metric in any form into a :class:`BaseMetric` instance.
 
