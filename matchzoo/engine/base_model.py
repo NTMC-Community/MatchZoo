@@ -76,10 +76,6 @@ class BaseModel(abc.ABC):
         """
         params = engine.ParamTable()
         params.add(engine.Param(
-            name='name',
-            desc="Not related to the model\'s behavior."
-        ))
-        params.add(engine.Param(
             name='model_class', value=cls,
             desc="Model class. Used internally for save/load. "
                  "Changing this may cause unexpected behaviors."
@@ -93,8 +89,7 @@ class BaseModel(abc.ABC):
             desc="Decides model output shape, loss, and metrics."
         ))
         params.add(engine.Param(
-            name='optimizer',
-            hyper_space=hyper_spaces.choice(['adam', 'adagrad', 'rmsprop'])
+            name='optimizer', value='adam',
         ))
         if with_embedding:
             params.add(engine.Param(
@@ -110,7 +105,7 @@ class BaseModel(abc.ABC):
                 desc='Should be set manually.'
             ))
             params.add(engine.Param(
-                name='embedding_trainable',
+                name='embedding_trainable', value=True,
                 desc='`True` to enable embedding layer training, '
                      '`False` to freeze embedding parameters.'
             ))
@@ -121,20 +116,23 @@ class BaseModel(abc.ABC):
                      "Shouldn't be changed."
             ))
             params.add(engine.Param(
-                name='mlp_num_units',
-                desc="Number of units in first `mlp_num_layers` layers."
+                name='mlp_num_units', value=64,
+                desc="Number of units in first `mlp_num_layers` layers.",
+                hyper_space=hyper_spaces.quniform(8, 256, 8)
             ))
             params.add(engine.Param(
-                name='mlp_num_layers',
-                desc="Number of layers of the multiple layer percetron."
+                name='mlp_num_layers', value=3,
+                desc="Number of layers of the multiple layer percetron.",
+                hyper_space=hyper_spaces.quniform(1, 6)
             ))
             params.add(engine.Param(
-                name='mlp_num_fan_out',
+                name='mlp_num_fan_out', value=32,
                 desc="Number of units of the layer that connects the multiple "
-                     "layer percetron and the output."
+                     "layer percetron and the output.",
+                hyper_space=hyper_spaces.quniform(4, 128, 4)
             ))
             params.add(engine.Param(
-                name='mlp_activation_func',
+                name='mlp_activation_func', value='relu',
                 desc='Activation function used in the multiple '
                      'layer perceptron.'
             ))
@@ -457,20 +455,11 @@ class BaseModel(abc.ABC):
 
         :param verbose: Verbosity.
         """
-        self._params.get('name').set_default(self.__class__.__name__, verbose)
         self._params.get('task').set_default(tasks.Ranking(), verbose)
         self._params.get('input_shapes').set_default([(30,), (30,)], verbose)
-        self._params.get('optimizer').set_default('adam', verbose)
         if 'with_embedding' in self._params:
             self._params.get('embedding_input_dim').set_default(300, verbose)
             self._params.get('embedding_output_dim').set_default(300, verbose)
-            self._params.get('embedding_trainable').set_default(True, verbose)
-        if 'with_multi_layer_perceptron' in self._params:
-            self._params.get('mlp_num_layers').set_default(3, verbose)
-            self._params.get('mlp_num_units').set_default(64, verbose)
-            self._params.get('mlp_num_fan_out').set_default(32, verbose)
-            self._params.get('mlp_activation_func').set_default('relu',
-                                                                verbose)
 
     def _set_param_default(self, name: str,
                            default_val: str, verbose: int = 0):
