@@ -22,7 +22,7 @@ Matchzoo appreciates your contribution! If you are interested in helping improve
 * Work on [new models](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match).
 * Work on [tutorials](https://github.com/NTMC-Community/MatchZoo/tree/master/tutorials).
 * Work on [documentation](https://github.com/NTMC-Community/MatchZoo/tree/master/docs).
-* Ask on [the issue tracker](https://github.com/NTMC-Community/MatchZoo/issues) about good beginner issues.
+* Try to answer questions on [the issue tracker](https://github.com/NTMC-Community/MatchZoo/issues).
 
 Submitting Changes
 ------------------
