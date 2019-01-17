@@ -1,9 +1,9 @@
 Contributing to Matchzoo
 ----------
 
-Welcome! Matchzoo is a community project that aims to work for a wide range of NLP and IR tasks such as Question Answering, Information Retrieval, Paraphrase identification etc. Your experience and what you can contribute are important to the project's success.
-
 > Note: Matchzoo is developed under Python 3.6.
+
+Welcome! Matchzoo is a community project that aims to work for a wide range of NLP and IR tasks such as Question Answering, Information Retrieval, Paraphrase identification etc. Your experience and what you can contribute are important to the project's success.
 
 Discussion
 ----------
