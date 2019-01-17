@@ -21,7 +21,7 @@ class BaseTask(abc.ABC):
             >>> BaseTask.convert_metrics(['mse'])
             ['mse']
             >>> BaseTask.convert_metrics('map')
-            [mean_average_precision(0)]
+            [mean_average_precision(0.0)]
 
         """
         if not metrics:

@@ -200,7 +200,7 @@ class BaseModel(abc.ABC):
             >>> model.guess_and_fill_missing_params(verbose=0)
             >>> model.params['task'].metrics = ['mse', 'map']
             >>> model.params['task'].metrics
-            ['mse', mean_average_precision(0)]
+            ['mse', mean_average_precision(0.0)]
             >>> model.build()
             >>> model.compile()
 

@@ -10,7 +10,7 @@ class AveragePrecision(engine.BaseMetric):
 
     ALIAS = ['average_precision', 'ap']
 
-    def __init__(self, threshold: float = 0):
+    def __init__(self, threshold: float = 0.):
         """
         :class:`AveragePrecision` constructor.
 

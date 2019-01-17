@@ -11,7 +11,7 @@ class DiscountedCumulativeGain(engine.BaseMetric):
 
     ALIAS = ['discounted_cumulative_gain', 'dcg']
 
-    def __init__(self, k: int = 1, threshold: float = 0):
+    def __init__(self, k: int = 1, threshold: float = 0.):
         """
         :class:`DiscountedCumulativeGain` constructor.
 

@@ -9,7 +9,7 @@ class MeanReciprocalRank(engine.BaseMetric):
 
     ALIAS = ['mean_reciprocal_rank', 'mrr']
 
-    def __init__(self, threshold: float = 0):
+    def __init__(self, threshold: float = 0.):
         """
         :class:`MeanReciprocalRankMetric`.
 
