@@ -111,7 +111,7 @@ class CDSSM(engine.BaseModel):
         """:return: Default preprocessor."""
         return preprocessors.CDSSMPreprocessor()
 
-    def guess_and_fill_missing_params(self, verbose=1):
+    def guess_and_fill_missing_params(self, verbose: int = 1):
         """
         Guess and fill missing parameters in :attr:`params`.
 

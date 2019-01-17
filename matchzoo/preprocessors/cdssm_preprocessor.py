@@ -20,7 +20,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
     def __init__(self,
                  fixed_length_left: int = 10,
                  fixed_length_right: int = 40,
-                 with_word_hashing=True):
+                 with_word_hashing: bool = True):
         """
         CDSSM Model preprocessor.
 
@@ -61,7 +61,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         )
         self._with_word_hashing = with_word_hashing
 
-    def fit(self, data_pack: DataPack, verbose=1):
+    def fit(self, data_pack: DataPack, verbose: int = 1):
         """
         Fit pre-processing context for transformation.
 
@@ -84,7 +84,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         return self
 
     @engine.validate_context
-    def transform(self, data_pack: DataPack, verbose=1) -> DataPack:
+    def transform(self, data_pack: DataPack, verbose: int = 1) -> DataPack:
         """
         Apply transformation on data, create `letter-ngram` representation.
 

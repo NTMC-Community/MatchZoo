@@ -1,4 +1,6 @@
 """Precision for ranking."""
+import numpy as np
+
 from matchzoo import engine
 
 
@@ -7,7 +9,7 @@ class Precision(engine.BaseMetric):
 
     ALIAS = 'precision'
 
-    def __init__(self, k=1, threshold=0):
+    def __init__(self, k: int = 1, threshold: float = 0.):
         """
         :class:`PrecisionMetric` constructor.
 
@@ -17,11 +19,11 @@ class Precision(engine.BaseMetric):
         self._k = k
         self._threshold = threshold
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """:return: Formated string representation of the metric."""
         return f"{self.ALIAS}@{self._k}({self._threshold})"
 
-    def __call__(self, y_true, y_pred):
+    def __call__(self, y_true: np.array, y_pred: np.array) -> float:
         """
         Calculate precision@k.
 

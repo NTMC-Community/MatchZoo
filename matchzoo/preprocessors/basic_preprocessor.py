@@ -82,7 +82,7 @@ class BasicPreprocessor(engine.BasePreprocessor):
         if remove_stop_words:
             self._default_units.append(processor_units.StopRemovalUnit())
 
-    def fit(self, data_pack: DataPack, verbose=1):
+    def fit(self, data_pack: DataPack, verbose: int = 1):
         """
         Fit pre-processing context for transformation.
 
@@ -113,7 +113,7 @@ class BasicPreprocessor(engine.BasePreprocessor):
         return self
 
     @engine.validate_context
-    def transform(self, data_pack: DataPack, verbose=1) -> DataPack:
+    def transform(self, data_pack: DataPack, verbose: int = 1) -> DataPack:
         """
         Apply transformation on data, create fixed length representation.
 

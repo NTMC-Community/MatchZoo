@@ -448,7 +448,8 @@ class DataPack(object):
             """
             self._data_pack = data_pack
 
-        def __getitem__(self, index):
+        def __getitem__(self, index: typing.Union[int, slice, np.array]
+                        ) -> 'DataPack':
             """Slicer."""
             dp = self._data_pack
             index = _convert_to_list_index(index, len(dp))

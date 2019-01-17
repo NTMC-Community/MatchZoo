@@ -345,7 +345,8 @@ class FrequencyFilterUnit(StatefulProcessorUnit):
 
     """
 
-    def __init__(self, low=0, high=float('inf'), mode='df'):
+    def __init__(self, low: float = 0, high: float = float('inf'),
+                 mode: str = 'df'):
         """Frequency filter unit."""
         super().__init__()
         self._low = low
@@ -376,21 +377,21 @@ class FrequencyFilterUnit(StatefulProcessorUnit):
         return list(filter(lambda token: token in valid_terms, tokens))
 
     @classmethod
-    def _tf(cls, list_of_tokens):
+    def _tf(cls, list_of_tokens: list) -> dict:
         stats = collections.Counter()
         for tokens in list_of_tokens:
             stats.update(tokens)
         return stats
 
     @classmethod
-    def _df(cls, list_of_tokens):
+    def _df(cls, list_of_tokens: list) -> dict:
         stats = collections.Counter()
         for tokens in list_of_tokens:
             stats.update(set(tokens))
         return stats
 
     @classmethod
-    def _idf(cls, list_of_tokens):
+    def _idf(cls, list_of_tokens: list) -> dict:
         num_docs = len(list_of_tokens)
         stats = cls._df(list_of_tokens)
         for key, val in stats.most_common():

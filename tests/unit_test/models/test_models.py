@@ -100,7 +100,7 @@ def test_model_fit(compiled_model, x, y):
 @pytest.mark.slow
 def test_model_evaluate(compiled_model, x, y):
     model, input_dtypes = compiled_model
-    assert model.evaluate(x, y, verbose=0)
+    assert model.evaluate(x, y)
 
 
 @pytest.mark.slow

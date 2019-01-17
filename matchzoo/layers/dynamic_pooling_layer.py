@@ -31,7 +31,7 @@ class DynamicPoolingLayer(Layer):
         self._psize1 = psize1
         self._psize2 = psize2
 
-    def build(self, input_shape):
+    def build(self, input_shape: typing.List[int]):
         """
         Build the layer.
 

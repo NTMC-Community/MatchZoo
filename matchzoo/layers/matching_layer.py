@@ -37,7 +37,7 @@ class MatchingLayer(Layer):
         self._shape2 = None
 
     @classmethod
-    def _validate_matching_type(cls, matching_type):
+    def _validate_matching_type(cls, matching_type: str = 'dot'):
         valid_matching_type = ['dot', 'mul', 'plus', 'minus', 'concat']
         if matching_type not in valid_matching_type:
             raise ValueError(f"{matching_type} is not a valid matching type, "

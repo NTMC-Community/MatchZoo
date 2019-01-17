@@ -200,7 +200,7 @@ class BaseModel(abc.ABC):
             >>> model.guess_and_fill_missing_params(verbose=0)
             >>> model.params['task'].metrics = ['mse', 'map']
             >>> model.params['task'].metrics
-            ['mse', mean_average_precision(0)]
+            ['mse', mean_average_precision(0.0)]
             >>> model.build()
             >>> model.compile()
 
@@ -270,8 +270,7 @@ class BaseModel(abc.ABC):
         x: typing.Union[np.ndarray, typing.List[np.ndarray],
                         typing.Dict[str, np.ndarray]],
         y: np.ndarray,
-        batch_size: int = 128,
-        verbose: int = 1
+        batch_size: int = 128
     ) -> typing.Dict[str, float]:
         """
         Evaluate the model.
@@ -281,7 +280,6 @@ class BaseModel(abc.ABC):
         :param x: input data
         :param y: labels
         :param batch_size: number of samples per gradient update
-        :param verbose: verbosity mode, 0 or 1
         :return: scalar test loss (if the model has a single output and no
             metrics) or list of scalars (if the model has multiple outputs
             and/or metrics). The attribute `model.backend.metrics_names` will
@@ -311,7 +309,7 @@ class BaseModel(abc.ABC):
             >>> m.build()
             >>> m.compile()
             >>> x, y = data_pack.unpack()
-            >>> evals = m.evaluate(x, y, verbose=0)
+            >>> evals = m.evaluate(x, y)
             >>> type(evals)
             <class 'dict'>
 
@@ -366,9 +364,9 @@ class BaseModel(abc.ABC):
     def _eval_metric_on_data_frame(
         cls,
         metric: engine.BaseMetric,
-        id_left,
-        y,
-        y_pred
+        id_left: typing.Union[list, np.array],
+        y: typing.Union[list, np.array],
+        y_pred: typing.Union[list, np.array]
     ):
         eval_df = pd.DataFrame(data={
             'id': id_left,
@@ -474,13 +472,14 @@ class BaseModel(abc.ABC):
             self._params.get('mlp_activation_func').set_default('relu',
                                                                 verbose)
 
-    def _set_param_default(self, name, default_val, verbose):
+    def _set_param_default(self, name: str,
+                           default_val: str, verbose: int = 0):
         if self._params[name] is None:
             self._params[name] = default_val
             if verbose:
                 print(f"Parameter \"{name}\" set to {default_val}.")
 
-    def _make_inputs(self):
+    def _make_inputs(self) -> list:
         input_left = keras.layers.Input(
             name='text_left',
             shape=self._params['input_shapes'][0]
@@ -491,7 +490,7 @@ class BaseModel(abc.ABC):
         )
         return [input_left, input_right]
 
-    def _make_output_layer(self):
+    def _make_output_layer(self) -> keras.layers.Layer:
         """:return: a correctly shaped keras dense layer for model output."""
         task = self._params['task']
         if isinstance(task, tasks.Classification):
@@ -501,7 +500,8 @@ class BaseModel(abc.ABC):
         else:
             raise ValueError("Invalid task type.")
 
-    def _make_embedding_layer(self, name='embedding'):
+    def _make_embedding_layer(self, name: str = 'embedding'
+                              ) -> keras.layers.Layer:
         return keras.layers.Embedding(
             self._params['embedding_input_dim'],
             self._params['embedding_output_dim'],
@@ -509,7 +509,7 @@ class BaseModel(abc.ABC):
             name=name
         )
 
-    def _make_multi_layer_perceptron_layer(self):
+    def _make_multi_layer_perceptron_layer(self) -> keras.layers.Layer:
         if not self._params['with_multi_layer_perceptron']:
             raise AttributeError
 

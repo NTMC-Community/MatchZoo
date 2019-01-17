@@ -30,7 +30,7 @@ class NaivePreprocessor(engine.BasePreprocessor):
 
     """
 
-    def fit(self, data_pack: DataPack, verbose=1):
+    def fit(self, data_pack: DataPack, verbose: int = 1):
         """
         Fit pre-processing context for transformation.
 
@@ -46,7 +46,7 @@ class NaivePreprocessor(engine.BasePreprocessor):
         return self
 
     @engine.validate_context
-    def transform(self, data_pack: DataPack, verbose=1) -> DataPack:
+    def transform(self, data_pack: DataPack, verbose: int = 1) -> DataPack:
         """
         Apply transformation on data, create `tri-letter` representation.
 

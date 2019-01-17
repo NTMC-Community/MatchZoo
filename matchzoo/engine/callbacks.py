@@ -51,7 +51,7 @@ class EvaluateAllMetrics(keras.callbacks.Callback):
         self._model_save_path = model_save_path
         self._verbose = verbose
 
-    def on_epoch_end(self, epoch, logs=None):
+    def on_epoch_end(self, epoch: int, logs: dict = None):
         """
         Called at the end of en epoch.
 
@@ -61,7 +61,7 @@ class EvaluateAllMetrics(keras.callbacks.Callback):
         """
         if (epoch + 1) % self._valid_steps == 0:
             val_logs = self._model.evaluate(self._dev_x, self._dev_y,
-                                            self._batch_size, verbose=0)
+                                            self._batch_size)
             if self._verbose:
                 print('Validation: ' + ' - '.join(
                     f'{k}: {v}' for k, v in val_logs.items()))

@@ -1,5 +1,6 @@
 """SNLI data loader."""
 
+import typing
 from pathlib import Path
 
 import pandas as pd
@@ -10,7 +11,10 @@ import matchzoo
 _url = "https://nlp.stanford.edu/projects/snli/snli_1.0.zip"
 
 
-def load_data(stage='train', task='classification', target_label='entailment'):
+def load_data(stage: str = 'train',
+              task: str = 'classification',
+              target_label: str = 'entailment'
+              ) -> typing.Union[matchzoo.DataPack, tuple]:
     """
     Load SNLI data.
 

@@ -20,7 +20,7 @@ class RankCrossEntropyLoss(object):
 
     """
 
-    def __init__(self, num_neg=1):
+    def __init__(self, num_neg: int = 1):
         """
         :class:`RankCrossEntropyLoss` constructor.
 
