@@ -58,4 +58,5 @@ class RankHingeLoss(object):
 
     @property
     def margin(self):
+        """margin accessor."""
         return self._margin
