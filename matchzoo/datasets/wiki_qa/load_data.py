@@ -16,7 +16,7 @@ _url = "https://download.microsoft.com/download/E/5/F/" \
 def load_data(
     stage: str = 'train',
     task: str = 'ranking',
-    filtered: str = False,
+    filtered: bool = False,
     return_classes: bool = False
 ) -> typing.Union[matchzoo.DataPack, tuple]:
     """
