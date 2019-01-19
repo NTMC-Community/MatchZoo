@@ -50,3 +50,12 @@ class RankHingeLoss(object):
         y_neg = K.mean(K.concatenate(y_neg, axis=-1), axis=-1, keepdims=True)
         loss = K.maximum(0., self._margin + y_neg - y_pos)
         return K.mean(loss)
+
+    @property
+    def num_neg(self):
+        """num_neg accessor."""
+        return self._num_neg
+
+    @property
+    def margin(self):
+        return self._margin
