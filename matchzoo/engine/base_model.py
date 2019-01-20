@@ -334,7 +334,7 @@ class BaseModel(abc.ABC):
         """
         result = dict()
         for x, y in generator:
-            batch_result = self.evaluate(x, y, batch_size=len(x))
+            batch_result = self.evaluate(x, y, batch_size=y.shape[0])
             for metric, val in batch_result.items():
                 result.setdefault(metric, [])
                 result[metric].append(val)

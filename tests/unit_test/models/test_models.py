@@ -8,8 +8,14 @@ import matchzoo as mz
 
 @pytest.fixture(scope='module', params=[
     mz.tasks.Ranking(),
-    mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=2)),
-    mz.tasks.Classification(num_classes=2)
+    pytest.param(
+        mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=2)),
+        marks=pytest.mark.slow
+    ),
+    pytest.param(
+        mz.tasks.Classification(num_classes=2),
+        marks=pytest.mark.slow
+    ),
 ])
 def task(request):
     return request.param
@@ -37,7 +43,10 @@ def model_class(request):
 
 @pytest.fixture(scope='module', params=[
     None,
-    mz.datasets.embeddings.load_glove_embedding(dimension=50),
+    pytest.param(
+        mz.datasets.embeddings.load_glove_embedding(dimension=50),
+        marks=pytest.mark.slow
+    )
 ])
 def embedding(request):
     return request.param
@@ -79,7 +88,7 @@ def train_gen(train_raw, preprocessor, gen_builder):
 
 
 @pytest.fixture(scope='module')
-def dev_gen(train_raw, preprocessor, gen_builder):
+def dev_gen(dev_raw, preprocessor, gen_builder):
     return gen_builder.build(preprocessor.transform(dev_raw, verbose=0))
 
 
@@ -94,7 +103,6 @@ def test_model_fit(model, train_gen):
     assert model.fit(x, y, verbose=0)
 
 
-@pytest.mark.slow
 def test_model_fit_generator(model, train_gen):
     assert model.fit_generator(train_gen, verbose=0)
 
@@ -105,9 +113,8 @@ def test_model_evaluate(model, dev_gen):
     assert model.evaluate(x, y)
 
 
-@pytest.mark.slow
 def test_model_evaluate_generator(model, dev_gen):
-    assert model.evaluate(dev_gen)
+    assert model.evaluate_generator(dev_gen)
 
 
 @pytest.mark.slow

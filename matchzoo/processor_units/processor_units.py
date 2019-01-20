@@ -443,7 +443,7 @@ class WordHashingUnit(ProcessorUnit):
             :class:`NgramLetterUnit`.
         :return: Word hashing representation of `tri-letters`.
         """
-        if any(isinstance(elem, list) for elem in terms):
+        if any([isinstance(elem, list) for elem in terms]):
             # The input shape for CDSSM is
             # [[word1 ngram, ngram], [word2, ngram, ngram], ...].
             hashing = np.zeros((len(terms), len(self._term_index) + 1))
