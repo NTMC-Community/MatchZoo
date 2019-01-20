@@ -137,21 +137,6 @@ def test_save_load_model(model):
 
 
 @pytest.mark.slow
-def test_tuner(model, train_gen, test_gen):
-    tuner = mz.auto.Tuner(
-        params=model.params,
-        train_data=train_gen,
-        test_data=test_gen,
-        fit_kwargs=dict(epochs=1),
-        num_runs=1
-    )
-    if 'with_embedding' in model.params:
-        tuner.callbacks.append(
-            mz.tuner.callbacks.LoadEmbeddingMatrix(embedding_matrix))
-    assert tuner.tune()
-
-
-@pytest.mark.slow
 def test_hyper_space(model):
     for _ in range(16):
         new_params = copy.deepcopy(model.params)

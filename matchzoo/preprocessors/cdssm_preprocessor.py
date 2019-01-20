@@ -39,7 +39,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             >>> test_data = mz.datasets.toy.load_data(stage='test')
             >>> cdssm_preprocessor = mz.preprocessors.CDSSMPreprocessor()
             >>> train_data_processed = cdssm_preprocessor.fit_transform(
-            ...     train_data
+            ...     train_data, verbose=0
             ... )
             >>> type(train_data_processed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>

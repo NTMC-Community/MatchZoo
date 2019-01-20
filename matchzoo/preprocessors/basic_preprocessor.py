@@ -41,15 +41,17 @@ class BasicPreprocessor(engine.BasePreprocessor):
         ...     filter_high_freq=1000,
         ...     remove_stop_words=True
         ... )
-        >>> preprocessor = preprocessor.fit(train_data)
+        >>> preprocessor = preprocessor.fit(train_data, verbose=0)
         >>> preprocessor.context['input_shapes']
         [(10,), (20,)]
         >>> preprocessor.context['vocab_size']
         225
-        >>> processed_train_data = preprocessor.transform(train_data)
+        >>> processed_train_data = preprocessor.transform(train_data,
+        ...                                               verbose=0)
         >>> type(processed_train_data)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
-        >>> test_data_transformed = preprocessor.transform(test_data)
+        >>> test_data_transformed = preprocessor.transform(test_data,
+        ...                                                verbose=0)
         >>> type(test_data_transformed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
 

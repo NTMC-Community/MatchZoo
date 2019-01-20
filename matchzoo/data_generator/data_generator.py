@@ -49,7 +49,7 @@ class DataGenerator(keras.utils.Sequence):
         pair_wise=False,
         num_dup: int = 1,
         num_neg: int = 1,
-        batch_size: int = 32,
+        batch_size: int = 128,
         shuffle: bool = True,
         callbacks: typing.List[Callback] = None
     ):

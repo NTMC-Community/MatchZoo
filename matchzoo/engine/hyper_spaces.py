@@ -115,22 +115,6 @@ class HyperoptProxy(object):
         """__rpow__."""
         return _wrap_as_composite_func(self, other, lambda x, y: y ** x)
 
-    def __gt__(self, other):
-        """__gt__."""
-        return _wrap_as_composite_func(self, other, lambda x, y: x > y)
-
-    def __ge__(self, other):
-        """__ge__."""
-        return _wrap_as_composite_func(self, other, lambda x, y: x >= y)
-
-    def __lt__(self, other):
-        """__lt__."""
-        return _wrap_as_composite_func(self, other, lambda x, y: x < y)
-
-    def __le__(self, other):
-        """__le__."""
-        return _wrap_as_composite_func(self, other, lambda x, y: x <= y)
-
     def __neg__(self):
         """__neg__."""
         return _wrap_as_composite_func(self, None, lambda x, _: -x)

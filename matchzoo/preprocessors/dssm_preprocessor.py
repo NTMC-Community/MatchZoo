@@ -32,7 +32,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             >>> test_data = mz.datasets.toy.load_data(stage='test')
             >>> dssm_preprocessor = mz.preprocessors.DSSMPreprocessor()
             >>> train_data_processed = dssm_preprocessor.fit_transform(
-            ...     train_data
+            ...     train_data, verbose=0
             ... )
             >>> type(train_data_processed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>

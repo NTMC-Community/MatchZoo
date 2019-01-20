@@ -14,5 +14,7 @@ from .anmm import ANMM
 from .mvlstm import MVLSTM
 
 import matchzoo
+
+
 def list_available():
     return matchzoo.engine.BaseModel.__subclasses__()

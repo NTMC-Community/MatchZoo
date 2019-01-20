@@ -37,7 +37,7 @@ class EvaluateAllMetrics(keras.callbacks.Callback):
         x: typing.Union[np.ndarray, typing.List[np.ndarray]],
         y: np.ndarray,
         once_every: int = 1,
-        batch_size: int = 32,
+        batch_size: int = 128,
         model_save_path: str = None,
         verbose=1
     ):
