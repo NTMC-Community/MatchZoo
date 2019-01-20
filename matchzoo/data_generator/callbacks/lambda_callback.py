@@ -22,8 +22,10 @@ class LambdaCallback(Callback):
 
     def on_batch_data_pack(self, data_pack):
         """`on_batch_data_pack`."""
-        self._on_batch_data_pack(data_pack)
+        if self._on_batch_data_pack:
+            self._on_batch_data_pack(data_pack)
 
     def on_batch_unpacked(self, x, y):
         """`on_batch_unpacked`."""
-        self._on_batch_unpacked(x, y)
+        if self._on_batch_unpacked:
+            self._on_batch_unpacked(x, y)

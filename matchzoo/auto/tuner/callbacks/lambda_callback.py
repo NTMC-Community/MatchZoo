@@ -29,12 +29,15 @@ class LambdaCallback(Callback):
 
     def on_run_start(self, tuner, sample: dict):
         """`on_run_start`."""
-        self._on_run_start(tuner, sample)
+        if self._on_run_start:
+            self._on_run_start(tuner, sample)
 
     def on_build_end(self, tuner, model: mz.engine.BaseModel):
         """`on_build_end`."""
-        self._on_build_end(tuner, model)
+        if self._on_build_end:
+            self._on_build_end(tuner, model)
 
     def on_run_end(self, tuner, model: mz.engine.BaseModel, result: dict):
         """`on_run_end`."""
-        self._on_result_end(tuner, model, result)
+        if self._on_result_end:
+            self._on_result_end(tuner, model, result)

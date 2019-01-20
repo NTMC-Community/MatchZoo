@@ -91,6 +91,10 @@ class ZooKeeper(object):
         """
         if not preprocessor:
             preprocessor = model_class.get_default_preprocessor()
+
+        if issubclass(model_class, (mz.models.DSSM, mz.models.CDSSM)):
+            preprocessor.with_word_hashing = False
+
         preprocessor.fit(data_pack, verbose=0)
 
         model = self._setup_model(model_class, preprocessor)
@@ -105,8 +109,8 @@ class ZooKeeper(object):
         model.build()
         model.compile()
 
-        builder_kwargs = self._infer_builder_kwargs(
-            model, embedding_matrix)
+        builder_kwargs = self._infer_builder_kwargs(model, embedding_matrix,
+                                                    preprocessor)
 
         return (
             model,
@@ -137,8 +141,7 @@ class ZooKeeper(object):
         if embedding:
             vocab_unit = preprocessor.context['vocab_unit']
             term_index = vocab_unit.state['term_index']
-            embedding_matrix = embedding.build_matrix(term_index)
-            return embedding_matrix
+            return embedding.build_matrix(term_index)
         else:
             matrix_shape = (
                 preprocessor.context['vocab_size'],
@@ -146,8 +149,8 @@ class ZooKeeper(object):
             )
             return np.random.uniform(-0.2, 0.2, matrix_shape)
 
-    def _infer_builder_kwargs(self, model, embedding_matrix):
-        builder_kwargs = dict()
+    def _infer_builder_kwargs(self, model, embedding_matrix, preprocessor):
+        builder_kwargs = dict(callbacks=[])
         if isinstance(self._task.loss, (mz.losses.RankHingeLoss,
                                         mz.losses.RankCrossEntropyLoss)):
             builder_kwargs.update(dict(
@@ -155,13 +158,15 @@ class ZooKeeper(object):
                 num_dup=self._config['num_dup'],
                 num_neg=self._config['num_neg']
             ))
+
         if isinstance(model, mz.models.DRMM):
             histo_callback = mz.data_generator.callbacks.Histogram(
                 embedding_matrix=embedding_matrix,
                 bin_size=self._config['bin_size'],
                 hist_mode=self._config['hist_mode']
             )
-            builder_kwargs['callbacks'] = [histo_callback]
+            builder_kwargs['callbacks'].append(histo_callback)
+
         elif isinstance(model, mz.models.MatchPyramid):
             dpool_callback = mz.data_generator.callbacks.DynamicPooling(
                 fixed_length_left=model.params['input_shapes'][0][0],
@@ -169,7 +174,22 @@ class ZooKeeper(object):
                 compress_ratio_left=self._config['compress_ratio_left'],
                 compress_ratio_right=self._config['compress_ratio_right']
             )
-            builder_kwargs['callbacks'] = [dpool_callback]
+            builder_kwargs['callbacks'].append(dpool_callback)
+
+        elif isinstance(model, (mz.models.DSSM, mz.models.CDSSM)):
+            term_index = preprocessor.context['vocab_unit'].state['term_index']
+            hashing_unit = mz.processor_units.WordHashingUnit(term_index)
+
+            def _apply_word_hashing(data_pack):
+                print(data_pack.left['text_left'])
+                data_pack.apply_on_text(hashing_unit.transform, inplace=True)
+                print(data_pack.left['text_left'])
+
+            hashing_callback = mz.data_generator.callbacks.LambdaCallback(
+                on_batch_data_pack=_apply_word_hashing
+            )
+            builder_kwargs['callbacks'].append(hashing_callback)
+
         return builder_kwargs
 
     def _infer_num_neg(self):

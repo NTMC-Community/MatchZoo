@@ -93,3 +93,13 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             processor_units.StopRemovalUnit(),
             processor_units.NgramLetterUnit(),
         ]
+
+    @property
+    def with_word_hashing(self):
+        """`with_word_hashing` getter."""
+        return self._with_word_hashing
+
+    @with_word_hashing.setter
+    def with_word_hashing(self, value):
+        """`with_word_hashing` setter."""
+        self._with_word_hashing = value
