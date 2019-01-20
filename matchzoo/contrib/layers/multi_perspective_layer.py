@@ -15,7 +15,7 @@ class MultiPerspectiveLayer(Layer):
 
     Examples:
         >>> import matchzoo as mz
-        >>> layer = mz.layers.MultiPerspectiveLayer(50, 20, None)
+        >>> layer = mz.contrib.layers.MultiPerspectiveLayer(50, 20, None)
 
     """
 
@@ -96,7 +96,8 @@ class MultiPerspectiveLayer(Layer):
         if self._perspective.get('max-attentive'):
             # Each contextual embedding compare with each contextual embedding.
             # retain max of weighted mean of each dimension.
-            relevancy_matrix = _calc_relevancy_matrix(lstm_reps_lt, lstm_reps_rt)
+            relevancy_matrix = _calc_relevancy_matrix(lstm_reps_lt,
+                                                      lstm_reps_rt)
             max_attentive_tensor = self.max_attentive_match([lstm_reps_lt,
                                                              lstm_reps_rt,
                                                              relevancy_matrix])
@@ -124,7 +125,7 @@ class MpFullMatch(Layer):
 
     def build(self, input_shapes):
         """Build."""
-        input_shape = input_shapes[0]
+        # input_shape = input_shapes[0]
         self.built = True
 
     def call(self, x, **kwargs):
@@ -200,7 +201,7 @@ class MpAttentiveMatch(Layer):
 
     def build(self, input_shapes):
         """Build."""
-        input_shape = input_shapes[0]
+        # input_shape = input_shapes[0]
         self.built = True
 
     def call(self, x, **kwargs):
@@ -232,7 +233,7 @@ class MpMaxAttentiveMatch(Layer):
 
     def build(self, input_shapes):
         """Build."""
-        input_shape = input_shapes[0]
+        # input_shape = input_shapes[0]
         self.built = True
 
     def call(self, x):
@@ -386,7 +387,7 @@ def _calc_relevancy_matrix(reps_lt, reps_rt):
     # -> [batch_size, 1, len_lt, dim]
     reps_lt = K.expand_dims(reps_lt, 1)
     # -> [batch_size, len_rt, 1, dim]
-    in_passage_repres_tmp = K.expand_dims(reps_rt, 2)
+    # in_passage_repres_tmp = K.expand_dims(reps_rt, 2)
     relevancy_matrix = _cosine_distance(reps_lt, reps_rt)
     return relevancy_matrix
 

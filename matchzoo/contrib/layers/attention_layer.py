@@ -16,7 +16,7 @@ class AttentionLayer(Layer):
 
     Examples:
         >>> import matchzoo as mz
-        >>> layer = mz.layers.AttentionLayer(att_dim=50)
+        >>> layer = mz.contrib.layers.AttentionLayer(att_dim=50)
 
     """
 

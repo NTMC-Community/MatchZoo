@@ -5,7 +5,7 @@ from keras.layers import Dense, Concatenate, Dropout
 from keras.layers import Bidirectional, LSTM
 
 from matchzoo import engine
-from matchzoo.contrib.layers.multi_perspective_layer import MultiPerspectiveLayer
+from matchzoo.contrib.layers import MultiPerspectiveLayer
 
 
 class BimpmModel(engine.BaseModel):
@@ -14,7 +14,7 @@ class BimpmModel(engine.BaseModel):
 
     Examples:
         >>> import matchzoo as mz
-        >>> model = mz.models.BimpmModel()
+        >>> model = mz.contrib.models.BimpmModel()
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
