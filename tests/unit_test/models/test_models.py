@@ -7,11 +7,7 @@ import matchzoo as mz
 
 
 @pytest.fixture(scope='module', params=[
-    mz.tasks.Ranking(),
-    pytest.param(
-        mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=2)),
-        marks=pytest.mark.slow
-    ),
+    mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=2)),
     pytest.param(
         mz.tasks.Classification(num_classes=2),
         marks=pytest.mark.slow
