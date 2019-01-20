@@ -1,4 +1,5 @@
 import pytest
+import copy
 from pathlib import Path
 import shutil
 
@@ -145,3 +146,15 @@ def test_tuner(model, train_gen, test_gen):
         tuner.callbacks.append(
             mz.tuner.callbacks.LoadEmbeddingMatrix(embedding_matrix))
     assert tuner.tune()
+
+
+@pytest.mark.slow
+def test_hyper_space(model):
+    for _ in range(16):
+        new_params = copy.deepcopy(model.params)
+        sample = mz.hyper_spaces.sample(new_params.hyper_space)
+        for key, value in sample.items():
+            new_params[key] = value
+        new_model = new_params['model_class'](params=new_params)
+        new_model.build()
+        new_model.compile()
