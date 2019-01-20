@@ -37,15 +37,9 @@ def model_class(request):
     return request.param
 
 
-@pytest.fixture(scope='module', params=[
-    None,
-    pytest.param(
-        mz.datasets.embeddings.load_glove_embedding(dimension=50),
-        marks=pytest.mark.slow
-    )
-])
-def embedding(request):
-    return request.param
+@pytest.fixture(scope='module')
+def embedding():
+    return mz.datasets.embeddings.load_glove_embedding(dimension=50)
 
 
 @pytest.fixture(scope='module')
@@ -99,18 +93,10 @@ def test_model_fit(model, train_gen):
     assert model.fit(x, y, verbose=0)
 
 
-def test_model_fit_generator(model, train_gen):
-    assert model.fit_generator(train_gen, verbose=0)
-
-
 @pytest.mark.slow
 def test_model_evaluate(model, dev_gen):
     x, y = dev_gen[0]
     assert model.evaluate(x, y)
-
-
-def test_model_evaluate_generator(model, dev_gen):
-    assert model.evaluate_generator(dev_gen)
 
 
 @pytest.mark.slow

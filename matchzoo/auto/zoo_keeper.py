@@ -151,6 +151,7 @@ class ZooKeeper(object):
 
     def _infer_builder_kwargs(self, model, embedding_matrix, preprocessor):
         builder_kwargs = dict(callbacks=[])
+
         if isinstance(self._task.loss, (mz.losses.RankHingeLoss,
                                         mz.losses.RankCrossEntropyLoss)):
             builder_kwargs.update(dict(
@@ -167,7 +168,7 @@ class ZooKeeper(object):
             )
             builder_kwargs['callbacks'].append(histo_callback)
 
-        elif isinstance(model, mz.models.MatchPyramid):
+        if isinstance(model, mz.models.MatchPyramid):
             dpool_callback = mz.data_generator.callbacks.DynamicPooling(
                 fixed_length_left=model.params['input_shapes'][0][0],
                 fixed_length_right=model.params['input_shapes'][1][0],
@@ -176,17 +177,12 @@ class ZooKeeper(object):
             )
             builder_kwargs['callbacks'].append(dpool_callback)
 
-        elif isinstance(model, (mz.models.DSSM, mz.models.CDSSM)):
+        if isinstance(model, (mz.models.DSSM, mz.models.CDSSM)):
             term_index = preprocessor.context['vocab_unit'].state['term_index']
             hashing_unit = mz.processor_units.WordHashingUnit(term_index)
-
-            def _apply_word_hashing(data_pack):
-                print(data_pack.left['text_left'])
-                data_pack.apply_on_text(hashing_unit.transform, inplace=True)
-                print(data_pack.left['text_left'])
-
             hashing_callback = mz.data_generator.callbacks.LambdaCallback(
-                on_batch_data_pack=_apply_word_hashing
+                on_batch_data_pack=lambda data_pack:
+                data_pack.apply_on_text(hashing_unit.transform, inplace=True)
             )
             builder_kwargs['callbacks'].append(hashing_callback)
 
