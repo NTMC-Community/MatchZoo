@@ -11,10 +11,12 @@ import matchzoo
 _url = "https://nlp.stanford.edu/projects/snli/snli_1.0.zip"
 
 
-def load_data(stage: str = 'train',
-              task: str = 'classification',
-              target_label: str = 'entailment'
-              ) -> typing.Union[matchzoo.DataPack, tuple]:
+def load_data(
+    stage: str = 'train',
+    task: str = 'classification',
+    target_label: str = 'entailment',
+    return_classes: bool = False
+) -> typing.Union[matchzoo.DataPack, tuple]:
     """
     Load SNLI data.
 
@@ -24,9 +26,11 @@ def load_data(stage: str = 'train',
     :param target_label: If `ranking`, chose one of `entailment`,
         `contradiction`, `neutral`, and `-` as the positive label.
         (default: `entailment`)
+    :param return_classes: `True` to return classes for classification task,
+        `False` otherwise.
 
-    :return: A DataPack if `ranking`, a tuple of (DataPack, classes) if
-        `classification`.
+    :return: A DataPack unless `task` is `classificiation` and `return_classes`
+        is `True`: a tuple of `(DataPack, classes)` in that case.
     """
     if stage not in ('train', 'dev', 'test'):
         raise ValueError(f"{stage} is not a valid stage."
@@ -52,7 +56,10 @@ def load_data(stage: str = 'train',
         label = data_pack.relation['label'].apply(classes.index)
         data_pack.relation['label'] = label
         data_pack.one_hot_encode_label(num_classes=4, inplace=True)
-        return data_pack, classes
+        if return_classes:
+            return data_pack, classes
+        else:
+            return data_pack
     else:
         raise ValueError(f"{task} is not a valid task.")
 

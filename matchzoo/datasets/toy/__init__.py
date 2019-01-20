@@ -6,16 +6,22 @@ import pandas as pd
 import matchzoo
 
 
-def load_data(stage: str = 'train', task: str = 'ranking'
-              ) -> typing.Union[matchzoo.DataPack, tuple]:
+def load_data(
+    stage: str = 'train',
+    task: str = 'ranking',
+    return_classes: bool = False
+) -> typing.Union[matchzoo.DataPack, typing.Tuple[matchzoo.DataPack, list]]:
     """
     Load WikiQA data.
 
     :param stage: One of `train`, `dev`, and `test`.
     :param task: Could be one of `ranking`, `classification` or a
         :class:`matchzoo.engine.BaseTask` instance.
-    :return: A DataPack if `ranking`, a tuple of (DataPack, classes) if
-        `classification`.
+    :param return_classes: `True` to return classes for classification task,
+        `False` otherwise.
+
+    :return: A DataPack unless `task` is `classificiation` and `return_classes`
+        is `True`: a tuple of `(DataPack, classes)` in that case.
 
     Example:
         >>> import matchzoo as mz
@@ -43,6 +49,10 @@ def load_data(stage: str = 'train', task: str = 'ranking'
         return data_pack
     elif isinstance(task, matchzoo.tasks.Classification):
         data_pack.relation['label'] = data_pack.relation['label'].astype(int)
-        return data_pack.one_hot_encode_label(num_classes=2), [False, True]
+        data_pack = data_pack.one_hot_encode_label(num_classes=2)
+        if return_classes:
+            return data_pack, [False, True]
+        else:
+            return data_pack
     else:
         raise ValueError(f"{task} is not a valid task.")
