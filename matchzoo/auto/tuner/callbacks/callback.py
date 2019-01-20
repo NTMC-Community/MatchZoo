@@ -29,7 +29,6 @@ class Callback(object):
         :param sample: Sampled hyper space. Changes to this dictionary affects
             the model building process of the tuner.
         """
-        pass
 
     def on_build_end(self, tuner: 'mz.Tuner', model: mz.engine.BaseModel):
         """
@@ -39,7 +38,6 @@ class Callback(object):
         :param model: A built model ready for fitting and evluating. Changes
             to this model affect the fitting and evaluating process.
         """
-        pass
 
     def on_run_end(self, tuner: 'mz.Tuner', model: mz.engine.BaseModel,
                    result: dict):
@@ -52,4 +50,3 @@ class Callback(object):
         :param result: Result of the run. Changes to this dictionary will be
             visible in the return value of the `tune` method.
         """
-        pass

@@ -12,7 +12,7 @@ class LambdaCallback(Callback):
         >>> import matchzoo as mz
         >>> callback = mz.tuner.callbacks.LambdaCallback(on_run_start=print)
         >>> callback.on_run_start('tuner', {'dict': 'of sample'})
-        'tuner' {'dict': 'of sample'}
+        tuner {'dict': 'of sample'}
 
     """
 

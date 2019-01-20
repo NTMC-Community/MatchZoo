@@ -11,7 +11,7 @@ class LambdaCallback(Callback):
         >>> from matchzoo.data_generator.callbacks import LambdaCallback
         >>> callback = LambdaCallback(on_batch_unpacked=print)
         >>> callback.on_batch_unpacked('x', 'y')
-        'x' 'y'
+        x y
 
     """
 

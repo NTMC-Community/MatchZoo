@@ -26,7 +26,6 @@ class Callback(object):
 
         :param data_pack: a sliced DataPack before unpacking.
         """
-        pass
 
     def on_batch_unpacked(self, x: dict, y: np.ndarray):
         """
@@ -35,4 +34,3 @@ class Callback(object):
         :param x: unpacked x.
         :param y: unpacked y.
         """
-        pass

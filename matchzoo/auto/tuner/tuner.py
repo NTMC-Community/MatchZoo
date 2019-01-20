@@ -41,6 +41,7 @@ class Tuner(object):
         (default: 10)
     :param callbacks: A list of callbacks to handle. Handled sequentially
         at every callback point.
+    :param verbose: Verbosity. (default: 1)
 
     Example:
         >>> import matchzoo as mz
@@ -56,10 +57,10 @@ class Tuner(object):
         ...     params=model.params,
         ...     train_data=train,
         ...     test_data=dev,
-        ...     num_runs=2,
-        ...     callbacks=[]  # disable logging results
+        ...     num_runs=1,
+        ...     verbose=0
         ... )
-        >>> results = tuner.tune() #doctest: +ELLIPSIS
+        >>> results = tuner.tune()
         >>> sorted(results['best'].keys())
         ['#', 'params', 'sample', 'score']
 
@@ -328,6 +329,16 @@ class Tuner(object):
         """`callbacks` setter."""
         self._validate_callbacks(value)
         self._callbacks = value
+
+    @property
+    def verbose(self):
+        """`verbose` getter."""
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, value):
+        """`verbose` setter."""
+        self._verbose = value
 
     @classmethod
     def _validate_params(cls, params):

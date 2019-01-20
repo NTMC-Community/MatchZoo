@@ -130,7 +130,7 @@ class ZooKeeper(object):
         if isinstance(model, mz.models.DRMM):
             left = model.params['input_shapes'][0]
             orig_right = model.params['input_shapes'][1]
-            updated_right = orig_right + self._config['bin_size']
+            updated_right = orig_right + (self._config['bin_size'],)
             model.params['input_shapes'] = (left, updated_right)
 
     def _build_matrix(self, preprocessor, embedding):
