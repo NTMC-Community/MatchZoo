@@ -147,54 +147,66 @@ class DataGenerator(keras.utils.Sequence):
 
     @property
     def callbacks(self):
+        """`callbacks` getter."""
         return self._callbacks
 
     @callbacks.setter
     def callbacks(self, value):
+        """`callbacks` setter."""
         self._callbacks = value
 
     @property
     def num_neg(self):
+        """`num_neg` getter."""
         return self._num_neg
 
     @num_neg.setter
     def num_neg(self, value):
+        """`num_neg` setter."""
         self._num_neg = value
         self.reset_index()
 
     @property
     def num_dup(self):
+        """`num_dup` getter."""
         return self._num_dup
 
     @num_dup.setter
     def num_dup(self, value):
+        """`num_dup` setter."""
         self._num_dup = value
         self.reset_index()
 
     @property
     def pair_wise(self):
+        """`pair_wise` getter."""
         return self._pair_wise
 
     @pair_wise.setter
     def pair_wise(self, value):
+        """`pair_wise` setter."""
         self._pair_wise = value
         self.reset_index()
 
     @property
     def batch_size(self):
+        """`batch_size` getter."""
         return self._batch_size
 
     @batch_size.setter
     def batch_size(self, value):
+        """`batch_size` setter."""
         self._batch_size = value
         self.reset_index()
 
     @property
     def shuffle(self):
+        """`shuffle` getter."""
         return self._shuffle
 
     @shuffle.setter
     def shuffle(self, value):
+        """`shuffle` setter."""
         self._shuffle = value
         self.reset_index()
 

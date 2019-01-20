@@ -587,5 +587,3 @@ class MatchingHistogramUnit(ProcessorUnit):
         elif self._mode == 'LCH':
             matching_hist = np.log(matching_hist)
         return matching_hist.tolist()
-
-

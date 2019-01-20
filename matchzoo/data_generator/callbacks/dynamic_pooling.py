@@ -4,6 +4,16 @@ from matchzoo.data_generator.callbacks import Callback
 
 
 class DynamicPooling(Callback):
+    """:class:`DPoolPairDataGenerator` constructor.
+
+    :param fixed_length_left: max length of left text.
+    :param fixed_length_right: max length of right text.
+    :param compress_ratio_left: the length change ratio,
+        especially after normal pooling layers.
+    :param compress_ratio_right: the length change ratio,
+        especially after normal pooling layers.
+    """
+
     def __init__(
         self,
         fixed_length_left: int,
@@ -11,21 +21,19 @@ class DynamicPooling(Callback):
         compress_ratio_left: float = 1,
         compress_ratio_right: float = 1,
     ):
-        """:class:`DPoolPairDataGenerator` constructor.
-
-        :param fixed_length_left: max length of left text.
-        :param fixed_length_right: max length of right text.
-        :param compress_ratio_left: the length change ratio,
-            especially after normal pooling layers.
-        :param compress_ratio_right: the length change ratio,
-            especially after normal pooling layers.
-        """
+        """Init."""
         self._fixed_length_left = fixed_length_left
         self._fixed_length_right = fixed_length_right
         self._compress_ratio_left = compress_ratio_left
         self._compress_ratio_right = compress_ratio_right
 
     def on_batch_unpacked(self, x, y):
+        """
+        Insert `dpool_index` into `x`.
+
+        :param x: unpacked x.
+        :param y: unpacked y.
+        """
         x['dpool_index'] = _dynamic_pooling_index(
             x['length_left'],
             x['length_right'],
@@ -73,10 +81,10 @@ def _dynamic_pooling_index(length_left: np.array,
         dpool_bias_left = 1
     if fixed_length_right % compress_ratio_right != 0:
         dpool_bias_right = 1
-    cur_fixed_length_left = int(fixed_length_left // compress_ratio_left) \
-                            + dpool_bias_left
-    cur_fixed_length_right = int(fixed_length_right // compress_ratio_right) \
-                             + dpool_bias_right
+    cur_fixed_length_left = int(
+        fixed_length_left // compress_ratio_left) + dpool_bias_left
+    cur_fixed_length_right = int(
+        fixed_length_right // compress_ratio_right) + dpool_bias_right
     for i in range(len(length_left)):
         index.append(_dpool_index(
             i,

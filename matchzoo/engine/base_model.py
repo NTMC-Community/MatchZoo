@@ -152,10 +152,6 @@ class BaseModel(abc.ABC):
         """
         return matchzoo.preprocessors.BasicPreprocessor()
 
-    @classmethod
-    def get_default_data_generator(cls, task, data_pack):
-        pass
-
     @property
     def params(self) -> engine.ParamTable:
         """:return: model parameters."""
@@ -269,23 +265,16 @@ class BaseModel(abc.ABC):
 
     def evaluate(
         self,
-        x: typing.Union[np.ndarray, typing.List[np.ndarray],
-                        typing.Dict[str, np.ndarray]],
+        x: typing.Dict[str, np.ndarray],
         y: np.ndarray,
         batch_size: int = 128
-    ) -> typing.Dict[str, float]:
+    ) -> typing.Dict['matchzoo.engine.BaseMetric', float]:
         """
         Evaluate the model.
 
-        See :meth:`keras.models.Model.evaluate` for more details.
-
-        :param x: input data
-        :param y: labels
-        :param batch_size: number of samples per gradient update
-        :return: scalar test loss (if the model has a single output and no
-            metrics) or list of scalars (if the model has multiple outputs
-            and/or metrics). The attribute `model.backend.metrics_names` will
-            give you the display labels for the scalar outputs.
+        :param x: Input data.
+        :param y: Labels.
+        :param batch_size: Number of samples when `predict` for evaluation.
 
         Examples::
             >>> import matchzoo as mz
@@ -316,7 +305,7 @@ class BaseModel(abc.ABC):
             <class 'dict'>
 
         """
-        result = {}
+        result = dict()
         matchzoo_metrics, keras_metrics = self._separate_metrics()
         y_pred = self.predict(x, batch_size)
 
@@ -337,10 +326,19 @@ class BaseModel(abc.ABC):
     def evaluate_generator(
         self,
         generator: DataGenerator,
-        batch_size=32,
-    ):
-        x, y = generator[:]
-        return self.evaluate(x, y, batch_size=batch_size)
+    ) -> typing.Dict['matchzoo.engine.BaseMetric', float]:
+        """
+        Evaluate the model.
+
+        :param generator: DataGenerator to evluate.
+        """
+        result = dict()
+        for x, y in generator:
+            batch_result = self.evaluate(x, y, batch_size=len(x))
+            for metric, val in batch_result.items():
+                result.setdefault(metric, [])
+                result[metric].append(val)
+        return {k: np.asscalar(np.mean(v)) for k, v in result.items()}
 
     def _separate_metrics(self):
         matchzoo_metrics = []
@@ -373,7 +371,7 @@ class BaseModel(abc.ABC):
 
     def predict(
         self,
-        x: typing.Union[np.ndarray, typing.List[np.ndarray]],
+        x: typing.Dict[str, np.ndarray],
         batch_size=128
     ) -> np.ndarray:
         """
@@ -410,7 +408,17 @@ class BaseModel(abc.ABC):
         with open(params_path, mode='wb') as params_file:
             dill.dump(self._params, params_file)
 
-    def get_embedding_layer(self, name: str = 'embedding'):
+    def get_embedding_layer(
+        self, name: str = 'embedding'
+    ) -> keras.layers.Layer:
+        """
+        Get the embedding layer.
+
+        All MatchZoo models with a single embedding layer set the embedding
+        layer name to `embedding`, and this method should return that layer.
+
+        :param name: Name of the embedding layer. (default: `embedding`)
+        """
         for layer in self._backend.layers:
             if layer.name == name:
                 return layer

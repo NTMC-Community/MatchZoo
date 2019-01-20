@@ -14,7 +14,9 @@ class Naive(engine.BaseModel):
     The worst choice to fit and evaluate performance.
     """
 
+    @classmethod
     def get_default_params(cls):
+        """Default parameters."""
         params = super().get_default_params()
         params.get('optimizer').hyper_space = \
             hyper_spaces.choice(['adam', 'adagrad', 'rmsprop'])

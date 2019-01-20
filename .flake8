@@ -12,3 +12,6 @@ ignore =
     D301,
     # F401 'blah blah' imported but unused
     F401,
+
+    # D100 Missing docstring in public module
+    D100,

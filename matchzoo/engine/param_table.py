@@ -2,6 +2,7 @@
 
 import typing
 import pandas as pd
+import collections.abc
 
 from matchzoo.engine import Param, hyper_spaces
 
@@ -130,7 +131,7 @@ class ParamTable(object):
         """
         return all(param for param in self)
 
-    def keys(self) -> typing.KeysView:
+    def keys(self) -> collections.abc.KeysView:
         """:return: Parameter table keys."""
         return self._params.keys()
 
@@ -139,6 +140,29 @@ class ParamTable(object):
         return item in self._params
 
     def update(self, other: dict):
+        """
+        Update `self`.
+
+        Update `self` with the key/value pairs from other, overwriting
+        existing keys. Notice that this does not add new keys to `self`.
+
+        This method is usually used by models to obtain useful information
+        from a preprocessor's context.
+
+        :param other: The dictionary used update.
+
+        Example:
+            >>> import matchzoo as mz
+            >>> model = mz.models.DenseBaseline()
+            >>> model.params['input_shapes'] is None
+            True
+            >>> prpr = model.get_default_preprocessor()
+            >>> _ = prpr.fit(mz.datasets.toy.load_data(), verbose=0)
+            >>> model.params.update(prpr.context)
+            >>> model.params['input_shapes']
+            [(30,), (30,)]
+
+        """
         for key in other:
             if key in self:
                 self[key] = other[key]

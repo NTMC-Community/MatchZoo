@@ -1,10 +1,9 @@
-"""Prepare mode, preprocessor, and data pack."""
-
 import typing
 
 import numpy as np
 
 import matchzoo as mz
+from matchzoo.data_generator import DataGeneratorBuilder
 
 
 class ZooKeeper(object):
@@ -15,6 +14,7 @@ class ZooKeeper(object):
     will be updated accordingly if a `config` dictionary is passed. e.g. to
     override the default `bin_size`, pass `config={'bin_size': 15}`.
 
+    See `tutorials/automation.ipynb` for a detailed walkthrough on usage.
 
     Default `config`:
 
@@ -55,39 +55,40 @@ class ZooKeeper(object):
         task: mz.engine.BaseTask,
         config: typing.Optional[dict] = None
     ):
+        """Init."""
         self._task = task
-        self._config = self.get_default_config()
+        self._config = self._get_default_config()
         if config:
             self._config.update(config)
 
         self._infer_num_neg()
 
-    @classmethod
-    def get_default_config(cls):
-        return {
-            # pair generator builder kwargs
-            'num_dup': 1,
-
-            # histogram unit of DRMM
-            'bin_size': 30,
-            'hist_mode': 'LCH',
-
-            # dynamic Pooling of MatchPyramid
-            'compress_ratio_left': 1.0,
-            'compress_ratio_right': 1.0,
-
-            # if no `matchzoo.Embedding` is passed to `tune`
-            'embedding_output_dim': 100
-        }
-
     def prepare(
         self,
-        model_class,
-        data_pack,
-        preprocessor=None,
+        model_class: typing.Type[mz.engine.BaseModel],
+        data_pack: mz.DataPack,
+        preprocessor: typing.Optional[mz.engine.BasePreprocessor] = None,
         embedding: typing.Optional[mz.Embedding] = None,
-        batch_size: int = 32,
-    ):
+    ) -> typing.Tuple[
+        mz.engine.BaseModel,
+        mz.engine.BasePreprocessor,
+        DataGeneratorBuilder,
+        np.ndarray
+    ]:
+        """
+        Prepare.
+
+        :param model_class: Model class.
+        :param data_pack: DataPack used to fit the preprocessor.
+        :param preprocessor: Preprocessor used to fit the `data_pack`.
+            (default: the default preprocessor of `model_class`)
+        :param embedding: Embedding to build a embedding matrix. If not set,
+            then a correctly shaped randomized matrix will be built.
+
+        :return: A tuple of `(model, preprocessor, data_generator_builder,
+            embedding_matrix)`.
+
+        """
         if not preprocessor:
             preprocessor = model_class.get_default_preprocessor()
         preprocessor.fit(data_pack, verbose=0)
@@ -105,10 +106,11 @@ class ZooKeeper(object):
         model.compile()
 
         builder_kwargs = self._infer_builder_kwargs(
-            model, embedding_matrix, batch_size)
+            model, embedding_matrix)
 
         return (
-            model, preprocessor,
+            model,
+            preprocessor,
             DataGeneratorBuilder(**builder_kwargs),
             embedding_matrix
         )
@@ -144,8 +146,8 @@ class ZooKeeper(object):
             )
             return np.random.uniform(-0.2, 0.2, matrix_shape)
 
-    def _infer_builder_kwargs(self, model, embedding_matrix, batch_size):
-        builder_kwargs = dict(batch_size=batch_size)
+    def _infer_builder_kwargs(self, model, embedding_matrix):
+        builder_kwargs = dict()
         if isinstance(self._task.loss, (mz.losses.RankHingeLoss,
                                         mz.losses.RankCrossEntropyLoss)):
             builder_kwargs.update(dict(
@@ -175,10 +177,20 @@ class ZooKeeper(object):
                                         mz.losses.RankCrossEntropyLoss)):
             self._config['num_neg'] = self._task.loss.num_neg
 
+    @classmethod
+    def _get_default_config(cls):
+        return {
+            # pair generator builder kwargs
+            'num_dup': 1,
 
-class DataGeneratorBuilder(object):
-    def __init__(self, **kwargs):
-        self._kwargs = kwargs
+            # histogram unit of DRMM
+            'bin_size': 30,
+            'hist_mode': 'LCH',
 
-    def build(self, data_pack):
-        return mz.DataGenerator(data_pack, **self._kwargs)
+            # dynamic Pooling of MatchPyramid
+            'compress_ratio_left': 1.0,
+            'compress_ratio_right': 1.0,
+
+            # if no `matchzoo.Embedding` is passed to `tune`
+            'embedding_output_dim': 100
+        }

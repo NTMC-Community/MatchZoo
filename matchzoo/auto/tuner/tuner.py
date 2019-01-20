@@ -1,5 +1,3 @@
-"""Tuner class. Currently a minimum working demo."""
-
 import copy
 import typing
 import logging
@@ -8,7 +6,7 @@ import hyperopt
 
 import matchzoo as mz
 from matchzoo import engine
-from matchzoo.auto.tuner.callbacks import Callback, LogResult
+from matchzoo.auto import tuner
 
 
 class Tuner(object):
@@ -23,7 +21,7 @@ class Tuner(object):
     have a hyper-space, then the default value of the hyper-parameter will
     be used.
 
-    Follow `tutorials/automation.ipynb` for a detailed walkthrough on usage.
+    See `tutorials/automation.ipynb` for a detailed walkthrough on usage.
 
     :param params: A completed parameter table to tune. Usually `model.params`
         of the desired model to tune. `params.completed()` should be `True`.
@@ -42,7 +40,7 @@ class Tuner(object):
         `params.hyper_space` and build a model based on the sample.
         (default: 10)
     :param callbacks: A list of callbacks to handle. Handled sequentially
-        at every callback point. (default: `[LogResult()]`)
+        at every callback point.
 
     Example:
         >>> import matchzoo as mz
@@ -77,7 +75,8 @@ class Tuner(object):
         metric: typing.Union[str, mz.engine.BaseMetric] = None,
         mode: str = 'maximize',
         num_runs: int = 10,
-        callbacks: typing.List[Callback] = None
+        callbacks: typing.List['tuner.callbacks.Callback'] = None,
+        verbose=1
     ):
         """Tuner."""
         if fit_kwargs is None:
@@ -85,7 +84,7 @@ class Tuner(object):
         if evaluate_kwargs is None:
             evaluate_kwargs = {}
         if callbacks is None:
-            callbacks = [LogResult()]
+            callbacks = []
 
         self._validate_params(params)
         metric = metric or params['task'].metrics[0]
@@ -109,6 +108,7 @@ class Tuner(object):
         self._mode = mode
         self._num_runs = num_runs
         self._callbacks = callbacks
+        self._verbose = verbose
 
     def tune(self):
         """
@@ -168,6 +168,8 @@ class Tuner(object):
         }
 
         self._handle_callbacks_run_end(model, result)
+        if self._verbose:
+            self._log_result(result)
 
         return {
             # these two items are for hyperopt
@@ -220,85 +222,110 @@ class Tuner(object):
             loss = -loss
         return loss
 
+    @classmethod
+    def _log_result(cls, result):
+        print(f"Run #{result['#']}")
+        print(f"Score: {result['score']}")
+        print(result['params'])
+        print()
+
     @property
     def params(self):
+        """`params` getter."""
         return self._params
 
     @params.setter
     def params(self, value):
+        """`params` setter."""
         self._validate_params(value)
         self._validate_metric(value, self._metric)
         self._params = value
 
     @property
     def train_data(self):
+        """`train_data` getter."""
         return self._train_data
 
     @train_data.setter
     def train_data(self, value):
+        """`train_data` setter."""
         self._validate_data(value)
         self._train_data = value
 
     @property
     def test_data(self):
+        """`test_data` getter."""
         return self._test_data
 
     @test_data.setter
     def test_data(self, value):
-        self._validate_test_data(value)
+        """`test_data` setter."""
+        self._validate_data(value)
         self._test_data = value
 
     @property
     def fit_kwargs(self):
+        """`fit_kwargs` getter."""
         return self._fit_kwargs
 
     @fit_kwargs.setter
     def fit_kwargs(self, value):
+        """`fit_kwargs` setter."""
         self._validate_kwargs(value)
         self._fit_kwargs = value
 
     @property
     def evaluate_kwargs(self):
+        """`evaluate_kwargs` getter."""
         return self._evaluate_kwargs
 
     @evaluate_kwargs.setter
     def evaluate_kwargs(self, value):
+        """`evaluate_kwargs` setter."""
         self._validate_kwargs(value)
         self._evaluate_kwargs = value
 
     @property
     def metric(self):
+        """`metric` getter."""
         return self._metric
 
     @metric.setter
     def metric(self, value):
+        """`metric` setter."""
         self._validate_metric(self._params, value)
         self._metric = value
 
     @property
     def mode(self):
+        """`mode` getter."""
         return self._mode
 
     @mode.setter
     def mode(self, value):
+        """`mode` setter."""
         self._validate_mode(value)
         self._mode = value
 
     @property
     def num_runs(self):
+        """`num_runs` getter."""
         return self._num_runs
 
     @num_runs.setter
     def num_runs(self, value):
+        """`num_runs` setter."""
         self._validate_num_runs(value)
         self._num_runs = value
 
     @property
     def callbacks(self):
+        """`callbacks` getter."""
         return self._callbacks
 
     @callbacks.setter
     def callbacks(self, value):
+        """`callbacks` setter."""
         self._validate_callbacks(value)
         self._callbacks = value
 
@@ -339,7 +366,7 @@ class Tuner(object):
     @classmethod
     def _validate_callbacks(cls, callbacks):
         for callback in callbacks:
-            if not isinstance(callback, Callback):
-                if issubclass(callback, Callback):
+            if not isinstance(callback, tuner.callbacks.Callback):
+                if issubclass(callback, tuner.callbacks.Callback):
                     raise TypeError("Make sure to instantiate the callbacks.")
                 raise TypeError

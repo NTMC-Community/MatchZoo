@@ -52,5 +52,5 @@ class RankCrossEntropyLoss(object):
 
     @property
     def num_neg(self):
-        """`num_neg` accessor."""
+        """`num_neg` getter."""
         return self._num_neg

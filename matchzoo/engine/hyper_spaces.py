@@ -215,4 +215,18 @@ class uniform(HyperoptProxy):
 
 
 def sample(space):
+    """
+    Take a sample in the hyper space.
+
+    This method is stateless, so the distribution of the samples is different
+    from that of `tune` call. This function just gives a general idea of what
+    a sample from the `space` looks like.
+
+    Example:
+        >>> import matchzoo as mz
+        >>> space = mz.models.Naive.get_default_params().hyper_space
+        >>> mz.hyper_spaces.sample(space)  # doctest: +ELLIPSIS
+        {'optimizer': ...}
+
+    """
     return hyperopt.pyll.stochastic.sample(space)

@@ -23,6 +23,7 @@ from .data_pack import build_vocab_unit
 
 from . import data_generator
 from .data_generator import DataGenerator
+from .data_generator import DataGeneratorBuilder
 
 from . import tasks
 from . import metrics
