@@ -2,7 +2,7 @@
 <img src="https://github.com/NTMC-Community/MatchZoo/blob/master/artworks/matchzoo-logo.png?raw=true" width = "400"  alt="logo" align="center" />
 </div>
 
-# MatchZoo [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Get%20over%20170%20free%20design%20blocks%20based%20on%20Bootstrap%204&url=https://www.froala.com/design-blocks&via=froala&hashtags=bootstrap,design,templates,blocks,developers)
+# MatchZoo [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=MatchZoo:%20deep%20learning%20170%20for%20semantic%20matching&url=https://github.com/NTMC-Community/MatchZoo)
 
 > Facilitating the design, comparison and sharing of deep text matching models.<br/>
 > MatchZoo 是一个通用的文本匹配工具包，它旨在方便大家快速的实现、比较、以及分享最新的深度文本匹配模型。
