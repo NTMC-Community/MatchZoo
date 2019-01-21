@@ -2,7 +2,7 @@
 <img src="https://github.com/NTMC-Community/MatchZoo/blob/master/artworks/matchzoo-logo.png?raw=true" width = "400"  alt="logo" align="center" />
 </div>
 
-# MatchZoo
+# MatchZoo [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Get%20over%20170%20free%20design%20blocks%20based%20on%20Bootstrap%204&url=https://www.froala.com/design-blocks&via=froala&hashtags=bootstrap,design,templates,blocks,developers)
 
 > Facilitating the design, comparison and sharing of deep text matching models.<br/>
 > MatchZoo 是一个通用的文本匹配工具包，它旨在方便大家快速的实现、比较、以及分享最新的深度文本匹配模型。
@@ -14,7 +14,6 @@
 [![codecov](https://codecov.io/gh/NTMC-Community/MatchZoo/branch/master/graph/badge.svg)](https://codecov.io/gh/NTMC-Community/MatchZoo)
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Requirements Status](https://requires.io/github/NTMC-Community/MatchZoo/requirements.svg?branch=master)](https://requires.io/github/NTMC-Community/MatchZoo/requirements/?branch=master)
-<a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="Check out MatchZoo, an open source deep learning project for semantic matching library on Github!" data-hashtags="MatchZoo" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 ---
 
 ## Get Started in 60 Seconds
