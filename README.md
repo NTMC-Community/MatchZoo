@@ -2,12 +2,11 @@
 <img src="https://github.com/NTMC-Community/MatchZoo/blob/master/artworks/matchzoo-logo.png?raw=true" width = "400"  alt="logo" align="center" />
 </div>
 
-# MatchZoo
+# MatchZoo [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=MatchZoo:%20deep%20learning%20for%20semantic%20matching&url=https://github.com/NTMC-Community/MatchZoo)
 
 > Facilitating the design, comparison and sharing of deep text matching models.<br/>
 > MatchZoo 是一个通用的文本匹配工具包，它旨在方便大家快速的实现、比较、以及分享最新的深度文本匹配模型。
 
-[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=MatchZoo:%20deep%20learning%20for%20semantic%20matching&url=https://github.com/NTMC-Community/MatchZoo)
 [![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Pypi Downloads](https://img.shields.io/pypi/dm/matchzoo.svg?label=pypi)](https://pypi.org/project/MatchZoo/)
 [![Documentation Status](https://readthedocs.org/projects/matchzoo/badge/?version=master)](https://matchzoo.readthedocs.io/en/master/?badge=master)
