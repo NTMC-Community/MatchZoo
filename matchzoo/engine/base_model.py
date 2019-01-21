@@ -116,7 +116,7 @@ class BaseModel(abc.ABC):
                      "Shouldn't be changed."
             ))
             params.add(engine.Param(
-                name='mlp_num_units', value=64,
+                name='mlp_num_units', value=128,
                 desc="Number of units in first `mlp_num_layers` layers.",
                 hyper_space=hyper_spaces.quniform(8, 256, 8)
             ))
@@ -126,7 +126,7 @@ class BaseModel(abc.ABC):
                 hyper_space=hyper_spaces.quniform(1, 6)
             ))
             params.add(engine.Param(
-                name='mlp_num_fan_out', value=32,
+                name='mlp_num_fan_out', value=64,
                 desc="Number of units of the layer that connects the multiple "
                      "layer percetron and the output.",
                 hyper_space=hyper_spaces.quniform(4, 128, 4)

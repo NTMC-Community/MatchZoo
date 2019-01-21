@@ -53,14 +53,7 @@ class DataGenerator(keras.utils.Sequence):
         shuffle: bool = True,
         callbacks: typing.List[Callback] = None
     ):
-        """
-        :class:`DataGenerator` constructor.
-
-        :param data_pack: a :class:`DataPack` object.
-        :param batch_size: number of instances for each batch
-        :param shuffle: a bool variable to determine whether choose samples
-        randomly
-        """
+        """Init."""
         if callbacks is None:
             callbacks = []
 
