@@ -68,13 +68,18 @@ Generate pair-wise training data on-the-fly, evaluate model performance using cu
 ```python
 train_generator = mz.PairDataGenerator(train_pack_processed, num_dup=1, num_neg=4, batch_size=64, shuffle=True)
 
-pred_x, pred_y = predict_pack_processed[:].unpack()
+pred_x, pred_y = predict_pack_processed.unpack()
 evaluate = mz.callbacks.EvaluateAllMetrics(model, x=pred_x, y=pred_y, batch_size=len(pred_x))
 
 history = model.fit_generator(train_generator, epochs=20, callbacks=[evaluate], workers=5, use_multiprocessing=False)
 ```
 
-For detailed usage, such as hyper-parameters tunning, model persistence, evaluation, please check out our [tutorials](https://github.com/NTMC-Community/MatchZoo/tree/master/tutorials) and documention: [English](https://matchzoo.readthedocs.io/en/master/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
+## References
+[Tutorials](https://github.com/NTMC-Community/MatchZoo/tree/master/tutorials)
+
+[English Documentation](https://matchzoo.readthedocs.io/en/master/)
+
+[中文文档](https://matchzoo.readthedocs.io/zh/latest/)
 
 If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match).
 
