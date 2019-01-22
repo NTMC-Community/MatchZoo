@@ -2,7 +2,6 @@
 
 import math
 import typing
-import random
 
 import keras
 import numpy as np
@@ -13,33 +12,71 @@ from matchzoo.data_generator.callbacks import Callback
 
 
 class DataGenerator(keras.utils.Sequence):
-    """Abstract base class of all matchzoo generators.
+    """
+    Data Generator.
 
-    Every generator must implement :meth:`_get_batch_of_transformed_samples`
-    method.
+    Used to divide a :class:`matchzoo.DataPack` into batches. This is helpful
+    for generating batch-wise features and delaying data preprocessing to the
+    `fit` time.
 
-    Examples:
+    See `tutorials/data_handling.ipynb` for a walkthrough.
+
+    :param data_pack: DataPack to generator data from.
+    :param mode: One of "point", "pair", and "list". (default: "point")
+    :param num_dup: Number of duplications per instance, only effective when
+        `mode` is "pair". (default: 1)
+    :param num_neg: Number of negative samples per instance, only effective
+        when `mode` is "pair". (default: 1)
+    :param resample: Either to resample for each epoch, only effective when
+        `mode` is "pair". (default: `True`)
+    :param batch_size: Batch size. (default: 128)
+    :param shuffle: Either to shuffle the samples/instances. (default: `True`)
+    :param callbacks: Callbacks. See `matchzoo.data_generator.callbacks` for
+        more details.
+
+    Examples::
+        >>> import numpy as np
         >>> import matchzoo as mz
-        >>> raw_data = mz.datasets.toy.load_data()
-        >>> data_generator = DataGenerator(raw_data, batch_size=3,
-        ...                                shuffle=False)
-        >>> len(data_generator)
-        34
-        >>> x, y = data_generator[-1]
-        >>> type(x)
-        <class 'dict'>
-        >>> x.keys()
-        dict_keys(['id_left', 'text_left', 'id_right', 'text_right'])
-        >>> type(x['id_left'])
-        <class 'numpy.ndarray'>
-        >>> type(x['id_right'])
-        <class 'numpy.ndarray'>
-        >>> type(x['text_left'])
-        <class 'numpy.ndarray'>
-        >>> type(x['text_right'])
-        <class 'numpy.ndarray'>
-        >>> type(y)
-        <class 'numpy.ndarray'>
+        >>> np.random.seed(0)
+        >>> data_pack = mz.datasets.toy.load_data()
+        >>> batch_size = 8
+
+    To generate data points:
+        >>> point_gen = mz.DataGenerator(
+        ...     data_pack=data_pack,
+        ...     batch_size=batch_size
+        ... )
+        >>> len(point_gen)
+        13
+        >>> x, y = point_gen[0]
+        >>> for key, value in sorted(x.items()):
+        ...     print(key, str(value)[:30])
+        id_left ['Q6' 'Q17' 'Q1' 'Q13' 'Q16' '
+        id_right ['D6-6' 'D17-1' 'D1-2' 'D13-3'
+        text_left ['how long is the term for fed
+        text_right ['See Article I and Article II
+
+    To generate data pairs:
+        >>> pair_gen = mz.DataGenerator(
+        ...     data_pack=data_pack,
+        ...     mode='pair',
+        ...     num_dup=4,
+        ...     num_neg=4,
+        ...     batch_size=batch_size,
+        ...     shuffle=False
+        ... )
+        >>> len(pair_gen)
+        3
+        >>> x, y = pair_gen[0]
+        >>> for key, value in sorted(x.items()):
+        ...     print(key, str(value)[:30])
+        id_left ['Q1' 'Q1' 'Q1' 'Q1' 'Q1' 'Q1'
+        id_right ['D1-3' 'D1-4' 'D1-0' 'D1-1' '
+        text_left ['how are glacier caves formed
+        text_right ['A glacier cave is a cave for
+
+    To generate data lists:
+        # TODO:
 
     """
 
@@ -61,7 +98,6 @@ class DataGenerator(keras.utils.Sequence):
         if mode not in ('point', 'pair', 'list'):
             raise ValueError
 
-        self._callbacks = callbacks
         self._mode = mode
         self._num_dup = num_dup
         self._num_neg = num_neg
@@ -69,6 +105,7 @@ class DataGenerator(keras.utils.Sequence):
         self._shuffle = shuffle
         self._resample = resample
         self._orig_relation = data_pack.relation
+        self._callbacks = callbacks
 
         if mode == 'pair':
             data_pack.relation = self._reorganize_pair_wise(
@@ -137,7 +174,7 @@ class DataGenerator(keras.utils.Sequence):
             raise ValueError
 
         if self._shuffle:
-            random.shuffle(index_pool)
+            np.random.shuffle(index_pool)
 
         # batch_indices: index -> batch of indices
         self._batch_indices = []
