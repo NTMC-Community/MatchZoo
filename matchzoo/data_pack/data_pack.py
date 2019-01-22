@@ -172,9 +172,14 @@ class DataPack(object):
                         relation=relation.copy())
 
     @property
-    def relation(self) -> pd.DataFrame:
-        """Get :meth:`relation` of :class:`DataPack`."""
+    def relation(self):
+        """`relation` getter."""
         return self._relation
+
+    @relation.setter
+    def relation(self, value):
+        """`relation` setter."""
+        self._relation = value
 
     @property
     def left(self) -> pd.DataFrame:

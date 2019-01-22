@@ -46,9 +46,10 @@ class DataGenerator(keras.utils.Sequence):
     def __init__(
         self,
         data_pack: mz.DataPack,
-        pair_wise=False,
+        mode='point',
         num_dup: int = 1,
         num_neg: int = 1,
+        resample: bool = True,
         batch_size: int = 128,
         shuffle: bool = True,
         callbacks: typing.List[Callback] = None
@@ -57,19 +58,28 @@ class DataGenerator(keras.utils.Sequence):
         if callbacks is None:
             callbacks = []
 
-        if pair_wise:
-            data_pack = self._reorganize_pair_wise(
-                data_pack, num_dup=num_dup, num_neg=num_neg)
+        if mode not in ('point', 'pair', 'list'):
+            raise ValueError
 
         self._callbacks = callbacks
-        self._pair_wise = pair_wise
+        self._mode = mode
         self._num_dup = num_dup
         self._num_neg = num_neg
         self._batch_size = batch_size
         self._shuffle = shuffle
-        self._data_pack = data_pack
+        self._resample = resample
+        self._orig_relation = data_pack.relation
 
+        if mode == 'pair':
+            data_pack.relation = self._reorganize_pair_wise(
+                data_pack.relation,
+                num_dup=num_dup,
+                num_neg=num_neg
+            )
+
+        self._data_pack = data_pack
         self._batch_indices = None
+
         self.reset_index()
 
     def __getitem__(self, item: int) -> typing.Tuple[dict, np.ndarray]:
@@ -93,6 +103,12 @@ class DataGenerator(keras.utils.Sequence):
 
     def on_epoch_end(self):
         """Reorganize the index array while epoch is ended."""
+        if self._mode == 'pair' and self._resample:
+            self._data_pack.relation = self._reorganize_pair_wise(
+                relation=self._orig_relation,
+                num_dup=self._num_dup,
+                num_neg=self._num_neg
+            )
         self.reset_index()
 
     def reset_index(self):
@@ -102,7 +118,10 @@ class DataGenerator(keras.utils.Sequence):
         Here the :attr:`index_array` records the index of all the instances.
         """
         # index pool: index -> instance
-        if self._pair_wise:
+        if self._mode == 'point':
+            num_instances = len(self._data_pack)
+            index_pool = list(range(num_instances))
+        elif self._mode == 'pair':
             index_pool = []
             step_size = self._num_neg + 1
             num_instances = int(len(self._data_pack) / step_size)
@@ -112,9 +131,10 @@ class DataGenerator(keras.utils.Sequence):
                 indices = list(range(lower, upper))
                 if indices:
                     index_pool.append(indices)
+        elif self._mode == 'list':
+            raise NotImplementedError
         else:
-            num_instances = len(self._data_pack)
-            index_pool = list(range(num_instances))
+            raise ValueError
 
         if self._shuffle:
             random.shuffle(index_pool)
@@ -125,7 +145,7 @@ class DataGenerator(keras.utils.Sequence):
             lower = self._batch_size * i
             upper = self._batch_size * (i + 1)
             candidates = index_pool[lower:upper]
-            if self._pair_wise:
+            if self._mode == 'pair':
                 candidates = sum(candidates, [])
             if candidates:
                 self._batch_indices.append(candidates)
@@ -171,14 +191,14 @@ class DataGenerator(keras.utils.Sequence):
         self.reset_index()
 
     @property
-    def pair_wise(self):
-        """`pair_wise` getter."""
-        return self._pair_wise
+    def mode(self):
+        """`mode` getter."""
+        return self._mode
 
-    @pair_wise.setter
-    def pair_wise(self, value):
-        """`pair_wise` setter."""
-        self._pair_wise = value
+    @mode.setter
+    def mode(self, value):
+        """`mode` setter."""
+        self._mode = value
         self.reset_index()
 
     @property
@@ -206,20 +226,13 @@ class DataGenerator(keras.utils.Sequence):
     @classmethod
     def _reorganize_pair_wise(
         cls,
-        data_pack: mz.DataPack,
+        relation: pd.DataFrame,
         num_dup: int = 1,
         num_neg: int = 1
     ):
-        """Re-organize the data pack as pair-wise format.
-
-        :param data_pack: the input :class:`DataPack`.
-        :param num_dup: number of duplicates for each positive sample.
-        :param num_neg: number of negative samples associated with each
-            positive sample.
-        :return: the reorganized :class:`DataPack` object.
-        """
+        """Re-organize the data pack as pair-wise format."""
         pairs = []
-        groups = data_pack.relation.sort_values(
+        groups = relation.sort_values(
             'label', ascending=False).groupby('id_left')
         for idx, group in groups:
             labels = group.label.unique()
@@ -232,6 +245,4 @@ class DataGenerator(keras.utils.Sequence):
                     neg_sample = neg_samples.sample(num_neg, replace=True)
                     pairs.extend((pos_sample, neg_sample))
         new_relation = pd.concat(pairs, ignore_index=True)
-        return mz.DataPack(relation=new_relation,
-                           left=data_pack.left.copy(),
-                           right=data_pack.right.copy())
+        return new_relation
