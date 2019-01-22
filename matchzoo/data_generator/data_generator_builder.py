@@ -8,7 +8,7 @@ class DataGeneratorBuilder(object):
 
     Example:
         >>> import matchzoo as mz
-        >>> builder = mz.DataGeneratorBuilder(pair_wise=True, batch_size=32)
+        >>> builder = mz.DataGeneratorBuilder(mode='pair', batch_size=32)
         >>> data = mz.datasets.toy.load_data()
         >>> gen = builder.build(data)
         >>> type(gen)

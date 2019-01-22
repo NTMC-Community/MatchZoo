@@ -155,7 +155,7 @@ class ZooKeeper(object):
         if isinstance(self._task.loss, (mz.losses.RankHingeLoss,
                                         mz.losses.RankCrossEntropyLoss)):
             builder_kwargs.update(dict(
-                pair_wise=True,
+                mode='pair',
                 num_dup=self._config['num_dup'],
                 num_neg=self._config['num_neg']
             ))
