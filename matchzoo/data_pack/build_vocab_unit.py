@@ -23,5 +23,9 @@ def build_vocab_unit(
     :return: A built vocabulary unit.
 
     """
-    return build_unit_from_data_pack(processor_units.VocabularyUnit(),
-                                     data_pack, mode, True, verbose)
+    return build_unit_from_data_pack(
+        unit=processor_units.VocabularyUnit(),
+        data_pack=data_pack,
+        mode=mode,
+        flatten=True, verbose=verbose
+    )

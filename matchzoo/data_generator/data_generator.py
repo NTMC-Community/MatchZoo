@@ -131,7 +131,7 @@ class DataGenerator(keras.utils.Sequence):
         batch_data_pack = self._data_pack[indices]
         self._handle_callbacks_on_batch_data_pack(batch_data_pack)
         x, y = batch_data_pack.unpack()
-        self._handle_callbacks_on_batch_x_y(x, y)
+        self._handle_callbacks_on_batch_unpacked(x, y)
         return x, y
 
     def __len__(self) -> int:
@@ -154,7 +154,7 @@ class DataGenerator(keras.utils.Sequence):
 
         Here the :attr:`index_array` records the index of all the instances.
         """
-        # index pool: index -> instance
+        # index pool: index -> instance index
         if self._mode == 'point':
             num_instances = len(self._data_pack)
             index_pool = list(range(num_instances))
@@ -191,7 +191,7 @@ class DataGenerator(keras.utils.Sequence):
         for callback in self._callbacks:
             callback.on_batch_data_pack(batch_data_pack)
 
-    def _handle_callbacks_on_batch_x_y(self, x, y):
+    def _handle_callbacks_on_batch_unpacked(self, x, y):
         for callback in self._callbacks:
             callback.on_batch_unpacked(x, y)
 

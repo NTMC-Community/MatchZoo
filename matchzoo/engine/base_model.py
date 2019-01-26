@@ -18,23 +18,42 @@ from matchzoo import tasks
 
 
 class BaseModel(abc.ABC):
-    """Abstract base class of all matchzoo models."""
+    """
+    Abstract base class of all MatchZoo models.
+
+    MatchZoo models are wrapped over keras models, and the actual keras model
+    built can be accessed by `model.backend`. `params` is a set of model
+    hyper-parameters that deterministically builds a model. In other words,
+    `params['model_class'](params=params)` of the same `params` always create
+    models with the same structure.
+
+    :param params: Model hyper-parameters. (default: return value from
+        :meth:`get_default_params`)
+    :param backend: A keras model as the model backend. Usually not passed as
+        an argument.
+
+    Example:
+        >>> BaseModel()  # doctest: +ELLIPSIS
+        Traceback (most recent call last):
+        ...
+        TypeError: Can't instantiate abstract class BaseModel ...
+        >>> class MyModel(BaseModel):
+        ...     def build(self):
+        ...         pass
+        >>> MyModel()  # doctest: +ELLIPSIS
+         <base_model.MyModel object at 0x...>
+
+    """
 
     BACKEND_WEIGHTS_FILENAME = 'backend_weights.h5'
     PARAMS_FILENAME = 'params.dill'
 
     def __init__(
         self,
-        params: engine.ParamTable = None,
-        backend: keras.models.Model = None
+        params: typing.Optional[engine.ParamTable] = None,
+        backend: typing.Optional[keras.models.Model] = None
     ):
-        """
-        :class:`BaseModel` constructor.
-
-        :param params: model parameters, if not set, return value from
-            :meth:`get_default_params` will be used
-        :param backend: a keras model as the model backend
-        """
+        """Init."""
         self._params = params or self.get_default_params()
         self._backend = backend
 
@@ -164,23 +183,17 @@ class BaseModel(abc.ABC):
     @property
     def backend(self) -> keras.models.Model:
         """:return model backend, a keras model instance."""
-        return self._backend
+        if not self._backend:
+            raise ValueError("Backend not found."
+                             "Please build the model first.")
+        else:
+            return self._backend
 
     @abc.abstractmethod
     def build(self):
         """
         Build model, each sub class need to impelemnt this method.
 
-        Example:
-
-            >>> BaseModel()  # doctest: +ELLIPSIS
-            Traceback (most recent call last):
-            ...
-            TypeError: Can't instantiate abstract class BaseModel ...
-            >>> class MyModel(BaseModel):
-            ...     def build(self):
-            ...         pass
-            >>> assert MyModel()
         """
 
     def compile(self):
@@ -275,12 +288,13 @@ class BaseModel(abc.ABC):
         :param x: Input data.
         :param y: Labels.
         :param batch_size: Number of samples when `predict` for evaluation.
+            (default: 128)
 
         Examples::
             >>> import matchzoo as mz
             >>> data_pack = mz.datasets.toy.load_data()
             >>> preprocessor = mz.preprocessors.NaivePreprocessor()
-            >>> data_pack = preprocessor.fit_transform(data_pack)
+            >>> data_pack = preprocessor.fit_transform(data_pack, verbose=0)
             >>> m = mz.models.DenseBaseline()
             >>> m.params['task'] = mz.tasks.Ranking()
             >>> m.params['task'].metrics = [
@@ -326,19 +340,16 @@ class BaseModel(abc.ABC):
     def evaluate_generator(
         self,
         generator: DataGenerator,
+        batch_size: int = 128
     ) -> typing.Dict['matchzoo.engine.BaseMetric', float]:
         """
         Evaluate the model.
 
         :param generator: DataGenerator to evluate.
+        :param batch_size: Batch size. (default: 128)
         """
-        result = dict()
-        for x, y in generator:
-            batch_result = self.evaluate(x, y, batch_size=y.shape[0])
-            for metric, val in batch_result.items():
-                result.setdefault(metric, [])
-                result[metric].append(val)
-        return {k: np.asscalar(np.mean(v)) for k, v in result.items()}
+        x, y = generator[:]
+        return self.evaluate(x, y, batch_size=batch_size)
 
     def _separate_metrics(self):
         matchzoo_metrics = []
@@ -450,7 +461,7 @@ class BaseModel(abc.ABC):
         """
         Guess and fill missing parameters in :attr:`params`.
 
-        Use this method to automatically fill-in hyper parameters.
+        Use this method to automatically fill-in other hyper parameters.
         This involves some guessing so the parameter it fills could be
         wrong. For example, the default task is `Ranking`, and if we do not
         set it to `Classification` manaully for data packs prepared for
@@ -503,6 +514,7 @@ class BaseModel(abc.ABC):
         )
 
     def _make_multi_layer_perceptron_layer(self) -> keras.layers.Layer:
+        # TODO: do not create new layers for a second call
         if not self._params['with_multi_layer_perceptron']:
             raise AttributeError
 

@@ -1,5 +1,5 @@
 import matchzoo as mz
-from matchzoo.auto.tuner.callbacks.callback import Callback
+from matchzoo.tune.callbacks.callback import Callback
 
 
 class LoadEmbeddingMatrix(Callback):

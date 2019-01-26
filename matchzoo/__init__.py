@@ -43,7 +43,5 @@ from .engine import callbacks
 
 from .embedding import Embedding
 
-from . import auto
-from .auto import tuner
-from .auto import ZooKeeper
-from .auto import Tuner
+from . import tune
+from .prepare import prepare, Preparer

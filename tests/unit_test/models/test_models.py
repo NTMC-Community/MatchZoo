@@ -44,8 +44,8 @@ def embedding():
 
 @pytest.fixture(scope='module')
 def setup(task, model_class, train_raw, embedding):
-    keeper = mz.ZooKeeper(task)
-    return keeper.prepare(
+    return mz.prepare(
+        task=task,
         model_class=model_class,
         data_pack=train_raw,
         embedding=embedding

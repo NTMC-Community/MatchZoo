@@ -1,5 +1,5 @@
 import matchzoo as mz
-from matchzoo.auto.tuner.callbacks.callback import Callback
+from matchzoo.tune.callbacks.callback import Callback
 
 
 class LambdaCallback(Callback):
@@ -10,7 +10,7 @@ class LambdaCallback(Callback):
 
     Example:
         >>> import matchzoo as mz
-        >>> callback = mz.tuner.callbacks.LambdaCallback(on_run_start=print)
+        >>> callback = mz.tune.callbacks.LambdaCallback(on_run_start=print)
         >>> callback.on_run_start('tuner', {'dict': 'of sample'})
         tuner {'dict': 'of sample'}
 

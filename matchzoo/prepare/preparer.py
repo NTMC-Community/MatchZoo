@@ -6,7 +6,7 @@ import matchzoo as mz
 from matchzoo.data_generator import DataGeneratorBuilder
 
 
-class ZooKeeper(object):
+class Preparer(object):
     """
     Zoo Keeper. Unifies setup processes of all MatchZoo models.
 
@@ -40,7 +40,7 @@ class ZooKeeper(object):
     Example:
         >>> import matchzoo as mz
         >>> task = mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss())
-        >>> keeper = mz.ZooKeeper(task)
+        >>> keeper = mz.Preparer(task)
         >>> model_class = mz.models.DenseBaseline
         >>> train_raw = mz.datasets.toy.load_data('train', 'ranking')
         >>> model, prpr, gen_builder, matrix = keeper.prepare(model_class,
@@ -97,7 +97,35 @@ class ZooKeeper(object):
 
         preprocessor.fit(data_pack, verbose=0)
 
-        model = self._setup_model(model_class, preprocessor)
+        model, embedding_matrix = self._build_model(
+            model_class,
+            preprocessor,
+            embedding
+        )
+
+        data_gen_builder = self._build_data_gen_builder(
+            model,
+            embedding_matrix,
+            preprocessor
+        )
+
+        return (
+            model,
+            preprocessor,
+            data_gen_builder,
+            embedding_matrix
+        )
+
+    def _build_model(
+        self,
+        model_class,
+        preprocessor,
+        embedding
+    ) -> typing.Tuple[mz.engine.BaseModel, np.ndarray]:
+
+        model = model_class()
+        model.params['task'] = self._task
+        model.params.update(preprocessor.context)
 
         if 'with_embedding' in model.params:
             embedding_matrix = self._build_matrix(preprocessor, embedding)
@@ -106,36 +134,22 @@ class ZooKeeper(object):
         else:
             embedding_matrix = None
 
+        self._handle_drmm_input_shapes(model)
+
+        assert model.params.completed()
         model.build()
         model.compile()
 
-        builder_kwargs = self._infer_builder_kwargs(model, embedding_matrix,
-                                                    preprocessor)
-
-        return (
-            model,
-            preprocessor,
-            DataGeneratorBuilder(**builder_kwargs),
-            embedding_matrix
-        )
-
-    def _setup_model(self, model_class, preprocessor):
-        model = model_class()
-        model.params['task'] = self._task
-        model.params.update(preprocessor.context)
         if 'with_embedding' in model.params:
-            model.params.update({
-                'embedding_input_dim': preprocessor.context['vocab_size']
-            })
-        self._handle_drmm_input_shapes(model)
-        return model
+            model.load_embedding_matrix(embedding_matrix)
+
+        return model, embedding_matrix
 
     def _handle_drmm_input_shapes(self, model):
         if isinstance(model, mz.models.DRMM):
             left = model.params['input_shapes'][0]
-            orig_right = model.params['input_shapes'][1]
-            updated_right = orig_right + (self._config['bin_size'],)
-            model.params['input_shapes'] = (left, updated_right)
+            right = left + (self._config['bin_size'],)
+            model.params['input_shapes'] = (left, right)
 
     def _build_matrix(self, preprocessor, embedding):
         if embedding:
@@ -149,7 +163,7 @@ class ZooKeeper(object):
             )
             return np.random.uniform(-0.2, 0.2, matrix_shape)
 
-    def _infer_builder_kwargs(self, model, embedding_matrix, preprocessor):
+    def _build_data_gen_builder(self, model, embedding_matrix, preprocessor):
         builder_kwargs = dict(callbacks=[])
 
         if isinstance(self._task.loss, (mz.losses.RankHingeLoss,
@@ -182,11 +196,15 @@ class ZooKeeper(object):
             hashing_unit = mz.processor_units.WordHashingUnit(term_index)
             hashing_callback = mz.data_generator.callbacks.LambdaCallback(
                 on_batch_data_pack=lambda data_pack:
-                data_pack.apply_on_text(hashing_unit.transform, inplace=True)
+                data_pack.apply_on_text(
+                    func=hashing_unit.transform,
+                    inplace=True,
+                    verbose=0
+                )
             )
             builder_kwargs['callbacks'].append(hashing_callback)
 
-        return builder_kwargs
+        return DataGeneratorBuilder(**builder_kwargs)
 
     def _infer_num_neg(self):
         if isinstance(self._task.loss, (mz.losses.RankHingeLoss,

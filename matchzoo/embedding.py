@@ -15,10 +15,10 @@ class Embedding(object):
 
     Examples::
         >>> import matchzoo as mz
-        >>> data_pack = mz.datasets.toy.load_data()
+        >>> train_raw = mz.datasets.toy.load_data()
         >>> pp = mz.preprocessors.NaivePreprocessor()
-        >>> vocab_unit = mz.build_vocab_unit(pp.fit_transform(data_pack),
-        ...                                  verbose=0)
+        >>> train = pp.fit_transform(train_raw, verbose=0)
+        >>> vocab_unit = mz.build_vocab_unit(train, verbose=0)
         >>> term_index = vocab_unit.state['term_index']
         >>> embed_path = mz.datasets.embeddings.EMBED_RANK
 

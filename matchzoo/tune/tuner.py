@@ -5,13 +5,12 @@ import logging
 import hyperopt
 
 import matchzoo as mz
-from matchzoo import engine
-from matchzoo.auto import tuner
+from matchzoo import tune
 
 
 class Tuner(object):
     """
-    Model parameter auto tuner.
+   Model hyper-parameters tuner.
 
     `model.params.hyper_space` reprensents the model's hyper-parameters
     search space, which is the cross-product of individual hyper parameter's
@@ -21,7 +20,7 @@ class Tuner(object):
     have a hyper-space, then the default value of the hyper-parameter will
     be used.
 
-    See `tutorials/automation.ipynb` for a detailed walkthrough on usage.
+    See `tutorials/model_tuning.ipynb` for a detailed walkthrough on usage.
 
     :param params: A completed parameter table to tune. Usually `model.params`
         of the desired model to tune. `params.completed()` should be `True`.
@@ -53,7 +52,7 @@ class Tuner(object):
         >>> model = mz.models.DenseBaseline()
         >>> model.params['input_shapes'] = prpr.context['input_shapes']
         >>> model.params['task'] = mz.tasks.Ranking()
-        >>> tuner = mz.auto.Tuner(
+        >>> tuner = mz.tune.Tuner(
         ...     params=model.params,
         ...     train_data=train,
         ...     test_data=dev,
@@ -76,7 +75,7 @@ class Tuner(object):
         metric: typing.Union[str, mz.engine.BaseMetric] = None,
         mode: str = 'maximize',
         num_runs: int = 10,
-        callbacks: typing.List['tuner.callbacks.Callback'] = None,
+        callbacks: typing.List['tune.callbacks.Callback'] = None,
         verbose=1
     ):
         """Tuner."""
@@ -150,7 +149,7 @@ class Tuner(object):
 
         # build model
         params = self._create_full_params(sample)
-        model = self._params['model_class'](params=params)
+        model = params['model_class'](params=params)
         model.build()
         model.compile()
         self._handle_callbacks_build_end(model)
@@ -161,16 +160,18 @@ class Tuner(object):
         score = lookup[self._metric]
 
         # collect result
-        result = {
+        # this result is for users, visible outside
+        mz_result = {
             '#': self.__curr_run_num,
             'params': params,
             'sample': sample,
             'score': score
         }
 
-        self._handle_callbacks_run_end(model, result)
+        self._handle_callbacks_run_end(model, mz_result)
+
         if self._verbose:
-            self._log_result(result)
+            self._log_result(mz_result)
 
         return {
             # these two items are for hyperopt
@@ -178,13 +179,12 @@ class Tuner(object):
             'status': hyperopt.STATUS_OK,
 
             # this item is for storing matchzoo information
-            'mz_result': result
+            'mz_result': mz_result
         }
 
     def _create_full_params(self, sample):
         params = copy.deepcopy(self._params)
-        for key, value in sample.items():
-            params[key] = value
+        params.update(sample)
         return params
 
     def _handle_callbacks_run_start(self, sample):
@@ -342,7 +342,7 @@ class Tuner(object):
 
     @classmethod
     def _validate_params(cls, params):
-        if not isinstance(params, engine.ParamTable):
+        if not isinstance(params, mz.engine.ParamTable):
             raise TypeError
         if not params.hyper_space:
             raise ValueError("Parameter hyper-space empty.")
@@ -377,7 +377,7 @@ class Tuner(object):
     @classmethod
     def _validate_callbacks(cls, callbacks):
         for callback in callbacks:
-            if not isinstance(callback, tuner.callbacks.Callback):
-                if issubclass(callback, tuner.callbacks.Callback):
+            if not isinstance(callback, tune.callbacks.Callback):
+                if issubclass(callback, tune.callbacks.Callback):
                     raise TypeError("Make sure to instantiate the callbacks.")
                 raise TypeError

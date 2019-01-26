@@ -42,7 +42,7 @@ class Callback(object):
     def on_run_end(self, tuner: 'mz.Tuner', model: mz.engine.BaseModel,
                    result: dict):
         """
-        Callback on build end stage.
+        Callback on run end stage.
 
         :param tuner: Tuner.
         :param model: A built model done fitting and evaluating. Changes to
