@@ -1,10 +1,11 @@
 """Precision for ranking."""
 import numpy as np
 
+from matchzoo.engine import base_metric
 from matchzoo import engine
 
 
-class Precision(engine.BaseMetric):
+class Precision(base_metric.BaseMetric):
     """Precision metric."""
 
     ALIAS = 'precision'

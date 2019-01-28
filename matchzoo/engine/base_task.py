@@ -3,7 +3,8 @@
 import typing
 import abc
 
-from matchzoo import engine
+from matchzoo.engine import base_metric
+from matchzoo.engine import parse_metric
 
 
 class BaseTask(abc.ABC):
@@ -27,7 +28,7 @@ class BaseTask(abc.ABC):
         elif not isinstance(metrics, list):
             metrics = [metrics]
         return [
-            engine.parse_metric(metric, self) for metric in metrics
+            parse_metric.parse_metric(metric, self) for metric in metrics
         ]
 
     def _assure_loss(self):
@@ -50,7 +51,15 @@ class BaseTask(abc.ABC):
         return self._metrics
 
     @metrics.setter
-    def metrics(self, new_metrics: typing.Union[list, str, engine.BaseMetric]):
+    def metrics(
+        self,
+        new_metrics: typing.Union[
+            typing.List[str],
+            typing.List[base_metric.BaseMetric],
+            str,
+            base_metric.BaseMetric
+        ]
+    ):
         self._metrics = self._convert_metrics(new_metrics)
 
     @classmethod

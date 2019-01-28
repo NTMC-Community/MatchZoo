@@ -1,7 +1,17 @@
-from matchzoo.processor_units import *
-import math
+from preprocessors.units import *
 import pytest
 import numpy as np
+
+from preprocessors.units.digit_removal import DigitRemoval
+from preprocessors.units.fixed_length import FixedLength
+from preprocessors.units.lemmatization import Lemmatization
+from preprocessors.units.lowercase import Lowercase
+from preprocessors.units.matching_histogram import MatchingHistogram
+from preprocessors.units.ngram_letter import NgramLetter
+from preprocessors.units.punc_removal import PuncRemoval
+from preprocessors.units.stemming import Stemming
+from preprocessors.units.stop_removal import StopRemoval
+from preprocessors.units.tokenize import Tokenize
 
 
 @pytest.fixture
@@ -28,7 +38,7 @@ def test_list_available():
 
 
 def test_tokenize_unit(raw_input):
-    tu = TokenizeUnit()
+    tu = Tokenize()
     out = tu.transform(raw_input)
     assert len(out) == 13
     assert 'an' in out
@@ -53,7 +63,7 @@ def test_puncremoval_unit(list_input):
 
 
 def test_stopremoval_unit(list_input):
-    su = StopRemovalUnit()
+    su = StopRemoval()
     out = su.transform(list_input)
     assert 'the' not in out
 

@@ -3,10 +3,10 @@ import math
 
 import numpy as np
 
-from matchzoo import engine
+from matchzoo.engine import base_metric
 
 
-class DiscountedCumulativeGain(engine.BaseMetric):
+class DiscountedCumulativeGain(base_metric.BaseMetric):
     """Disconunted cumulative gain metric."""
 
     ALIAS = ['discounted_cumulative_gain', 'dcg']

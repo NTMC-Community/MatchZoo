@@ -1,11 +1,11 @@
 """Average precision metric for ranking."""
 import numpy as np
 
-from matchzoo import engine
+from matchzoo.engine import base_metric
 from . import Precision
 
 
-class AveragePrecision(engine.BaseMetric):
+class AveragePrecision(base_metric.BaseMetric):
     """Average precision metric."""
 
     ALIAS = ['average_precision', 'ap']

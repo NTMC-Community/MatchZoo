@@ -11,7 +11,6 @@ import keras.backend as K
 import pandas as pd
 
 import matchzoo
-from matchzoo import DataGenerator
 from matchzoo import engine
 from matchzoo.engine import hyper_spaces
 from matchzoo import tasks
@@ -251,7 +250,7 @@ class BaseModel(abc.ABC):
 
     def fit_generator(
         self,
-        generator: DataGenerator,
+        generator: matchzoo.DataGenerator,
         epochs: int = 1,
         verbose: int = 1,
         **kwargs
@@ -339,7 +338,7 @@ class BaseModel(abc.ABC):
 
     def evaluate_generator(
         self,
-        generator: DataGenerator,
+        generator: 'DataGenerator',
         batch_size: int = 128
     ) -> typing.Dict['matchzoo.engine.BaseMetric', float]:
         """

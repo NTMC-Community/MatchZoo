@@ -8,7 +8,7 @@ from matchzoo import build_vocab_unit
 from matchzoo import chain_transform
 from matchzoo import DataPack
 from matchzoo import engine
-from matchzoo import processor_units
+from matchzoo import preprocessors
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
@@ -27,7 +27,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         The word hashing step could eats up a lot of memory. To workaround
         this problem, set `with_word_hashing` to `False` and use a
         :class:`matchzoo.DynamicDataGenerator` with a
-        :class:`matchzoo.processor_units.WordHashingUnit`.
+        :class:`matchzoo.preprocessor.units.WordHashing`.
 
         :param text_len: Fixed text length, cut original text if it is longer
          or pad if shorter.
@@ -43,9 +43,7 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
             ... )
             >>> type(train_data_processed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
-            >>> test_data_transformed = cdssm_preprocessor.transform(
-            ...     test_data, verbose=0
-            ... )
+            >>> test_data_transformed = cdssm_preprocessor.transform(test_data)
             >>> type(test_data_transformed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
 
@@ -53,11 +51,11 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         super().__init__()
         self._fixed_length_left = fixed_length_left
         self._fixed_length_right = fixed_length_right
-        self._left_fixedlength_unit = processor_units.FixedLengthUnit(
+        self._left_fixedlength_unit = preprocessors.units.FixedLength(
             self._fixed_length_left,
             pad_value='0', pad_mode='post'
         )
-        self._right_fixedlength_unit = processor_units.FixedLengthUnit(
+        self._right_fixedlength_unit = preprocessors.units.FixedLength(
             self._fixed_length_right,
             pad_value='0', pad_mode='post'
         )
@@ -71,8 +69,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         :param data_pack: Data_pack to be preprocessed.
         :return: class:`CDSSMPreprocessor` instance.
         """
-        units = self._default_processor_units()
-        units.append(processor_units.NgramLetterUnit())
+        units = self._default_preprocessor.units()
+        units.append(units.NgramLetter())
         data_pack = data_pack.apply_on_text(chain_transform(units),
                                             verbose=verbose)
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
@@ -96,29 +94,29 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         data_pack = data_pack.copy()
-        units = self._default_processor_units()
+        units = self._default_preprocessor.units()
         data_pack.apply_on_text(chain_transform(units), inplace=True,
                                 verbose=verbose)
         data_pack.apply_on_text(self._left_fixedlength_unit.transform,
                                 mode='left', inplace=True, verbose=verbose)
         data_pack.apply_on_text(self._right_fixedlength_unit.transform,
                                 mode='right', inplace=True, verbose=verbose)
-        post_units = [processor_units.NgramLetterUnit(reduce_dim=False)]
+        post_units = [preprocessors.units.NgramLetter(reduce_dim=False)]
         if self._with_word_hashing:
             term_index = self._context['vocab_unit'].state['term_index']
-            post_units.append(processor_units.WordHashingUnit(term_index))
+            post_units.append(preprocessors.units.WordHashing(term_index))
         data_pack.apply_on_text(chain_transform(post_units),
                                 inplace=True, verbose=verbose)
         return data_pack
 
     @classmethod
-    def _default_processor_units(cls) -> list:
+    def _default_units(cls) -> list:
         """Prepare needed process units."""
         return [
-            processor_units.TokenizeUnit(),
-            processor_units.LowercaseUnit(),
-            processor_units.PuncRemovalUnit(),
-            processor_units.StopRemovalUnit(),
+            preprocessors.units.tokenize.Tokenize(),
+            preprocessors.units.lowercase.Lowercase(),
+            preprocessors.units.punc_removal.PuncRemoval(),
+            preprocessors.units.stop_removal.StopRemoval(),
         ]
 
     @property

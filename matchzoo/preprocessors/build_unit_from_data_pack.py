@@ -2,19 +2,18 @@
 
 from tqdm import tqdm
 
-from matchzoo import processor_units
-from .data_pack import DataPack
+import matchzoo as mz
 
 
 def build_unit_from_data_pack(
-    unit: processor_units.StatefulProcessorUnit,
-    data_pack: DataPack, mode: str = 'both',
+    unit: mz.preprocessors.units.StatefulUnit,
+    data_pack: mz.DataPack, mode: str = 'both',
     flatten: bool = True, verbose: int = 1
-) -> processor_units.StatefulProcessorUnit:
+) -> mz.preprocessors.units.StatefulUnit:
     """
-    Build a :class:`StatefulProcessorUnit` from a :class:`DataPack` object.
+    Build a :class:`StatefulUnit` from a :class:`DataPack` object.
 
-    :param unit: :class:`StatefulProcessorUnit` object to be built.
+    :param unit: :class:`StatefulUnit` object to be built.
     :param data_pack: The input :class:`DataPack` object.
     :param mode: One of 'left', 'right', and 'both', to determine the source
             data for building the :class:`VocabularyUnit`.
@@ -22,7 +21,7 @@ def build_unit_from_data_pack(
         :class:`DataPack` text as a list, and `False` to organize
         :class:`DataPack` text as a list of list.
     :param verbose: Verbosity.
-    :return: A built :class:`StatefulProcessorUnit` object.
+    :return: A built :class:`StatefulUnit` object.
 
     """
     corpus = []

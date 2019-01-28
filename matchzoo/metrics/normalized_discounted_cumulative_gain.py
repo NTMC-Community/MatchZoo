@@ -1,11 +1,11 @@
 """Normalized discounted cumulative gain metric for ranking."""
 import numpy as np
 
-from matchzoo import engine
+from matchzoo.engine import base_metric
 from .discounted_cumulative_gain import DiscountedCumulativeGain
 
 
-class NormalizedDiscountedCumulativeGain(engine.BaseMetric):
+class NormalizedDiscountedCumulativeGain(base_metric.BaseMetric):
     """Normalized discounted cumulative gain metric."""
 
     ALIAS = ['normalized_discounted_cumulative_gain', 'ndcg']

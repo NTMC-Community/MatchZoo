@@ -74,17 +74,17 @@ def embedding_matrix(setup):
 
 @pytest.fixture(scope='module')
 def train_gen(train_raw, preprocessor, gen_builder):
-    return gen_builder.build(preprocessor.transform(train_raw, verbose=0))
+    return gen_builder.build(preprocessor.transform(train_raw))
 
 
 @pytest.fixture(scope='module')
 def dev_gen(dev_raw, preprocessor, gen_builder):
-    return gen_builder.build(preprocessor.transform(dev_raw, verbose=0))
+    return gen_builder.build(preprocessor.transform(dev_raw))
 
 
 @pytest.fixture(scope='module')
 def test_gen(test_raw, preprocessor, gen_builder):
-    return gen_builder.build(preprocessor.transform(test_raw, verbose=0))
+    return gen_builder.build(preprocessor.transform(test_raw))
 
 
 @pytest.mark.slow

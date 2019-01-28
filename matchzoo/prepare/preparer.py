@@ -193,7 +193,7 @@ class Preparer(object):
 
         if isinstance(model, (mz.models.DSSM, mz.models.CDSSM)):
             term_index = preprocessor.context['vocab_unit'].state['term_index']
-            hashing_unit = mz.processor_units.WordHashingUnit(term_index)
+            hashing_unit = mz.preprocessors.units.WordHashing(term_index)
             hashing_callback = mz.data_generator.callbacks.LambdaCallback(
                 on_batch_data_pack=lambda data_pack:
                 data_pack.apply_on_text(

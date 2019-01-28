@@ -48,7 +48,7 @@ class Tuner(object):
         >>> dev = mz.datasets.toy.load_data('dev')
         >>> prpr = mz.models.DenseBaseline.get_default_preprocessor()
         >>> train = prpr.fit_transform(train, verbose=0)
-        >>> dev = prpr.transform(dev, verbose=0)
+        >>> dev = prpr.transform(dev)
         >>> model = mz.models.DenseBaseline()
         >>> model.params['input_shapes'] = prpr.context['input_shapes']
         >>> model.params['task'] = mz.tasks.Ranking()

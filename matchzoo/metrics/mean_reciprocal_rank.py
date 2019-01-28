@@ -1,10 +1,10 @@
 """Mean reciprocal ranking metric."""
 import numpy as np
 
-from matchzoo import engine
+from matchzoo.engine import base_metric
 
 
-class MeanReciprocalRank(engine.BaseMetric):
+class MeanReciprocalRank(base_metric.BaseMetric):
     """Mean reciprocal rank metric."""
 
     ALIAS = ['mean_reciprocal_rank', 'mrr']

@@ -2,15 +2,16 @@
 import typing
 import functools
 
-from .processor_units import ProcessorUnit
+from .unit import Unit
 
 
-def chain_transform(units: typing.List[ProcessorUnit]) -> typing.Callable:
+def chain_transform(units: typing.List[Unit]) -> typing.Callable:
     """
     Compose unit transformations into a single function.
 
-    :param units: List of :class:`matchzoo.ProcessorUnit`.
+    :param units: List of :class:`matchzoo.StatelessUnit`.
     """
+
     @functools.wraps(chain_transform)
     def wrapper(arg):
         """Wrapper function of transformations composition."""

@@ -6,7 +6,7 @@ import typing
 import numpy as np
 import pandas as pd
 
-from matchzoo import processor_units
+import matchzoo as mz
 
 
 class Embedding(object):
@@ -58,7 +58,7 @@ class Embedding(object):
     def build_matrix(
         self,
         term_index: typing.Union[
-            dict, processor_units.VocabularyUnit.TermIndex],
+            dict, preprocessors.units.vocabulary.Vocabulary.TermIndex],
         initializer=lambda: np.random.uniform(-0.2, 0.2)
     ) -> np.ndarray:
         """

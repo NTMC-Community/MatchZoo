@@ -1,9 +1,9 @@
 """Classification task."""
 
-from matchzoo import engine
+from matchzoo.engine.base_task import BaseTask
 
 
-class Classification(engine.BaseTask):
+class Classification(BaseTask):
     """Classification task.
 
     Examples:

@@ -4,7 +4,8 @@ import logging
 
 from tqdm import tqdm
 
-from matchzoo import engine, processor_units
+from matchzoo import engine
+from matchzoo import preprocessors
 from matchzoo import DataPack
 from matchzoo import chain_transform, build_vocab_unit
 
@@ -25,8 +26,7 @@ class NaivePreprocessor(engine.BasePreprocessor):
         ...                                                   verbose=0)
         >>> type(train_data_processed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
-        >>> test_data_transformed = preprocessor.transform(test_data,
-        ...                                                verbose=0)
+        >>> test_data_transformed = preprocessor.transform(test_data)
         >>> type(test_data_transformed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
 
@@ -40,7 +40,7 @@ class NaivePreprocessor(engine.BasePreprocessor):
         :param verbose: Verbosity.
         :return: class:`NaivePreprocessor` instance.
         """
-        units = self._default_processor_units()
+        units = self._default_units()
         data_pack = data_pack.apply_on_text(chain_transform(units),
                                             verbose=verbose)
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
@@ -57,8 +57,8 @@ class NaivePreprocessor(engine.BasePreprocessor):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        units = self._default_processor_units()
+        units = self._default_units()
         units.append(self._context['vocab_unit'])
-        units.append(processor_units.FixedLengthUnit(text_length=30,
+        units.append(preprocessors.units.FixedLength(text_length=30,
                                                      pad_mode='post'))
         return data_pack.apply_on_text(chain_transform(units), verbose=verbose)

@@ -4,16 +4,13 @@ import logging
 
 from tqdm import tqdm
 
-from matchzoo import engine, processor_units
-from matchzoo import DataPack
-from matchzoo import chain_transform, build_vocab_unit, \
-    build_unit_from_data_pack
+from matchzoo.engine.base_preprocessor import BasePreprocessor
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
 
 
-class BasicPreprocessor(engine.BasePreprocessor):
+class BasicPreprocessor(BasePreprocessor):
     """
     Baisc preprocessor helper.
 
@@ -46,12 +43,10 @@ class BasicPreprocessor(engine.BasePreprocessor):
         [(10,), (20,)]
         >>> preprocessor.context['vocab_size']
         225
-        >>> processed_train_data = preprocessor.transform(train_data,
-        ...                                               verbose=0)
+        >>> processed_train_data = preprocessor.transform()
         >>> type(processed_train_data)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
-        >>> test_data_transformed = preprocessor.transform(test_data,
-        ...                                                verbose=0)
+        >>> test_data_transformed = preprocessor.transform()
         >>> type(test_data_transformed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
 
@@ -67,22 +62,23 @@ class BasicPreprocessor(engine.BasePreprocessor):
         super().__init__()
         self._fixed_length_left = fixed_length_left
         self._fixed_length_right = fixed_length_right
-        self._left_fixedlength_unit = processor_units.FixedLengthUnit(
+        self._left_fixedlength_unit = preprocessors.units.FixedLength(
             self._fixed_length_left,
             pad_mode='post'
         )
-        self._right_fixedlength_unit = processor_units.FixedLengthUnit(
+        self._right_fixedlength_unit = preprocessors.units.FixedLength(
             self._fixed_length_right,
             pad_mode='post'
         )
-        self._filter_unit = processor_units.FrequencyFilterUnit(
+        self._filter_unit = preprocessors.units.FrequencyFilter(
             low=filter_low_freq,
             high=filter_high_freq,
             mode=filter_mode
         )
-        self._default_units = self._default_processor_units()
+        self._units = self._default_units()
         if remove_stop_words:
-            self._default_units.append(processor_units.StopRemovalUnit())
+            self._default_units.append(
+                preprocessors.units.stop_removal.StopRemoval())
 
     def fit(self, data_pack: DataPack, verbose: int = 1):
         """
@@ -92,9 +88,8 @@ class BasicPreprocessor(engine.BasePreprocessor):
         :param verbose: Verbosity.
         :return: class:`BasicPreprocessor` instance.
         """
-        units = self._default_units
-        data_pack = data_pack.apply_on_text(chain_transform(units),
-                                            verbose=verbose)
+        data_pack = data_pack.apply_on_text(
+            chain_transform(self._units), verbose=verbose)
 
         fitted_filter_unit = build_unit_from_data_pack(self._filter_unit,
                                                        data_pack,
@@ -116,7 +111,6 @@ class BasicPreprocessor(engine.BasePreprocessor):
 
         return self
 
-    @engine.validate_context
     def transform(self, data_pack: DataPack, verbose: int = 1) -> DataPack:
         """
         Apply transformation on data, create fixed length representation.

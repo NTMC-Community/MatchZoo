@@ -4,15 +4,17 @@ import logging
 
 from tqdm import tqdm
 
-from matchzoo import engine, processor_units
-from matchzoo import DataPack
-from matchzoo import chain_transform, build_vocab_unit
+from matchzoo.data_pack import DataPack
+from matchzoo.engine.base_preprocessor import BasePreprocessor
+from .units.chain_transform import chain_transform
+from .build_vocab_unit import build_vocab_unit
+from .units import *
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
 
 
-class DSSMPreprocessor(engine.BasePreprocessor):
+class DSSMPreprocessor(BasePreprocessor):
     """DSSM Model preprocessor."""
 
     def __init__(self, with_word_hashing: bool = True):
@@ -22,7 +24,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         The word hashing step could eats up a lot of memory. To workaround
         this problem, set `with_word_hashing` to `False` and use  a
         :class:`matchzoo.DynamicDataGenerator` with a
-        :class:`matchzoo.processor_units.WordHashingUnit`.
+        :class:`matchzoo.preprocessor.units.WordHashing`.
 
         :param with_word_hashing: Include a word hashing step if `True`.
 
@@ -36,9 +38,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
             ... )
             >>> type(train_data_processed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
-            >>> test_data_transformed = dssm_preprocessor.transform(
-            ... test_data, verbose=0
-            ... )
+            >>> test_data_transformed = dssm_preprocessor.transform(test_data)
             >>> type(test_data_transformed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
 
@@ -54,7 +54,7 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :param data_pack: data_pack to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
-        units = self._default_processor_units()
+        units = self._default_units()
         data_pack = data_pack.apply_on_text(chain_transform(units),
                                             verbose=verbose)
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
@@ -66,7 +66,6 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         self._context['input_shapes'] = [(vocab_size,), (vocab_size,)]
         return self
 
-    @engine.validate_context
     def transform(self, data_pack: DataPack, verbose: int = 1) -> DataPack:
         """
         Apply transformation on data, create `tri-letter` representation.
@@ -77,23 +76,23 @@ class DSSMPreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         data_pack = data_pack.copy()
-        units = self._default_processor_units()
+        units = self._default_units()
         if self._with_word_hashing:
             term_index = self._context['vocab_unit'].state['term_index']
-            units.append(processor_units.WordHashingUnit(term_index))
+            units.append(preprocessors.units.WordHashing(term_index))
         data_pack.apply_on_text(chain_transform(units), inplace=True,
                                 verbose=verbose)
         return data_pack
 
     @classmethod
-    def _default_processor_units(cls) -> list:
+    def _default_units(cls) -> list:
         """Prepare needed process units."""
         return [
-            processor_units.TokenizeUnit(),
-            processor_units.LowercaseUnit(),
-            processor_units.PuncRemovalUnit(),
-            processor_units.StopRemovalUnit(),
-            processor_units.NgramLetterUnit(),
+            preprocessors.units.Tokenize(),
+            preprocessors.units.Lowercase,
+            preprocessors.units.PuncRemoval(),
+            preprocessors.units.StopRemoval(),
+            preprocessors.units.NgramLetter(),
         ]
 
     @property
