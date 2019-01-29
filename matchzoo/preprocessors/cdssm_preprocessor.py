@@ -43,7 +43,8 @@ class CDSSMPreprocessor(BasePreprocessor):
             ... )
             >>> type(train_data_processed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
-            >>> test_data_transformed = cdssm_preprocessor.transform(test_data)
+            >>> test_data_transformed = cdssm_preprocessor.transform(test_data,
+            ...                                                      verbose=0)
             >>> type(test_data_transformed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
 

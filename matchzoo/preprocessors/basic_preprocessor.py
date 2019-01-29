@@ -45,10 +45,12 @@ class BasicPreprocessor(BasePreprocessor):
         [(10,), (20,)]
         >>> preprocessor.context['vocab_size']
         225
-        >>> processed_train_data = preprocessor.transform()
+        >>> processed_train_data = preprocessor.transform(train_data,
+        ...                                               verbose=0)
         >>> type(processed_train_data)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
-        >>> test_data_transformed = preprocessor.transform()
+        >>> test_data_transformed = preprocessor.transform(test_data,
+        ...                                                verbose=0)
         >>> type(test_data_transformed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
 
@@ -139,11 +141,9 @@ class BasicPreprocessor(BasePreprocessor):
 
         data_pack.left['length_left'] = \
             data_pack.left['length_left'].apply(
-                lambda val: min(val, max_len_left)
-            )
+                lambda val: min(val, max_len_left))
 
         data_pack.right['length_right'] = \
             data_pack.right['length_right'].apply(
-                lambda val: min(val, max_len_right)
-            )
+                lambda val: min(val, max_len_right))
         return data_pack

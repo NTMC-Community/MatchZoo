@@ -32,7 +32,7 @@ class DRMM(BaseModel):
         params = super().get_default_params(with_embedding=True,
                                             with_multi_layer_perceptron=True)
         params.add(Param(name='mask_value', value=-1,
-                                desc="The value to be masked from inputs."))
+                         desc="The value to be masked from inputs."))
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(5,), (5, 30,)]
         return params

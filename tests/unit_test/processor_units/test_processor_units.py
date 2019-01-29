@@ -122,3 +122,17 @@ def test_matchinghistogram_unit(hist_mode):
         assert out == [[1.1, 0.0, 0.0], [0.0, 0.69, 0.69]]
     else:
         assert False
+
+
+import matchzoo as mz
+
+
+def test_this():
+    train_data = mz.datasets.toy.load_data()
+    test_data = mz.datasets.toy.load_data(stage='test')
+    dssm_preprocessor = mz.preprocessors.DSSMPreprocessor()
+    train_data_processed = dssm_preprocessor.fit_transform(
+        train_data, verbose=0)
+    type(train_data_processed)
+    test_data_transformed = dssm_preprocessor.transform(test_data)
+    type(test_data_transformed)

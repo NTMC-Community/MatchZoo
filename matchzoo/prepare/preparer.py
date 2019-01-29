@@ -11,7 +11,7 @@ from matchzoo.data_generator import DataGeneratorBuilder
 
 class Preparer(object):
     """
-    Zoo Keeper. Unifies setup processes of all MatchZoo models.
+    Unified setup processes of all MatchZoo models.
 
     `config` is used to control specific behaviors. The default `config`
     will be updated accordingly if a `config` dictionary is passed. e.g. to
@@ -60,7 +60,7 @@ class Preparer(object):
     ):
         """Init."""
         self._task = task
-        self._config = self._get_default_config()
+        self._config = self.get_default_config()
         if config:
             self._config.update(config)
 
@@ -215,7 +215,8 @@ class Preparer(object):
             self._config['num_neg'] = self._task.loss.num_neg
 
     @classmethod
-    def _get_default_config(cls):
+    def get_default_config(cls) -> dict:
+        """Default config getter."""
         return {
             # pair generator builder kwargs
             'num_dup': 1,

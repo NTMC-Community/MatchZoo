@@ -34,12 +34,16 @@ class ANMM(BaseModel):
             desc="The dropout rate.",
             hyper_space=hyper_spaces.quniform(0, 1, 0.05)
         ))
-        params.add(Param(name='num_layers', value=2,
-                                desc="Number of hidden layers in the MLP "
-                                     "layer."))
-        params.add(Param(name='hidden_sizes', value=[30, 30],
-                                desc="Number of hidden size for each hidden"
-                                     " layer"))
+        params.add(Param(
+            name='num_layers', value=2,
+            desc="Number of hidden layers in the MLP "
+                 "layer."
+        ))
+        params.add(Param(
+            name='hidden_sizes', value=[30, 30],
+            desc="Number of hidden size for each hidden"
+                 " layer"
+        ))
         return params
 
     def build(self):

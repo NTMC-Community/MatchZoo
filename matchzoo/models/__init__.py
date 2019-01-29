@@ -14,12 +14,7 @@ from .anmm import ANMM
 from .mvlstm import MVLSTM
 
 
-def list_available():
+def list_available() -> list:
     from matchzoo.engine.base_model import BaseModel
-    return _subclasses(BaseModel)
-
-
-def _subclasses(base):
-    return base.__subclasses__() + sum([
-        subclass.__subclasses__() for subclass in base.__subclasses__()
-    ], [])
+    from matchzoo.utils import list_recursive_concrete_subclasses
+    return list_recursive_concrete_subclasses(BaseModel)

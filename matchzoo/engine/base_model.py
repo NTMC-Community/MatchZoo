@@ -194,10 +194,7 @@ class BaseModel(abc.ABC):
 
     @abc.abstractmethod
     def build(self):
-        """
-        Build model, each sub class need to impelemnt this method.
-
-        """
+        """Build model, each subclass need to impelemnt this method."""
 
     def compile(self):
         """

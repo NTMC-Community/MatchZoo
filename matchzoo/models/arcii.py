@@ -61,7 +61,7 @@ class ArcII(BaseModel):
         params.add(Param(
             name='dropout_rate', value=0.0,
             hyper_space=hyper_spaces.quniform(low=0.0, high=0.8,
-                                                     q=0.01),
+                                              q=0.01),
             desc="The dropout rate."
         ))
         return params

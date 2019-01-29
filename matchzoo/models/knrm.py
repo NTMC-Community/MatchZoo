@@ -42,9 +42,11 @@ class KNRM(BaseModel):
                 low=0.01, high=0.2, q=0.01),
             desc="The `sigma` defines the kernel width."
         ))
-        params.add(Param(name='exact_sigma', value=0.001,
-                                desc="The `exact_sigma` denotes the `sigma` "
-                                     "for exact match."))
+        params.add(Param(
+            name='exact_sigma', value=0.001,
+            desc="The `exact_sigma` denotes the `sigma` "
+                 "for exact match."
+        ))
         return params
 
     def build(self):
@@ -86,6 +88,7 @@ class KNRM(BaseModel):
         :param sigma: Float, sigma of the kernel.
         :return: `keras.layers.Layer`.
         """
+
         def kernel(x):
             return K.tf.exp(-0.5 * (x - mu) * (x - mu) / sigma / sigma)
 

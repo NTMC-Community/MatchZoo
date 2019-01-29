@@ -85,9 +85,9 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
 
     def fit_transform(
         self,
-        data_pack: 'matchzoo.DataPack',
+        data_pack: 'mz.DataPack',
         verbose: int = 1
-    ) -> 'matchzoo.DataPack':
+    ) -> 'mz.DataPack':
         """
         Call fit-transform.
 

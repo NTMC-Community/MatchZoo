@@ -5,6 +5,7 @@ from .unit import Unit
 
 class PuncRemoval(Unit):
     """Process unit for remove punctuations."""
+
     _MATCH_PUNC = re.compile(r'[^\w\s]')
 
     def transform(self, input_: list) -> list:

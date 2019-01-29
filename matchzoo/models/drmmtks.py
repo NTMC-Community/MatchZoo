@@ -39,7 +39,7 @@ class DRMMTKS(BaseModel):
             with_multi_layer_perceptron=True
         )
         params.add(Param(name='mask_value', value=-1,
-                                desc="The value to be masked from inputs."))
+                         desc="The value to be masked from inputs."))
         params['input_shapes'] = [(5,), (300,)]
         params.add(Param(
             'top_k', value=10,
