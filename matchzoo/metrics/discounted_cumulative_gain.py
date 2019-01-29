@@ -11,19 +11,17 @@ class DiscountedCumulativeGain(engine.BaseMetric):
 
     ALIAS = ['discounted_cumulative_gain', 'dcg']
 
-    def __init__(self, k: int = 1, threshold: float = 0.):
+    def __init__(self, k: int = 1):
         """
         :class:`DiscountedCumulativeGain` constructor.
 
         :param k: Number of results to consider.
-        :param threshold: the label threshold of relevance degree.
         """
         self._k = k
-        self._threshold = threshold
 
     def __repr__(self) -> str:
         """:return: Formated string representation of the metric."""
-        return f"{self.ALIAS[0]}@{self._k}({self._threshold})"
+        return f"{self.ALIAS[0]}@{self._k}"
 
     def __call__(self, y_true: np.array, y_pred: np.array) -> float:
         """
@@ -32,31 +30,27 @@ class DiscountedCumulativeGain(engine.BaseMetric):
         Relevance is positive real values or binary values.
 
         Example:
-            >>> y_true = [0, 1, 2, 0]
+            >>> y_true = []
             >>> y_pred = [0.4, 0.2, 0.5, 0.7]
-            >>> DiscountedCumulativeGain(1)(y_true, y_pred)
+            >>> DiscountedCumulativeGain(0)(y_true, y_pred)
             0.0
-            >>> round(DiscountedCumulativeGain(k=-1)(y_true, y_pred), 2)
-            0.0
+            >>> round(DiscountedCumulativeGain(k=1)(y_true, y_pred), 2)
+            0.4
             >>> round(DiscountedCumulativeGain(k=2)(y_true, y_pred), 2)
-            2.73
+            0.6
             >>> round(DiscountedCumulativeGain(k=3)(y_true, y_pred), 2)
-            2.73
-            >>> type(DiscountedCumulativeGain(k=1)(y_true, y_pred))
-            <class 'float'>
+            0.92
 
-        :param y_true: The ground true label of each document.
+        :param y_true: The relevance degree label of each document.
         :param y_pred: The predicted scores of each document.
 
         :return: Discounted cumulative gain.
         """
+        y_pred = np.asfarray(y_pred)[:self._k]
         if self._k <= 0:
             return 0.
-        coupled_pair = engine.sort_and_couple(y_true, y_pred)
-        result = 0.
-        for i, (label, score) in enumerate(coupled_pair):
-            if i >= self._k:
-                break
-            if label > self._threshold:
-                result += (math.pow(2., label) - 1.) / math.log(2. + i)
-        return result
+        elif self._k == 1:
+            return y_pred[0]
+        else:
+            return y_pred[0] + np.sum(y_pred[1:] / np.log2(
+                np.arange(2, y_pred.size + 1)))
