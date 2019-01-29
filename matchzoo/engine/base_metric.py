@@ -4,8 +4,6 @@ import abc
 
 import numpy as np
 
-import matchzoo
-
 
 class BaseMetric(abc.ABC):
     """Metric base class."""

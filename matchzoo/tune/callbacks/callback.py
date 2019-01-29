@@ -1,4 +1,5 @@
-import matchzoo as mz
+import matchzoo
+from matchzoo.engine.base_model import BaseModel
 
 
 class Callback(object):
@@ -21,7 +22,7 @@ class Callback(object):
 
     """
 
-    def on_run_start(self, tuner: 'mz.Tuner', sample: dict):
+    def on_run_start(self, tuner: 'matchzoo.tune.Tuner', sample: dict):
         """
         Callback on run start stage.
 
@@ -30,7 +31,7 @@ class Callback(object):
             the model building process of the tuner.
         """
 
-    def on_build_end(self, tuner: 'mz.Tuner', model: mz.engine.BaseModel):
+    def on_build_end(self, tuner: 'matchzoo.tune.Tuner', model: BaseModel):
         """
         Callback on build end stage.
 
@@ -39,7 +40,7 @@ class Callback(object):
             to this model affect the fitting and evaluating process.
         """
 
-    def on_run_end(self, tuner: 'mz.Tuner', model: mz.engine.BaseModel,
+    def on_run_end(self, tuner: 'matchzoo.tune.Tuner', model: BaseModel,
                    result: dict):
         """
         Callback on run end stage.

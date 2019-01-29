@@ -1,4 +1,3 @@
-from .chain_transform import chain_transform
 from .digit_removal import DigitRemoval
 from .fixed_length import FixedLength
 from .frequency_filter import FrequencyFilter

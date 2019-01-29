@@ -2,11 +2,11 @@
 
 import keras
 
-from matchzoo import engine
+from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine import hyper_spaces
 
 
-class Naive(engine.BaseModel):
+class Naive(BaseModel):
     """
     Naive model with a simplest structure for testing purposes.
 

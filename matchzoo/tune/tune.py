@@ -1,15 +1,16 @@
 import typing
 
 import matchzoo as mz
+from matchzoo.engine.base_metric import BaseMetric
 
 
 def tune(
-    params: mz.engine.ParamTable,
+    params: mz.ParamTable,
     train_data: typing.Union[mz.DataPack, mz.DataGenerator],
     test_data: typing.Union[mz.DataPack, mz.DataGenerator],
     fit_kwargs: dict = None,
     evaluate_kwargs: dict = None,
-    metric: typing.Union[str, mz.engine.BaseMetric] = None,
+    metric: typing.Union[str, BaseMetric] = None,
     mode: str = 'maximize',
     num_runs: int = 10,
     callbacks: typing.List['mz.tune.callbacks.Callback'] = None,

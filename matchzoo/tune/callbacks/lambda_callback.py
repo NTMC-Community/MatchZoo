@@ -1,4 +1,5 @@
 import matchzoo as mz
+from matchzoo.engine.base_model import BaseModel
 from matchzoo.tune.callbacks.callback import Callback
 
 
@@ -7,13 +8,6 @@ class LambdaCallback(Callback):
     LambdaCallback. Just a shorthand for creating a callback class.
 
     See :class:`matchzoo.tuner.callbacks.Callback` for more details.
-
-    Example:
-        >>> import matchzoo as mz
-        >>> callback = mz.tune.callbacks.LambdaCallback(on_run_start=print)
-        >>> callback.on_run_start('tuner', {'dict': 'of sample'})
-        tuner {'dict': 'of sample'}
-
     """
 
     def __init__(
@@ -32,12 +26,12 @@ class LambdaCallback(Callback):
         if self._on_run_start:
             self._on_run_start(tuner, sample)
 
-    def on_build_end(self, tuner, model: mz.engine.BaseModel):
+    def on_build_end(self, tuner, model: BaseModel):
         """`on_build_end`."""
         if self._on_build_end:
             self._on_build_end(tuner, model)
 
-    def on_run_end(self, tuner, model: mz.engine.BaseModel, result: dict):
+    def on_run_end(self, tuner, model: BaseModel, result: dict):
         """`on_run_end`."""
         if self._on_result_end:
             self._on_result_end(tuner, model, result)

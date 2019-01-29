@@ -11,8 +11,12 @@ import keras.backend as K
 import pandas as pd
 
 import matchzoo
-from matchzoo import engine
+from matchzoo import DataGenerator
 from matchzoo.engine import hyper_spaces
+from matchzoo.engine.base_preprocessor import BasePreprocessor
+from matchzoo.engine.base_metric import BaseMetric
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine.param import Param
 from matchzoo import tasks
 
 
@@ -39,8 +43,8 @@ class BaseModel(abc.ABC):
         >>> class MyModel(BaseModel):
         ...     def build(self):
         ...         pass
-        >>> MyModel()  # doctest: +ELLIPSIS
-         <base_model.MyModel object at 0x...>
+        >>> isinstance(MyModel(), BaseModel)
+        True
 
     """
 
@@ -49,7 +53,7 @@ class BaseModel(abc.ABC):
 
     def __init__(
         self,
-        params: typing.Optional[engine.ParamTable] = None,
+        params: typing.Optional[ParamTable] = None,
         backend: typing.Optional[keras.models.Model] = None
     ):
         """Init."""
@@ -61,7 +65,7 @@ class BaseModel(abc.ABC):
         cls,
         with_embedding=False,
         with_multi_layer_perceptron=False
-    ) -> engine.ParamTable:
+    ) -> ParamTable:
         """
         Model default parameters.
 
@@ -76,9 +80,9 @@ class BaseModel(abc.ABC):
             ...
             ...     @classmethod
             ...     def get_default_params(cls):
-            ...         params = engine.ParamTable()
-            ...         params.add(engine.Param('num_eggs', 512))
-            ...         params.add(engine.Param('ham_type', 'Parma Ham'))
+            ...         params = ParamTable()
+            ...         params.add(Param('num_eggs', 512))
+            ...         params.add(Param('ham_type', 'Parma Ham'))
             ...         return params
             >>> my_model = MyModel()
             >>> my_model.build()
@@ -92,64 +96,64 @@ class BaseModel(abc.ABC):
         :return: model parameters
 
         """
-        params = engine.ParamTable()
-        params.add(engine.Param(
+        params = ParamTable()
+        params.add(Param(
             name='model_class', value=cls,
             desc="Model class. Used internally for save/load. "
                  "Changing this may cause unexpected behaviors."
         ))
-        params.add(engine.Param(
+        params.add(Param(
             name='input_shapes',
             desc="Dependent on the model and data. Should be set manually."
         ))
-        params.add(engine.Param(
+        params.add(Param(
             name='task',
             desc="Decides model output shape, loss, and metrics."
         ))
-        params.add(engine.Param(
+        params.add(Param(
             name='optimizer', value='adam',
         ))
         if with_embedding:
-            params.add(engine.Param(
+            params.add(Param(
                 name='with_embedding', value=True,
                 desc="A flag used help `auto` module. Shouldn't be changed."
             ))
-            params.add(engine.Param(
+            params.add(Param(
                 name='embedding_input_dim',
                 desc='Usually equals vocab size + 1. Should be set manually.'
             ))
-            params.add(engine.Param(
+            params.add(Param(
                 name='embedding_output_dim',
                 desc='Should be set manually.'
             ))
-            params.add(engine.Param(
+            params.add(Param(
                 name='embedding_trainable', value=True,
                 desc='`True` to enable embedding layer training, '
                      '`False` to freeze embedding parameters.'
             ))
         if with_multi_layer_perceptron:
-            params.add(engine.Param(
+            params.add(Param(
                 name='with_multi_layer_perceptron', value=True,
                 desc="A flag of whether a multiple layer perceptron is used. "
                      "Shouldn't be changed."
             ))
-            params.add(engine.Param(
+            params.add(Param(
                 name='mlp_num_units', value=128,
                 desc="Number of units in first `mlp_num_layers` layers.",
                 hyper_space=hyper_spaces.quniform(8, 256, 8)
             ))
-            params.add(engine.Param(
+            params.add(Param(
                 name='mlp_num_layers', value=3,
                 desc="Number of layers of the multiple layer percetron.",
                 hyper_space=hyper_spaces.quniform(1, 6)
             ))
-            params.add(engine.Param(
+            params.add(Param(
                 name='mlp_num_fan_out', value=64,
                 desc="Number of units of the layer that connects the multiple "
                      "layer percetron and the output.",
                 hyper_space=hyper_spaces.quniform(4, 128, 4)
             ))
-            params.add(engine.Param(
+            params.add(Param(
                 name='mlp_activation_func', value='relu',
                 desc='Activation function used in the multiple '
                      'layer perceptron.'
@@ -157,7 +161,7 @@ class BaseModel(abc.ABC):
         return params
 
     @classmethod
-    def get_default_preprocessor(cls) -> engine.BasePreprocessor:
+    def get_default_preprocessor(cls) -> BasePreprocessor:
         """
         Model default preprocessor.
 
@@ -171,7 +175,7 @@ class BaseModel(abc.ABC):
         return matchzoo.preprocessors.BasicPreprocessor()
 
     @property
-    def params(self) -> engine.ParamTable:
+    def params(self) -> ParamTable:
         """:return: model parameters."""
         return self._params
 
@@ -280,7 +284,7 @@ class BaseModel(abc.ABC):
         x: typing.Dict[str, np.ndarray],
         y: np.ndarray,
         batch_size: int = 128
-    ) -> typing.Dict['matchzoo.engine.BaseMetric', float]:
+    ) -> typing.Dict[BaseMetric, float]:
         """
         Evaluate the model.
 
@@ -338,9 +342,9 @@ class BaseModel(abc.ABC):
 
     def evaluate_generator(
         self,
-        generator: 'DataGenerator',
+        generator: DataGenerator,
         batch_size: int = 128
-    ) -> typing.Dict['matchzoo.engine.BaseMetric', float]:
+    ) -> typing.Dict['BaseMetric', float]:
         """
         Evaluate the model.
 
@@ -354,7 +358,7 @@ class BaseModel(abc.ABC):
         matchzoo_metrics = []
         keras_metrics = []
         for metric in self._params['task'].metrics:
-            if isinstance(metric, engine.BaseMetric):
+            if isinstance(metric, BaseMetric):
                 matchzoo_metrics.append(metric)
             else:
                 keras_metrics.append(metric)
@@ -363,7 +367,7 @@ class BaseModel(abc.ABC):
     @classmethod
     def _eval_metric_on_data_frame(
         cls,
-        metric: engine.BaseMetric,
+        metric: BaseMetric,
         id_left: typing.Union[list, np.array],
         y: typing.Union[list, np.array],
         y_pred: typing.Union[list, np.array]
@@ -373,7 +377,7 @@ class BaseModel(abc.ABC):
             'true': y.squeeze(),
             'pred': y_pred.squeeze()
         })
-        assert isinstance(metric, engine.BaseMetric)
+        assert isinstance(metric, BaseMetric)
         val = eval_df.groupby(by='id').apply(
             lambda df: metric(df['true'].values, df['pred'].values)
         ).mean()

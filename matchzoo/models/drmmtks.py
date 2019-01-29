@@ -5,12 +5,15 @@ import logging
 import keras
 import keras.backend as K
 
-from matchzoo import engine
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine import hyper_spaces
 
 logger = logging.getLogger(__name__)
 
 
-class DRMMTKS(engine.BaseModel):
+class DRMMTKS(BaseModel):
     """
     DRMMTKS Model.
 
@@ -29,18 +32,18 @@ class DRMMTKS(engine.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls) -> engine.ParamTable:
+    def get_default_params(cls) -> ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params(
             with_embedding=True,
             with_multi_layer_perceptron=True
         )
-        params.add(engine.Param(name='mask_value', value=-1,
+        params.add(Param(name='mask_value', value=-1,
                                 desc="The value to be masked from inputs."))
         params['input_shapes'] = [(5,), (300,)]
-        params.add(engine.Param(
+        params.add(Param(
             'top_k', value=10,
-            hyper_space=engine.hyper_spaces.quniform(low=2, high=100),
+            hyper_space=hyper_spaces.quniform(low=2, high=100),
             desc="Size of top-k pooling layer."
         ))
         return params

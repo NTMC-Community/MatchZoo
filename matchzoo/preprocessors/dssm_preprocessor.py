@@ -6,9 +6,9 @@ from tqdm import tqdm
 
 from matchzoo.data_pack import DataPack
 from matchzoo.engine.base_preprocessor import BasePreprocessor
-from .units.chain_transform import chain_transform
+from .chain_transform import chain_transform
 from .build_vocab_unit import build_vocab_unit
-from .units import *
+from . import units
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
@@ -54,9 +54,9 @@ class DSSMPreprocessor(BasePreprocessor):
         :param data_pack: data_pack to be preprocessed.
         :return: class:`DSSMPreprocessor` instance.
         """
-        units = self._default_units()
-        data_pack = data_pack.apply_on_text(chain_transform(units),
-                                            verbose=verbose)
+
+        func = chain_transform(self._default_units())
+        data_pack = data_pack.apply_on_text(func, verbose=verbose)
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
 
         self._context['vocab_unit'] = vocab_unit
@@ -76,23 +76,23 @@ class DSSMPreprocessor(BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         data_pack = data_pack.copy()
-        units = self._default_units()
+        units_ = self._default_units()
         if self._with_word_hashing:
             term_index = self._context['vocab_unit'].state['term_index']
-            units.append(preprocessors.units.WordHashing(term_index))
-        data_pack.apply_on_text(chain_transform(units), inplace=True,
-                                verbose=verbose)
+            units_.append(units.WordHashing(term_index))
+        func = chain_transform(units_)
+        data_pack.apply_on_text(func, inplace=True, verbose=verbose)
         return data_pack
 
     @classmethod
     def _default_units(cls) -> list:
         """Prepare needed process units."""
         return [
-            preprocessors.units.Tokenize(),
-            preprocessors.units.Lowercase,
-            preprocessors.units.PuncRemoval(),
-            preprocessors.units.StopRemoval(),
-            preprocessors.units.NgramLetter(),
+            units.Tokenize(),
+            units.Lowercase,
+            units.PuncRemoval(),
+            units.StopRemoval(),
+            units.NgramLetter(),
         ]
 
     @property

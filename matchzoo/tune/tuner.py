@@ -5,7 +5,9 @@ import logging
 import hyperopt
 
 import matchzoo as mz
-from matchzoo import tune
+from matchzoo.engine.base_metric import BaseMetric
+from matchzoo.engine.base_model import BaseModel
+from .callbacks.callback import Callback
 
 
 class Tuner(object):
@@ -67,15 +69,15 @@ class Tuner(object):
 
     def __init__(
         self,
-        params: mz.engine.ParamTable,
+        params: mz.ParamTable,
         train_data: typing.Union[mz.DataPack, mz.DataGenerator],
         test_data: typing.Union[mz.DataPack, mz.DataGenerator],
         fit_kwargs: dict = None,
         evaluate_kwargs: dict = None,
-        metric: typing.Union[str, mz.engine.BaseMetric] = None,
+        metric: typing.Union[str, BaseMetric] = None,
         mode: str = 'maximize',
         num_runs: int = 10,
-        callbacks: typing.List['tune.callbacks.Callback'] = None,
+        callbacks: typing.List[Callback] = None,
         verbose=1
     ):
         """Tuner."""
@@ -342,7 +344,7 @@ class Tuner(object):
 
     @classmethod
     def _validate_params(cls, params):
-        if not isinstance(params, mz.engine.ParamTable):
+        if not isinstance(params, mz.ParamTable):
             raise TypeError
         if not params.hyper_space:
             raise ValueError("Parameter hyper-space empty.")
@@ -377,7 +379,7 @@ class Tuner(object):
     @classmethod
     def _validate_callbacks(cls, callbacks):
         for callback in callbacks:
-            if not isinstance(callback, tune.callbacks.Callback):
-                if issubclass(callback, tune.callbacks.Callback):
+            if not isinstance(callback, Callback):
+                if issubclass(callback, Callback):
                     raise TypeError("Make sure to instantiate the callbacks.")
                 raise TypeError

@@ -6,11 +6,10 @@ import typing
 
 import hyperopt.pyll
 
-from matchzoo import engine
+from matchzoo.engine import hyper_spaces
 
 # Both hyperopt native spaces and matchzoo proxies are valid spaces.
-SpaceType = typing.Union[hyperopt.pyll.Apply,
-                         engine.hyper_spaces.HyperoptProxy]
+SpaceType = typing.Union[hyperopt.pyll.Apply, hyper_spaces.HyperoptProxy]
 
 
 class Param(object):
@@ -227,7 +226,7 @@ class Param(object):
 
         Example:
             >>> import matchzoo as mz
-            >>> param = mz.engine.Param(
+            >>> param = mz.Param(
             ...     name='str', validator=lambda x: isinstance(x, str))
             >>> param.value = 'hello'
             >>> param.value = None

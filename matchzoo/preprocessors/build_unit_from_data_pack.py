@@ -3,13 +3,14 @@
 from tqdm import tqdm
 
 import matchzoo as mz
+from .units import StatefulUnit
 
 
 def build_unit_from_data_pack(
-    unit: mz.preprocessors.units.StatefulUnit,
+    unit: StatefulUnit,
     data_pack: mz.DataPack, mode: str = 'both',
     flatten: bool = True, verbose: int = 1
-) -> mz.preprocessors.units.StatefulUnit:
+) -> StatefulUnit:
     """
     Build a :class:`StatefulUnit` from a :class:`DataPack` object.
 

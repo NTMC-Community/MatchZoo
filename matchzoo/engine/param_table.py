@@ -4,7 +4,8 @@ import typing
 import pandas as pd
 import collections.abc
 
-from matchzoo.engine import Param, hyper_spaces
+from matchzoo.engine.param import Param
+from matchzoo.engine import hyper_spaces
 
 
 class ParamTable(object):
@@ -40,8 +41,8 @@ class ParamTable(object):
             raise TypeError("Only accepts a Param instance.")
         if param.name in self._params:
             msg = f"Parameter named {param.name} already exists.\n" \
-                  f"To re-assign parameter {param.name} value, " \
-                  f"use `params[\"{param.name}\"] = value` instead."
+                f"To re-assign parameter {param.name} value, " \
+                f"use `params[\"{param.name}\"] = value` instead."
             raise ValueError(msg)
         self._params[param.name] = param
 
@@ -75,9 +76,9 @@ class ParamTable(object):
 
         Example:
             >>> import matchzoo as mz
-            >>> table = mz.engine.ParamTable()
-            >>> table.add(mz.engine.Param(name='x', value=10, desc='my x'))
-            >>> table.add(mz.engine.Param(name='y', value=20, desc='my y'))
+            >>> table = mz.ParamTable()
+            >>> table.add(mz.Param(name='x', value=10, desc='my x'))
+            >>> table.add(mz.Param(name='y', value=20, desc='my y'))
             >>> table.to_frame()
               Name Description  Value Hyper-Space
             0    x        my x     10        None

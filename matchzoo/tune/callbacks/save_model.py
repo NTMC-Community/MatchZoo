@@ -3,6 +3,7 @@ from pathlib import Path
 import uuid
 
 import matchzoo as mz
+from matchzoo.engine.base_model import BaseModel
 from matchzoo.tune.callbacks.callback import Callback
 
 
@@ -24,7 +25,7 @@ class SaveModel(Callback):
         """Init."""
         self._dir_path = dir_path or mz.USER_TUNED_MODELS_DIR
 
-    def on_run_end(self, tuner, model: mz.engine.BaseModel, result: dict):
+    def on_run_end(self, tuner, model: BaseModel, result: dict):
         """Save model on run end."""
         model_id = str(uuid.uuid4())
         model.save(self._dir_path.joinpath(model_id))

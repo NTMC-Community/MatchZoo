@@ -4,17 +4,17 @@ import logging
 
 from tqdm import tqdm
 
-from matchzoo import build_vocab_unit
-from matchzoo import chain_transform
+from . import units
+from .chain_transform import chain_transform
 from matchzoo import DataPack
-from matchzoo import engine
-from matchzoo import preprocessors
+from matchzoo.engine.base_preprocessor import BasePreprocessor
+from .build_vocab_unit import build_vocab_unit
 
 logger = logging.getLogger(__name__)
 tqdm.pandas()
 
 
-class CDSSMPreprocessor(engine.BasePreprocessor):
+class CDSSMPreprocessor(BasePreprocessor):
     """CDSSM Model preprocessor."""
 
     def __init__(self,
@@ -29,8 +29,8 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         :class:`matchzoo.DynamicDataGenerator` with a
         :class:`matchzoo.preprocessor.units.WordHashing`.
 
-        :param text_len: Fixed text length, cut original text if it is longer
-         or pad if shorter.
+        TODO: doc here.
+
         :param with_word_hashing: Include a word hashing step if `True`.
 
         Example:
@@ -51,11 +51,11 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         super().__init__()
         self._fixed_length_left = fixed_length_left
         self._fixed_length_right = fixed_length_right
-        self._left_fixedlength_unit = preprocessors.units.FixedLength(
+        self._left_fixedlength_unit = units.FixedLength(
             self._fixed_length_left,
             pad_value='0', pad_mode='post'
         )
-        self._right_fixedlength_unit = preprocessors.units.FixedLength(
+        self._right_fixedlength_unit = units.FixedLength(
             self._fixed_length_right,
             pad_value='0', pad_mode='post'
         )
@@ -69,10 +69,9 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         :param data_pack: Data_pack to be preprocessed.
         :return: class:`CDSSMPreprocessor` instance.
         """
-        units = self._default_preprocessor.units()
-        units.append(units.NgramLetter())
-        data_pack = data_pack.apply_on_text(chain_transform(units),
-                                            verbose=verbose)
+        fit_units = self._default_units() + [units.NgramLetter()]
+        func = chain_transform(fit_units)
+        data_pack = data_pack.apply_on_text(func, verbose=verbose)
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
 
         self._context['vocab_unit'] = vocab_unit
@@ -83,7 +82,6 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         ]
         return self
 
-    @engine.validate_context
     def transform(self, data_pack: DataPack, verbose: int = 1) -> DataPack:
         """
         Apply transformation on data, create `letter-ngram` representation.
@@ -94,17 +92,16 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
         :return: Transformed data as :class:`DataPack` object.
         """
         data_pack = data_pack.copy()
-        units = self._default_preprocessor.units()
-        data_pack.apply_on_text(chain_transform(units), inplace=True,
-                                verbose=verbose)
+        func = chain_transform(self._default_units())
+        data_pack.apply_on_text(func, inplace=True, verbose=verbose)
         data_pack.apply_on_text(self._left_fixedlength_unit.transform,
                                 mode='left', inplace=True, verbose=verbose)
         data_pack.apply_on_text(self._right_fixedlength_unit.transform,
                                 mode='right', inplace=True, verbose=verbose)
-        post_units = [preprocessors.units.NgramLetter(reduce_dim=False)]
+        post_units = [units.NgramLetter(reduce_dim=False)]
         if self._with_word_hashing:
             term_index = self._context['vocab_unit'].state['term_index']
-            post_units.append(preprocessors.units.WordHashing(term_index))
+            post_units.append(units.WordHashing(term_index))
         data_pack.apply_on_text(chain_transform(post_units),
                                 inplace=True, verbose=verbose)
         return data_pack
@@ -113,10 +110,10 @@ class CDSSMPreprocessor(engine.BasePreprocessor):
     def _default_units(cls) -> list:
         """Prepare needed process units."""
         return [
-            preprocessors.units.tokenize.Tokenize(),
-            preprocessors.units.lowercase.Lowercase(),
-            preprocessors.units.punc_removal.PuncRemoval(),
-            preprocessors.units.stop_removal.StopRemoval(),
+            units.Tokenize(),
+            units.Lowercase(),
+            units.PuncRemoval(),
+            units.StopRemoval(),
         ]
 
     @property

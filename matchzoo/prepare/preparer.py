@@ -3,6 +3,9 @@ import typing
 import numpy as np
 
 import matchzoo as mz
+from matchzoo.engine.base_task import BaseTask
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.base_preprocessor import BasePreprocessor
 from matchzoo.data_generator import DataGeneratorBuilder
 
 
@@ -52,7 +55,7 @@ class Preparer(object):
 
     def __init__(
         self,
-        task: mz.engine.BaseTask,
+        task: BaseTask,
         config: typing.Optional[dict] = None
     ):
         """Init."""
@@ -65,13 +68,13 @@ class Preparer(object):
 
     def prepare(
         self,
-        model_class: typing.Type[mz.engine.BaseModel],
+        model_class: typing.Type[BaseModel],
         data_pack: mz.DataPack,
-        preprocessor: typing.Optional[mz.engine.BasePreprocessor] = None,
+        preprocessor: typing.Optional[BasePreprocessor] = None,
         embedding: typing.Optional[mz.Embedding] = None,
     ) -> typing.Tuple[
-        mz.engine.BaseModel,
-        mz.engine.BasePreprocessor,
+        BaseModel,
+        BasePreprocessor,
         DataGeneratorBuilder,
         np.ndarray
     ]:
@@ -121,7 +124,7 @@ class Preparer(object):
         model_class,
         preprocessor,
         embedding
-    ) -> typing.Tuple[mz.engine.BaseModel, np.ndarray]:
+    ) -> typing.Tuple[BaseModel, np.ndarray]:
 
         model = model_class()
         model.params['task'] = self._task

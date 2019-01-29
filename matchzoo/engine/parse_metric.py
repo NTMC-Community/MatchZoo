@@ -1,15 +1,14 @@
 import typing
 
 import matchzoo
-from matchzoo.engine import base_metric
+from matchzoo.engine.base_metric import BaseMetric
 from matchzoo.engine import base_task
 
 
 def parse_metric(
-    metric: typing.Union[str, typing.Type[base_metric.BaseMetric],
-                         base_metric.BaseMetric],
+    metric: typing.Union[str, typing.Type[BaseMetric], BaseMetric],
     task: 'base_task.BaseTask' = None
-) -> typing.Union['base_metric.BaseMetric', str]:
+) -> typing.Union['BaseMetric', str]:
     """
     Parse input metric in any form into a :class:`BaseMetric` instance.
 
@@ -18,23 +17,24 @@ def parse_metric(
     :return: A :class:`BaseMetric` instance
 
     Examples::
-        >>> from matchzoo import engine, metrics
+        >>> from matchzoo import metrics
+        >>> from matchzoo.engine.parse_metric import parse_metric
 
     Use `str` as keras native metrics:
-        >>> engine.parse_metric('mse')
+        >>> parse_metric('mse')
         'mse'
 
     Use `str` as MatchZoo metrics:
-        >>> mz_metric = engine.parse_metric('map')
+        >>> mz_metric = parse_metric('map')
         >>> type(mz_metric)
         <class 'matchzoo.metrics.mean_average_precision.MeanAveragePrecision'>
 
     Use :class:`matchzoo.engine.BaseMetric` subclasses as MatchZoo metrics:
-        >>> type(engine.parse_metric(metrics.AveragePrecision))
+        >>> type(parse_metric(metrics.AveragePrecision))
         <class 'matchzoo.metrics.average_precision.AveragePrecision'>
 
     Use :class:`matchzoo.engine.BaseMetric` instances as MatchZoo metrics:
-        >>> type(engine.parse_metric(metrics.AveragePrecision()))
+        >>> type(parse_metric(metrics.AveragePrecision()))
         <class 'matchzoo.metrics.average_precision.AveragePrecision'>
 
     """

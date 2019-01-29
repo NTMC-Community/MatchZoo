@@ -1,7 +1,7 @@
 import pytest
 import hyperopt.pyll.base
 
-from matchzoo import engine
+from matchzoo.engine import hyper_spaces
 
 
 @pytest.fixture(scope='module', params=[
@@ -24,9 +24,9 @@ def op(request):
 
 
 @pytest.fixture(scope='module', params=[
-    engine.hyper_spaces.choice(options=[0, 1]),
-    engine.hyper_spaces.uniform(low=0, high=10),
-    engine.hyper_spaces.quniform(low=0, high=10, q=2)
+    hyper_spaces.choice(options=[0, 1]),
+    hyper_spaces.uniform(low=0, high=10),
+    hyper_spaces.quniform(low=0, high=10, q=2)
 ])
 def proxy(request):
     return request.param

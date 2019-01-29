@@ -42,4 +42,4 @@ class AveragePrecision(base_metric.BaseMetric):
         out = [metric(y_true, y_pred) for metric in precision_metrics]
         if not out:
             return 0.
-        return np.mean(out)
+        return np.asscalar(np.mean(out))

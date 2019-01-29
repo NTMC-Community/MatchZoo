@@ -3,6 +3,7 @@
 import matchzoo as mz
 
 from matchzoo.data_pack import DataPack
+from .units import Vocabulary
 from .build_unit_from_data_pack import build_unit_from_data_pack
 
 
@@ -10,7 +11,7 @@ def build_vocab_unit(
     data_pack: DataPack,
     mode: str = 'both',
     verbose: int = 1
-) -> mz.preprocessors.units.Vocabulary:
+) -> Vocabulary:
     """
         Build a :class:`preprocessor.units.Vocabulary` given `data_pack`.
 
@@ -26,7 +27,7 @@ def build_vocab_unit(
 
         """
     return build_unit_from_data_pack(
-        unit=mz.preprocessors.units.Vocabulary(),
+        unit=Vocabulary(),
         data_pack=data_pack,
         mode=mode,
         flatten=True, verbose=verbose

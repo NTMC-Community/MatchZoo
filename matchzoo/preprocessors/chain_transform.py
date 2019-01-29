@@ -2,7 +2,7 @@
 import typing
 import functools
 
-from .unit import Unit
+from .units.unit import Unit
 
 
 def chain_transform(units: typing.List[Unit]) -> typing.Callable:

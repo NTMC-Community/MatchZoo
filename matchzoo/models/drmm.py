@@ -4,10 +4,13 @@ import typing
 import keras
 import keras.backend as K
 
-from matchzoo import engine
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine import hyper_spaces
 
 
-class DRMM(engine.BaseModel):
+class DRMM(BaseModel):
     """
     DRMM Model.
 
@@ -24,11 +27,11 @@ class DRMM(engine.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls) -> engine.ParamTable:
+    def get_default_params(cls) -> ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params(with_embedding=True,
                                             with_multi_layer_perceptron=True)
-        params.add(engine.Param(name='mask_value', value=-1,
+        params.add(Param(name='mask_value', value=-1,
                                 desc="The value to be masked from inputs."))
         params['optimizer'] = 'adam'
         params['input_shapes'] = [(5,), (5, 30,)]

@@ -2,14 +2,17 @@ import typing
 
 import matchzoo as mz
 from .preparer import Preparer
+from matchzoo.engine.base_task import BaseTask
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.base_preprocessor import BasePreprocessor
 
 
 def prepare(
-    task: mz.engine.BaseTask,
-    model_class: typing.Type[mz.engine.BaseModel],
+    task: BaseTask,
+    model_class: typing.Type[BaseModel],
     data_pack: mz.DataPack,
     config: typing.Optional[dict] = None,
-    preprocessor: typing.Optional[mz.engine.BasePreprocessor] = None,
+    preprocessor: typing.Optional[BasePreprocessor] = None,
     embedding: typing.Optional[mz.Embedding] = None,
 ):
     """

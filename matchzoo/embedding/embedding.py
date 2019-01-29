@@ -30,7 +30,7 @@ class Embedding(object):
 
     To build your own:
         >>> data = pd.DataFrame(data=[[0, 1], [2, 3]], index=['A', 'B'])
-        >>> embedding = mz.embedding.Embedding(data)
+        >>> embedding = mz.Embedding(data)
         >>> matrix = embedding.build_matrix({'A': 2, 'B': 1})
         >>> matrix.shape == (3, 2)
         True
@@ -58,7 +58,7 @@ class Embedding(object):
     def build_matrix(
         self,
         term_index: typing.Union[
-            dict, preprocessors.units.vocabulary.Vocabulary.TermIndex],
+            dict, mz.preprocessors.units.Vocabulary.TermIndex],
         initializer=lambda: np.random.uniform(-0.2, 0.2)
     ) -> np.ndarray:
         """

@@ -13,8 +13,13 @@ from .drmm import DRMM
 from .anmm import ANMM
 from .mvlstm import MVLSTM
 
-import matchzoo
-
 
 def list_available():
-    return matchzoo.engine.BaseModel.__subclasses__()
+    from matchzoo.engine.base_model import BaseModel
+    return _subclasses(BaseModel)
+
+
+def _subclasses(base):
+    return base.__subclasses__() + sum([
+        subclass.__subclasses__() for subclass in base.__subclasses__()
+    ], [])

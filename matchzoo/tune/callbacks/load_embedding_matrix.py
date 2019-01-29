@@ -1,4 +1,4 @@
-import matchzoo as mz
+from matchzoo.engine.base_model import BaseModel
 from matchzoo.tune.callbacks.callback import Callback
 
 
@@ -14,6 +14,6 @@ class LoadEmbeddingMatrix(Callback):
         """Init."""
         self._embedding_matrix = embedding_matrix
 
-    def on_build_end(self, tuner, model: mz.engine.BaseModel):
+    def on_build_end(self, tuner, model: BaseModel):
         """`on_build_end`."""
         model.load_embedding_matrix(self._embedding_matrix)
