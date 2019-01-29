@@ -1,3 +1,8 @@
+"""
+These tests are simplied because the original verion takes too much time to
+run, making CI fails as it reaches the time limit.
+"""
+
 import pytest
 import copy
 from pathlib import Path
@@ -8,10 +13,7 @@ import matchzoo as mz
 
 @pytest.fixture(scope='module', params=[
     mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=2)),
-    pytest.param(
-        mz.tasks.Classification(num_classes=2),
-        marks=pytest.mark.slow
-    ),
+    mz.tasks.Classification(num_classes=2),
 ])
 def task(request):
     return request.param
@@ -20,16 +22,6 @@ def task(request):
 @pytest.fixture(scope='module')
 def train_raw(task):
     return mz.datasets.toy.load_data('train', task)
-
-
-@pytest.fixture(scope='module')
-def dev_raw(task):
-    return mz.datasets.toy.load_data('dev', task)
-
-
-@pytest.fixture(scope='module')
-def test_raw(task):
-    return mz.datasets.toy.load_data('test', task)
 
 
 @pytest.fixture(scope='module', params=mz.models.list_available())
@@ -73,35 +65,15 @@ def embedding_matrix(setup):
 
 
 @pytest.fixture(scope='module')
-def train_gen(train_raw, preprocessor, gen_builder):
+def gen(train_raw, preprocessor, gen_builder):
     return gen_builder.build(preprocessor.transform(train_raw))
 
 
-@pytest.fixture(scope='module')
-def dev_gen(dev_raw, preprocessor, gen_builder):
-    return gen_builder.build(preprocessor.transform(dev_raw))
-
-
-@pytest.fixture(scope='module')
-def test_gen(test_raw, preprocessor, gen_builder):
-    return gen_builder.build(preprocessor.transform(test_raw))
-
-
 @pytest.mark.slow
-def test_model_fit(model, train_gen):
-    x, y = train_gen[0]
+def test_model_fit_eval_predict(model, gen):
+    x, y = gen[0]
     assert model.fit(x, y, verbose=0)
-
-
-@pytest.mark.slow
-def test_model_evaluate(model, dev_gen):
-    x, y = dev_gen[0]
     assert model.evaluate(x, y)
-
-
-@pytest.mark.slow
-def test_model_predict(model, test_gen):
-    x, y = test_gen[0]
     assert model.predict(x) is not None
 
 
@@ -124,7 +96,7 @@ def test_save_load_model(model):
 
 @pytest.mark.slow
 def test_hyper_space(model):
-    for _ in range(16):
+    for _ in range(8):
         new_params = copy.deepcopy(model.params)
         sample = mz.hyper_spaces.sample(new_params.hyper_space)
         for key, value in sample.items():
