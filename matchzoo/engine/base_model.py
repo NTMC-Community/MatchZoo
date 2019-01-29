@@ -299,7 +299,7 @@ class BaseModel(abc.ABC):
             ...     mz.metrics.Precision(k=2, threshold=2),
             ...     mz.metrics.DiscountedCumulativeGain(k=2),
             ...     mz.metrics.NormalizedDiscountedCumulativeGain(
-            ...         k=3, threshold=-1),
+            ...         k=3),
             ...     mz.metrics.MeanReciprocalRank(threshold=2),
             ...     mz.metrics.MeanAveragePrecision(threshold=3)
             ... ]
