@@ -39,18 +39,17 @@ def test_mean_average_precision():
 
 
 def test_dcg_at_k():
-    label = [0, 1, 2]
-    score = [0.1, 0.4, 0.2]
+    label = [3, 3, 2]
+    score = [3, 2, 3]
     dcg = metrics.DiscountedCumulativeGain
-    assert round(dcg(k=1)(label, score), 2) == 1.44
-    assert round(dcg(k=2)(label, score), 2) == 4.17
-    assert round(dcg(k=3)(label, score), 2) == 4.17
+    assert round(dcg(k=1)(label, score), 2) == 3.0
+    assert round(dcg(k=2)(label, score), 2) == 5.0
 
 
 def test_ndcg_at_k():
-    label = [0, 1, 2]
-    score = [0.1, 0.4, 0.2]
+    label = [3, 3, 2]
+    score = [3, 2, 3]
     ndcg = metrics.NormalizedDiscountedCumulativeGain
-    assert round(ndcg(k=1)(label, score), 2) == 0.33
-    assert round(ndcg(k=2)(label, score), 2) == 0.80
-    assert round(ndcg(k=3)(label, score), 2) == 0.80
+    assert round(ndcg(k=1)(label, score), 2) == 1.0
+    assert round(ndcg(k=2)(label, score), 2) == 0.83
+    assert round(ndcg(k=3)(label, score), 2) == 0.95
