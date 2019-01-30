@@ -260,6 +260,11 @@ class DataGenerator(keras.utils.Sequence):
         self._shuffle = value
         self.reset_index()
 
+    @property
+    def batch_indices(self):
+        """`batch_indices` getter."""
+        return self._batch_indices
+
     @classmethod
     def _reorganize_pair_wise(
         cls,
