@@ -32,6 +32,7 @@ from . import models
 from . import embedding
 from . import datasets
 from . import layers
+from . import auto
 from . import contrib
 
 from .engine import hyper_spaces
@@ -42,10 +43,6 @@ from .engine.param import Param
 from .engine.param_table import ParamTable
 
 from .embedding.embedding import Embedding
-
-from . import tune
-from .prepare import prepare
-from .prepare import Preparer
 
 from .utils import one_hot
 from .preprocessors.build_unit_from_data_pack import build_unit_from_data_pack

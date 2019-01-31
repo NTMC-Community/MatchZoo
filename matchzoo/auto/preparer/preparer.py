@@ -43,11 +43,11 @@ class Preparer(object):
     Example:
         >>> import matchzoo as mz
         >>> task = mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss())
-        >>> keeper = mz.Preparer(task)
+        >>> preparer = mz.auto.Preparer(task)
         >>> model_class = mz.models.DenseBaseline
         >>> train_raw = mz.datasets.toy.load_data('train', 'ranking')
-        >>> model, prpr, gen_builder, matrix = keeper.prepare(model_class,
-        ...                                                   train_raw)
+        >>> model, prpr, gen_builder, matrix = preparer.prepare(model_class,
+        ...                                                     train_raw)
         >>> model.params.completed()
         True
 
@@ -71,7 +71,7 @@ class Preparer(object):
         model_class: typing.Type[BaseModel],
         data_pack: mz.DataPack,
         preprocessor: typing.Optional[BasePreprocessor] = None,
-        embedding: typing.Optional[mz.Embedding] = None,
+        embedding: typing.Optional['mz.Embedding'] = None,
     ) -> typing.Tuple[
         BaseModel,
         BasePreprocessor,

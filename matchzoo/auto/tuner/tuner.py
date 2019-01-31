@@ -6,7 +6,6 @@ import hyperopt
 
 import matchzoo as mz
 from matchzoo.engine.base_metric import BaseMetric
-from matchzoo.engine.base_model import BaseModel
 from .callbacks.callback import Callback
 
 
@@ -54,7 +53,7 @@ class Tuner(object):
         >>> model = mz.models.DenseBaseline()
         >>> model.params['input_shapes'] = prpr.context['input_shapes']
         >>> model.params['task'] = mz.tasks.Ranking()
-        >>> tuner = mz.tune.Tuner(
+        >>> tuner = mz.auto.Tuner(
         ...     params=model.params,
         ...     train_data=train,
         ...     test_data=dev,
@@ -69,7 +68,7 @@ class Tuner(object):
 
     def __init__(
         self,
-        params: mz.ParamTable,
+        params: 'mz.ParamTable',
         train_data: typing.Union[mz.DataPack, mz.DataGenerator],
         test_data: typing.Union[mz.DataPack, mz.DataGenerator],
         fit_kwargs: dict = None,
