@@ -3,10 +3,10 @@ import math
 
 import numpy as np
 
-from matchzoo import engine
+from matchzoo.engine.base_metric import BaseMetric, sort_and_couple
 
 
-class DiscountedCumulativeGain(engine.BaseMetric):
+class DiscountedCumulativeGain(BaseMetric):
     """Disconunted cumulative gain metric."""
 
     ALIAS = ['discounted_cumulative_gain', 'dcg']
@@ -52,7 +52,7 @@ class DiscountedCumulativeGain(engine.BaseMetric):
         """
         if self._k <= 0:
             return 0.
-        coupled_pair = engine.sort_and_couple(y_true, y_pred)
+        coupled_pair = sort_and_couple(y_true, y_pred)
         result = 0.
         for i, (label, score) in enumerate(coupled_pair):
             if i >= self._k:

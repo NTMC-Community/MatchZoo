@@ -1,15 +1,17 @@
 """An implementation of CDSSM (CLSM) model."""
 import typing
 
-from matchzoo import engine
-from matchzoo import TensorType
-from matchzoo import preprocessors
-
 import keras
 from keras.models import Model
 
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
+from matchzoo import preprocessors
+from matchzoo.utils import TensorType
 
-class CDSSM(engine.BaseModel):
+
+class CDSSM(BaseModel):
     """
     CDSSM Model implementation.
 
@@ -30,30 +32,30 @@ class CDSSM(engine.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls) -> engine.ParamTable:
+    def get_default_params(cls) -> ParamTable:
         """:return: model default parameters."""
         # set :attr:`with_multi_layer_perceptron` to False to support
         # user-defined variable dense layer units
         params = super().get_default_params(with_multi_layer_perceptron=True)
-        params.add(engine.Param(name='filters', value=32,
-                                desc="Number of filters in the 1D convolution "
-                                     "layer."))
-        params.add(engine.Param(name='kernel_size', value=3,
-                                desc="Number of kernel size in the 1D "
-                                     "convolution layer."))
-        params.add(engine.Param(name='strides', value=1,
-                                desc="Strides in the 1D convolution layer."))
-        params.add(engine.Param(name='padding', value='same',
-                                desc="The padding mode in the convolution "
-                                     "layer. It should be one of `same`, "
-                                     "`valid`, ""and `causal`."))
-        params.add(engine.Param(name='conv_activation_func', value='relu',
-                                desc="Activation function in the convolution"
-                                     " layer."))
-        params.add(engine.Param(name='w_initializer', value='glorot_normal'))
-        params.add(engine.Param(name='b_initializer', value='zeros'))
-        params.add(engine.Param(name='dropout_rate', value=0.3,
-                                desc="The dropout rate."))
+        params.add(Param(name='filters', value=32,
+                         desc="Number of filters in the 1D convolution "
+                              "layer."))
+        params.add(Param(name='kernel_size', value=3,
+                         desc="Number of kernel size in the 1D "
+                              "convolution layer."))
+        params.add(Param(name='strides', value=1,
+                         desc="Strides in the 1D convolution layer."))
+        params.add(Param(name='padding', value='same',
+                         desc="The padding mode in the convolution "
+                              "layer. It should be one of `same`, "
+                              "`valid`, ""and `causal`."))
+        params.add(Param(name='conv_activation_func', value='relu',
+                         desc="Activation function in the convolution"
+                              " layer."))
+        params.add(Param(name='w_initializer', value='glorot_normal'))
+        params.add(Param(name='b_initializer', value='zeros'))
+        params.add(Param(name='dropout_rate', value=0.3,
+                         desc="The dropout rate."))
         return params
 
     def _create_base_network(self) -> typing.Callable:
@@ -66,6 +68,7 @@ class CDSSM(engine.BaseModel):
 
         :return: Wrapped Keras `Layer` as CDSSM network, tensor in tensor out.
         """
+
         def _wrapper(x: TensorType):
             # Apply 1d convolutional on each word_ngram (lt).
             # Input shape: (batch_size, num_tri_letters, 90000)

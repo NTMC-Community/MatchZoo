@@ -2,10 +2,13 @@
 import keras
 import keras.backend as K
 
-from matchzoo import engine, preprocessors
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine import hyper_spaces
 
 
-class KNRM(engine.BaseModel):
+class KNRM(BaseModel):
     """
     KNRM model.
 
@@ -26,22 +29,24 @@ class KNRM(engine.BaseModel):
     def get_default_params(cls):
         """Get default parameters."""
         params = super().get_default_params(with_embedding=True)
-        params.add(engine.Param(
+        params.add(Param(
             name='kernel_num',
             value=11,
-            hyper_space=engine.hyper_spaces.quniform(low=5, high=20),
+            hyper_space=hyper_spaces.quniform(low=5, high=20),
             desc="The number of RBF kernels."
         ))
-        params.add(engine.Param(
+        params.add(Param(
             name='sigma',
             value=0.1,
-            hyper_space=engine.hyper_spaces.quniform(
+            hyper_space=hyper_spaces.quniform(
                 low=0.01, high=0.2, q=0.01),
             desc="The `sigma` defines the kernel width."
         ))
-        params.add(engine.Param(name='exact_sigma', value=0.001,
-                                desc="The `exact_sigma` denotes the `sigma` "
-                                     "for exact match."))
+        params.add(Param(
+            name='exact_sigma', value=0.001,
+            desc="The `exact_sigma` denotes the `sigma` "
+                 "for exact match."
+        ))
         return params
 
     def build(self):
@@ -83,6 +88,7 @@ class KNRM(engine.BaseModel):
         :param sigma: Float, sigma of the kernel.
         :return: `keras.layers.Layer`.
         """
+
         def kernel(x):
             return K.tf.exp(-0.5 * (x - mu) * (x - mu) / sigma / sigma)
 

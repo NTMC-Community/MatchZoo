@@ -6,6 +6,7 @@ import numpy as np
 import keras
 
 import matchzoo
+from matchzoo.engine.base_model import BaseModel
 
 
 class EvaluateAllMetrics(keras.callbacks.Callback):
@@ -33,11 +34,11 @@ class EvaluateAllMetrics(keras.callbacks.Callback):
 
     def __init__(
         self,
-        model: 'matchzoo.engine.BaseModel',
+        model: 'BaseModel',
         x: typing.Union[np.ndarray, typing.List[np.ndarray]],
         y: np.ndarray,
         once_every: int = 1,
-        batch_size: int = 32,
+        batch_size: int = 128,
         model_save_path: str = None,
         verbose=1
     ):

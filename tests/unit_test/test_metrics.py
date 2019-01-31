@@ -1,14 +1,13 @@
-import pytest
-
 import numpy as np
 
-from matchzoo import engine, metrics
+from matchzoo.engine.base_metric import sort_and_couple
+from matchzoo import metrics
 
 
 def test_sort_and_couple():
     l = [0, 1, 2]
     s = [0.1, 0.4, 0.2]
-    c = engine.sort_and_couple(l, s)
+    c = sort_and_couple(l, s)
     assert (c == np.array([(1, 0.4), (2, 0.2), (0, 0.1)])).all()
 
 

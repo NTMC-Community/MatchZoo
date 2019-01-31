@@ -1,7 +1,7 @@
-from matchzoo.processor_units import *
-import math
 import pytest
 import numpy as np
+
+from matchzoo.preprocessors import units
 
 
 @pytest.fixture
@@ -23,84 +23,80 @@ def vec_input():
                      [1, 0, 0, 0, 0]])
 
 
-def test_list_available():
-    assert len(list_available()) == 12
-
-
 def test_tokenize_unit(raw_input):
-    tu = TokenizeUnit()
+    tu = units.Tokenize()
     out = tu.transform(raw_input)
     assert len(out) == 13
     assert 'an' in out
 
 
 def test_lowercase_unit(list_input):
-    lu = LowercaseUnit()
+    lu = units.Lowercase()
     out = lu.transform(list_input)
     assert 'is' in out
 
 
 def test_digitremoval_unit(list_input):
-    du = DigitRemovalUnit()
+    du = units.DigitRemoval()
     out = du.transform(list_input)
     assert 36 not in out
 
 
 def test_puncremoval_unit(list_input):
-    pu = PuncRemovalUnit()
+    pu = units.PuncRemoval()
     out = pu.transform(list_input)
     assert '!' not in out
 
 
 def test_stopremoval_unit(list_input):
-    su = StopRemovalUnit()
+    su = units.StopRemoval()
     out = su.transform(list_input)
     assert 'the' not in out
 
 
 def test_stemming_unit(list_input):
-    su_porter = StemmingUnit()
+    su_porter = units.Stemming()
     out_porter = su_porter.transform(list_input)
     assert 'thi' in out_porter
-    su_lancaster = StemmingUnit(stemmer='lancaster')
+    su_lancaster = units.Stemming(stemmer='lancaster')
     out_lancaster = su_lancaster.transform(list_input)
     assert 'thi' in out_lancaster
-    su_not_exist = StemmingUnit(stemmer='fake_stemmer')
+    su_not_exist = units.Stemming(stemmer='fake_stemmer')
     with pytest.raises(ValueError):
         su_not_exist.transform(list_input)
 
 
 def test_lemma_unit(list_input):
-    lemma = LemmatizationUnit()
+    lemma = units.Lemmatization()
     out = lemma.transform(list_input)
     assert 'this' in out
 
 
 def test_ngram_unit(list_input):
-    ngram = NgramLetterUnit()
+    ngram = units.NgramLetter()
     out = ngram.transform(list_input)
     assert '#a#' in out
-    ngram = NgramLetterUnit(reduce_dim=False)
+    ngram = units.NgramLetter(reduce_dim=False)
     out = ngram.transform(list_input)
     assert len(out) == 9
 
 
 def test_fixedlength_unit(list_input):
-    fixedlength = FixedLengthUnit(3)
+    fixedlength = units.FixedLength(3)
     out = fixedlength.transform([])
     assert list(out) == [0] * 3
     out = fixedlength.transform(list_input)
     assert list(out) == ['36', '!', 'input']
-    fixedlength = FixedLengthUnit(3, truncate_mode='post')
+    fixedlength = units.FixedLength(3, truncate_mode='post')
     out = fixedlength.transform(list_input)
     assert list(out) == ['this', 'Is', 'a']
-    fixedlength = FixedLengthUnit(12, pad_value='0',
-                                  truncate_mode='pre', pad_mode='pre')
+    fixedlength = units.FixedLength(12, pad_value='0',
+                                    truncate_mode='pre', pad_mode='pre')
     out = fixedlength.transform(list_input)
     assert list(out[3:]) == list_input
     assert list(out[:3]) == ['0'] * 3
-    fixedlength = FixedLengthUnit(12, pad_value='0',
-                                  truncate_mode='pre', pad_mode='post')
+    fixedlength = units.FixedLength(12, pad_value='0',
+                                    truncate_mode='pre', pad_mode='post')
     out = fixedlength.transform(list_input)
     assert list(out[:-3]) == list_input
     assert list(out[-3:]) == ['0'] * 3
@@ -115,7 +111,7 @@ def test_matchinghistogram_unit(hist_mode):
     embedding = np.array([[1.0, -1.0], [1.0, 2.0], [1.0, 3.0]])
     text_left = [0, 1]
     text_right = [1, 2]
-    histogram = MatchingHistogramUnit(3, embedding, True, hist_mode)
+    histogram = units.MatchingHistogram(3, embedding, True, hist_mode)
     out = histogram.transform([text_left, text_right])
     out = [[round(elem, 2) for elem in list_val] for list_val in out]
     if hist_mode == 'CH':
@@ -126,3 +122,17 @@ def test_matchinghistogram_unit(hist_mode):
         assert out == [[1.1, 0.0, 0.0], [0.0, 0.69, 0.69]]
     else:
         assert False
+
+
+import matchzoo as mz
+
+
+def test_this():
+    train_data = mz.datasets.toy.load_data()
+    test_data = mz.datasets.toy.load_data(stage='test')
+    dssm_preprocessor = mz.preprocessors.DSSMPreprocessor()
+    train_data_processed = dssm_preprocessor.fit_transform(
+        train_data, verbose=0)
+    type(train_data_processed)
+    test_data_transformed = dssm_preprocessor.transform(test_data)
+    type(test_data_transformed)

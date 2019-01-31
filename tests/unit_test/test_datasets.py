@@ -7,16 +7,19 @@ import matchzoo as mz
 def test_load_data():
     train_data = mz.datasets.wiki_qa.load_data('train', task='ranking')
     assert len(train_data) == 20360
-    train_data = mz.datasets.wiki_qa.load_data('train',
-                                               task='classification')
+    train_data, _ = mz.datasets.wiki_qa.load_data('train',
+                                                  task='classification',
+                                                  return_classes=True)
     assert len(train_data) == 20360
 
     dev_data = mz.datasets.wiki_qa.load_data('dev', task='ranking',
                                              filtered=False)
     assert len(dev_data) == 2733
-    dev_data = mz.datasets.wiki_qa.load_data('dev', task='classification',
-                                             filtered=True)
+    dev_data, tag = mz.datasets.wiki_qa.load_data('dev', task='classification',
+                                                  filtered=True,
+                                                  return_classes=True)
     assert len(dev_data) == 1126
+    assert tag == [False, True]
 
     test_data = mz.datasets.wiki_qa.load_data('test', task='ranking',
                                               filtered=False)

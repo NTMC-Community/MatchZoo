@@ -2,11 +2,12 @@
 from keras.models import Model
 from keras.layers import Input, Dot
 
-from matchzoo import engine
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine.base_model import BaseModel
 from matchzoo import preprocessors
 
 
-class DSSM(engine.BaseModel):
+class DSSM(BaseModel):
     """
     Deep structured semantic model.
 
@@ -22,10 +23,9 @@ class DSSM(engine.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls) -> engine.ParamTable:
+    def get_default_params(cls) -> ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params(with_multi_layer_perceptron=True)
-        params['optimizer'] = 'adam'
         return params
 
     def build(self):

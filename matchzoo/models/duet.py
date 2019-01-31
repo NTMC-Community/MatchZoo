@@ -4,11 +4,13 @@ import keras
 import keras.backend as K
 import tensorflow as tf
 
-from matchzoo import engine
-from matchzoo import preprocessors
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine import hyper_spaces
 
 
-class DUET(engine.BaseModel):
+class DUET(BaseModel):
     """
     DUET Model.
 
@@ -32,38 +34,38 @@ class DUET(engine.BaseModel):
     def get_default_params(cls):
         """Get default parameters."""
         params = super().get_default_params(with_embedding=True)
-        params.add(engine.Param(name='lm_filters', value=32,
-                                desc="Filter size of 1D convolution layer in "
-                                     "the local model."))
-        params.add(engine.Param(name='lm_hidden_sizes', value=[32],
-                                desc="A list of hidden size of the MLP layer "
-                                     "in the local model."))
-        params.add(engine.Param(name='dm_filters', value=32,
-                                desc="Filter size of 1D convolution layer in "
-                                     "the distributed model."))
-        params.add(engine.Param(name='dm_kernel_size', value=3,
-                                desc="Kernel size of 1D convolution layer in "
-                                     "the distributed model."))
-        params.add(engine.Param(name='dm_q_hidden_size', value=32,
-                                desc="Hidden size of the MLP layer for the "
-                                     "left text in the distributed model."))
-        params.add(engine.Param(name='dm_d_mpool', value=3,
-                                desc="Max pooling size for the right text in "
-                                     "the distributed model."))
-        params.add(engine.Param(name='dm_hidden_sizes', value=[32],
-                                desc="A list of hidden size of the MLP layer "
-                                     "in the distributed model."))
-        params.add(engine.Param(name='padding', value='same',
-                                desc="The padding mode in the convolution "
-                                     "layer. It should be one of `same`, "
-                                     "`valid`, ""and `causal`."))
-        params.add(engine.Param(name='activation_func', value='relu',
-                                desc="Activation function in the convolution"
-                                     " layer."))
-        params.add(engine.Param(
+        params.add(Param(name='lm_filters', value=32,
+                         desc="Filter size of 1D convolution layer in "
+                              "the local model."))
+        params.add(Param(name='lm_hidden_sizes', value=[32],
+                         desc="A list of hidden size of the MLP layer "
+                              "in the local model."))
+        params.add(Param(name='dm_filters', value=32,
+                         desc="Filter size of 1D convolution layer in "
+                              "the distributed model."))
+        params.add(Param(name='dm_kernel_size', value=3,
+                         desc="Kernel size of 1D convolution layer in "
+                              "the distributed model."))
+        params.add(Param(name='dm_q_hidden_size', value=32,
+                         desc="Hidden size of the MLP layer for the "
+                              "left text in the distributed model."))
+        params.add(Param(name='dm_d_mpool', value=3,
+                         desc="Max pooling size for the right text in "
+                              "the distributed model."))
+        params.add(Param(name='dm_hidden_sizes', value=[32],
+                         desc="A list of hidden size of the MLP layer "
+                              "in the distributed model."))
+        params.add(Param(name='padding', value='same',
+                         desc="The padding mode in the convolution "
+                              "layer. It should be one of `same`, "
+                              "`valid`, ""and `causal`."))
+        params.add(Param(name='activation_func', value='relu',
+                         desc="Activation function in the convolution"
+                              " layer."))
+        params.add(Param(
             name='dropout_rate', value=0.5,
-            hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8,
-                                                     q=0.02),
+            hyper_space=hyper_spaces.quniform(low=0.0, high=0.8,
+                                              q=0.02),
             desc="The dropout rate."))
         return params
 

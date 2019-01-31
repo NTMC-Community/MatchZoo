@@ -4,10 +4,13 @@ import typing
 import keras
 
 import matchzoo
-from matchzoo import engine
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine import hyper_spaces
 
 
-class MatchPyramid(engine.BaseModel):
+class MatchPyramid(BaseModel):
     """
     MatchPyramid Model.
 
@@ -24,35 +27,29 @@ class MatchPyramid(engine.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls) -> engine.ParamTable:
+    def get_default_params(cls) -> ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params(with_embedding=True)
-        params['optimizer'] = 'adam'
-        opt_space = engine.hyper_spaces.choice(['adam', 'rmsprop', 'adagrad'])
-        params.get('optimizer').hyper_space = opt_space
-        params.add(engine.Param(name='num_blocks', value=1,
-                                desc="Number of convolution blocks."))
-        params.add(engine.Param(name='kernel_count', value=[32],
-                                desc="The kernel count of the 2D convolution "
-                                     "of each block."))
-        params.add(engine.Param(name='kernel_size', value=[[3, 3]],
-                                desc="The kernel size of the 2D convolution "
-                                     "of each block."))
-        params.add(engine.Param(name='activation', value='relu',
-                                desc="The activation function."))
-        params.add(engine.Param(name='dpool_size', value=[3, 10],
-                                desc="The max-pooling size of each block."))
-        params.add(engine.Param(
+        params.add(Param(name='num_blocks', value=1,
+                         desc="Number of convolution blocks."))
+        params.add(Param(name='kernel_count', value=[32],
+                         desc="The kernel count of the 2D convolution "
+                              "of each block."))
+        params.add(Param(name='kernel_size', value=[[3, 3]],
+                         desc="The kernel size of the 2D convolution "
+                              "of each block."))
+        params.add(Param(name='activation', value='relu',
+                         desc="The activation function."))
+        params.add(Param(name='dpool_size', value=[3, 10],
+                         desc="The max-pooling size of each block."))
+        params.add(Param(
             name='padding', value='same',
-            hyper_space=engine.hyper_spaces.choice(
-                ['same', 'valid', 'causal']),
-            desc="The padding mode in the convolution layer. It should be one"
-                 "of `same`, `valid`, and `causal`."
+            desc="The padding mode in the convolution layer."
         ))
-        params.add(engine.Param(
+        params.add(Param(
             name='dropout_rate', value=0.0,
-            hyper_space=engine.hyper_spaces.quniform(low=0.0, high=0.8,
-                                                     q=0.01),
+            hyper_space=hyper_spaces.quniform(low=0.0, high=0.8,
+                                              q=0.01),
             desc="The dropout rate."
         ))
         return params

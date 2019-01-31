@@ -3,11 +3,13 @@
 import keras
 import keras.backend as K
 
-from matchzoo import engine
-from matchzoo import models
+from .knrm import KNRM
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine import hyper_spaces
 
 
-class ConvKNRM(models.KNRM):
+class ConvKNRM(KNRM):
     """
     ConvKNRM model.
 
@@ -31,18 +33,18 @@ class ConvKNRM(models.KNRM):
     def get_default_params(cls):
         """Get default parameters."""
         params = super().get_default_params()
-        params.add(engine.Param(name='filters', value=128,
-                                desc="The filter size in the convolution"
-                                     " layer."))
-        params.add(engine.Param(name='conv_activation_func', value='relu',
-                                desc="The activation function in the "
-                                     "convolution layer."))
-        params.add(engine.Param(name='max_ngram', value=3,
-                                desc="The maximum length of n-grams for the "
-                                     "convolution layer."))
-        params.add(engine.Param(name='use_crossmatch', value=True,
-                                desc="Whether to match left n-grams and right "
-                                     "n-grams of different lengths"))
+        params.add(Param(name='filters', value=128,
+                         desc="The filter size in the convolution"
+                              " layer."))
+        params.add(Param(name='conv_activation_func', value='relu',
+                         desc="The activation function in the "
+                              "convolution layer."))
+        params.add(Param(name='max_ngram', value=3,
+                         desc="The maximum length of n-grams for the "
+                              "convolution layer."))
+        params.add(Param(name='use_crossmatch', value=True,
+                         desc="Whether to match left n-grams and right "
+                              "n-grams of different lengths"))
         return params
 
     def build(self):

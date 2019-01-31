@@ -2,10 +2,12 @@
 import keras
 import keras.backend as K
 
-from matchzoo import engine
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
+from matchzoo.engine import hyper_spaces
 
 
-class MatchLSTM(engine.BaseModel):
+class MatchLSTM(BaseModel):
     """
     Match LSTM model.
 
@@ -26,20 +28,20 @@ class MatchLSTM(engine.BaseModel):
     def get_default_params(cls):
         """Get default parameters."""
         params = super().get_default_params(with_embedding=True)
-        params.add(engine.Param(
+        params.add(Param(
             'lstm_num_units', 256,
-            hyper_space=engine.hyper_spaces.quniform(low=128, high=384, q=32),
+            hyper_space=hyper_spaces.quniform(low=128, high=384, q=32),
             desc="The hidden size in the LSTM layer."
         ))
-        params.add(engine.Param(
+        params.add(Param(
             'fc_num_units', 200,
-            hyper_space=engine.hyper_spaces.quniform(
+            hyper_space=hyper_spaces.quniform(
                 low=100, high=300, q=20),
             desc="The hidden size in the full connection layer."
         ))
-        params.add(engine.Param(
+        params.add(Param(
             'dropout_rate', 0.0,
-            hyper_space=engine.hyper_spaces.quniform(
+            hyper_space=hyper_spaces.quniform(
                 low=0.0, high=0.9, q=0.01),
             desc="The dropout rate."
         ))
