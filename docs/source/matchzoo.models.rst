@@ -44,10 +44,10 @@ matchzoo.models.conv\_knrm module
     :undoc-members:
     :show-inheritance:
 
-matchzoo.models.dense\_baseline\_model module
----------------------------------------------
+matchzoo.models.dense\_baseline module
+--------------------------------------
 
-.. automodule:: matchzoo.models.dense_baseline_model
+.. automodule:: matchzoo.models.dense_baseline
     :members:
     :undoc-members:
     :show-inheritance:
@@ -108,10 +108,10 @@ matchzoo.models.mvlstm module
     :undoc-members:
     :show-inheritance:
 
-matchzoo.models.naive\_model module
------------------------------------
+matchzoo.models.naive module
+----------------------------
 
-.. automodule:: matchzoo.models.naive_model
+.. automodule:: matchzoo.models.naive
     :members:
     :undoc-members:
     :show-inheritance:
