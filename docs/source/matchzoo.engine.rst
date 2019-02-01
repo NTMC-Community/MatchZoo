@@ -68,6 +68,14 @@ matchzoo.engine.param\_table module
     :undoc-members:
     :show-inheritance:
 
+matchzoo.engine.parse\_metric module
+------------------------------------
+
+.. automodule:: matchzoo.engine.parse_metric
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

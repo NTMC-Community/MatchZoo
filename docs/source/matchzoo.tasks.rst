@@ -20,14 +20,6 @@ matchzoo.tasks.ranking module
     :undoc-members:
     :show-inheritance:
 
-matchzoo.tasks.utils module
----------------------------
-
-.. automodule:: matchzoo.tasks.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------
