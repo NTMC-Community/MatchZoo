@@ -68,7 +68,7 @@ class MatchPyramid(engine.BaseModel):
             name='dpool_index',
             shape=[self._params['input_shapes'][0][0],
                    self._params['input_shapes'][1][0],
-                   3],
+                   2],
             dtype='int32')
 
         embedding = self._make_embedding_layer()
