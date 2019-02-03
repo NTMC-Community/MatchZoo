@@ -2,10 +2,11 @@ import typing
 
 import matchzoo as mz
 from matchzoo.engine.base_metric import BaseMetric
+from .tuner import Tuner
 
 
 def tune(
-    params: mz.ParamTable,
+    params: 'mz.ParamTable',
     train_data: typing.Union[mz.DataPack, mz.DataGenerator],
     test_data: typing.Union[mz.DataPack, mz.DataGenerator],
     fit_kwargs: dict = None,
@@ -13,13 +14,13 @@ def tune(
     metric: typing.Union[str, BaseMetric] = None,
     mode: str = 'maximize',
     num_runs: int = 10,
-    callbacks: typing.List['mz.tune.callbacks.Callback'] = None,
+    callbacks: typing.List['mz.auto.tuner.callbacks.Callback'] = None,
     verbose=1
 ):
     """
     Tune model hyper-parameters.
 
-    A simple shorthand for using :class:`matchzoo.tune.Tuner`.
+    A simple shorthand for using :class:`matchzoo.auto.Tuner`.
 
     `model.params.hyper_space` reprensents the model's hyper-parameters
     search space, which is the cross-product of individual hyper parameter's
@@ -61,7 +62,7 @@ def tune(
         >>> model = mz.models.DenseBaseline()
         >>> model.params['input_shapes'] = prpr.context['input_shapes']
         >>> model.params['task'] = mz.tasks.Ranking()
-        >>> results = mz.tune.tune(
+        >>> results = mz.auto.tune(
         ...     params=model.params,
         ...     train_data=train,
         ...     test_data=dev,
@@ -73,7 +74,7 @@ def tune(
 
     """
 
-    tuner = mz.tune.Tuner(
+    tuner = Tuner(
         params=params,
         train_data=train_data,
         test_data=test_data,

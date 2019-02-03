@@ -4,7 +4,7 @@ import uuid
 
 import matchzoo as mz
 from matchzoo.engine.base_model import BaseModel
-from matchzoo.tune.callbacks.callback import Callback
+from .callback import Callback
 
 
 class SaveModel(Callback):

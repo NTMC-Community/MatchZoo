@@ -12,7 +12,7 @@ def tuner():
     prpr.fit(train_raw)
     model.params.update(prpr.context)
     model.guess_and_fill_missing_params()
-    return mz.tune.Tuner(
+    return mz.auto.Tuner(
         params=model.params,
         train_data=prpr.transform(train_raw, verbose=0),
         test_data=prpr.transform(dev_raw, verbose=0)

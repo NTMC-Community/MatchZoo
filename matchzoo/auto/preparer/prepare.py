@@ -12,7 +12,7 @@ def prepare(
     model_class: typing.Type[BaseModel],
     data_pack: mz.DataPack,
     preprocessor: typing.Optional[BasePreprocessor] = None,
-    embedding: typing.Optional[mz.Embedding] = None,
+    embedding: typing.Optional['mz.Embedding'] = None,
     config: typing.Optional[dict] = None,
 ):
     """
