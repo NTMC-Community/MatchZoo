@@ -50,8 +50,7 @@ def _dynamic_pooling_index(length_left: np.array,
                            fixed_length_right: int,
                            compress_ratio_left: float,
                            compress_ratio_right: float) -> np.array:
-    def _dpool_index(batch_idx: int,
-                     one_length_left: int,
+    def _dpool_index(one_length_left: int,
                      one_length_right: int,
                      fixed_length_left: int,
                      fixed_length_right: int):
@@ -71,8 +70,7 @@ def _dynamic_pooling_index(length_left: np.array,
                          for i in range(fixed_length_right)]
         mesh1, mesh2 = np.meshgrid(one_idx_left, one_idx_right)
         index_one = np.transpose(
-            np.stack([np.ones(mesh1.shape) * batch_idx,
-                      mesh1, mesh2]), (2, 1, 0))
+            np.stack([mesh1, mesh2]), (2, 1, 0))
         return index_one
 
     index = []
@@ -87,7 +85,6 @@ def _dynamic_pooling_index(length_left: np.array,
         fixed_length_right // compress_ratio_right) + dpool_bias_right
     for i in range(len(length_left)):
         index.append(_dpool_index(
-            i,
             length_left[i] // compress_ratio_left,
             length_right[i] // compress_ratio_right,
             cur_fixed_length_left,
