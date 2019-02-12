@@ -106,5 +106,6 @@ def load_from_file(file_path: str, mode: str = 'word2vec') -> Embedding:
                              header=None,
                              quoting=csv.QUOTE_NONE)
     else:
-        raise TypeError("Not supported embedding type.")
+        raise TypeError(f"{mode} is not a supported embedding type."
+                        f"`word2vec` or `glove` expected.")
     return Embedding(data)

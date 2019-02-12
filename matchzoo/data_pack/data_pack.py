@@ -211,7 +211,8 @@ class DataPack(object):
         data_file_path = dirpath.joinpath(self.DATA_FILENAME)
 
         if data_file_path.exists():
-            raise FileExistsError
+            raise FileExistsError(
+                'DataPack instance already exist, fail to save')
         elif not dirpath.exists():
             dirpath.mkdir()
 
@@ -383,7 +384,8 @@ class DataPack(object):
         elif mode == 'right':
             self._apply_on_text_right(func, rename, verbose=verbose)
         else:
-            raise ValueError("`mode` must be one of `left` `right` `both`.")
+            raise ValueError(f"{mode} is not a valid mode type."
+                             f"Must be one of `left` `right` `both`.")
 
     def _apply_on_text_right(self, func, rename, verbose=1):
         name = rename or 'text_right'

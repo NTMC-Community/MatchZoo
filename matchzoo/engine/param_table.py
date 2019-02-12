@@ -53,7 +53,7 @@ class ParamTable(object):
     def set(self, key, param: Param):
         """Set `key` to parameter `param`."""
         if not isinstance(param, Param):
-            raise ValueError
+            raise ValueError("Only accepts a Param instance.")
         self._params[key] = param
 
     @property

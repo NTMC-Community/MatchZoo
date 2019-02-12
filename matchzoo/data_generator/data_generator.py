@@ -96,7 +96,8 @@ class DataGenerator(keras.utils.Sequence):
             callbacks = []
 
         if mode not in ('point', 'pair', 'list'):
-            raise ValueError
+            raise ValueError(f"{mode} is not a valid mode type."
+                             f"Must be one of `point`, `pair` or `list`.")
 
         self._mode = mode
         self._num_dup = num_dup
@@ -169,9 +170,11 @@ class DataGenerator(keras.utils.Sequence):
                 if indices:
                     index_pool.append(indices)
         elif self._mode == 'list':
-            raise NotImplementedError
+            raise NotImplementedError(
+                f'{self._mode} data generator not implemented.')
         else:
-            raise ValueError
+            raise ValueError(f"{self._mode} is not a valid mode type"
+                             f"Must be one of `point`, `pair` or `list`.")
 
         if self._shuffle:
             np.random.shuffle(index_pool)

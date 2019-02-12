@@ -47,7 +47,9 @@ def load_data(
 
     if isinstance(task, matchzoo.tasks.Ranking):
         if target_label not in ['entailment', 'contradiction', 'neutral', '-']:
-            raise ValueError
+            raise ValueError(f"{target_label} is not a valid target label."
+                             f"Must be one of `entailment`, `contradiction`, "
+                             f"`neutral` and `-`.")
         binary = (data_pack.relation['label'] == target_label).astype(float)
         data_pack.relation['label'] = binary
         return data_pack
@@ -61,7 +63,8 @@ def load_data(
         else:
             return data_pack
     else:
-        raise ValueError(f"{task} is not a valid task.")
+        raise ValueError(f"{task} is not a valid task."
+                         f"Must be one of `Ranking` and `Classification`.")
 
 
 def _download_data():
