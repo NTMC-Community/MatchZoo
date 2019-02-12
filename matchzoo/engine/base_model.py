@@ -517,7 +517,8 @@ class BaseModel(abc.ABC):
     def _make_multi_layer_perceptron_layer(self) -> keras.layers.Layer:
         # TODO: do not create new layers for a second call
         if not self._params['with_multi_layer_perceptron']:
-            raise AttributeError
+            raise AttributeError(
+                'Parameter `with_multi_layer_perception` not set.')
 
         def _wrapper(x):
             activation = self._params['mlp_activation_func']

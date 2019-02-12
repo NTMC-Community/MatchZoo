@@ -91,7 +91,10 @@ class MatchingLayer(Layer):
                 def func(x, y):
                     return K.tf.concat([x, y], axis=3)
             else:
-                raise ValueError
+                raise ValueError(f"Invalid matching type."
+                                 f"{self._matching_type} received."
+                                 f"Mut be in `dot`, `mul`, `plus`, "
+                                 f"`minus` and `concat`.")
             x1_exp = K.tf.stack([x1] * self._shape2[1], 2)
             x2_exp = K.tf.stack([x2] * self._shape1[1], 1)
             return func(x1_exp, x2_exp)
@@ -122,7 +125,10 @@ class MatchingLayer(Layer):
         elif self._matching_type == 'concat':
             return shape1[0], shape1[1], shape2[1], shape1[2] + shape2[2]
         else:
-            raise ValueError
+            raise ValueError(f"Invalid `matching_type`."
+                             f"{self._matching_type} received."
+                             f"Must be in `mul`, `plus`, `minus` "
+                             f"`dot` and `concat`.")
 
     def get_config(self) -> dict:
         """Get the config dict of MatchingLayer."""
