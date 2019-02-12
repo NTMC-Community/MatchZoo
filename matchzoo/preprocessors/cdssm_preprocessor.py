@@ -1,7 +1,5 @@
 """CDSSM Preprocessor."""
 
-import logging
-
 from tqdm import tqdm
 
 from . import units
@@ -10,7 +8,6 @@ from matchzoo import DataPack
 from matchzoo.engine.base_preprocessor import BasePreprocessor
 from .build_vocab_unit import build_vocab_unit
 
-logger = logging.getLogger(__name__)
 tqdm.pandas()
 
 
