@@ -413,7 +413,7 @@ class BaseModel(abc.ABC):
         if not dirpath.exists():
             dirpath.mkdir(parents=True)
         else:
-            raise FileExistsError('Model already exist, fail to save.')
+            raise FileExistsError(f'{dirpath} already exist, fail to save.')
 
         self._backend.save_weights(weights_path)
         with open(params_path, mode='wb') as params_file:

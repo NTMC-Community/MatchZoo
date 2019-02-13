@@ -212,7 +212,7 @@ class DataPack(object):
 
         if data_file_path.exists():
             raise FileExistsError(
-                'DataPack instance already exist, fail to save')
+                f'{data_file_path} already exist, fail to save')
         elif not dirpath.exists():
             dirpath.mkdir()
 
