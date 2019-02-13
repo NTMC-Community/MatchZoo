@@ -111,7 +111,8 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         data_file_path = dirpath.joinpath(self.DATA_FILENAME)
 
         if data_file_path.exists():
-            raise FileExistsError
+            raise FileExistsError(
+                f'{data_file_path} instance exist, fail to save.')
         elif not dirpath.exists():
             dirpath.mkdir()
 

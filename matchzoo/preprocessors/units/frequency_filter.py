@@ -59,7 +59,8 @@ class FrequencyFilter(StatefulUnit):
         elif self._mode == 'idf':
             stats = self._idf(list_of_tokens)
         else:
-            raise ValueError('Mode must be one of `tf`, `df`, and `idf`.')
+            raise ValueError(f"{self._mode} is not a valid filtering mode."
+                             f"Mode must be one of `tf`, `df`, and `idf`.")
 
         for k, v in stats.items():
             if self._low <= v < self._high:

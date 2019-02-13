@@ -65,7 +65,8 @@ def load_data(
         else:
             return data_pack
     else:
-        raise ValueError(f"{task} is not a valid task.")
+        raise ValueError(f"{task} is not a valid task."
+                         f"Must be one of `Ranking` and `Classification`.")
 
 
 def _download_data():

@@ -413,7 +413,7 @@ class BaseModel(abc.ABC):
         if not dirpath.exists():
             dirpath.mkdir(parents=True)
         else:
-            raise FileExistsError
+            raise FileExistsError(f'{dirpath} already exist, fail to save.')
 
         self._backend.save_weights(weights_path)
         with open(params_path, mode='wb') as params_file:
@@ -502,7 +502,8 @@ class BaseModel(abc.ABC):
         elif isinstance(task, tasks.Ranking):
             return keras.layers.Dense(1, activation='linear')
         else:
-            raise ValueError("Invalid task type.")
+            raise ValueError(f"{task} is not a valid task type."
+                             f"Must be in `Ranking` and `Classification`.")
 
     def _make_embedding_layer(self, name: str = 'embedding'
                               ) -> keras.layers.Layer:
@@ -516,7 +517,8 @@ class BaseModel(abc.ABC):
     def _make_multi_layer_perceptron_layer(self) -> keras.layers.Layer:
         # TODO: do not create new layers for a second call
         if not self._params['with_multi_layer_perceptron']:
-            raise AttributeError
+            raise AttributeError(
+                'Parameter `with_multi_layer_perception` not set.')
 
         def _wrapper(x):
             activation = self._params['mlp_activation_func']

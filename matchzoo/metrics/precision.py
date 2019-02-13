@@ -45,7 +45,8 @@ class Precision(BaseMetric):
         :raises: ValueError: len(r) must be >= k.
         """
         if self._k <= 0:
-            raise ValueError('self._k must be larger than 0.')
+            raise ValueError(f"k must be greater than 0."
+                             f"{self._k} received.")
         coupled_pair = sort_and_couple(y_true, y_pred)
         precision = 0.0
         for idx, (label, score) in enumerate(coupled_pair):

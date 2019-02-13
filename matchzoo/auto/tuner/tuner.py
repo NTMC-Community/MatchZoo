@@ -207,7 +207,9 @@ class Tuner(object):
         elif isinstance(self._train_data, mz.DataGenerator):
             model.fit_generator(self._train_data, **self._fit_kwargs)
         else:
-            raise ValueError
+            raise ValueError(f"Invalid data type: `train_data`."
+                             f"{type(self._train_data)} received."
+                             f"Must be one of `DataPack` and `DataGenerator`.")
 
     def _evaluate_model(self, model):
         if isinstance(self._test_data, mz.DataPack):
@@ -217,7 +219,9 @@ class Tuner(object):
             return model.evaluate_generator(self._test_data,
                                             **self._evaluate_kwargs)
         else:
-            raise ValueError
+            raise ValueError(f"Invalid data type: `test_data`."
+                             f"{type(self._test_data)} received."
+                             f"Must be one of `DataPack` and `DataGenerator`.")
 
     def _fix_loss_sign(self, loss):
         if self._mode == 'maximize':
@@ -344,7 +348,7 @@ class Tuner(object):
     @classmethod
     def _validate_params(cls, params):
         if not isinstance(params, mz.ParamTable):
-            raise TypeError
+            raise TypeError("Only accepts a `ParamTable` instance.")
         if not params.hyper_space:
             raise ValueError("Parameter hyper-space empty.")
         if not params.completed():
@@ -353,12 +357,13 @@ class Tuner(object):
     @classmethod
     def _validate_data(cls, train_data):
         if not isinstance(train_data, (mz.DataPack, mz.DataGenerator)):
-            raise TypeError
+            raise TypeError(
+                "Only accepts a `DataPack` or `DataGenerator` instance.")
 
     @classmethod
     def _validate_kwargs(cls, kwargs):
         if not isinstance(kwargs, dict):
-            raise TypeError
+            raise TypeError('Only accepts a `dict` instance.')
 
     @classmethod
     def _validate_mode(cls, mode):
@@ -373,7 +378,7 @@ class Tuner(object):
     @classmethod
     def _validate_num_runs(cls, num_runs):
         if not isinstance(num_runs, int):
-            raise TypeError
+            raise TypeError('Only accepts an `int` value.')
 
     @classmethod
     def _validate_callbacks(cls, callbacks):
@@ -381,4 +386,4 @@ class Tuner(object):
             if not isinstance(callback, Callback):
                 if issubclass(callback, Callback):
                     raise TypeError("Make sure to instantiate the callbacks.")
-                raise TypeError
+                raise TypeError('Only accepts a `callbacks` instance.')
