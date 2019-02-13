@@ -1,6 +1,5 @@
 """An implementation of MVLSTM Model."""
 import typing
-import logging
 
 import keras
 import keras.backend as K
@@ -10,8 +9,6 @@ from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
 from matchzoo.engine import hyper_spaces
-
-logger = logging.getLogger(__name__)
 
 
 class MVLSTM(BaseModel):

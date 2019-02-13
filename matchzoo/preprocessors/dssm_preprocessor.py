@@ -1,7 +1,5 @@
 """DSSM Preprocessor."""
 
-import logging
-
 from tqdm import tqdm
 
 from matchzoo.data_pack import DataPack
@@ -10,7 +8,6 @@ from .chain_transform import chain_transform
 from .build_vocab_unit import build_vocab_unit
 from . import units
 
-logger = logging.getLogger(__name__)
 tqdm.pandas()
 
 

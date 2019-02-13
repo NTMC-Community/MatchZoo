@@ -1,7 +1,5 @@
 """An implementation of aNMM Model."""
 
-import logging
-
 import keras
 from keras.activations import softmax
 from keras.initializers import RandomUniform
@@ -10,8 +8,6 @@ from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
 from matchzoo.engine import hyper_spaces
-
-logger = logging.getLogger(__name__)
 
 
 class ANMM(BaseModel):
