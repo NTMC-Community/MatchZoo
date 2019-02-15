@@ -77,7 +77,7 @@ def _download_data():
 
 
 def _read_data(path):
-    table = pd.read_csv(path)
+    table = pd.read_csv(path, sep='\t')
     df = pd.DataFrame({
         'text_left': table['sentence1'],
         'text_right': table['sentence2'],
