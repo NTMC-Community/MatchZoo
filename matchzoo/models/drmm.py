@@ -63,9 +63,8 @@ class DRMM(engine.BaseModel):
         # Process left input.
         # shape = [B, L, D]
         embed_query = embedding(query)
-        # shape = [B, L]
-        atten_mask = K.any(K.not_equal(query, self._params['mask_value']),
-                           axis=-1, keepdims=True)
+        # shape = [B, L, 1]
+        atten_mask = K.not_equal(query, self._params['mask_value'])
         atten_mask = K.cast(atten_mask, K.floatx())
         atten_mask = K.expand_dims(atten_mask, axis=2)
         # shape = [B, L, D]
