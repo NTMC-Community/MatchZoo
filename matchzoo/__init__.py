@@ -46,3 +46,11 @@ from .embedding.embedding import Embedding
 from .utils import one_hot
 from .preprocessors.build_unit_from_data_pack import build_unit_from_data_pack
 from .preprocessors.build_vocab_unit import build_vocab_unit
+
+# deprecated, should be removed in v2.2
+from .contrib.legacy_data_generator import DPoolDataGenerator
+from .contrib.legacy_data_generator import DPoolPairDataGenerator
+from .contrib.legacy_data_generator import HistogramDataGenerator
+from .contrib.legacy_data_generator import HistogramPairDataGenerator
+from .contrib.legacy_data_generator import DynamicDataGenerator
+from .contrib.legacy_data_generator import PairDataGenerator
