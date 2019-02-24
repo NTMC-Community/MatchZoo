@@ -2,12 +2,12 @@
 <img src="https://github.com/NTMC-Community/MatchZoo/blob/master/artworks/matchzoo-logo.png?raw=true" width = "400"  alt="logo" align="center" />
 </div>
 
-# MatchZoo
+# MatchZoo [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=MatchZoo:%20deep%20learning%20for%20semantic%20matching&url=https://github.com/NTMC-Community/MatchZoo)
 
 > Facilitating the design, comparison and sharing of deep text matching models.<br/>
 > MatchZoo 是一个通用的文本匹配工具包，它旨在方便大家快速的实现、比较、以及分享最新的深度文本匹配模型。
 
-[![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)](https://www.python.org/downloads/release/python-360/)
+[![Python 3.6](https://img.shields.io/badge/python-3.6%20%7C%203.7-blue.svg)](https://www.python.org/downloads/release/python-360/)
 [![Pypi Downloads](https://img.shields.io/pypi/dm/matchzoo.svg?label=pypi)](https://pypi.org/project/MatchZoo/)
 [![Documentation Status](https://readthedocs.org/projects/matchzoo/badge/?version=master)](https://matchzoo.readthedocs.io/en/master/?badge=master)
 [![Build Status](https://travis-ci.org/NTMC-Community/MatchZoo.svg?branch=master)](https://travis-ci.org/NTMC-Community/MatchZoo/)
@@ -68,13 +68,18 @@ Generate pair-wise training data on-the-fly, evaluate model performance using cu
 ```python
 train_generator = mz.PairDataGenerator(train_pack_processed, num_dup=1, num_neg=4, batch_size=64, shuffle=True)
 
-pred_x, pred_y = predict_pack_processed[:].unpack()
+pred_x, pred_y = predict_pack_processed.unpack()
 evaluate = mz.callbacks.EvaluateAllMetrics(model, x=pred_x, y=pred_y, batch_size=len(pred_x))
 
 history = model.fit_generator(train_generator, epochs=20, callbacks=[evaluate], workers=5, use_multiprocessing=False)
 ```
 
-For detailed usage, such as hyper-parameters tunning, model persistence, evaluation, please check out our [tutorials](https://github.com/NTMC-Community/MatchZoo/tree/master/tutorials) and documention: [English](https://matchzoo.readthedocs.io/en/master/) [中文](https://matchzoo.readthedocs.io/zh/latest/)
+## References
+[Tutorials](https://github.com/NTMC-Community/MatchZoo/tree/master/tutorials)
+
+[English Documentation](https://matchzoo.readthedocs.io/en/master/)
+
+[中文文档](https://matchzoo.readthedocs.io/zh/latest/)
 
 If you're interested in the cutting-edge research progress, please take a look at [awaresome neural models for semantic match](https://github.com/NTMC-Community/awaresome-neural-models-for-semantic-match).
 
