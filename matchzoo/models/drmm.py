@@ -67,9 +67,10 @@ class DRMM(BaseModel):
         # shape = [B, L, D]
         embed_query = embedding(query)
         # shape = [B, L]
-        atten_mask = K.any(K.not_equal(query, self._params['mask_value']),
-                           axis=-1, keepdims=True)
+        atten_mask = K.not_equal(query, self._params['mask_value'])
+        # shape = [B, L]
         atten_mask = K.cast(atten_mask, K.floatx())
+        # shape = [B, L, D]
         atten_mask = K.expand_dims(atten_mask, axis=2)
         # shape = [B, L, D]
         attention_probs = self.attention_layer(embed_query, atten_mask)
