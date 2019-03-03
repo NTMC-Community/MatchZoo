@@ -15,6 +15,45 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Requirements Status](https://requires.io/github/NTMC-Community/MatchZoo/requirements.svg?branch=master)](https://requires.io/github/NTMC-Community/MatchZoo/requirements/?branch=master)
 ---
+Right now, we have published the 2.0 version, which provides a unified data processing APIs, simplified model configurations, automatically hyper-parameter tuning and model selection. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users.
+<table>
+  <tr>
+    <th width=30%, bgcolor=#999999 >Tasks</th> 
+    <th width=20%, bgcolor=#999999>Text 1</th>
+    <th width="20%", bgcolor=#999999>Text 2</th>
+    <th width="20%", bgcolor=#999999>Objective</th>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> Paraphrase Indentification </td>
+    <td align="center", bgcolor=#eeeeee> string 1 </td>
+    <td align="center", bgcolor=#eeeeee> string 2 </td>
+    <td align="center", bgcolor=#eeeeee> classification </td>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> Textual Entailment </td>
+    <td align="center", bgcolor=#eeeeee> text </td>
+    <td align="center", bgcolor=#eeeeee> hypothesis </td>
+    <td align="center", bgcolor=#eeeeee> classification </td>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> Question Answer </td>
+    <td align="center", bgcolor=#eeeeee> question </td>
+    <td align="center", bgcolor=#eeeeee> answer </td>
+    <td align="center", bgcolor=#eeeeee> classification/ranking </td>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> Conversation </td>
+    <td align="center", bgcolor=#eeeeee> dialog </td>
+    <td align="center", bgcolor=#eeeeee> response </td>
+    <td align="center", bgcolor=#eeeeee> classification/ranking </td>
+  </tr>
+  <tr>
+    <td align="center", bgcolor=#eeeeee> Information Retrieval </td>
+    <td align="center", bgcolor=#eeeeee> query </td>
+    <td align="center", bgcolor=#eeeeee> document </td>
+    <td align="center", bgcolor=#eeeeee> ranking </td>
+  </tr>
+</table>
 
 ## Get Started in 60 Seconds
 
@@ -32,9 +71,8 @@ Preprocess your input data in three lines of code, keep track parameters to be p
 
 ```python
 preprocessor = mz.preprocessors.DSSMPreprocessor()
-train_pack_processed = preprocessor.fit_transform(train_pack)
-valid_pack_processed = preprocessor.transform(valid_pack)
-predict_pack_processed = preprocessor.transform(predict_pack)
+train_processed = preprocessor.fit_transform(train_pack)
+valid_processed = preprocessor.transform(valid_pack)
 ```
 
 Make use of MatchZoo customized loss functions and evaluation metrics:
@@ -63,13 +101,13 @@ model.build()
 model.compile()
 ```
 
-Generate pair-wise training data on-the-fly, evaluate model performance using customized callbacks on prediction data.
+Generate pair-wise training data on-the-fly, evaluate model performance using customized callbacks on validation data.
 
 ```python
-train_generator = mz.PairDataGenerator(train_pack_processed, num_dup=1, num_neg=4, batch_size=64, shuffle=True)
+train_generator = mz.PairDataGenerator(train_processed, num_dup=1, num_neg=4, batch_size=64, shuffle=True)
 
-pred_x, pred_y = predict_pack_processed.unpack()
-evaluate = mz.callbacks.EvaluateAllMetrics(model, x=pred_x, y=pred_y, batch_size=len(pred_x))
+valid_x, valid_y = valid_processed.unpack()
+evaluate = mz.callbacks.EvaluateAllMetrics(model, x=valid_x, y=valid_y, batch_size=len(pred_x))
 
 history = model.fit_generator(train_generator, epochs=20, callbacks=[evaluate], workers=5, use_multiprocessing=False)
 ```
@@ -102,6 +140,32 @@ python setup.py install
 ```
 
 
+## Models:
+
+1. [DRMM](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/drmm.py): this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf">A Deep Relevance Matching Model for Ad-hoc Retrieval</a>.
+
+2. [MatchPyramid](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/match_pyramid.py): this model is an implementation of <a href="https://arxiv.org/abs/1602.06359"> Text Matching as Image Recognition</a>
+
+3. [ARC-I](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/arci.py): this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Convolutional Neural Network Architectures for Matching Natural Language Sentences</a>
+
+4. [DSSM](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/dssm.py): this model is an implementation of <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/cikm2013_DSSM_fullversion.pdf">Learning Deep Structured Semantic Models for Web Search using Clickthrough Data</a>
+
+5. [CDSSM](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/cdssm.py): this model is an implementation of <a href="https://www.microsoft.com/en-us/research/publication/learning-semantic-representations-using-convolutional-neural-networks-for-web-search/">Learning Semantic Representations Using Convolutional Neural Networks for Web Search</a>
+
+6. [ARC-II](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/arcii.py): this model is an implementation of <a href="https://arxiv.org/abs/1503.03244">Convolutional Neural Network Architectures for Matching Natural Language Sentences</a>
+
+7. [MV-LSTM](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/mvlstm.py):this model is an implementation of <a href="https://arxiv.org/abs/1511.08277">A Deep Architecture for Semantic Matching with Multiple Positional Sentence Representations</a>
+
+8. [aNMM](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/anmm.py): this model is an implementation of <a href="http://maroo.cs.umass.edu/pub/web/getpdf.php?id=1240">aNMM: Ranking Short Answer Texts with Attention-Based Neural Matching Model</a>
+
+9. [DUET](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/duet.py): this model is an implementation of <a href="https://dl.acm.org/citation.cfm?id=3052579">Learning to Match Using Local and Distributed Representations of Text for Web Search</a>
+
+10. [K-NRM](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/knrm.py): this model is an implementation of <a href="https://arxiv.org/abs/1706.06613">End-to-End Neural Ad-hoc Ranking with Kernel Pooling</a>
+
+11. [CONV-KNRM](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/conv_knrm.py): this model is an implementation of <a href="http://www.cs.cmu.edu/~zhuyund/papers/WSDM_2018_Dai.pdf">Convolutional neural networks for soft-matching n-grams in ad-hoc search</a>
+
+12. models under development: <a href="https://arxiv.org/abs/1604.04378">Match-SRNN</a>, <a href="https://arxiv.org/abs/1710.05649">DeepRank</a>, <a href="https://arxiv.org/abs/1702.03814">BiMPM</a> .... 
+
 
 ## Citation
 
@@ -126,7 +190,7 @@ If you use MatchZoo in your research, please use the following BibTex entry.
       <td>
         ​ <a href="https://github.com/faneshion"><img width="40" height="40" src="https://github.com/faneshion.png?s=40" alt="faneshion"></a><br>
         ​ <a href="http://www.bigdatalab.ac.cn/~fanyixing/">Fan Yixing</a> ​
-        <p>Founder<br>
+        <p>Core Dev<br>
         ASST PROF, ICT</p>​
       </td>
       <td>
@@ -212,9 +276,6 @@ Thank you to all the people who already contributed to MatchZoo!
 - Xueqi Cheng
   * Institute of Computing Technology, Chinese Academy of Sciences
   * [Homepage](http://www.bigdatalab.ac.cn/~cxq/)
-
-
-
 
 
 ## License
