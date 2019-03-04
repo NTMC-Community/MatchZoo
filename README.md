@@ -15,7 +15,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Requirements Status](https://requires.io/github/NTMC-Community/MatchZoo/requirements.svg?branch=master)](https://requires.io/github/NTMC-Community/MatchZoo/requirements/?branch=master)
 ---
-Right now, we have published the 2.0 version, which provides a unified data processing APIs, simplified model configurations, automatically hyper-parameter tuning and model selection. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users.
+Right now, we have published the 2.0 version, which provides a unified data processing APIs, simplified model configurations, automatically hyper-parameter tuning and model selection. Potential tasks related to MatchZoo include document retrieval, question answering, conversational response ranking, paraphrase identification, etc. We are always happy to receive any code contributions, suggestions, comments from all our MatchZoo users. We have a discussion group in [gitter](https://gitter.im/NTMC-Community/community), any question are welcome at [here](https://gitter.im/NTMC-Community/community).
 <table>
   <tr>
     <th width=30%, bgcolor=#999999 >Tasks</th> 
