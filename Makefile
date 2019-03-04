@@ -4,7 +4,7 @@ init:
 TEST_ARGS = --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-report html --cov-config .coveragerc matchzoo/ tests/
 
 test:
-	pytest $(TEST_ARGS)
+	python3 -m pytest $(TEST_ARGS)
 	flake8 ./matchzoo --exclude __init__.py
 
 quick:
