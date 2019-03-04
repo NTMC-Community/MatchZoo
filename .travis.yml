@@ -9,16 +9,18 @@ env:
         - PYTHONPATH=$PYTHONPATH:$TRAVIS_BUILD_DIR/tests:$TRAVIS_BUILD_DIR/matchzoo
 
 matrix:
+    allow_failures:
+      - os: osx
     include:
-        - os: linux
-          dist: trusty
-          python: 3.6
-        - os: osx
-          language: generic
-          env: PYTHON_VERSION=3.6
-        - os: osx
-          language: generic
-          env: PYTHON_VERSION=3.7
+      - os: linux
+        dist: trusty
+        python: 3.6
+      - os: osx
+        language: generic
+        env: PYTHON_VERSION=3.6
+      - os: osx
+        language: generic
+        env: PYTHON_VERSION=3.7
 
 install:
   - pip3 install -r requirements.txt
