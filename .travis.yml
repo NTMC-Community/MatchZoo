@@ -1,5 +1,7 @@
 language: python
 
+cache: pip
+
 sudo: true
 
 env:
@@ -27,8 +29,7 @@ install:
 script:
   - stty cols 80
   - export COLUMNS=80
-  - python3 -m pytest --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-report html --cov-config .coveragerc matchzoo/ tests/ -W ignore::DeprecationWarning
-  - flake8 ./matchzoo --exclude __init__.py
+  - make test
 
 after_success:
       - codecov
