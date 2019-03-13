@@ -1,7 +1,8 @@
 """The rank cross entropy loss."""
 import numpy as np
 
-from keras import layers, backend as K
+import tensorflow as tf
+from tensorflow.keras import layers
 
 
 class RankCrossEntropyLoss(object):
@@ -9,10 +10,11 @@ class RankCrossEntropyLoss(object):
     Rank cross entropy loss.
 
     Examples:
-        >>> from keras import backend as K
+        >>> import tensorflow as tf
+        >>> import tensorflow.keras.backend as K
         >>> softmax = lambda x: np.exp(x)/np.sum(np.exp(x), axis=0)
-        >>> x_pred = K.variable(np.array([[1.0], [1.2], [0.8]]))
-        >>> x_true = K.variable(np.array([[1], [0], [0]]))
+        >>> x_pred = tf.variable(np.array([[1.0], [1.2], [0.8]]))
+        >>> x_true = tf.variable(np.array([[1], [0], [0]]))
         >>> expect = -np.log(softmax(np.array([[1.0], [1.2], [0.8]])))
         >>> loss = K.eval(RankCrossEntropyLoss(num_neg=2)(x_true, x_pred))
         >>> np.isclose(loss, expect[0]).all()
@@ -46,9 +48,11 @@ class RankCrossEntropyLoss(object):
                 lambda a: a[neg_idx + 1::(self._num_neg + 1), :])(y_true)
             logits.append(neg_logits)
             labels.append(neg_labels)
-        logits = K.concatenate(logits, axis=-1)
-        labels = K.concatenate(labels, axis=-1)
-        return -K.mean(K.sum(labels * K.log(K.softmax(logits)), axis=-1))
+        logits = tf.keras.backend.concatenate(logits, axis=-1)
+        labels = tf.keras.backend.concatenate(labels, axis=-1)
+        return -tf.keras.backend.mean(tf.keras.backend.sum(
+            labels * tf.keras.backend.log(tf.keras.backend.softmax(logits)),
+            axis=-1))
 
     @property
     def num_neg(self):

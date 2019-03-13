@@ -1,7 +1,9 @@
 """The rank hinge loss."""
 import numpy as np
 
-from keras import layers, backend as K
+import tensorflow as tf
+from tensorflow.keras import layers
+import tensorflow.keras.backend as K
 
 
 class RankHingeLoss(object):
@@ -9,7 +11,7 @@ class RankHingeLoss(object):
     Rank hinge loss.
 
     Examples:
-        >>> from keras import backend as K
+        >>> import tensorflow.keras.backend as K
         >>> x_pred = K.variable(np.array([[1.0], [1.2], [0.8], [1.4]]))
         >>> x_true = K.variable(np.array([[1], [0], [1], [0]]))
         >>> expect = ((1.0 + 1.2 - 1.0) + (1.0 + 1.4 - 0.8)) / 2
