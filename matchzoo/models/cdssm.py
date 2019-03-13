@@ -1,8 +1,9 @@
 """An implementation of CDSSM (CLSM) model."""
 import typing
 
-import keras
-from keras.models import Model
+# import keras
+import tensorflow as tf
+from tensorflow.keras.models import Model
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
@@ -73,7 +74,7 @@ class CDSSM(BaseModel):
             # Apply 1d convolutional on each word_ngram (lt).
             # Input shape: (batch_size, num_tri_letters, 90000)
             # Sequence of num_tri_letters vectors of 90000d vectors.
-            x = keras.layers.Conv1D(
+            x = tf.keras.layers.Conv1D(
                 filters=self._params['filters'],
                 kernel_size=self._params['kernel_size'],
                 strides=self._params['strides'],
@@ -83,8 +84,8 @@ class CDSSM(BaseModel):
                 bias_initializer=self._params['b_initializer'])(x)
             # Apply max pooling by take max at each dimension across
             # all word_trigram features.
-            x = keras.layers.Dropout(self._params['dropout_rate'])(x)
-            x = keras.layers.GlobalMaxPool1D()(x)
+            x = tf.keras.layers.Dropout(self._params['dropout_rate'])(x)
+            x = tf.keras.layers.GlobalMaxPool1D()(x)
             # Apply a none-linear transformation use a tanh layer.
             x = self._make_multi_layer_perceptron_layer()(x)
             return x
@@ -104,7 +105,7 @@ class CDSSM(BaseModel):
         x = [base_network(input_left),
              base_network(input_right)]
         # Dot product with cosine similarity.
-        x = keras.layers.Dot(axes=[1, 1], normalize=True)(x)
+        x = tf.keras.layers.Dot(axes=[1, 1], normalize=True)(x)
         x_out = self._make_output_layer()(x)
         self._backend = Model(inputs=[input_left, input_right],
                               outputs=x_out)
