@@ -1,6 +1,7 @@
 """Match LSTM model."""
-import keras
-import keras.backend as K
+
+import tensorflow as tf
+import tensorflow.keras.backend as K
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
@@ -56,47 +57,47 @@ class MatchLSTM(BaseModel):
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
 
-        lstm_left = keras.layers.LSTM(self._params['lstm_num_units'],
-                                      return_sequences=True,
-                                      name='lstm_left')
-        lstm_right = keras.layers.LSTM(self._params['lstm_num_units'],
-                                       return_sequences=True,
-                                       name='lstm_right')
+        lstm_left = tf.keras.layers.LSTM(self._params['lstm_num_units'],
+                                         return_sequences=True,
+                                         name='lstm_left')
+        lstm_right = tf.keras.layers.LSTM(self._params['lstm_num_units'],
+                                          return_sequences=True,
+                                          name='lstm_right')
         encoded_left = lstm_left(embed_left)
         encoded_right = lstm_right(embed_right)
 
         def attention(tensors):
             """Attention layer."""
             left, right = tensors
-            tensor_left = K.expand_dims(left, axis=2)
-            tensor_right = K.expand_dims(right, axis=1)
+            tensor_left = tf.expand_dims(left, axis=2)
+            tensor_right = tf.expand_dims(right, axis=1)
             tensor_left = K.repeat_elements(tensor_left, len_right, 2)
             tensor_right = K.repeat_elements(tensor_right, len_left, 1)
-            tensor_merged = K.concatenate([tensor_left, tensor_right], axis=-1)
-            middle_output = keras.layers.Dense(self._params['fc_num_units'],
+            tensor_merged = tf.concatenate([tensor_left, tensor_right], axis=-1)
+            middle_output = tf.keras.layers.Dense(self._params['fc_num_units'],
                                                activation='tanh')(
                 tensor_merged)
-            attn_scores = keras.layers.Dense(1)(middle_output)
-            attn_scores = K.squeeze(attn_scores, axis=3)
+            attn_scores = tf.keras.layers.Dense(1)(middle_output)
+            attn_scores = tf.squeeze(attn_scores, axis=3)
             exp_attn_scores = K.exp(
                 attn_scores - K.max(attn_scores, axis=-1, keepdims=True))
             exp_sum = K.sum(exp_attn_scores, axis=-1, keepdims=True)
             attention_weights = exp_attn_scores / exp_sum
             return K.batch_dot(attention_weights, right)
 
-        attn_layer = keras.layers.Lambda(attention)
+        attn_layer = tf.keras.layers.Lambda(attention)
         left_attn_vec = attn_layer([encoded_left, encoded_right])
-        concat = keras.layers.Concatenate(axis=1)(
+        concat = tf.keras.layers.Concatenate(axis=1)(
             [left_attn_vec, encoded_right])
-        lstm_merge = keras.layers.LSTM(self._params['lstm_num_units'] * 2,
+        lstm_merge = tf.keras.layers.LSTM(self._params['lstm_num_units'] * 2,
                                        return_sequences=False,
                                        name='lstm_merge')
         merged = lstm_merge(concat)
-        dropout = keras.layers.Dropout(
+        dropout = tf.keras.layers.Dropout(
             rate=self._params['dropout_rate'])(merged)
 
-        phi = keras.layers.Dense(self._params['fc_num_units'],
-                                 activation='tanh')(dropout)
+        phi = tf.keras.layers.Dense(self._params['fc_num_units'],
+                                    activation='tanh')(dropout)
         inputs = [input_left, input_right]
         out = self._make_output_layer()(phi)
-        self._backend = keras.Model(inputs=inputs, outputs=[out])
+        self._backend = tf.keras.Model(inputs=inputs, outputs=[out])
