@@ -1,7 +1,7 @@
 """An implementation of MatchPyramid Model."""
 import typing
 
-import keras
+import tensorflow as tf
 
 import matchzoo
 from matchzoo.engine.base_model import BaseModel
@@ -61,7 +61,7 @@ class MatchPyramid(BaseModel):
         MatchPyramid text matching as image recognition.
         """
         input_left, input_right = self._make_inputs()
-        input_dpool_index = keras.layers.Input(
+        input_dpool_index = tf.keras.layers.Input(
             name='dpool_index',
             shape=[self._params['input_shapes'][0][0],
                    self._params['input_shapes'][1][0],
@@ -90,12 +90,12 @@ class MatchPyramid(BaseModel):
             *self._params['dpool_size'])
         embed_pool = dpool_layer([embed_cross, input_dpool_index])
 
-        embed_flat = keras.layers.Flatten()(embed_pool)
-        x = keras.layers.Dropout(rate=self._params['dropout_rate'])(embed_flat)
+        embed_flat = tf.keras.layers.Flatten()(embed_pool)
+        x = tf.keras.layers.Dropout(rate=self._params['dropout_rate'])(embed_flat)
 
         inputs = [input_left, input_right, input_dpool_index]
         x_out = self._make_output_layer()(x)
-        self._backend = keras.Model(inputs=inputs, outputs=x_out)
+        self._backend = tf.keras.Model(inputs=inputs, outputs=x_out)
 
     @classmethod
     def _conv_block(
@@ -105,8 +105,8 @@ class MatchPyramid(BaseModel):
         padding: str,
         activation: str
     ) -> typing.Any:
-        output = keras.layers.Conv2D(kernel_count,
-                                     kernel_size,
-                                     padding=padding,
-                                     activation=activation)(x)
+        output = tf.keras.layers.Conv2D(kernel_count,
+                                        kernel_size,
+                                        padding=padding,
+                                        activation=activation)(x)
         return output

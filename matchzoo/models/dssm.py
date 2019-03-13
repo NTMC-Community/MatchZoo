@@ -1,6 +1,7 @@
 """An implementation of DSSM, Deep Structured Semantic Model."""
-from keras.models import Model
-from keras.layers import Input, Dot
+
+import tensorflow as tf
+from tensorflow.keras.layers import Input, Dot
 
 from matchzoo.engine.param_table import ParamTable
 from matchzoo.engine.base_model import BaseModel
@@ -46,7 +47,7 @@ class DSSM(BaseModel):
         # Dot product with cosine similarity.
         x = Dot(axes=[1, 1], normalize=True)(x)
         x_out = self._make_output_layer()(x)
-        self._backend = Model(
+        self._backend = tf.keras.Model(
             inputs=[input_left, input_right],
             outputs=x_out)
 

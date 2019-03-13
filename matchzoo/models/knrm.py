@@ -1,6 +1,6 @@
 """KNRM model."""
-import keras
-import keras.backend as K
+
+import tensorflow as tf
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
@@ -57,7 +57,7 @@ class KNRM(BaseModel):
         q_embed = embedding(query)
         d_embed = embedding(doc)
 
-        mm = keras.layers.Dot(axes=[2, 2], normalize=True)([q_embed, d_embed])
+        mm = tf.keras.layers.Dot(axes=[2, 2], normalize=True)([q_embed, d_embed])
 
         KM = []
         for i in range(self._params['kernel_num']):
@@ -68,19 +68,19 @@ class KNRM(BaseModel):
                 sigma = self._params['exact_sigma']
                 mu = 1.0
             mm_exp = self._kernel_layer(mu, sigma)(mm)
-            mm_doc_sum = keras.layers.Lambda(
-                lambda x: K.tf.reduce_sum(x, 2))(mm_exp)
-            mm_log = keras.layers.Activation(K.tf.log1p)(mm_doc_sum)
-            mm_sum = keras.layers.Lambda(
-                lambda x: K.tf.reduce_sum(x, 1))(mm_log)
+            mm_doc_sum = tf.keras.layers.Lambda(
+                lambda x: tf.reduce_sum(x, 2))(mm_exp)
+            mm_log = tf.keras.layers.Activation(tf.log1p)(mm_doc_sum)
+            mm_sum = tf.keras.layers.Lambda(
+                lambda x: tf.reduce_sum(x, 1))(mm_log)
             KM.append(mm_sum)
 
-        phi = keras.layers.Lambda(lambda x: K.tf.stack(x, 1))(KM)
+        phi = tf.keras.layers.Lambda(lambda x: tf.stack(x, 1))(KM)
         out = self._make_output_layer()(phi)
-        self._backend = keras.Model(inputs=[query, doc], outputs=[out])
+        self._backend = tf.keras.Model(inputs=[query, doc], outputs=[out])
 
     @classmethod
-    def _kernel_layer(cls, mu: float, sigma: float) -> keras.layers.Layer:
+    def _kernel_layer(cls, mu: float, sigma: float) -> tf.keras.layers.Layer:
         """
         Gaussian kernel layer in KNRM.
 
@@ -90,6 +90,6 @@ class KNRM(BaseModel):
         """
 
         def kernel(x):
-            return K.tf.exp(-0.5 * (x - mu) * (x - mu) / sigma / sigma)
+            return tf.exp(-0.5 * (x - mu) * (x - mu) / sigma / sigma)
 
-        return keras.layers.Activation(kernel)
+        return tf.keras.layers.Activation(kernel)

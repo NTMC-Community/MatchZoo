@@ -1,6 +1,6 @@
 """Naive model with a simplest structure for testing purposes."""
 
-import keras
+import tensorflow as tf
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine import hyper_spaces
@@ -25,6 +25,6 @@ class Naive(BaseModel):
     def build(self):
         """Build."""
         x_in = self._make_inputs()
-        x = keras.layers.concatenate(x_in)
+        x = tf.keras.layers.concatenate(x_in)
         x_out = self._make_output_layer()(x)
-        self._backend = keras.models.Model(inputs=x_in, outputs=x_out)
+        self._backend = tf.keras.models.Model(inputs=x_in, outputs=x_out)

@@ -1,7 +1,5 @@
 """DUET Model."""
 
-import keras
-import keras.backend as K
 import tensorflow as tf
 
 from matchzoo.engine.base_model import BaseModel
@@ -77,71 +75,72 @@ class DUET(BaseModel):
         q_embed = embedding(query)
         d_embed = embedding(doc)
 
-        lm_xor = keras.layers.Lambda(self._xor_match)([query, doc])
-        lm_conv = keras.layers.Conv1D(
+        lm_xor = tf.keras.layers.Lambda(self._xor_match)([query, doc])
+        lm_conv = tf.keras.layers.Conv1D(
             self._params['lm_filters'],
             self._params['input_shapes'][1][0],
             padding=self._params['padding'],
             activation=self._params['activation_func']
         )(lm_xor)
 
-        lm_conv = keras.layers.Dropout(self._params['dropout_rate'])(
+        lm_conv = tf.keras.layers.Dropout(self._params['dropout_rate'])(
             lm_conv)
-        lm_feat = keras.layers.Reshape((-1,))(lm_conv)
+        lm_feat = tf.keras.layers.Reshape((-1,))(lm_conv)
         for hidden_size in self._params['lm_hidden_sizes']:
-            lm_feat = keras.layers.Dense(
+            lm_feat = tf.keras.layers.Dense(
                 hidden_size,
                 activation=self._params['activation_func']
             )(lm_feat)
-        lm_drop = keras.layers.Dropout(self._params['dropout_rate'])(
+        lm_drop = tf.keras.layers.Dropout(self._params['dropout_rate'])(
             lm_feat)
-        lm_score = keras.layers.Dense(1)(lm_drop)
+        lm_score = tf.keras.layers.Dense(1)(lm_drop)
 
-        dm_q_conv = keras.layers.Conv1D(
+        dm_q_conv = tf.keras.layers.Conv1D(
             self._params['dm_filters'],
             self._params['dm_kernel_size'],
             padding=self._params['padding'],
             activation=self._params['activation_func']
         )(q_embed)
-        dm_q_conv = keras.layers.Dropout(self._params['dropout_rate'])(
+        dm_q_conv = tf.keras.layers.Dropout(self._params['dropout_rate'])(
             dm_q_conv)
-        dm_q_mp = keras.layers.MaxPooling1D(
+        dm_q_mp = tf.keras.layers.MaxPooling1D(
             pool_size=self._params['input_shapes'][0][0])(dm_q_conv)
-        dm_q_rep = keras.layers.Reshape((-1,))(dm_q_mp)
-        dm_q_rep = keras.layers.Dense(self._params['dm_q_hidden_size'])(
+        dm_q_rep = tf.keras.layers.Reshape((-1,))(dm_q_mp)
+        dm_q_rep = tf.keras.layers.Dense(self._params['dm_q_hidden_size'])(
             dm_q_rep)
-        dm_q_rep = keras.layers.Lambda(lambda x: tf.expand_dims(x, 1))(
+        dm_q_rep = tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, 1))(
             dm_q_rep)
 
-        dm_d_conv1 = keras.layers.Conv1D(
+        dm_d_conv1 = tf.keras.layers.Conv1D(
             self._params['dm_filters'],
             self._params['dm_kernel_size'],
             padding=self._params['padding'],
             activation=self._params['activation_func']
         )(d_embed)
-        dm_d_conv1 = keras.layers.Dropout(self._params['dropout_rate'])(
+        dm_d_conv1 = tf.keras.layers.Dropout(self._params['dropout_rate'])(
             dm_d_conv1)
-        dm_d_mp = keras.layers.MaxPooling1D(
+        dm_d_mp = tf.keras.layers.MaxPooling1D(
             pool_size=self._params['dm_d_mpool'])(dm_d_conv1)
-        dm_d_conv2 = keras.layers.Conv1D(
+        dm_d_conv2 = tf.keras.layers.Conv1D(
             self._params['dm_filters'], 1,
             padding=self._params['padding'],
             activation=self._params['activation_func']
         )(dm_d_mp)
-        dm_d_conv2 = keras.layers.Dropout(self._params['dropout_rate'])(
+        dm_d_conv2 = tf.keras.layers.Dropout(self._params['dropout_rate'])(
             dm_d_conv2)
 
-        h_dot = keras.layers.Lambda(self._hadamard_dot)([dm_q_rep, dm_d_conv2])
-        dm_feat = keras.layers.Reshape((-1,))(h_dot)
+        h_dot = tf.keras.layers.Lambda(
+            self._hadamard_dot)([dm_q_rep, dm_d_conv2])
+        dm_feat = tf.keras.layers.Reshape((-1,))(h_dot)
         for hidden_size in self._params['dm_hidden_sizes']:
-            dm_feat = keras.layers.Dense(hidden_size)(dm_feat)
-        dm_feat_drop = keras.layers.Dropout(self._params['dropout_rate'])(
+            dm_feat = tf.keras.layers.Dense(hidden_size)(dm_feat)
+        dm_feat_drop = tf.keras.layers.Dropout(self._params['dropout_rate'])(
             dm_feat)
-        dm_score = keras.layers.Dense(1)(dm_feat_drop)
+        dm_score = tf.keras.layers.Dense(1)(dm_feat_drop)
 
-        add = keras.layers.Add()([lm_score, dm_score])
+        add = tf.keras.layers.Add()([lm_score, dm_score])
         out = self._make_output_layer()(add)
-        self._backend = keras.Model(inputs=[query, doc], outputs=out)
+        self._backend = tf.keras.Model(inputs=[query, doc], outputs=out)
 
     @classmethod
     def _xor_match(cls, x):
@@ -149,10 +148,10 @@ class DUET(BaseModel):
         t2 = x[1]
         t1_shape = t1.get_shape()
         t2_shape = t2.get_shape()
-        t1_expand = K.tf.stack([t1] * t2_shape[1], 2)
-        t2_expand = K.tf.stack([t2] * t1_shape[1], 1)
-        out_bool = K.tf.equal(t1_expand, t2_expand)
-        out = K.tf.cast(out_bool, K.tf.float32)
+        t1_expand = tf.stack([t1] * t2_shape[1], 2)
+        t2_expand = tf.stack([t2] * t1_shape[1], 1)
+        out_bool = tf.equal(t1_expand, t2_expand)
+        out = tf.cast(out_bool, tf.float32)
         return out
 
     @classmethod

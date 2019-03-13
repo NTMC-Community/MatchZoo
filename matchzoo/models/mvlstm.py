@@ -1,8 +1,7 @@
 """An implementation of MVLSTM Model."""
 import typing
 
-import keras
-import keras.backend as K
+import tensorflow as tf
 
 import matchzoo
 from matchzoo.engine.base_model import BaseModel
@@ -57,29 +56,29 @@ class MVLSTM(BaseModel):
         embed_doc = embedding(doc)
 
         # Bi-directional LSTM layer
-        rep_query = keras.layers.Bidirectional(keras.layers.LSTM(
-            self._params['lstm_units'],
-            return_sequences=True,
-            dropout=self._params['dropout_rate']
+        rep_query = tf.keras.layers.Bidirectional(
+            tf.keras.layers.LSTM(self._params['lstm_units'],
+                                 return_sequences=True,
+                                 dropout=self._params['dropout_rate']
         ))(embed_query)
-        rep_doc = keras.layers.Bidirectional(keras.layers.LSTM(
-            self._params['lstm_units'],
-            return_sequences=True,
-            dropout=self._params['dropout_rate']
+        rep_doc = tf.keras.layers.Bidirectional(
+            tf.keras.layers.LSTM(self._params['lstm_units'],
+                                 return_sequences=True,
+                                 dropout=self._params['dropout_rate']
         ))(embed_doc)
 
         # Top-k matching layer
-        matching_matrix = keras.layers.Dot(
+        matching_matrix = tf.keras.layers.Dot(
             axes=[2, 2], normalize=False)([rep_query, rep_doc])
-        matching_signals = keras.layers.Reshape((-1,))(matching_matrix)
-        matching_topk = keras.layers.Lambda(
-            lambda x: K.tf.nn.top_k(x, k=self._params['top_k'], sorted=True)[0]
+        matching_signals = tf.keras.layers.Reshape((-1,))(matching_matrix)
+        matching_topk = tf.keras.layers.Lambda(
+            lambda x: tf.nn.top_k(x, k=self._params['top_k'], sorted=True)[0]
         )(matching_signals)
 
         # Multilayer perceptron layer.
         mlp = self._make_multi_layer_perceptron_layer()(matching_topk)
-        mlp = keras.layers.Dropout(
+        mlp = tf.keras.layers.Dropout(
             rate=self._params['dropout_rate'])(mlp)
 
         x_out = self._make_output_layer()(mlp)
-        self._backend = keras.Model(inputs=[query, doc], outputs=x_out)
+        self._backend = tf.keras.Model(inputs=[query, doc], outputs=x_out)
