@@ -324,10 +324,10 @@ class BaseModel(abc.ABC):
 
         for metric in keras_metrics:
             metric_func = tf.keras.metrics.get(metric)
-            result[metric] = tf.keras.bckend.eval(
-                tf.keras.bckend.mean(
-                    metric_func(tf.keras.bckend.variable(y),
-                                tf.keras.bckend.variable(y_pred)))
+            result[metric] = tf.keras.backend.eval(
+                tf.keras.backend.mean(
+                    metric_func(tf.keras.backend.variable(y),
+                                tf.keras.backend.variable(y_pred)))
             )
 
         if matchzoo_metrics:

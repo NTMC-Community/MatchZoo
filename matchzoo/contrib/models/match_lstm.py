@@ -73,7 +73,7 @@ class MatchLSTM(BaseModel):
             tensor_right = tf.expand_dims(right, axis=1)
             tensor_left = K.repeat_elements(tensor_left, len_right, 2)
             tensor_right = K.repeat_elements(tensor_right, len_left, 1)
-            tensor_merged = tf.concatenate([tensor_left, tensor_right], axis=-1)
+            tensor_merged = K.concatenate([tensor_left, tensor_right], axis=-1)
             middle_output = tf.keras.layers.Dense(self._params['fc_num_units'],
                                                activation='tanh')(
                 tensor_merged)

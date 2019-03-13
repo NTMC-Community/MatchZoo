@@ -91,7 +91,7 @@ class ConvKNRM(KNRM):
                     mm_doc_sum = tf.keras.layers.Lambda(
                         lambda x: tf.reduce_sum(x, 2))(
                         mm_exp)
-                    mm_log = tf.keras.layers.Activation(K.tf.log1p)(mm_doc_sum)
+                    mm_log = tf.keras.layers.Activation(tf.log1p)(mm_doc_sum)
                     mm_sum = tf.keras.layers.Lambda(
                         lambda x: tf.reduce_sum(x, 1))(mm_log)
                     KM.append(mm_sum)
