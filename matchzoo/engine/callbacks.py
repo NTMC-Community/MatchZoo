@@ -3,13 +3,13 @@ import typing
 from pathlib import Path
 
 import numpy as np
-import keras
+import tensorflow as tf
 
 import matchzoo
 from matchzoo.engine.base_model import BaseModel
 
 
-class EvaluateAllMetrics(keras.callbacks.Callback):
+class EvaluateAllMetrics(tf.keras.callbacks.Callback):
     """
     Callback to evaluate all metrics.
 
