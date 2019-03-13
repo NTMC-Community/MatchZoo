@@ -1,7 +1,8 @@
 """ConvKNRM model."""
 
-import keras
-import keras.backend as K
+# import keras
+import tensorflow as tf
+# import keras.backend as K
 
 from .knrm import KNRM
 from matchzoo.engine.param import Param
@@ -59,7 +60,7 @@ class ConvKNRM(KNRM):
         q_convs = []
         d_convs = []
         for i in range(self._params['max_ngram']):
-            c = keras.layers.Conv1D(
+            c = tf.keras.layers.Conv1D(
                 self._params['filters'], i + 1,
                 activation=self._params['conv_activation_func'],
                 padding='same'
@@ -75,8 +76,9 @@ class ConvKNRM(KNRM):
                     continue
                 q_ngram = q_convs[qi]
                 d_ngram = d_convs[di]
-                mm = keras.layers.Dot(axes=[2, 2],
-                                      normalize=True)([q_ngram, d_ngram])
+                mm = tf.keras.layers.Dot(
+                    axes=[2, 2],
+                    normalize=True)([q_ngram, d_ngram])
 
                 for i in range(self._params['kernel_num']):
                     mu = 1. / (self._params['kernel_num'] - 1) + (2. * i) / (
@@ -86,14 +88,14 @@ class ConvKNRM(KNRM):
                         sigma = self._params['exact_sigma']
                         mu = 1.0
                     mm_exp = self._kernel_layer(mu, sigma)(mm)
-                    mm_doc_sum = keras.layers.Lambda(
-                        lambda x: K.tf.reduce_sum(x, 2))(
+                    mm_doc_sum = tf.keras.layers.Lambda(
+                        lambda x: tf.reduce_sum(x, 2))(
                         mm_exp)
-                    mm_log = keras.layers.Activation(K.tf.log1p)(mm_doc_sum)
-                    mm_sum = keras.layers.Lambda(
-                        lambda x: K.tf.reduce_sum(x, 1))(mm_log)
+                    mm_log = tf.keras.layers.Activation(K.tf.log1p)(mm_doc_sum)
+                    mm_sum = tf.keras.layers.Lambda(
+                        lambda x: tf.reduce_sum(x, 1))(mm_log)
                     KM.append(mm_sum)
 
-        phi = keras.layers.Lambda(lambda x: K.tf.stack(x, 1))(KM)
+        phi = tf.keras.layers.Lambda(lambda x: tf.stack(x, 1))(KM)
         out = self._make_output_layer()(phi)
-        self._backend = keras.Model(inputs=[query, doc], outputs=[out])
+        self._backend = tf.keras.Model(inputs=[query, doc], outputs=[out])

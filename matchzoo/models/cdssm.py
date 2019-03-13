@@ -1,9 +1,7 @@
 """An implementation of CDSSM (CLSM) model."""
 import typing
 
-# import keras
 import tensorflow as tf
-from tensorflow.keras.models import Model
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
@@ -107,7 +105,7 @@ class CDSSM(BaseModel):
         # Dot product with cosine similarity.
         x = tf.keras.layers.Dot(axes=[1, 1], normalize=True)(x)
         x_out = self._make_output_layer()(x)
-        self._backend = Model(inputs=[input_left, input_right],
+        self._backend = tf.keras.Model(inputs=[input_left, input_right],
                               outputs=x_out)
 
     @classmethod
