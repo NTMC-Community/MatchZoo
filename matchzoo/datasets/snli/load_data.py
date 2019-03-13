@@ -4,7 +4,7 @@ import typing
 from pathlib import Path
 
 import pandas as pd
-import keras
+import tensorflow as tf
 
 import matchzoo
 
@@ -68,7 +68,7 @@ def load_data(
 
 
 def _download_data():
-    ref_path = keras.utils.data_utils.get_file(
+    ref_path = tf.keras.utils.get_file(
         'snli', _url, extract=True,
         cache_dir=matchzoo.USER_DATA_DIR,
         cache_subdir='snli'
