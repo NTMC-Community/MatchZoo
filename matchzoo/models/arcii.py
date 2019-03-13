@@ -1,7 +1,8 @@
 """An implementation of ArcII Model."""
 import typing
 
-import keras
+# import keras
+import tensorflow as tf
 
 import matchzoo
 from matchzoo.engine.base_model import BaseModel
@@ -80,12 +81,12 @@ class ArcII(BaseModel):
         embed_right = embedding(input_right)
 
         # Phrase level representations
-        conv_1d_left = keras.layers.Conv1D(
+        conv_1d_left = tf.keras.layers.Conv1D(
             self._params['kernel_1d_count'],
             self._params['kernel_1d_size'],
             padding=self._params['padding']
         )(embed_left)
-        conv_1d_right = keras.layers.Conv1D(
+        conv_1d_right = tf.keras.layers.Conv1D(
             self._params['kernel_1d_count'],
             self._params['kernel_1d_size'],
             padding=self._params['padding']
@@ -105,12 +106,12 @@ class ArcII(BaseModel):
                 self._params['pool_2d_size'][i]
             )
 
-        embed_flat = keras.layers.Flatten()(embed_cross)
-        x = keras.layers.Dropout(rate=self._params['dropout_rate'])(embed_flat)
+        embed_flat = tf.keras.layers.Flatten()(embed_cross)
+        x = tf.keras.layers.Dropout(rate=self._params['dropout_rate'])(embed_flat)
 
         inputs = [input_left, input_right]
         x_out = self._make_output_layer()(x)
-        self._backend = keras.Model(inputs=inputs, outputs=x_out)
+        self._backend = tf.keras.Model(inputs=inputs, outputs=x_out)
 
     @classmethod
     def _conv_pool_block(
@@ -121,9 +122,9 @@ class ArcII(BaseModel):
         activation: str,
         pool_size: int
     ) -> typing.Any:
-        output = keras.layers.Conv2D(kernel_count,
+        output = tf.keras.layers.Conv2D(kernel_count,
                                      kernel_size,
                                      padding=padding,
                                      activation=activation)(x)
-        output = keras.layers.MaxPooling2D(pool_size=pool_size)(output)
+        output = tf.keras.layers.MaxPooling2D(pool_size=pool_size)(output)
         return output
