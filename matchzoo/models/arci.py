@@ -1,7 +1,8 @@
 """An implementation of ArcI Model."""
 import typing
 
-import keras
+# import keras
+import tensorflow as tf
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
@@ -110,16 +111,16 @@ class ArcI(BaseModel):
                 self._params['right_pool_sizes'][i]
             )
 
-        rep_left = keras.layers.Flatten()(embed_left)
-        rep_right = keras.layers.Flatten()(embed_right)
-        concat = keras.layers.Concatenate(axis=1)([rep_left, rep_right])
-        dropout = keras.layers.Dropout(
+        rep_left = tf.keras.layers.Flatten()(embed_left)
+        rep_right = tf.keras.layers.Flatten()(embed_right)
+        concat = tf.keras.layers.Concatenate(axis=1)([rep_left, rep_right])
+        dropout = tf.keras.layers.Dropout(
             rate=self._params['dropout_rate'])(concat)
         mlp = self._make_multi_layer_perceptron_layer()(dropout)
 
         inputs = [input_left, input_right]
         x_out = self._make_output_layer()(mlp)
-        self._backend = keras.Model(inputs=inputs, outputs=x_out)
+        self._backend = tf.keras.Model(inputs=inputs, outputs=x_out)
 
     def _conv_pool_block(
         self,
@@ -130,11 +131,11 @@ class ArcI(BaseModel):
         conv_activation_func: str,
         pool_size: int
     ) -> typing.Any:
-        output = keras.layers.Conv1D(
+        output = tf.keras.layers.Conv1D(
             filters,
             kernel_size,
             padding=padding,
             activation=conv_activation_func
         )(input_)
-        output = keras.layers.MaxPooling1D(pool_size=pool_size)(output)
+        output = tf.keras.layers.MaxPooling1D(pool_size=pool_size)(output)
         return output
