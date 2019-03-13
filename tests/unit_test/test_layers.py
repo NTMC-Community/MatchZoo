@@ -1,6 +1,7 @@
-import numpy as np
 import pytest
-from keras import backend as K
+import numpy as np
+import tensorflow as tf
+
 
 from matchzoo import layers
 
@@ -16,12 +17,12 @@ def test_matching_layers():
                          [[0.1, 0.2], [0.2, 0.3]],
                          [[0.1, 0.2], [0.2, 0.3]]
                         ])
-    s1_tensor = K.variable(s1_value)
-    s2_tensor = K.variable(s2_value)
-    s3_tensor = K.variable(s3_value)
+    s1_tensor = tf.variable(s1_value)
+    s2_tensor = tf.variable(s2_value)
+    s3_tensor = tf.variable(s3_value)
     for matching_type in ['dot', 'mul', 'plus', 'minus', 'concat']:
         model = layers.MatchingLayer(matching_type=matching_type)([s1_tensor, s2_tensor])
-        ret = K.eval(model)
+        ret = tf.keras.backend.eval(model)
     with pytest.raises(ValueError):
         layers.MatchingLayer(matching_type='error')
     with pytest.raises(ValueError):

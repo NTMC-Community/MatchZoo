@@ -1,7 +1,7 @@
 import copy
 
 import pytest
-import keras
+import tensorflow as tf
 
 import matchzoo as mz
 
@@ -44,7 +44,7 @@ def test_resample():
         batch_size=4
     )
 
-    class CheckResample(keras.callbacks.Callback):
+    class CheckResample(tf.keras.callbacks.Callback):
         def __init__(self, data_gen):
             super().__init__()
             self._data_gen = data_gen
