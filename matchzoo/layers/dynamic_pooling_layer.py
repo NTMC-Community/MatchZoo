@@ -40,8 +40,8 @@ class DynamicPoolingLayer(Layer):
         """
         super().build(input_shape)
         input_shape_one = input_shape[0]
-        self._msize1 = input_shape_one[1]
-        self._msize2 = input_shape_one[2]
+        self._msize1 = int(input_shape_one[1])
+        self._msize2 = int(input_shape_one[2])
 
     def call(self, inputs: list, **kwargs) -> typing.Any:
         """
@@ -73,10 +73,10 @@ class DynamicPoolingLayer(Layer):
                              .format(self._psize1, self._psize2,
                                      suggestion1, suggestion2))
 
-        x_pool = K.tf.nn.max_pool(x_expand,
-                                  [1, stride1, stride2, 1],
-                                  [1, stride1, stride2, 1],
-                                  "VALID")
+        x_pool = tf.nn.max_pool(x_expand,
+                                [1, stride1, stride2, 1],
+                                [1, stride1, stride2, 1],
+                                "VALID")
         return x_pool
 
     def compute_output_shape(self, input_shape: list) -> tuple:

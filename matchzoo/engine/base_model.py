@@ -417,7 +417,7 @@ class BaseModel(abc.ABC):
         else:
             raise FileExistsError(f'{dirpath} already exist, fail to save.')
 
-        self._backend.save_weights(weights_path)
+        self._backend.save_weights(str(weights_path))
         with open(params_path, mode='wb') as params_file:
             dill.dump(self._params, params_file)
 
@@ -551,5 +551,5 @@ def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
     model_instance = params['model_class'](params=params)
     model_instance.build()
     model_instance.compile()
-    model_instance.backend.load_weights(weights_path)
+    model_instance.backend.load_weights(str(weights_path))
     return model_instance

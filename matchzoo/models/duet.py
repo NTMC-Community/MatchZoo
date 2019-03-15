@@ -85,7 +85,7 @@ class DUET(BaseModel):
 
         lm_conv = tf.keras.layers.Dropout(self._params['dropout_rate'])(
             lm_conv)
-        lm_feat = tf.keras.layers.Reshape((-1,))(lm_conv)
+        lm_feat = tf.keras.layers.Flatten()(lm_conv)
         for hidden_size in self._params['lm_hidden_sizes']:
             lm_feat = tf.keras.layers.Dense(
                 hidden_size,
@@ -105,7 +105,7 @@ class DUET(BaseModel):
             dm_q_conv)
         dm_q_mp = tf.keras.layers.MaxPooling1D(
             pool_size=self._params['input_shapes'][0][0])(dm_q_conv)
-        dm_q_rep = tf.keras.layers.Reshape((-1,))(dm_q_mp)
+        dm_q_rep = tf.keras.layers.Flatten()(dm_q_mp)
         dm_q_rep = tf.keras.layers.Dense(self._params['dm_q_hidden_size'])(
             dm_q_rep)
         dm_q_rep = tf.keras.layers.Lambda(lambda x: tf.expand_dims(x, 1))(
@@ -131,7 +131,7 @@ class DUET(BaseModel):
 
         h_dot = tf.keras.layers.Lambda(
             self._hadamard_dot)([dm_q_rep, dm_d_conv2])
-        dm_feat = tf.keras.layers.Reshape((-1,))(h_dot)
+        dm_feat = tf.keras.layers.Flatten()(h_dot)
         for hidden_size in self._params['dm_hidden_sizes']:
             dm_feat = tf.keras.layers.Dense(hidden_size)(dm_feat)
         dm_feat_drop = tf.keras.layers.Dropout(self._params['dropout_rate'])(
