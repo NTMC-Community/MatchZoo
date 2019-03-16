@@ -50,3 +50,26 @@ def test_load_snli():
     assert len(x['text_left']) == 550152
     assert len(x['text_right']) == 550152
     assert y.shape == (550152, 1)
+
+
+def test_load_quora_qp():
+    train_data, classes = mz.datasets.quora_qp.load_data(
+        'matchzoo/datasets/toy/qp_train_demo.csv',
+        'train', 'classification')
+    assert len(train_data) == 1000
+    x, y = train_data.unpack()
+    assert len(x['text_left']) == 1000
+    assert len(x['text_right']) == 1000
+    assert y.shape == (1000, 2)
+    test_data, classes = mz.datasets.quora_qp.load_data(
+        'matchzoo/datasets/toy/qp_test_demo.csv',
+        'test', 'classification')
+    assert len(test_data) == 1000
+    assert classes == [False, True]
+
+    train_data = mz.datasets.quora_qp.load_data(
+        'matchzoo/datasets/toy/qp_train_demo.csv',
+        'train', 'ranking')
+    x, y = train_data.unpack()
+    assert len(x['text_left']) == 1000
+    assert y.shape == (1000, 1)
