@@ -1,4 +1,4 @@
-"""Quora Question Pairs dataset loader."""
+"""Quora Question Pairs data loader."""
 
 import typing
 from pathlib import Path
@@ -10,15 +10,16 @@ import matchzoo
 
 def load_data(
     path: typing.Union[str, Path],
-    stage: str = 'train',
-    task: str = 'classification',
+    stage: str = 'train', task: str = 'classification'
 ) -> typing.Union[matchzoo.DataPack, tuple]:
     """
-    Load `Quora Question Pairs` datasets from specific path. Due to the
-    data is released by Kaggle and can be accessed by user cookie, on
-    `https://www.kaggle.com/c/quora-question-pairs`, user should download
-    it by self and load it by this function. Split the train set into
-    train and dev set is also defined by user.
+    Load QuoraQP data.
+
+    Load data from specific path. Due to the data is released by Kaggle
+    and can be accessed by user cookies, user should download it by self,
+    from `https://www.kaggle.com/c/quora-question-pairs`, and load it by
+    this function. The method of split the train set into train and dev
+    is also defined by users.
 
     :param path: Downloaded file path.
     :param stage: One of `train`, `dev`, and `test`.
@@ -67,5 +68,3 @@ def _read_data(path, has_label=True):
             'label': pd.Series([0 for _ in range(len(data))])
         })
     return matchzoo.pack(df)
-
-
