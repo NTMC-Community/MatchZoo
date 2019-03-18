@@ -55,9 +55,8 @@ def load_data(
 
 def _download_data():
     ref_path = tf.keras.utils.get_file(
-        'quora.tsv', _url, extract=False,
-        cache_dir=matchzoo.USER_DATA_DIR,
-        cache_subdir='quora_qp'
+        'quora.tsv', _url,
+        cache_dir=matchzoo.USER_DATA_DIR
     )
     return Path(ref_path)
 
