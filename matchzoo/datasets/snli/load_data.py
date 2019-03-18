@@ -83,5 +83,5 @@ def _read_data(path):
         'text_right': table['sentence2'],
         'label': table['gold_label']
     })
-    df.dropna(axis=0, how='any', inplace=True)
+    df = df.dropna(axis=0, how='any').reset_index(drop=True)
     return matchzoo.pack(df)
