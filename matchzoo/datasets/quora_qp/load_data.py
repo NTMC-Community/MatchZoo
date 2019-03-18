@@ -12,7 +12,7 @@ _url = "http://qim.fs.quoracdn.net/quora_duplicate_questions.tsv"
 
 
 def load_data(
-    path: typing.Optional[str, Path] = None,
+    path: typing.Union[str, Path, None] = None,
     stage: str = 'train', task: str = 'classification'
 ) -> typing.Union[matchzoo.DataPack, tuple]:
     """
