@@ -80,7 +80,6 @@ def _read_data(path, is_tsv=False, has_label=True):
     else:
         df = pd.DataFrame({
             'text_left': data['question1'],
-            'text_right': data['question2'],
-            'label': pd.Series([0 for _ in range(len(data))])
+            'text_right': data['question2']
         })
     return matchzoo.pack(df)
