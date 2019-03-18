@@ -52,24 +52,11 @@ def test_load_snli():
     assert y.shape == (550152, 1)
 
 
+@pytest.mark.slow
 def test_load_quora_qp():
-    train_data, classes = mz.datasets.quora_qp.load_data(
-        'matchzoo/datasets/toy/qp_train_demo.csv',
-        'train', 'classification')
-    assert len(train_data) == 1000
+    train_data, classes = mz.datasets.quora_qp.load_data(task='classification')
+    assert len(train_data) == 404301
     x, y = train_data.unpack()
-    assert len(x['text_left']) == 1000
-    assert len(x['text_right']) == 1000
-    assert y.shape == (1000, 2)
-    test_data, classes = mz.datasets.quora_qp.load_data(
-        'matchzoo/datasets/toy/qp_test_demo.csv',
-        'test', 'classification')
-    assert len(test_data) == 1000
-    assert classes == [False, True]
-
-    train_data = mz.datasets.quora_qp.load_data(
-        'matchzoo/datasets/toy/qp_train_demo.csv',
-        'train', 'ranking')
-    x, y = train_data.unpack()
-    assert len(x['text_left']) == 1000
-    assert y.shape == (1000, 1)
+    assert len(x['text_left']) == 404301
+    assert len(x['text_right']) == 404301
+    assert y.shape == (404301, 2)

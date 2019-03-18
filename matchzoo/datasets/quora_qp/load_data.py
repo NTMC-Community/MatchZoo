@@ -12,19 +12,14 @@ _url = "http://qim.fs.quoracdn.net/quora_duplicate_questions.tsv"
 
 
 def load_data(
-    path: typing.Union[str, Path],
+    path: typing.Optional[str, Path] = None,
     stage: str = 'train', task: str = 'classification'
 ) -> typing.Union[matchzoo.DataPack, tuple]:
     """
     Load QuoraQP data.
 
-    Load data from specific path. Due to the data is released by Kaggle
-    and can be accessed by user cookies, user should download it by self,
-    from `https://www.kaggle.com/c/quora-question-pairs`, and load it by
-    this function. The method of split the train set into train and dev
-    is also defined by users.
-
-    :param path: Downloaded file path.
+    :param path: `None` for download from quora, specific path for
+        downloaded data.
     :param stage: One of `train`, `dev`, and `test`.
     :param task: Could be one of `ranking`, `classification` or a
         :class:`matchzoo.engine.BaseTask` instance.
@@ -35,10 +30,14 @@ def load_data(
         raise ValueError(f"{stage} is not a valid stage."
                          f"Must be one of `train`, `dev`, and `test`.")
 
-    if stage in ('train', 'dev'):
+    if path is None:
+        path = _download_data()
         dp = _read_data(path)
     else:
-        dp = _read_data(path, False)
+        if stage in ('train', 'dev'):
+            dp = _read_data(path)
+        else:
+            dp = _read_data(path, False)
 
     if task == 'ranking':
         task = matchzoo.tasks.Ranking()
@@ -56,11 +55,11 @@ def load_data(
 
 def _download_data():
     ref_path = tf.keras.utils.get_file(
-        'quoraqp', _url, extract=True,
+        'quoraqp', _url, extract=False,
         cache_dir=matchzoo.USER_DATA_DIR,
         cache_subdir='quora_qp'
     )
-    return Path(ref_path).parent.joinpath('WikiQACorpus')
+    return Path(ref_path).parent.joinpath('quora_duplicate_questions.tsv')
 
 
 def _read_data(path, has_label=True):
