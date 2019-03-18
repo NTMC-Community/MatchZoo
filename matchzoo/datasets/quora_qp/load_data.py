@@ -32,7 +32,7 @@ def load_data(
 
     if path is None:
         path = _download_data()
-        dp = _read_data(path)
+        dp = _read_data(path, is_tsv=True)
     else:
         if stage in ('train', 'dev'):
             dp = _read_data(path)
@@ -55,15 +55,16 @@ def load_data(
 
 def _download_data():
     ref_path = tf.keras.utils.get_file(
-        'quoraqp', _url, extract=False,
+        'quora.tsv', _url, extract=False,
         cache_dir=matchzoo.USER_DATA_DIR,
         cache_subdir='quora_qp'
     )
-    return Path(ref_path).parent.joinpath('quora_duplicate_questions.tsv')
+    return Path(ref_path)
 
 
-def _read_data(path, has_label=True):
-    data = pd.read_csv(path)
+def _read_data(path, is_tsv=False, has_label=True):
+    sep = '\t' if is_tsv else ','
+    data = pd.read_csv(path, sep=sep)
     if has_label:
         df = pd.DataFrame({
             'id_left': data['qid1'],
