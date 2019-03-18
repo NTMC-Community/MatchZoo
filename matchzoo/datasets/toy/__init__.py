@@ -57,3 +57,8 @@ def load_data(
     else:
         raise ValueError(f"{task} is not a valid task."
                          f"Must be one of `Ranking` and `Classification`.")
+
+
+def load_embedding():
+    path = Path(__file__).parent.joinpath('embedding.2d.txt')
+    return matchzoo.embedding.load_from_file(path, mode='glove')
