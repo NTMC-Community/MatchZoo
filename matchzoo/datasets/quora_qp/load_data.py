@@ -4,8 +4,11 @@ import typing
 from pathlib import Path
 
 import pandas as pd
+import tensorflow as tf
 
 import matchzoo
+
+_url = "http://qim.fs.quoracdn.net/quora_duplicate_questions.tsv"
 
 
 def load_data(
@@ -49,6 +52,15 @@ def load_data(
         return dp, [False, True]
     else:
         raise ValueError(f"{task} is not a valid task.")
+
+
+def _download_data():
+    ref_path = tf.keras.utils.get_file(
+        'quoraqp', _url, extract=True,
+        cache_dir=matchzoo.USER_DATA_DIR,
+        cache_subdir='quora_qp'
+    )
+    return Path(ref_path).parent.joinpath('WikiQACorpus')
 
 
 def _read_data(path, has_label=True):
