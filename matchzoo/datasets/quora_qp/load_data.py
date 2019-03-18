@@ -13,7 +13,8 @@ _url = "http://qim.fs.quoracdn.net/quora_duplicate_questions.tsv"
 
 def load_data(
     path: typing.Union[str, Path, None] = None,
-    stage: str = 'train', task: str = 'classification'
+    stage: str = 'train', task: str = 'classification',
+    return_classes: bool = False,
 ) -> typing.Union[matchzoo.DataPack, tuple]:
     """
     Load QuoraQP data.
@@ -23,6 +24,7 @@ def load_data(
     :param stage: One of `train`, `dev`, and `test`.
     :param task: Could be one of `ranking`, `classification` or a
         :class:`matchzoo.engine.BaseTask` instance.
+    :param return_classes: Whether return classes for classification task.
     :return: A DataPack if `ranking`, a tuple of (DataPack, classes) if
         `classification`.
     """
@@ -48,7 +50,10 @@ def load_data(
         return dp
     elif isinstance(task, matchzoo.tasks.Classification):
         dp.one_hot_encode_label(num_classes=2, inplace=True)
-        return dp, [False, True]
+        if return_classes:
+            return dp, [False, True]
+        else:
+            return dp
     else:
         raise ValueError(f"{task} is not a valid task.")
 
