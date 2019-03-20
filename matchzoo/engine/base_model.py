@@ -319,7 +319,7 @@ class BaseModel(abc.ABC):
         for metric in keras_metrics:
             metric_func = keras.metrics.get(metric)
             result[metric] = K.eval(
-                metric_func(K.variable(y), K.variable(y_pred)))
+                metric_func(K.variable(y), K.variable(y_pred))).mean()
 
         if matchzoo_metrics:
             if not isinstance(self.params['task'], tasks.Ranking):
