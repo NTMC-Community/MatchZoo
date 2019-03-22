@@ -57,3 +57,13 @@ def test_load_snli():
     assert len(x['text_left']) == 550152
     assert len(x['text_right']) == 550152
     assert y.shape == (550152, 1)
+
+
+@pytest.mark.slow
+def test_load_quora_qp():
+    train_data = mz.datasets.quora_qp.load_data(task='classification')
+    assert len(train_data) == 404290
+    x, y = train_data.unpack()
+    assert len(x['text_left']) == 404290
+    assert len(x['text_right']) == 404290
+    assert y.shape == (404290, 2)
