@@ -12,6 +12,7 @@ from .drmmtks import DRMMTKS
 from .drmm import DRMM
 from .anmm import ANMM
 from .mvlstm import MVLSTM
+from .match_srnn import MatchSRNN
 
 
 def list_available() -> list:
