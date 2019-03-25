@@ -3,17 +3,19 @@
 import typing
 from pathlib import Path
 
+import keras
 import pandas as pd
-import tensorflow as tf
 
 import matchzoo
 
-_url = "http://qim.fs.quoracdn.net/quora_duplicate_questions.tsv"
+_url = "https://firebasestorage.googleapis.com/v0/b/mtl-sentence" \
+       "-representations.appspot.com/o/data%2FQQP.zip?alt=media&" \
+       "token=700c6acf-160d-4d89-81d1-de4191d02cb5"
 
 
 def load_data(
-    path: typing.Union[str, Path, None] = None,
-    stage: str = 'train', task: str = 'classification',
+    stage: str = 'train',
+    task: str = 'classification',
     return_classes: bool = False,
 ) -> typing.Union[matchzoo.DataPack, tuple]:
     """
@@ -32,14 +34,9 @@ def load_data(
         raise ValueError(f"{stage} is not a valid stage."
                          f"Must be one of `train`, `dev`, and `test`.")
 
-    if path is None:
-        path = _download_data()
-        dp = _read_data(path, is_tsv=True)
-    else:
-        if stage in ('train', 'dev'):
-            dp = _read_data(path)
-        else:
-            dp = _read_data(path, False)
+    data_root = _download_data()
+    file_path = data_root.joinpath(f"{stage}.tsv")
+    data_pack = _read_data(file_path, stage)
 
     if task == 'ranking':
         task = matchzoo.tasks.Ranking()
@@ -47,29 +44,29 @@ def load_data(
         task = matchzoo.tasks.Classification()
 
     if isinstance(task, matchzoo.tasks.Ranking):
-        return dp
+        return data_pack
     elif isinstance(task, matchzoo.tasks.Classification):
-        dp.one_hot_encode_label(num_classes=2, inplace=True)
+        data_pack.one_hot_encode_label(num_classes=2, inplace=True)
         if return_classes:
-            return dp, [False, True]
+            return data_pack, [False, True]
         else:
-            return dp
+            return data_pack
     else:
         raise ValueError(f"{task} is not a valid task.")
 
 
 def _download_data():
-    ref_path = tf.keras.utils.get_file(
-        'quora.tsv', _url,
-        cache_dir=matchzoo.USER_DATA_DIR
+    ref_path = keras.utils.data_utils.get_file(
+        'quora_qp', _url, extract=True,
+        cache_dir=matchzoo.USER_DATA_DIR,
+        cache_subdir='quora_qp'
     )
-    return Path(ref_path)
+    return Path(ref_path).parent.joinpath('QQP')
 
 
-def _read_data(path, is_tsv=False, has_label=True):
-    sep = '\t' if is_tsv else ','
-    data = pd.read_csv(path, sep=sep)
-    if has_label:
+def _read_data(path, stage):
+    data = pd.read_csv(path, sep='\t')
+    if stage in ['train', 'dev']:
         df = pd.DataFrame({
             'id_left': data['qid1'],
             'id_right': data['qid2'],

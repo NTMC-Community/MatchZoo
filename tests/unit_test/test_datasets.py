@@ -62,8 +62,23 @@ def test_load_snli():
 @pytest.mark.slow
 def test_load_quora_qp():
     train_data = mz.datasets.quora_qp.load_data(task='classification')
-    assert len(train_data) == 404290
+    assert len(train_data) == 363870
     x, y = train_data.unpack()
-    assert len(x['text_left']) == 404290
-    assert len(x['text_right']) == 404290
-    assert y.shape == (404290, 2)
+    assert len(x['text_left']) == 363870
+    assert len(x['text_right']) == 363870
+    assert y.shape == (363870, 2)
+
+    dev_data, tag = mz.datasets.quora_qp.load_data(
+        'dev',
+        task='classification',
+        return_classes=True)
+    assert tag == [False, True]
+    assert len(dev_data) == 40431
+
+    test_data = mz.datasets.quora_qp.load_data('test')
+    assert len(test_data) == 390965
+
+    train_data = mz.datasets.quora_qp.load_data('train', 'ranking')
+    x, y = train_data.unpack()
+    assert y.shape == (363870, 1)
+
