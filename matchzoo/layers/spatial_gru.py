@@ -27,7 +27,7 @@ class SpatialGRU(Layer):
         hyperbolic tangent (`tanh`). If you pass `None`, no
         activation is applied (ie. "linear" activation: `a(x) = x`).
     :param recurrent_activation: Activation function to use for
-        the recurrent step. Default: hard sigmoid (`hard_sigmoid`).
+        the recurrent step. Default: sigmoid (`sigmoid`).
         If you pass `None`, no activation is applied (ie. "linear"
         activation: `a(x) = x`).
     :param use_bias: Boolean, whether the layer uses a bias vector.
@@ -37,12 +37,16 @@ class SpatialGRU(Layer):
         weights matrix, used for the linear transformation of the
         recurrent state.
     :param bias_initializer: Initializer for the bias vector.
+    :param direction: Scanning direction. `lt` (i.e., left top)
+        indicates the scanning from left top to right bottom, and
+        `rb` (i.e., right bottom) indicates the scanning from
+        right bottom to left top.
     :param kwargs: Standard layer keyword arguments.
 
     Examples:
         >>> import matchzoo as mz
         >>> layer = mz.layers.SpatialGRU(units=50,
-        ...                              normalize=True)
+        ...                              direction='lt')
         >>> num_batch, channel, left_len, right_len = 5, 10, 3, 2
         >>> layer.build([num_batch, channel, left_len, right_len])
 
@@ -53,11 +57,12 @@ class SpatialGRU(Layer):
                  normalize: bool = False,
                  init_diag: bool = False,
                  activation: str = 'tanh',
-                 recurrent_activation: str = 'hard_sigmoid',
+                 recurrent_activation: str = 'sigmoid',
                  use_bias: bool = True,
                  kernel_initializer: str = 'glorot_uniform',
                  recurrent_initializer: str = 'orthogonal',
                  bias_initializer: str = 'zeros',
+                 direction: str = 'lr',
                  **kwargs):
         """:class:`SpatialGRU` constructor."""
         super(SpatialGRU, self).__init__(**kwargs)
@@ -71,6 +76,7 @@ class SpatialGRU(Layer):
         self._kernel_initializer = initializers.get(kernel_initializer)
         self._recurrent_initializer = initializers.get(recurrent_initializer)
         self._bias_initializer = initializers.get(bias_initializer)
+        self._direction = direction
 
     def build(self, input_shape: typing.Any):
         """
@@ -180,6 +186,12 @@ class SpatialGRU(Layer):
 
         # input_x: (text1_maxlen, text2_maxlen, batch_size, channel)
         input_x = K.tf.transpose(inputs, [2, 3, 0, 1])
+        if self._direction == 'rb':
+            input_x = K.tf.reverse(input_x, [0, 1])
+        elif self._direction != 'lt':
+            raise ValueError(f"Invalid direction. "
+                             f"`{self._direction}` received. "
+                             f"Must be in `lt`, `rb`.")
         input_x = K.tf.reshape(input_x, [-1, self._channel])
         input_x = K.tf.split(
             axis=0,
@@ -238,7 +250,8 @@ class SpatialGRU(Layer):
             'recurrent_initializer':
                 initializers.serialize(self._recurrent_initializer),
             'bias_initializer':
-                initializers.serialize(self._bias_initializer)
+                initializers.serialize(self._bias_initializer),
+            'direction': self._direction
         }
         base_config = super(SpatialGRU, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))

@@ -20,6 +20,7 @@ class MatchSRNN(BaseModel):
         >>> model.params['channels'] = 4
         >>> model.params['units'] = 10
         >>> model.params['dropout_rate'] = 0.0
+        >>> model.params['direction'] = 'lt'
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -33,6 +34,8 @@ class MatchSRNN(BaseModel):
                          desc="Number of word interaction tensor channels"))
         params.add(Param(name='units', value=10,
                          desc="Number of SpatialGRU units"))
+        params.add(Param(name='direction', value='lt',
+                         desc="Direction of SpatialGRU scanning"))
         params.add(Param(
             name='dropout_rate', value=0.0,
             hyper_space=hyper_spaces.quniform(low=0.0, high=0.8,
@@ -77,7 +80,8 @@ class MatchSRNN(BaseModel):
         matching_tensor = keras.layers.Permute((2, 3, 1))(matching_tensor)
 
         spatial_gru = matchzoo.layers.SpatialGRU(
-            units=self._params['units'])
+            units=self._params['units'],
+            direction=self._params['direction'])
 
         h_ij = spatial_gru(matching_tensor)
 
