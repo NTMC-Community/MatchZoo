@@ -55,7 +55,7 @@ class MatchingTensorLayer(Layer):
                              'on a list of 2 inputs.')
         self._shape1 = input_shape[0]
         self._shape2 = input_shape[1]
-        for idx in 0, 2:
+        for idx in (0, 2):
             if self._shape1[idx] != self._shape2[idx]:
                 raise ValueError(
                     'Incompatible dimensions: '
