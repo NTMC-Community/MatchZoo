@@ -11,7 +11,8 @@ from matchzoo.contrib.layers import MultiPerspectiveLayer
 class BimpmModel(engine.BaseModel):
     """
     BimpmModel.
-
+    Reference:
+        - https://github.com/zhiguowang/BiMPM/blob/master/src/SentenceMatchModelGraph.py#L43-L186
     Examples:
         >>> import matchzoo as mz
         >>> model = mz.contrib.models.BimpmModel()
@@ -107,6 +108,8 @@ class BimpmModel(engine.BaseModel):
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
 
+        # L119-L121
+        # https://github.com/zhiguowang/BiMPM/blob/master/src/SentenceMatchModelGraph.py#L119-L121
         embed_left = Dropout(self._params['dropout_rate'])(embed_left)
         embed_right = Dropout(self._params['dropout_rate'])(embed_right)
 

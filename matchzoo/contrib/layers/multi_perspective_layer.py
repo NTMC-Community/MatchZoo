@@ -248,7 +248,12 @@ class MpMaxAttentiveMatch(Layer):
 
 
 def cal_max_question_representation(reps_lt, attn_scores):
-    """Return [batch_size, passage_len]."""
+    """
+    cal_max_question_representation
+    :param reps_lt: [batch_size, passage_len, hidden_size]
+    :param attn_scores: []
+    :return: [batch_size, passage_len, hidden_size].
+    """
     attn_positions = K.argmax(attn_scores, axis=2)
     max_reps_lt = collect_representation(reps_lt, attn_positions)
     return max_reps_lt
@@ -289,10 +294,10 @@ def collect_final_step_of_lstm(lstm_representation, lengths):
 def collect_probs(probs, positions):
     """
     Collect Probs.
-
+    Reference: https://github.com/zhiguowang/BiMPM/blob/master/src/layer_utils.py#L128-L140
     :param probs: [batch_size, chunks_size]
     :param positions: [batch_size, pair_size]
-    :return:
+    :return: [batch_size, pair_size]
     """
     batch_size = K.shape(probs)[0]
     pair_size = K.shape(positions)[1]
@@ -386,6 +391,7 @@ class MpCosineLayer(Layer):
 def _calc_relevancy_matrix(reps_lt, reps_rt):
     # -> [batch_size, 1, len_lt, dim]
     reps_lt = K.expand_dims(reps_lt, 1)
+    reps_rt = K.expand_dims(reps_rt, 2)
     # -> [batch_size, len_rt, 1, dim]
     # in_passage_repres_tmp = K.expand_dims(reps_rt, 2)
     relevancy_matrix = _cosine_distance(reps_lt, reps_rt)
