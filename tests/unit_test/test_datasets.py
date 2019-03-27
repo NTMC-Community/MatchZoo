@@ -37,11 +37,12 @@ def test_load_snli():
     train_data, classes = mz.datasets.snli.load_data('train',
                                                      'classification',
                                                      return_classes=True)
-    assert len(train_data) == 550152
+    num_samples = 550146
+    assert len(train_data) == num_samples
     x, y = train_data.unpack()
-    assert len(x['text_left']) == 550152
-    assert len(x['text_right']) == 550152
-    assert y.shape == (550152, 4)
+    assert len(x['text_left']) == num_samples
+    assert len(x['text_right']) == num_samples
+    assert y.shape == (num_samples, 4)
     assert classes == ['entailment', 'contradiction', 'neutral', '-']
     dev_data, classes = mz.datasets.snli.load_data('dev', 'classification',
                                                    return_classes=True)
@@ -54,9 +55,9 @@ def test_load_snli():
 
     train_data = mz.datasets.snli.load_data('train', 'ranking')
     x, y = train_data.unpack()
-    assert len(x['text_left']) == 550152
-    assert len(x['text_right']) == 550152
-    assert y.shape == (550152, 1)
+    assert len(x['text_left']) == num_samples
+    assert len(x['text_right']) == num_samples
+    assert y.shape == (num_samples, 1)
 
 
 @pytest.mark.slow
