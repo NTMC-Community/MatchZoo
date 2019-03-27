@@ -66,13 +66,14 @@ def _download_data():
 
 def _read_data(path, stage):
     data = pd.read_csv(path, sep='\t', error_bad_lines=False)
+    data = data.dropna(axis=0, how='any').reset_index(drop=True)
     if stage in ['train', 'dev']:
         df = pd.DataFrame({
             'id_left': data['qid1'],
             'id_right': data['qid2'],
             'text_left': data['question1'],
             'text_right': data['question2'],
-            'label': data['is_duplicate']
+            'label': data['is_duplicate'].astype(int)
         })
     else:
         df = pd.DataFrame({
