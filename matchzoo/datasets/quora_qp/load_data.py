@@ -65,7 +65,7 @@ def _download_data():
 
 
 def _read_data(path, stage):
-    data = pd.read_csv(path, sep='\t')
+    data = pd.read_csv(path, sep='\t', error_bad_lines=False)
     if stage in ['train', 'dev']:
         df = pd.DataFrame({
             'id_left': data['qid1'],
