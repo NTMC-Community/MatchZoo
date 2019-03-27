@@ -1,6 +1,6 @@
 """LBMP model."""
-import typing
 import keras
+import typing
 
 from matchzoo.engine import hyper_spaces
 from matchzoo.engine.param_table import ParamTable
@@ -18,13 +18,12 @@ class LBMP(BaseModel):
         >>> model.params['embedding_input_dim'] = 10000
         >>> model.params['embedding_output_dim'] = 100
         >>> model.params['embedding_trainable'] = True
-        >>> model.params['leaky_relu_alpha'] = 0.1
+        >>> model.params['alpha'] = 0.1
         >>> model.params['mlp_num_layers'] = 3
         >>> model.params['mlp_num_units'] = [600, 600]
         >>> model.params['lstm_num_units'] = 600
         >>> model.params['dropout_rate'] = 0.1
         >>> model.build()
-
     """
 
     @classmethod
@@ -32,7 +31,7 @@ class LBMP(BaseModel):
         """:return: model default parameters."""
         params = super().get_default_params(with_embedding=True)
         params['optimizer'] = 'adam'
-        params.add(Param(name='leaky_relu_alpha', value=0.1,
+        params.add(Param(name='alpha', value=0.1,
                          desc="Negative slope coefficient of LeakyReLU function."))
         params.add(Param(name='mlp_num_layers', value=3,
                          desc="The number of layers of mlp."))
@@ -55,7 +54,7 @@ class LBMP(BaseModel):
         embedding = self._make_embedding_layer()
         embed_left = embedding(input_left)
         embed_right = embedding(input_right)
-      
+
         # get sentence embedding
         embed_sen_left = self._sentence_encoder(
             embed_left, lstm_num_units=self._params['lstm_num_units'], drop_rate=self._params['dropout_rate'])
@@ -70,8 +69,9 @@ class LBMP(BaseModel):
             [embed_sen_left, embed_sen_right, concat1_abs, concat2])
 
         # multiply perception layers to classify
-        out = self._classifier(concat, mlp_num_layers=self._params['mlp_num_layers'], mlp_num_units=self._params[
-                               'mlp_num_units'], drop_rate=self._params['dropout_rate'], leaky_relu_alpah=self._params['leaky_relu_alpha'])
+        mlp_out = self._classifier(concat, mlp_num_layers=self._params['mlp_num_layers'], mlp_num_units=self._params[
+                               'mlp_num_units'], drop_rate=self._params['dropout_rate'], leaky_relu_alpah=self._params['alpha'])
+        out = self._make_output_layer()(mlp_out)
 
         self._backend = keras.Model(
             inputs=[input_left, input_right], outputs=out)
@@ -85,12 +85,11 @@ class LBMP(BaseModel):
         leaky_relu_alpah: float
     )-> typing.Any:
         for i in range(mlp_num_layers - 1):
-            input_ = keras.layers.Dropout(rate=drop_rate)(input_)  
+            input_ = keras.layers.Dropout(rate=drop_rate)(input_)
             input_ = keras.layers.Dense(mlp_num_units[i])(input_)
             input_ = keras.layers.LeakyReLU(alpha=leaky_relu_alpah)(input_)
 
-        return self._make_output_layer()(input_)
-
+        return input_
 
     def _sentence_encoder(
         self,
@@ -126,6 +125,6 @@ class LBMP(BaseModel):
         layer3_maxpooling = keras.layers.GlobalMaxPooling1D()(layer3)
 
         sen_encoder = keras.layers.Concatenate(axis=1)(
-            [layer1_maxpooling, layer2_maxpooling, layer3_maxpooling])  
+            [layer1_maxpooling, layer2_maxpooling, layer3_maxpooling])
 
         return sen_encoder
