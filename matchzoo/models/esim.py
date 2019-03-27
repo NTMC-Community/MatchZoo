@@ -80,9 +80,11 @@ class ESIM(BaseModel):
         embed_right = embedding(input_right)
         # Get the mask for calculating attention
         # shape = [B, L]
-        left_mask = keras.layers.Masking()(input_left)
+        left_mask = keras.layers.Lambda(get_mask)(input_left)
+        # left_mask = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(left_mask)
+
         # shape = [B, R]
-        right_mask = keras.layers.Masking()(input_right)
+        right_mask = keras.layers.Lambda(get_mask)(input_right)
 
         # Add dropout layer
         embed_left = keras.layers.Dropout(
@@ -150,7 +152,7 @@ class ESIM(BaseModel):
         mlp = keras.layers.Dropout(
             rate=self._params['dropout_rate'])(mlp)
         inputs = [input_left, input_right]
-        mlp = keras.layers.Lambda(lambda x:K.tf.Print(x, [x]))(mlp)
+        # mlp = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(mlp)
         x_out = self._make_output_layer()(mlp)
         self._backend = keras.Model(inputs=inputs, outputs=x_out)
 
@@ -162,16 +164,19 @@ class ESIM(BaseModel):
         embed_cross = keras.layers.Dot(axes=2)([encoded_left, encoded_right])
         cross_shape = [self._params['input_shapes'][0][0], self._params['input_shapes'][1][0]]
         embed_cross = keras.layers.Reshape(cross_shape)(embed_cross)
-        left2right_attn = self._masked_softmax(embed_cross, left_mask, self._params['input_shapes'][0][0],
+        left2right_attn = self._masked_softmax(embed_cross, left_mask,
+                                               self._params['input_shapes'][0][0],
                                                self._params['input_shapes'][1][0])
-        right2right_attn = self._masked_softmax(keras.layers.Permute([2, 1])(embed_cross), right_mask,
-                                                self._params['input_shapes'][1][0],
-                                                self._params['input_shapes'][0][0])
+        # left2right_attn = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(left2right_attn)
+
+        right2left_attn = self._masked_softmax(keras.layers.Permute([2, 1])(embed_cross), right_mask,
+                                               self._params['input_shapes'][1][0],
+                                               self._params['input_shapes'][0][0])
 
         attended_left = self._weighted_sum(left2right_attn,
                                            encoded_right,
                                            left_mask)
-        attended_right = self._weighted_sum(right2right_attn,
+        attended_right = self._weighted_sum(right2left_attn,
                                             encoded_left,
                                             right_mask)
         return attended_left, attended_right
@@ -179,20 +184,18 @@ class ESIM(BaseModel):
     def _masked_softmax(self, input, mask, att_len, base_len):
         inf = 1e8
 
-        def tile_tensor(x):
-            res = K.tile(K.expand_dims(x, axis=1), [1, base_len, 1])
+        def tile_mask(x):
+            res = inf * K.tile(K.expand_dims(1 - x, axis=1), [1, base_len, 1])
             return res
 
-        def fill_mask(x):
-            return inf * x
+        # def fill_mask(x):
+        #     return inf * x
 
-        tiled_mask = keras.layers.Lambda(tile_tensor)(mask)
-        # tiled_mask = K.tile(K.expand_dims(mask, axis=1), [1, att_len, 1])
+        tiled_mask = keras.layers.Lambda(tile_mask)(mask)
         flattened_mask = keras.layers.Flatten()(tiled_mask)
         flattened_input = keras.layers.Flatten()(input)
         softmax_res = keras.layers.Softmax() \
-            (keras.layers.Subtract()([flattened_input,
-                                      keras.layers.Lambda(fill_mask)(flattened_mask)]))
+            (keras.layers.Subtract()([flattened_input, flattened_mask]))
         output = keras.layers.Reshape([att_len, base_len])(softmax_res)
         return output
 
@@ -200,6 +203,11 @@ class ESIM(BaseModel):
         weighted_sum = keras.layers.Dot(axes=[2, 1])([weights, tensor])
         expanded_mask = keras.layers.Lambda(expand_tensor)(mask)
         return keras.layers.Multiply()([expanded_mask, weighted_sum])
+
+
+def get_mask(x):
+    boolean_mask = K.not_equal(x, 0)
+    return K.cast(boolean_mask, K.dtype(x))
 
 
 def expand_tensor(x):
