@@ -249,7 +249,8 @@ class MpMaxAttentiveMatch(Layer):
 
 def cal_max_question_representation(reps_lt, attn_scores):
     """
-    cal_max_question_representation
+    Calculate max_question_representation.
+
     :param reps_lt: [batch_size, passage_len, hidden_size]
     :param attn_scores: []
     :return: [batch_size, passage_len, hidden_size].
@@ -294,7 +295,9 @@ def collect_final_step_of_lstm(lstm_representation, lengths):
 def collect_probs(probs, positions):
     """
     Collect Probs.
-    Reference: https://github.com/zhiguowang/BiMPM/blob/master/src/layer_utils.py#L128-L140
+
+    Reference:
+    https://github.com/zhiguowang/BiMPM/blob/master/src/layer_utils.py#L128-L140
     :param probs: [batch_size, chunks_size]
     :param positions: [batch_size, pair_size]
     :return: [batch_size, pair_size]

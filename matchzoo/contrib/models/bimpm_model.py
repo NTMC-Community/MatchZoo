@@ -11,8 +11,9 @@ from matchzoo.contrib.layers import MultiPerspectiveLayer
 class BimpmModel(engine.BaseModel):
     """
     BimpmModel.
+
     Reference:
-        - https://github.com/zhiguowang/BiMPM/blob/master/src/SentenceMatchModelGraph.py#L43-L186
+    https://github.com/zhiguowang/BiMPM/blob/master/src/SentenceMatchModelGraph.py#L43-L186
     Examples:
         >>> import matchzoo as mz
         >>> model = mz.contrib.models.BimpmModel()
