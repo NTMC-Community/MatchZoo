@@ -1,4 +1,4 @@
-"""LBMP model."""
+"""HBMP model."""
 import keras
 import typing
 
@@ -8,12 +8,12 @@ from matchzoo.engine.param import Param
 from matchzoo.engine.base_model import BaseModel
 
 
-class LBMP(BaseModel):
+class HBMP(BaseModel):
     """
-    LBMP model.
+    HBMP model.
 
     Examples:
-        >>> model = LBMP()
+        >>> model = HBMP()
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.params['embedding_input_dim'] = 10000
         >>> model.params['embedding_output_dim'] = 100
@@ -70,7 +70,7 @@ class LBMP(BaseModel):
 
         # multiply perception layers to classify
         mlp_out = self._classifier(concat, mlp_num_layers=self._params['mlp_num_layers'], mlp_num_units=self._params[
-                               'mlp_num_units'], drop_rate=self._params['dropout_rate'], leaky_relu_alpah=self._params['alpha'])
+            'mlp_num_units'], drop_rate=self._params['dropout_rate'], leaky_relu_alpah=self._params['alpha'])
         out = self._make_output_layer()(mlp_out)
 
         self._backend = keras.Model(
@@ -103,26 +103,17 @@ class LBMP(BaseModel):
         each BiLSTM layer reads the input sentence as the input.
         each BiLSTM layer except the first one is initialized(the initial hidden state and the cell state) with the final state of the previous layer.   
         """
-        layer1_fw, h1_fw, c1_fw = keras.layers.LSTM(
-            units=lstm_num_units, return_sequences=True, return_state=True, dropout=drop_rate, recurrent_dropout=drop_rate)(input_)
-        layer1_bw, h1_bw, c1_bw = keras.layers.LSTM(
-            units=lstm_num_units, return_sequences=True, return_state=True, dropout=drop_rate, recurrent_dropout=drop_rate, go_backwards=True)(input_)
-        layer1 = keras.layers.Concatenate(axis=2)([layer1_fw, layer1_bw])
-        layer1_maxpooling = keras.layers.GlobalMaxPooling1D()(layer1)
+        layer1 = keras.layers.Bidirectional(keras.layers.LSTM(units=lstm_num_units, return_sequences=True,
+                                                              return_state=True, dropout=drop_rate, recurrent_dropout=drop_rate), merge_mode='concat')(input_)
+        layer1_maxpooling = keras.layers.GlobalMaxPooling1D()(layer1[0])
 
-        layer2_fw, h2_fw, c2_fw = keras.layers.LSTM(units=lstm_num_units, return_sequences=True, return_state=True,
-                                                    dropout=drop_rate, recurrent_dropout=drop_rate)(input_, initial_state=[c1_fw, h1_fw])
-        layer2_bw, h2_bw, c2_bw = keras.layers.LSTM(units=lstm_num_units, return_sequences=True, return_state=True,
-                                                    dropout=drop_rate, recurrent_dropout=drop_rate, go_backwards=True)(input_, initial_state=[c1_bw, h1_bw])
-        layer2 = keras.layers.Concatenate(axis=2)([layer2_fw, layer2_bw])
-        layer2_maxpooling = keras.layers.GlobalMaxPooling1D()(layer2)
+        layer2 = keras.layers.Bidirectional(keras.layers.LSTM(units=lstm_num_units, return_sequences=True, return_state=True,
+                                                              dropout=drop_rate, recurrent_dropout=drop_rate), merge_mode='concat')(input_, initial_state=layer1[1:5])
+        layer2_maxpooling = keras.layers.GlobalMaxPooling1D()(layer2[0])
 
-        layer3_fw = keras.layers.LSTM(units=lstm_num_units, return_sequences=True, dropout=drop_rate,
-                                      recurrent_dropout=drop_rate)(input_, initial_state=[c2_fw, h2_fw])
-        layer3_bw = keras.layers.LSTM(units=lstm_num_units, return_sequences=True, dropout=drop_rate,
-                                      recurrent_dropout=drop_rate, go_backwards=True)(input_, initial_state=[c2_bw, h2_bw])
-        layer3 = keras.layers.Concatenate(axis=2)([layer3_fw, layer3_bw])
-        layer3_maxpooling = keras.layers.GlobalMaxPooling1D()(layer3)
+        layer3 = keras.layers.Bidirectional(keras.layers.LSTM(units=lstm_num_units, return_sequences=True, return_state=True,
+                                                              dropout=drop_rate, recurrent_dropout=drop_rate), merge_mode='concat')(input_, initial_state=layer2[1:5])
+        layer3_maxpooling = keras.layers.GlobalMaxPooling1D()(layer3[0])
 
         sen_encoder = keras.layers.Concatenate(axis=1)(
             [layer1_maxpooling, layer2_maxpooling, layer3_maxpooling])

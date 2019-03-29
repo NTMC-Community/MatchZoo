@@ -1,2 +1,2 @@
 from .match_lstm import MatchLSTM
-from .lbmp import LBMP
+from .hbmp import HBMP
