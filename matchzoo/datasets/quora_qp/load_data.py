@@ -46,7 +46,8 @@ def load_data(
     if isinstance(task, matchzoo.tasks.Ranking):
         return data_pack
     elif isinstance(task, matchzoo.tasks.Classification):
-        data_pack.one_hot_encode_label(num_classes=2, inplace=True)
+        if stage != 'test':
+            data_pack.one_hot_encode_label(num_classes=2, inplace=True)
         if return_classes:
             return data_pack, [False, True]
         else:
