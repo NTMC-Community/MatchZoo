@@ -79,7 +79,7 @@ def test_load_quora_qp():
     test_data = mz.datasets.quora_qp.load_data('test')
     assert len(test_data) == 390965
 
-    train_data = mz.datasets.quora_qp.load_data('train', 'ranking')
-    x, y = train_data.unpack()
-    assert y.shape == (363177, 1)
+    dev_data = mz.datasets.quora_qp.load_data('dev', 'ranking')
+    x, y = dev_data.unpack()
+    assert y.shape == (40371, 1)
 
