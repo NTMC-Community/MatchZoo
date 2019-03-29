@@ -63,10 +63,6 @@ def test_load_snli():
 def test_load_quora_qp():
     train_data = mz.datasets.quora_qp.load_data(task='classification')
     assert len(train_data) == 363177
-    x, y = train_data.unpack()
-    assert len(x['text_left']) == 363177
-    assert len(x['text_right']) == 363177
-    assert y.shape == (363177, 2)
 
     dev_data, tag = mz.datasets.quora_qp.load_data(
         'dev',
@@ -74,6 +70,10 @@ def test_load_quora_qp():
         return_classes=True)
     assert tag == [False, True]
     assert len(dev_data) == 40371
+    x, y = dev_data.unpack()
+    assert len(x['text_left']) == 40371
+    assert len(x['text_right']) == 40371
+    assert y.shape == (40371, 2)
 
     test_data = mz.datasets.quora_qp.load_data('test')
     assert len(test_data) == 390965
