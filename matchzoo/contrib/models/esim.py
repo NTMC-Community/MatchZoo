@@ -3,7 +3,6 @@ import typing
 
 import keras
 from keras import backend as K
-import matchzoo
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
@@ -16,10 +15,10 @@ class ESIM(BaseModel):
 
     Examples:
         >>> model = ESIM()
-        >>> model.params['lstm_units'] = 256
+        >>> model.params['lstm_units'] = 64
         >>> model.params['mlp_num_layers'] = 0
-        >>> model.params['mlp_num_units'] = 256
-        >>> model.params['mlp_num_fan_out'] = 256
+        >>> model.params['mlp_num_units'] = 64
+        >>> model.params['mlp_num_fan_out'] = 64
         >>> model.params['mlp_activation_func'] = 'tanh'
         >>> model.params['dropout_rate'] = 0.5
         >>> model.guess_and_fill_missing_params(verbose=0)
@@ -68,10 +67,6 @@ class ESIM(BaseModel):
         input_left, input_right = self._make_inputs()
         hidden_size = self._params['lstm_units']
 
-        def tile_tensor(x):
-            res = K.tile(K.expand_dims(x), [1, 1, 2 * hidden_size])
-            return res
-
         embedding = self._make_embedding_layer()
         # Look up embedding matrix and get embed representation
         # shape = [B, L, D]
@@ -80,11 +75,10 @@ class ESIM(BaseModel):
         embed_right = embedding(input_right)
         # Get the mask for calculating attention
         # shape = [B, L]
-        left_mask = keras.layers.Lambda(get_mask)(input_left)
-        # left_mask = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(left_mask)
+        mask_left = keras.layers.Lambda(get_mask)(input_left)
 
         # shape = [B, R]
-        right_mask = keras.layers.Lambda(get_mask)(input_right)
+        mask_right = keras.layers.Lambda(get_mask)(input_right)
 
         # Add dropout layer
         embed_left = keras.layers.Dropout(
@@ -105,15 +99,15 @@ class ESIM(BaseModel):
         # Make interaction and get the interactive representation
         # shape = [B, L, 2*H]
         # shape = [B, R, 2*H]
-        attended_left, attended_right = self._attention(encoded_left, left_mask, encoded_right, right_mask)
+        attended_left, attended_right = self._attention(encoded_left, mask_left, encoded_right, mask_right)
         # shape = [B, L, 8*H]
-        enhanced_left = keras.layers.Concatenate()([encoded_left, attended_left,
-                                                    keras.layers.Subtract()([encoded_left, attended_left]),
-                                                    keras.layers.Multiply()([encoded_left, attended_left])])
+        enhanced_left = keras.layers.concatenate([encoded_left, attended_left,
+                                                  keras.layers.subtract([encoded_left, attended_left]),
+                                                  keras.layers.multiply([encoded_left, attended_left])])
         # shape = [B, R, 8*H]
-        enhanced_right = keras.layers.Concatenate()([encoded_right, attended_right,
-                                                     keras.layers.Subtract()([encoded_right, attended_right]),
-                                                     keras.layers.Multiply()([encoded_right, attended_right])])
+        enhanced_right = keras.layers.concatenate([encoded_right, attended_right,
+                                                   keras.layers.subtract([encoded_right, attended_right]),
+                                                   keras.layers.multiply([encoded_right, attended_right])])
         # Project to the H size
         projection = keras.layers.Dense(hidden_size, activation=keras.layers.ReLU())
         # shape = [B, L, H]
@@ -135,20 +129,24 @@ class ESIM(BaseModel):
         # shape = [B, R, 2*H]
         fusion_right = fusion_layer(projected_right)
         # Do global avg and max pooling and get a fixed-length representation vector
-        avg_left_rep = keras.layers.Lambda(lambda x: K.sum(x * expand_tensor(left_mask), axis=1) /
-                                                     expand_tensor(K.sum(left_mask, axis=1)))(fusion_left)
-        avg_right_rep = keras.layers.Lambda(lambda x: K.sum(x * expand_tensor(right_mask), axis=1) /
-                                                      expand_tensor(K.sum(right_mask, axis=1)))(fusion_right)
-        max_left_rep = keras.layers.Lambda(lambda x: K.max(x + (1 - tile_tensor(left_mask)) * -1e7, axis=1))(
-            fusion_left)
-        max_right_rep = keras.layers.Lambda(lambda x: K.max(x + (1 - tile_tensor(right_mask)) * -1e7, axis=1))(
-            fusion_right)
+        avg_left_rep = keras.layers.Lambda(
+            lambda x: K.sum(x * K.expand_dims(mask_left), axis=1) /
+                      K.expand_dims(K.sum(mask_left, axis=1)))(fusion_left)
+        avg_right_rep = keras.layers.Lambda(
+            lambda x: K.sum(x * K.expand_dims(mask_right), axis=1) /
+                      K.expand_dims(K.sum(mask_right, axis=1)))(fusion_right)
+        max_left_rep = keras.layers.Lambda(
+            lambda x: K.max(x + (1 - tile_tensor(mask_left, -1, [1, 1, 2 * hidden_size])) * -1e7,
+                            axis=1))(fusion_left)
+        max_right_rep = keras.layers.Lambda(
+            lambda x: K.max(x + (1 - tile_tensor(mask_right, -1, [1, 1, 2 * hidden_size])) * -1e7,
+                            axis=1))(fusion_right)
         # shape = [B, 8*H]
-        cls_input = keras.layers.Concatenate()([avg_left_rep, avg_right_rep, max_left_rep, max_right_rep])
-        cls_input = keras.layers.Dropout(
-            rate=self._params['dropout_rate'])(cls_input)
+        mlp_input = keras.layers.concatenate([avg_left_rep, avg_right_rep, max_left_rep, max_right_rep])
+        mlp_input = keras.layers.Dropout(
+            rate=self._params['dropout_rate'])(mlp_input)
         # Output layer
-        mlp = self._make_multi_layer_perceptron_layer()(cls_input)
+        mlp = self._make_multi_layer_perceptron_layer()(mlp_input)
         mlp = keras.layers.Dropout(
             rate=self._params['dropout_rate'])(mlp)
         inputs = [input_left, input_right]
@@ -161,22 +159,21 @@ class ESIM(BaseModel):
                    encoded_right,
                    right_mask):
         # Interaction
-        embed_cross = keras.layers.Dot(axes=2)([encoded_left, encoded_right])
+        embed_cross = keras.layers.dot([encoded_left, encoded_right], axes=2)
         cross_shape = [self._params['input_shapes'][0][0], self._params['input_shapes'][1][0]]
         embed_cross = keras.layers.Reshape(cross_shape)(embed_cross)
-        left2right_attn = self._masked_softmax(embed_cross, left_mask,
-                                               self._params['input_shapes'][0][0],
-                                               self._params['input_shapes'][1][0])
-        # left2right_attn = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(left2right_attn)
+        left_to_right_attn = self._masked_softmax(embed_cross, left_mask,
+                                                  self._params['input_shapes'][0][0],
+                                                  self._params['input_shapes'][1][0])
 
-        right2left_attn = self._masked_softmax(keras.layers.Permute([2, 1])(embed_cross), right_mask,
-                                               self._params['input_shapes'][1][0],
-                                               self._params['input_shapes'][0][0])
+        right_to_left_attn = self._masked_softmax(keras.layers.Permute([2, 1])(embed_cross), right_mask,
+                                                  self._params['input_shapes'][1][0],
+                                                  self._params['input_shapes'][0][0])
 
-        attended_left = self._weighted_sum(left2right_attn,
+        attended_left = self._weighted_sum(left_to_right_attn,
                                            encoded_right,
                                            left_mask)
-        attended_right = self._weighted_sum(right2left_attn,
+        attended_right = self._weighted_sum(right_to_left_attn,
                                             encoded_left,
                                             right_mask)
         return attended_left, attended_right
@@ -188,21 +185,18 @@ class ESIM(BaseModel):
             res = inf * K.tile(K.expand_dims(1 - x, axis=1), [1, base_len, 1])
             return res
 
-        # def fill_mask(x):
-        #     return inf * x
-
         tiled_mask = keras.layers.Lambda(tile_mask)(mask)
         flattened_mask = keras.layers.Flatten()(tiled_mask)
         flattened_input = keras.layers.Flatten()(input)
         softmax_res = keras.layers.Softmax() \
-            (keras.layers.Subtract()([flattened_input, flattened_mask]))
+            (keras.layers.subtract([flattened_input, flattened_mask]))
         output = keras.layers.Reshape([att_len, base_len])(softmax_res)
         return output
 
     def _weighted_sum(self, weights, tensor, mask):
-        weighted_sum = keras.layers.Dot(axes=[2, 1])([weights, tensor])
-        expanded_mask = keras.layers.Lambda(expand_tensor)(mask)
-        return keras.layers.Multiply()([expanded_mask, weighted_sum])
+        weighted_sum = keras.layers.dot([weights, tensor], axes=[2, 1])
+        expanded_mask = keras.layers.Lambda(K.expand_dims)(mask)
+        return keras.layers.multiply([expanded_mask, weighted_sum])
 
 
 def get_mask(x):
@@ -210,9 +204,6 @@ def get_mask(x):
     return K.cast(boolean_mask, K.dtype(x))
 
 
-def expand_tensor(x):
-    return K.expand_dims(x)
-
-
-def sum_tensor(x):
-    return K.sum(x, axis=1)
+def tile_tensor(x, axis, time):
+    res = K.tile(K.expand_dims(x, axis=axis), time)
+    return res
