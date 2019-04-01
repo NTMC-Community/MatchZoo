@@ -71,11 +71,13 @@ class ESIM(BaseModel):
         # Look up embedding matrix and get embed representation
         # shape = [B, L, D]
         embed_left = embedding(input_left)
+
         # shape = [B, R, D]
         embed_right = embedding(input_right)
         # Get the mask for calculating attention
         # shape = [B, L]
         mask_left = keras.layers.Lambda(get_mask)(input_left)
+        # mask_left = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(mask_left)
 
         # shape = [B, R]
         mask_right = keras.layers.Lambda(get_mask)(input_right)
@@ -99,6 +101,8 @@ class ESIM(BaseModel):
         # Make interaction and get the interactive representation
         # shape = [B, L, 2*H]
         # shape = [B, R, 2*H]
+        # encoded_left = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(encoded_left)
+
         attended_left, attended_right = self._attention(encoded_left, mask_left, encoded_right, mask_right)
         # shape = [B, L, 8*H]
         enhanced_left = keras.layers.concatenate([encoded_left, attended_left,
@@ -162,11 +166,11 @@ class ESIM(BaseModel):
         embed_cross = keras.layers.dot([encoded_left, encoded_right], axes=2)
         cross_shape = [self._params['input_shapes'][0][0], self._params['input_shapes'][1][0]]
         embed_cross = keras.layers.Reshape(cross_shape)(embed_cross)
-        left_to_right_attn = self._masked_softmax(embed_cross, left_mask,
+        left_to_right_attn = self._masked_softmax(embed_cross, right_mask,
                                                   self._params['input_shapes'][0][0],
                                                   self._params['input_shapes'][1][0])
 
-        right_to_left_attn = self._masked_softmax(keras.layers.Permute([2, 1])(embed_cross), right_mask,
+        right_to_left_attn = self._masked_softmax(keras.layers.Permute([2, 1])(embed_cross), left_mask,
                                                   self._params['input_shapes'][1][0],
                                                   self._params['input_shapes'][0][0])
 
@@ -178,20 +182,41 @@ class ESIM(BaseModel):
                                             right_mask)
         return attended_left, attended_right
 
+    # def _masked_softmax(self, input, mask, att_len, base_len, epsilon=1e-8):
+    #
+    #     def tile_mask(x):
+    #         res = K.tile(K.expand_dims(x, axis=1), [1, att_len, 1])
+    #         return res
+    #
+    #     tiled_mask = keras.layers.Lambda(tile_mask)(mask)
+    #     reshaped_mask = keras.layers.Lambda(lambda x: K.reshape(x, [-1, base_len]))(tiled_mask)
+    #     reshaped_input = keras.layers.Lambda(lambda x: K.reshape(x, [-1, base_len]))(input)
+    #     softmax_res = keras.layers.Softmax() \
+    #         (keras.layers.multiply([reshaped_input, reshaped_mask]))
+    #     softmax_res = keras.layers.multiply([softmax_res, reshaped_mask])
+    #     softmax_res = keras.layers.Lambda(lambda x: x / K.sum(x, axis=-1, keepdims=True) + epsilon)(softmax_res)
+    #     output = keras.layers.Lambda(lambda x: K.reshape(x, [-1, att_len, base_len]))(softmax_res)
+    #     output = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(output)
+    #     return output
+
     def _masked_softmax(self, input, mask, att_len, base_len):
         inf = 1e8
 
         def tile_mask(x):
-            res = inf * K.tile(K.expand_dims(1 - x, axis=1), [1, base_len, 1])
+            res = inf * K.tile(K.expand_dims(1 - x, axis=1), [1, att_len, 1])
             return res
 
         tiled_mask = keras.layers.Lambda(tile_mask)(mask)
-        flattened_mask = keras.layers.Flatten()(tiled_mask)
-        flattened_input = keras.layers.Flatten()(input)
-        softmax_res = keras.layers.Softmax() \
-            (keras.layers.subtract([flattened_input, flattened_mask]))
-        output = keras.layers.Reshape([att_len, base_len])(softmax_res)
-        return output
+        # tiled_mask = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(tiled_mask)
+
+        # reshaped_mask = keras.layers.Lambda(lambda x: K.reshape(x, [-1, base_len]))(tiled_mask)
+        # reshaped_input = keras.layers.Lambda(lambda x: K.reshape(x, [-1, base_len]))(input)
+        # input = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(input)
+        logits = keras.layers.subtract([input, tiled_mask])
+        softmax_res = keras.layers.Softmax()(logits)
+        # output = keras.layers.Lambda(lambda x: K.reshape(x, [-1, att_len, base_len]))(softmax_res)
+        softmax_res = keras.layers.Lambda(lambda x: K.tf.Print(x, [x]))(softmax_res)
+        return softmax_res
 
     def _weighted_sum(self, weights, tensor, mask):
         weighted_sum = keras.layers.dot([weights, tensor], axes=[2, 1])
