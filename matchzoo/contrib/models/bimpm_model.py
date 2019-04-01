@@ -4,11 +4,13 @@ from keras.models import Model
 from keras.layers import Dense, Concatenate, Dropout
 from keras.layers import Bidirectional, LSTM
 
-from matchzoo import engine
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine.base_model import BaseModel
 from matchzoo.contrib.layers import MultiPerspectiveLayer
 
 
-class BimpmModel(engine.BaseModel):
+class BimpmModel(BaseModel):
     """
     BimpmModel.
 
@@ -23,34 +25,34 @@ class BimpmModel(engine.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls) -> engine.ParamTable:
+    def get_default_params(cls) -> ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params(with_embedding=True)
         params['optimizer'] = 'adam'
 
-        params.add(engine.Param('dim_word_embedding', 50))
+        params.add(Param('dim_word_embedding', 50))
         # TODO(tjf): remove the unused params in the final version
-        params.add(engine.Param('dim_char_embedding', 50))
-        params.add(engine.Param('word_embedding_mat'))
-        params.add(engine.Param('char_embedding_mat'))
-        params.add(engine.Param('embedding_random_scale', 0.2))
-        params.add(engine.Param('activation_embedding', 'softmax'))
+        params.add(Param('dim_char_embedding', 50))
+        params.add(Param('word_embedding_mat'))
+        params.add(Param('char_embedding_mat'))
+        params.add(Param('embedding_random_scale', 0.2))
+        params.add(Param('activation_embedding', 'softmax'))
 
         # Bimpm Setting
-        params.add(engine.Param('perspective', {'full': True,
+        params.add(Param('perspective', {'full': True,
                                                 'max-pooling': True,
                                                 'attentive': True,
                                                 'max-attentive': True}))
-        params.add(engine.Param('mp_dim', 20))
-        params.add(engine.Param('att_dim', 20))
-        params.add(engine.Param('hidden_size', 128))
-        params.add(engine.Param('dropout_rate', 0.0))
-        params.add(engine.Param('w_initializer', 'glorot_uniform'))
-        params.add(engine.Param('b_initializer', 'zeros'))
-        params.add(engine.Param('activation_hidden', 'linear'))
+        params.add(Param('mp_dim', 20))
+        params.add(Param('att_dim', 20))
+        params.add(Param('hidden_size', 128))
+        params.add(Param('dropout_rate', 0.0))
+        params.add(Param('w_initializer', 'glorot_uniform'))
+        params.add(Param('b_initializer', 'zeros'))
+        params.add(Param('activation_hidden', 'linear'))
 
-        params.add(engine.Param('with_match_highway', False))
-        params.add(engine.Param('with_aggregation_highway', False))
+        params.add(Param('with_match_highway', False))
+        params.add(Param('with_aggregation_highway', False))
 
         return params
 
