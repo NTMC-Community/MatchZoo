@@ -6,6 +6,8 @@ import pandas as pd
 import matchzoo as mz
 from keras.utils import to_categorical
 
+from matchzoo.engine.base_task import BaseTask
+from matchzoo.contrib.models import ESIM
 
 @pytest.fixture(scope='module')
 def train_data():
@@ -23,7 +25,7 @@ def test_data():
 
 
 @pytest.fixture(scope='module')
-def task(request) -> mz.engine.BaseTask:
+def task(request) -> BaseTask:
     return mz.tasks.Classification(num_classes=2)
 
 
@@ -82,7 +84,8 @@ def test_duet(train_data_processed,
                  preprocessor):
     """Test esim model."""
     # Create a esim model
-    esim = mz.models.ESIM()
+    # esim = mz.contrib.models.ESIM()
+    esim = ESIM()
     input_shapes = preprocessor.context['input_shapes']
     embed_dimension = preprocessor.context['vocab_size'] + 1
     esim.params['input_shapes'] = input_shapes

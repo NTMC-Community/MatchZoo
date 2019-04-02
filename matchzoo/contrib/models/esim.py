@@ -5,10 +5,15 @@ from keras.layers import * # Dense, Dot, Softmax, Concatenate, Embedding, LSTM, 
 import keras.backend as K
 
 import matchzoo as mz
-from matchzoo import engine
 
 
-class ESIM(engine.base_model.BaseModel):
+from matchzoo.engine.param import Param
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param_table import ParamTable
+
+
+
+class ESIM(BaseModel):
     """
     ESIM model.
 
@@ -35,24 +40,24 @@ class ESIM(engine.base_model.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls)  -> engine.ParamTable:
+    def get_default_params(cls)  -> ParamTable:
         """Get default parameters."""
         params = super().get_default_params(with_embedding=True,
                                             with_multi_layer_perceptron=True)
 
-        params.add(engine.Param(
+        params.add(Param(
             name='dropout_rate',
             value=0.5,
             desc="The dropout rate for all fully-connected layer"
         ))
 
-        params.add(engine.Param(
+        params.add(Param(
             name='lstm_dim',
             value=300,
             desc="The dimension of LSTM layer."
         ))
 
-        params.add(engine.Param(
+        params.add(Param(
             name='mask_value',
             value=0,
             desc="The value would be regarded as pad"
@@ -62,7 +67,7 @@ class ESIM(engine.base_model.BaseModel):
 
     def compile(self, optimizer=None):
         """
-        Overwrite the engine.BaseModel.compile() to allow self-defined optimizer and learning rate
+        Overwrite the BaseModel.compile() to allow self-defined optimizer and learning rate
 
         Examples:
             >>> from matchzoo import models
@@ -98,7 +103,7 @@ class ESIM(engine.base_model.BaseModel):
     
     def _make_embedding_layer(self, name: str = 'embedding') -> keras.layers.Layer:
         """
-        Overwrite the engine.BaseModel._make_embedding_layer to allow specifiying mask_zero
+        Overwrite the BaseModel._make_embedding_layer to allow specifiying mask_zero
         """
         return keras.layers.Embedding(
             self._params['embedding_input_dim'],
