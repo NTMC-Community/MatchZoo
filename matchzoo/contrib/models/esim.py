@@ -5,10 +5,10 @@ from keras.layers import * # Dense, Dot, Softmax, Concatenate, Embedding, LSTM, 
 import keras.backend as K
 
 import matchzoo as mz
-from matchzoo import engine, preprocessors
+from matchzoo import engine
 
 
-class ESIM(engine.BaseModel):
+class ESIM(engine.base_model.BaseModel):
     """
     ESIM model.
 
