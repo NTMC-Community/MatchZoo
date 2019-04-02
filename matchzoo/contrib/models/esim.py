@@ -69,9 +69,10 @@ class ESIM(BaseModel):
         )
         return [input_left, input_right]
 
-    def _make_embedding_layer(self, name='embedding') -> keras.layers.Layer:
+    def _make_embedding_layer(self, 
+                              name: str = 'embedding') -> keras.layers.Layer:
         """
-        Overwrite the BaseModel._make_embedding_layer to allow
+        Overwrite the :meth:`BaseModel._make_embedding_layer` to allow
         specifiying mask_zero.
 
         :param name: name for embedding layer, default 'embedding'
@@ -84,7 +85,7 @@ class ESIM(BaseModel):
             name=name
         )
 
-    def _expand_dim(self, inp, axis) -> keras.layers.Layer:
+    def _expand_dim(self, inp: tf.Tensor, axis: int) -> keras.layers.Layer:
         """
         Wrap keras.backend.expand_dims into a Lambda layer.
 
@@ -102,7 +103,7 @@ class ESIM(BaseModel):
             lambda weight_mask: weight_mask[0] + (1.0 - weight_mask[1]) * -1e7,
             name="atten_mask")
 
-    def _make_BiLSTM_layer(self, lstm_dim) -> keras.layers.Layer:
+    def _make_BiLSTM_layer(self, lstm_dim: int) -> keras.layers.Layer:
         """
         Bidirectional LSTM layer in ESIM.
 
@@ -113,7 +114,7 @@ class ESIM(BaseModel):
             layer=keras.layers.LSTM(lstm_dim, return_sequences=True),
             merge_mode='concat')
 
-    def _max(self, texts, mask) -> tf.Tensor:
+    def _max(self, texts: tf.Tensor, mask: tf.Tensor) -> tf.Tensor:
         """
         Compute the max of each text according to their real length
 
@@ -130,7 +131,7 @@ class ESIM(BaseModel):
 
         return text_max
 
-    def _avg(self, texts, mask) -> tf.Tensor:
+    def _avg(self, texts: tf.Tensor, mask: tf.Tensor) -> tf.Tensor:
         """
         Compute the mean of each text according to their real length
 
@@ -151,7 +152,6 @@ class ESIM(BaseModel):
 
     def build(self):
         """Build model."""
-
         # parameters
         lstm_dim = self._params['lstm_dim']
         dropout_rate = self._params['dropout_rate']
@@ -174,24 +174,18 @@ class ESIM(BaseModel):
         a_mask = create_mask(a)         # [B, T_a]
         b_mask = create_mask(b)         # [B, T_b]
 
-        ########################
         # encoding
-        ########################
         a_emb = dropout(embedding(a))   # [B, T_a, E_dim]
         b_emb = dropout(embedding(b))   # [B, T_b, E_dim]
 
         a_ = lstm_compare(a_emb)          # [B, T_a, H*2]
         b_ = lstm_compare(b_emb)          # [B, T_b, H*2]
 
-        ########################
         # local inference
-        ########################
-        # similarity matrix
-        e = keras.layers.Dot(axes=-1)([a_, b_])  # [B, T_a, T_b]
-        _ab_mask = keras.layers.Multiply()(
+        e = keras.layers.Dot(axes=-1)([a_, b_])   # [B, T_a, T_b]
+        _ab_mask = keras.layers.Multiply()(       # _ab_mask: [B, T_a, T_b]
             [self._expand_dim(a_mask, axis=2),    # [B, T_a, 1]
              self._expand_dim(b_mask, axis=1)])   # [B, 1, T_b]
-        # _ab_mask: [B, T_a, T_b]
 
         pm = keras.layers.Permute((2, 1))
         mask_layer = self._make_atten_mask_layer()
@@ -220,9 +214,7 @@ class ESIM(BaseModel):
         m_a = dropout(dense_compare(m_a))   # [B, T_a, H]
         m_b = dropout(dense_compare(m_b))   # [B, T_a, H]
 
-        ########################
         # inference composition
-        ########################
         v_a = lstm_compose(m_a)          # [B, T_a, H*2]
         v_b = lstm_compose(m_b)          # [B, T_b, H*2]
 
