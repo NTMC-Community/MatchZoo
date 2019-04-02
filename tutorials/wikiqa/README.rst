@@ -92,3 +92,26 @@ MatchLSTM
   10  dropout_rate          0.5
 ====  ====================  ======================================================
 
+MatchPyramid
+############
+
+====  ====================  ====================================================
+  ..  Name                  Value
+====  ====================  ====================================================
+   0  model_class           <class 'matchzoo.models.match_pyramid.MatchPyramid'>
+   1  input_shapes          [(10,), (40,)]
+   2  task                  Ranking Task
+   3  optimizer             adam
+   4  with_embedding        True
+   5  embedding_input_dim   16546
+   6  embedding_output_dim  300
+   7  embedding_trainable   True
+   8  num_blocks            2
+   9  kernel_count          [16, 32]
+  10  kernel_size           [[3, 3], [3, 3]]
+  11  activation            relu
+  12  dpool_size            [3, 10]
+  13  padding               same
+  14  dropout_rate          0.1
+====  ====================  ====================================================
+

@@ -61,11 +61,15 @@ class MatchPyramid(BaseModel):
         MatchPyramid text matching as image recognition.
         """
         input_left, input_right = self._make_inputs()
-        input_dpool_index = keras.layers.Input(
-            name='dpool_index',
-            shape=[self._params['input_shapes'][0][0],
-                   self._params['input_shapes'][1][0],
-                   2],
+
+        length_left = keras.layers.Input(
+            name='length_left',
+            shape=(1,),
+            dtype='int32')
+
+        length_right = keras.layers.Input(
+            name='length_right',
+            shape=(1,),
             dtype='int32')
 
         embedding = self._make_embedding_layer()
@@ -88,12 +92,12 @@ class MatchPyramid(BaseModel):
         # Dynamic Pooling
         dpool_layer = matchzoo.layers.DynamicPoolingLayer(
             *self._params['dpool_size'])
-        embed_pool = dpool_layer([embed_cross, input_dpool_index])
+        embed_pool = dpool_layer([embed_cross, length_left, length_right])
 
         embed_flat = keras.layers.Flatten()(embed_pool)
         x = keras.layers.Dropout(rate=self._params['dropout_rate'])(embed_flat)
 
-        inputs = [input_left, input_right, input_dpool_index]
+        inputs = [input_left, input_right, length_left, length_right]
         x_out = self._make_output_layer()(x)
         self._backend = keras.Model(inputs=inputs, outputs=x_out)
 

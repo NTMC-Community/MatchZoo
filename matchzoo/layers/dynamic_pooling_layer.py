@@ -49,17 +49,21 @@ class DynamicPoolingLayer(Layer):
 
         :param inputs: two input tensors.
         """
-        x, dpool_index = inputs
-        dpool_shape = K.tf.shape(dpool_index)
-        batch_index_one = K.tf.expand_dims(
-            K.tf.expand_dims(
-                K.tf.range(dpool_shape[0]), axis=-1),
-            axis=-1)
-        batch_index = K.tf.expand_dims(
-            K.tf.tile(batch_index_one, [1, self._msize1, self._msize2]),
-            axis=-1)
-        dpool_index_ex = K.tf.concat([batch_index, dpool_index], axis=3)
-        x_expand = K.tf.gather_nd(x, dpool_index_ex)
+        x, length_left, length_right = inputs
+        batch_size = K.tf.shape(x)[0]
+        x_expand = K.tf.image.crop_and_resize(
+            image = x,
+            boxes = K.tf.stack([
+                K.tf.zeros((batch_size, )),
+                K.tf.zeros((batch_size, )),
+                K.tf.cast(K.tf.squeeze(length_left), K.tf.float32) / self._msize1,
+                K.tf.cast(K.tf.squeeze(length_right), K.tf.float32) / self._msize2
+            ], axis = -1),
+            box_ind = K.tf.range(0, limit=batch_size),
+            crop_size = (self._msize1, self._msize2),
+            method = 'nearest'
+        )
+
         stride1 = self._msize1 / self._psize1
         stride2 = self._msize2 / self._psize2
 
