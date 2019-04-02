@@ -3,9 +3,9 @@ import shutil
 import pytest
 import numpy as np
 import pandas as pd
-import matchzoo as mz
 from keras.utils import to_categorical
 
+import matchzoo as mz
 from matchzoo.engine.base_task import BaseTask
 from matchzoo.contrib.models import ESIM
 
