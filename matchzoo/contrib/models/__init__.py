@@ -1,2 +1,2 @@
 from .match_lstm import MatchLSTM
-from .bimpm_model import BiMpM
+from .bimpm_model import BiMPM

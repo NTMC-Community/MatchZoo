@@ -1,4 +1,4 @@
-"""BiMpM."""
+"""BiMPM."""
 
 from keras.models import Model
 from keras.layers import Dense, Concatenate, Dropout
@@ -10,15 +10,15 @@ from matchzoo.engine.base_model import BaseModel
 from matchzoo.contrib.layers import MultiPerspectiveLayer
 
 
-class BiMpM(BaseModel):
+class BiMPM(BaseModel):
     """
-    BiMpM.
+    BiMPM.
 
     Reference:
     https://github.com/zhiguowang/BiMPM/blob/master/src/SentenceMatchModelGraph.py#L43-L186
     Examples:
         >>> import matchzoo as mz
-        >>> model = mz.contrib.models.BiMpM()
+        >>> model = mz.contrib.models.BiMPM()
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -38,7 +38,7 @@ class BiMpM(BaseModel):
         # params.add(Param('embedding_random_scale', 0.2))
         # params.add(Param('activation_embedding', 'softmax'))
 
-        # BiMpM Setting
+        # BiMPM Setting
         params.add(Param('perspective', {'full': True,
                                          'max-pooling': True,
                                          'attentive': True,
