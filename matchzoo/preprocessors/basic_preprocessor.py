@@ -146,4 +146,20 @@ class BasicPreprocessor(BasePreprocessor):
         data_pack.right['length_right'] = \
             data_pack.right['length_right'].apply(
                 lambda val: min(val, max_len_right))
+
+        # filter the sample with 0-length text_left or text_right in data_pack
+        keep_right_ids = set()
+        for i in range(data_pack.right.shape[0]):
+            if data_pack.right['length_right'][i] > 0:
+                keep_right_ids.add(data_pack.right.index[i])
+        keep_left_ids = set()
+        for i in range(data_pack.left.shape[0]):
+            if data_pack.left['length_left'][i] > 0:
+                keep_left_ids.add(data_pack.left.index[i])
+        keep_relation_ids = []
+        for i in range(data_pack.relation.shape[0]):
+            if data_pack.relation['id_left'][i] in keep_left_ids and \
+                    data_pack.relation['id_right'][i] in keep_right_ids:
+                keep_relation_ids.append(i)
+        data_pack = data_pack[keep_relation_ids]
         return data_pack
