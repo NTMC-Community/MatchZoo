@@ -72,9 +72,10 @@ def data(train_raw, preprocessor, gen_builder):
 @pytest.mark.slow
 def test_model_fit_eval_predict(model, data):
     x, y = data
-    assert model.fit(x, y, batch_size=len(x), verbose=0)
-    assert model.evaluate(x, y, batch_size=len(x))
-    assert model.predict(x, batch_size=len(x)) is not None
+    batch_size = len(x['id_left'])
+    assert model.fit(x, y, batch_size=batch_size, verbose=0)
+    assert model.evaluate(x, y, batch_size=batch_size)
+    assert model.predict(x, batch_size=batch_size) is not None
 
 
 @pytest.mark.skip('too time consuming, need a better way to test this')
