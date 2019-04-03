@@ -1,4 +1,4 @@
-"""Bimpm."""
+"""BiMpM."""
 
 from keras.models import Model
 from keras.layers import Dense, Concatenate, Dropout
@@ -10,15 +10,15 @@ from matchzoo.engine.base_model import BaseModel
 from matchzoo.contrib.layers import MultiPerspectiveLayer
 
 
-class BimpmModel(BaseModel):
+class BiMpM(BaseModel):
     """
-    BimpmModel.
+    BiMpM.
 
     Reference:
     https://github.com/zhiguowang/BiMPM/blob/master/src/SentenceMatchModelGraph.py#L43-L186
     Examples:
         >>> import matchzoo as mz
-        >>> model = mz.contrib.models.BimpmModel()
+        >>> model = mz.contrib.models.BiMpM()
         >>> model.guess_and_fill_missing_params(verbose=0)
         >>> model.build()
 
@@ -30,19 +30,19 @@ class BimpmModel(BaseModel):
         params = super().get_default_params(with_embedding=True)
         params['optimizer'] = 'adam'
 
-        params.add(Param('dim_word_embedding', 50))
-        # TODO(tjf): remove the unused params in the final version
-        params.add(Param('dim_char_embedding', 50))
-        params.add(Param('word_embedding_mat'))
-        params.add(Param('char_embedding_mat'))
-        params.add(Param('embedding_random_scale', 0.2))
-        params.add(Param('activation_embedding', 'softmax'))
+        # params.add(Param('dim_word_embedding', 50))
+        # TODO(tjf): remove unused params in the final version
+        # params.add(Param('dim_char_embedding', 50))
+        # params.add(Param('word_embedding_mat'))
+        # params.add(Param('char_embedding_mat'))
+        # params.add(Param('embedding_random_scale', 0.2))
+        # params.add(Param('activation_embedding', 'softmax'))
 
-        # Bimpm Setting
+        # BiMpM Setting
         params.add(Param('perspective', {'full': True,
-                                                'max-pooling': True,
-                                                'attentive': True,
-                                                'max-attentive': True}))
+                                         'max-pooling': True,
+                                         'attentive': True,
+                                         'max-attentive': True}))
         params.add(Param('mp_dim', 20))
         params.add(Param('att_dim', 20))
         params.add(Param('hidden_size', 128))
