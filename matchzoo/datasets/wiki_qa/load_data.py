@@ -13,17 +13,24 @@ _url = "https://download.microsoft.com/download/E/5/F/" \
        "E5FCFCEE-7005-4814-853D-DAA7C66507E0/WikiQACorpus.zip"
 
 
-def load_data(stage: str = 'train', task: str = 'ranking', filter: str = False
-              ) -> typing.Union[matchzoo.DataPack, tuple]:
+def load_data(
+    stage: str = 'train',
+    task: str = 'ranking',
+    filtered: bool = False,
+    return_classes: bool = False
+) -> typing.Union[matchzoo.DataPack, tuple]:
     """
     Load WikiQA data.
 
     :param stage: One of `train`, `dev`, and `test`.
     :param task: Could be one of `ranking`, `classification` or a
         :class:`matchzoo.engine.BaseTask` instance.
-    :param filter: Whether remove the questions without correct answers.
-    :return: A DataPack if `ranking`, a tuple of (DataPack, classes) if
-        `classification`.
+    :param filtered: Whether remove the questions without correct answers.
+    :param return_classes: `True` to return classes for classification task,
+        `False` otherwise.
+
+    :return: A DataPack unless `task` is `classificiation` and `return_classes`
+        is `True`: a tuple of `(DataPack, classes)` in that case.
     """
     if stage not in ('train', 'dev', 'test'):
         raise ValueError(f"{stage} is not a valid stage."
@@ -32,7 +39,7 @@ def load_data(stage: str = 'train', task: str = 'ranking', filter: str = False
     data_root = _download_data()
     file_path = data_root.joinpath(f'WikiQA-{stage}.tsv')
     data_pack = _read_data(file_path)
-    if filter and stage in ('dev', 'test'):
+    if filtered and stage in ('dev', 'test'):
         ref_path = data_root.joinpath(f'WikiQA-{stage}.ref')
         filter_ref_path = data_root.joinpath(f'WikiQA-{stage}-filtered.ref')
         with open(filter_ref_path, mode='r') as f:
@@ -53,9 +60,13 @@ def load_data(stage: str = 'train', task: str = 'ranking', filter: str = False
         return data_pack
     elif isinstance(task, matchzoo.tasks.Classification):
         data_pack.one_hot_encode_label(task.num_classes, inplace=True)
-        return data_pack, [False, True]
+        if return_classes:
+            return data_pack, [False, True]
+        else:
+            return data_pack
     else:
-        raise ValueError(f"{task} is not a valid task.")
+        raise ValueError(f"{task} is not a valid task."
+                         f"Must be one of `Ranking` and `Classification`.")
 
 
 def _download_data():

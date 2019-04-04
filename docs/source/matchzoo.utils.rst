@@ -4,6 +4,14 @@ matchzoo.utils package
 Submodules
 ----------
 
+matchzoo.utils.list\_recursive\_subclasses module
+-------------------------------------------------
+
+.. automodule:: matchzoo.utils.list_recursive_subclasses
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matchzoo.utils.one\_hot module
 ------------------------------
 

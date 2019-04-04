@@ -1,10 +1,10 @@
 """Mean average precision metric for ranking."""
 import numpy as np
 
-from matchzoo import engine
+from matchzoo.engine.base_metric import BaseMetric, sort_and_couple
 
 
-class MeanAveragePrecision(engine.BaseMetric):
+class MeanAveragePrecision(BaseMetric):
     """Mean average precision metric."""
 
     ALIAS = ['mean_average_precision', 'map']
@@ -37,7 +37,7 @@ class MeanAveragePrecision(engine.BaseMetric):
         """
         result = 0.
         pos = 0
-        coupled_pair = engine.sort_and_couple(y_true, y_pred)
+        coupled_pair = sort_and_couple(y_true, y_pred)
         for idx, (label, score) in enumerate(coupled_pair):
             if label > self._threshold:
                 pos += 1.

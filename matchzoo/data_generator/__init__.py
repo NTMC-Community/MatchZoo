@@ -1,8 +1,3 @@
+from . import callbacks
 from .data_generator import DataGenerator
-from .pair_data_generator import PairDataGenerator
-from .dynamic_data_generator import DynamicDataGenerator
-from .dpool_data_generator import DPoolDataGenerator
-from .dpool_data_generator import DPoolPairDataGenerator
-from .histogram_data_generator import HistogramDataGenerator
-from .histogram_data_generator import HistogramPairDataGenerator
-
+from .data_generator_builder import DataGeneratorBuilder

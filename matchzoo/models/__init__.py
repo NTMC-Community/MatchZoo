@@ -13,6 +13,8 @@ from .drmm import DRMM
 from .anmm import ANMM
 from .mvlstm import MVLSTM
 
-import matchzoo
-def list_available():
-    return matchzoo.engine.BaseModel.__subclasses__()
+
+def list_available() -> list:
+    from matchzoo.engine.base_model import BaseModel
+    from matchzoo.utils import list_recursive_concrete_subclasses
+    return list_recursive_concrete_subclasses(BaseModel)

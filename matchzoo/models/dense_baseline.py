@@ -2,10 +2,12 @@
 
 import keras.layers
 
-from matchzoo import engine
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine import hyper_spaces
 
 
-class DenseBaseline(engine.BaseModel):
+class DenseBaseline(BaseModel):
     """
     A simple densely connected baseline model.
 
@@ -22,14 +24,14 @@ class DenseBaseline(engine.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls) -> engine.ParamTable:
+    def get_default_params(cls) -> ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params(with_multi_layer_perceptron=True)
         params['mlp_num_units'] = 256
         params.get('mlp_num_units').hyper_space = \
-            engine.hyper_spaces.quniform(16, 512)
+            hyper_spaces.quniform(16, 512)
         params.get('mlp_num_layers').hyper_space = \
-            engine.hyper_spaces.quniform(1, 5)
+            hyper_spaces.quniform(1, 5)
         return params
 
     def build(self):

@@ -3,11 +3,13 @@ import typing
 
 import keras
 
-from matchzoo import engine
-from matchzoo import preprocessors
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine import hyper_spaces
 
 
-class ArcI(engine.BaseModel):
+class ArcI(BaseModel):
     """
     ArcI Model.
 
@@ -32,47 +34,47 @@ class ArcI(engine.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls) -> engine.ParamTable:
+    def get_default_params(cls) -> ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params(
             with_embedding=True,
             with_multi_layer_perceptron=True
         )
         params['optimizer'] = 'adam'
-        params.add(engine.Param(name='num_blocks', value=1,
-                                desc="Number of convolution blocks."))
-        params.add(engine.Param(name='left_filters', value=[32],
-                                desc="The filter size of each convolution "
-                                     "blocks for the left input."))
-        params.add(engine.Param(name='left_kernel_sizes', value=[3],
-                                desc="The kernel size of each convolution "
-                                     "blocks for the left input."))
-        params.add(engine.Param(name='right_filters', value=[32],
-                                desc="The filter size of each convolution "
-                                     "blocks for the right input."))
-        params.add(engine.Param(name='right_kernel_sizes', value=[3],
-                                desc="The kernel size of each convolution "
-                                     "blocks for the right input."))
-        params.add(engine.Param(name='conv_activation_func', value='relu',
-                                desc="The activation function in the "
-                                     "convolution layer."))
-        params.add(engine.Param(name='left_pool_sizes', value=[2],
-                                desc="The pooling size of each convolution "
-                                     "blocks for the left input."))
-        params.add(engine.Param(name='right_pool_sizes', value=[2],
-                                desc="The pooling size of each convolution "
-                                     "blocks for the right input."))
-        params.add(engine.Param(
+        params.add(Param(name='num_blocks', value=1,
+                         desc="Number of convolution blocks."))
+        params.add(Param(name='left_filters', value=[32],
+                         desc="The filter size of each convolution "
+                              "blocks for the left input."))
+        params.add(Param(name='left_kernel_sizes', value=[3],
+                         desc="The kernel size of each convolution "
+                              "blocks for the left input."))
+        params.add(Param(name='right_filters', value=[32],
+                         desc="The filter size of each convolution "
+                              "blocks for the right input."))
+        params.add(Param(name='right_kernel_sizes', value=[3],
+                         desc="The kernel size of each convolution "
+                              "blocks for the right input."))
+        params.add(Param(name='conv_activation_func', value='relu',
+                         desc="The activation function in the "
+                              "convolution layer."))
+        params.add(Param(name='left_pool_sizes', value=[2],
+                         desc="The pooling size of each convolution "
+                              "blocks for the left input."))
+        params.add(Param(name='right_pool_sizes', value=[2],
+                         desc="The pooling size of each convolution "
+                              "blocks for the right input."))
+        params.add(Param(
             name='padding',
             value='same',
-            hyper_space=engine.hyper_spaces.choice(
+            hyper_space=hyper_spaces.choice(
                 ['same', 'valid', 'causal']),
             desc="The padding mode in the convolution layer. It should be one"
                  "of `same`, `valid`, and `causal`."
         ))
-        params.add(engine.Param(
+        params.add(Param(
             'dropout_rate', 0.0,
-            hyper_space=engine.hyper_spaces.quniform(
+            hyper_space=hyper_spaces.quniform(
                 low=0.0, high=0.8, q=0.01),
             desc="The dropout rate."
         ))

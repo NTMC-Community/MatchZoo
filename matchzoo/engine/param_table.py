@@ -2,8 +2,10 @@
 
 import typing
 import pandas as pd
+import collections.abc
 
-from matchzoo.engine import Param, hyper_spaces
+from matchzoo.engine.param import Param
+from matchzoo.engine import hyper_spaces
 
 
 class ParamTable(object):
@@ -39,8 +41,8 @@ class ParamTable(object):
             raise TypeError("Only accepts a Param instance.")
         if param.name in self._params:
             msg = f"Parameter named {param.name} already exists.\n" \
-                  f"To re-assign parameter {param.name} value, " \
-                  f"use `params[\"{param.name}\"] = value` instead."
+                f"To re-assign parameter {param.name} value, " \
+                f"use `params[\"{param.name}\"] = value` instead."
             raise ValueError(msg)
         self._params[param.name] = param
 
@@ -51,7 +53,7 @@ class ParamTable(object):
     def set(self, key, param: Param):
         """Set `key` to parameter `param`."""
         if not isinstance(param, Param):
-            raise ValueError
+            raise ValueError("Only accepts a Param instance.")
         self._params[key] = param
 
     @property
@@ -74,9 +76,9 @@ class ParamTable(object):
 
         Example:
             >>> import matchzoo as mz
-            >>> table = mz.engine.ParamTable()
-            >>> table.add(mz.engine.Param(name='x', value=10, desc='my x'))
-            >>> table.add(mz.engine.Param(name='y', value=20, desc='my y'))
+            >>> table = mz.ParamTable()
+            >>> table.add(mz.Param(name='x', value=10, desc='my x'))
+            >>> table.add(mz.Param(name='y', value=20, desc='my y'))
             >>> table.to_frame()
               Name Description  Value Hyper-Space
             0    x        my x     10        None
@@ -130,10 +132,38 @@ class ParamTable(object):
         """
         return all(param for param in self)
 
-    def keys(self) -> typing.KeysView:
+    def keys(self) -> collections.abc.KeysView:
         """:return: Parameter table keys."""
         return self._params.keys()
 
     def __contains__(self, item):
         """:return: `True` if parameter in parameters."""
         return item in self._params
+
+    def update(self, other: dict):
+        """
+        Update `self`.
+
+        Update `self` with the key/value pairs from other, overwriting
+        existing keys. Notice that this does not add new keys to `self`.
+
+        This method is usually used by models to obtain useful information
+        from a preprocessor's context.
+
+        :param other: The dictionary used update.
+
+        Example:
+            >>> import matchzoo as mz
+            >>> model = mz.models.DenseBaseline()
+            >>> model.params['input_shapes'] is None
+            True
+            >>> prpr = model.get_default_preprocessor()
+            >>> _ = prpr.fit(mz.datasets.toy.load_data(), verbose=0)
+            >>> model.params.update(prpr.context)
+            >>> model.params['input_shapes']
+            [(30,), (30,)]
+
+        """
+        for key in other:
+            if key in self:
+                self[key] = other[key]

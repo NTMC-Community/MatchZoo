@@ -10,3 +10,4 @@ pandas >= 0.23.1
 sphinx_autodoc_typehints>=1.6.0
 tensorflow
 tabulate >= 0.8.2
+nbsphinx

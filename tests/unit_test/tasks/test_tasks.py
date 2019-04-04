@@ -3,10 +3,6 @@ import pytest
 from matchzoo import tasks
 
 
-def test_list_available_task_types():
-    assert tasks.list_available_task_types()
-
-
 @pytest.mark.parametrize("task_type", [
     tasks.Ranking, tasks.Classification
 ])
@@ -25,7 +21,3 @@ def test_classification_instantiation_failure(arg):
 def test_classification_num_classes(arg):
     task = tasks.Classification(num_classes=arg)
     assert task.num_classes == arg
-
-
-def test_list_available_tasks():
-    assert tasks.list_available_task_types()

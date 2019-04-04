@@ -1,10 +1,10 @@
 """Precision for ranking."""
 import numpy as np
 
-from matchzoo import engine
+from matchzoo.engine.base_metric import BaseMetric, sort_and_couple
 
 
-class Precision(engine.BaseMetric):
+class Precision(BaseMetric):
     """Precision metric."""
 
     ALIAS = 'precision'
@@ -45,8 +45,9 @@ class Precision(engine.BaseMetric):
         :raises: ValueError: len(r) must be >= k.
         """
         if self._k <= 0:
-            raise ValueError('self._k must be larger than 0.')
-        coupled_pair = engine.sort_and_couple(y_true, y_pred)
+            raise ValueError(f"k must be greater than 0."
+                             f"{self._k} received.")
+        coupled_pair = sort_and_couple(y_true, y_pred)
         precision = 0.0
         for idx, (label, score) in enumerate(coupled_pair):
             if idx >= self._k:

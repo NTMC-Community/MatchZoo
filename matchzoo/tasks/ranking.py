@@ -1,10 +1,9 @@
 """Ranking task."""
 
-import matchzoo as mz
-from matchzoo import engine
+from matchzoo.engine import base_task
 
 
-class Ranking(engine.BaseTask):
+class Ranking(base_task.BaseTask):
     """Ranking Task.
 
     Examples:

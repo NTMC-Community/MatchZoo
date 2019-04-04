@@ -1,18 +1,16 @@
 """An implementation of aNMM Model."""
 
-
-import logging
-
 import keras
 from keras.activations import softmax
 from keras.initializers import RandomUniform
 
-from matchzoo import engine
+from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
+from matchzoo.engine import hyper_spaces
 
-logger = logging.getLogger(__name__)
 
-
-class ANMM(engine.BaseModel):
+class ANMM(BaseModel):
     """
     ANMM Model.
 
@@ -24,17 +22,24 @@ class ANMM(engine.BaseModel):
     """
 
     @classmethod
-    def get_default_params(cls) -> engine.ParamTable:
+    def get_default_params(cls) -> ParamTable:
         """:return: model default parameters."""
         params = super().get_default_params(with_embedding=True)
-        params.add(engine.Param(name='dropout_rate', value=0.1,
-                                desc="The dropout rate."))
-        params.add(engine.Param(name='num_layers', value=2,
-                                desc="Number of hidden layers in the MLP "
-                                     "layer."))
-        params.add(engine.Param(name='hidden_sizes', value=[30, 30],
-                                desc="Number of hidden size for each hidden"
-                                     " layer"))
+        params.add(Param(
+            name='dropout_rate', value=0.1,
+            desc="The dropout rate.",
+            hyper_space=hyper_spaces.quniform(0, 1, 0.05)
+        ))
+        params.add(Param(
+            name='num_layers', value=2,
+            desc="Number of hidden layers in the MLP "
+                 "layer."
+        ))
+        params.add(Param(
+            name='hidden_sizes', value=[30, 30],
+            desc="Number of hidden size for each hidden"
+                 " layer"
+        ))
         return params
 
     def build(self):
@@ -69,5 +74,6 @@ class ANMM(engine.BaseModel):
             d_bin)
         d_bin = keras.layers.Reshape((q_text_len,))(d_bin)
         q_attention = keras.layers.Reshape((q_text_len,))(q_attention)
-        out = keras.layers.Dot(axes=[1, 1])([d_bin, q_attention])
-        self._backend = keras.Model(inputs=[query, doc], outputs=out)
+        score = keras.layers.Dot(axes=[1, 1])([d_bin, q_attention])
+        x_out = self._make_output_layer()(score)
+        self._backend = keras.Model(inputs=[query, doc], outputs=x_out)

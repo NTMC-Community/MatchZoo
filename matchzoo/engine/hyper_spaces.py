@@ -115,22 +115,6 @@ class HyperoptProxy(object):
         """__rpow__."""
         return _wrap_as_composite_func(self, other, lambda x, y: y ** x)
 
-    def __gt__(self, other):
-        """__gt__."""
-        return _wrap_as_composite_func(self, other, lambda x, y: x > y)
-
-    def __ge__(self, other):
-        """__ge__."""
-        return _wrap_as_composite_func(self, other, lambda x, y: x >= y)
-
-    def __lt__(self, other):
-        """__lt__."""
-        return _wrap_as_composite_func(self, other, lambda x, y: x < y)
-
-    def __le__(self, other):
-        """__le__."""
-        return _wrap_as_composite_func(self, other, lambda x, y: x <= y)
-
     def __neg__(self):
         """__neg__."""
         return _wrap_as_composite_func(self, None, lambda x, _: -x)
@@ -212,3 +196,21 @@ class uniform(HyperoptProxy):
     def __str__(self):
         """:return: `str` representation of the hyper space."""
         return f'uniform distribution in  [{self._low}, {self._high})'
+
+
+def sample(space):
+    """
+    Take a sample in the hyper space.
+
+    This method is stateless, so the distribution of the samples is different
+    from that of `tune` call. This function just gives a general idea of what
+    a sample from the `space` looks like.
+
+    Example:
+        >>> import matchzoo as mz
+        >>> space = mz.models.Naive.get_default_params().hyper_space
+        >>> mz.hyper_spaces.sample(space)  # doctest: +ELLIPSIS
+        {'optimizer': ...}
+
+    """
+    return hyperopt.pyll.stochastic.sample(space)

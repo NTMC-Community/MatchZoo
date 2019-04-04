@@ -1,10 +1,10 @@
 """Mean reciprocal ranking metric."""
 import numpy as np
 
-from matchzoo import engine
+from matchzoo.engine.base_metric import BaseMetric, sort_and_couple
 
 
-class MeanReciprocalRank(engine.BaseMetric):
+class MeanReciprocalRank(BaseMetric):
     """Mean reciprocal rank metric."""
 
     ALIAS = ['mean_reciprocal_rank', 'mrr']
@@ -36,7 +36,7 @@ class MeanReciprocalRank(engine.BaseMetric):
         :param y_pred: The predicted scores of each document.
         :return: Mean reciprocal rank.
         """
-        coupled_pair = engine.sort_and_couple(y_true, y_pred)
+        coupled_pair = sort_and_couple(y_true, y_pred)
         for idx, (label, pred) in enumerate(coupled_pair):
             if label > self._threshold:
                 return 1. / (idx + 1)

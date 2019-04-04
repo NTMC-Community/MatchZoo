@@ -49,3 +49,8 @@ class RankCrossEntropyLoss(object):
         logits = K.concatenate(logits, axis=-1)
         labels = K.concatenate(labels, axis=-1)
         return -K.mean(K.sum(labels * K.log(K.softmax(logits)), axis=-1))
+
+    @property
+    def num_neg(self):
+        """`num_neg` getter."""
+        return self._num_neg

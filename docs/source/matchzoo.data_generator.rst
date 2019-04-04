@@ -1,6 +1,13 @@
 matchzoo.data\_generator package
 ================================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    matchzoo.data_generator.callbacks
+
 Submodules
 ----------
 
@@ -12,34 +19,10 @@ matchzoo.data\_generator.data\_generator module
     :undoc-members:
     :show-inheritance:
 
-matchzoo.data\_generator.dpool\_data\_generator module
-------------------------------------------------------
-
-.. automodule:: matchzoo.data_generator.dpool_data_generator
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matchzoo.data\_generator.dynamic\_data\_generator module
+matchzoo.data\_generator.data\_generator\_builder module
 --------------------------------------------------------
 
-.. automodule:: matchzoo.data_generator.dynamic_data_generator
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matchzoo.data\_generator.histogram\_data\_generator module
-----------------------------------------------------------
-
-.. automodule:: matchzoo.data_generator.histogram_data_generator
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matchzoo.data\_generator.pair\_data\_generator module
------------------------------------------------------
-
-.. automodule:: matchzoo.data_generator.pair_data_generator
+.. automodule:: matchzoo.data_generator.data_generator_builder
     :members:
     :undoc-members:
     :show-inheritance:

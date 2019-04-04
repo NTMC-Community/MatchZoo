@@ -7,8 +7,7 @@ from pathlib import Path
 
 import dill
 
-from matchzoo import DataPack
-from matchzoo import processor_units
+import matchzoo as mz
 
 
 def validate_context(func):
@@ -49,7 +48,11 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         return self._context
 
     @abc.abstractmethod
-    def fit(self, data_pack: DataPack, verbose=1) -> 'BasePreprocessor':
+    def fit(
+        self,
+        data_pack: 'mz.DataPack',
+        verbose: int = 1
+    ) -> 'BasePreprocessor':
         """
         Fit parameters on input data.
 
@@ -64,7 +67,11 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         """
 
     @abc.abstractmethod
-    def transform(self, data_pack: DataPack, verbose=1) -> DataPack:
+    def transform(
+        self,
+        data_pack: 'mz.DataPack',
+        verbose: int = 1
+    ) -> 'mz.DataPack':
         """
         Transform input data to expected manner.
 
@@ -76,7 +83,11 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
             or list of text-left, text-right tuples.
         """
 
-    def fit_transform(self, data_pack: DataPack, verbose=1) -> DataPack:
+    def fit_transform(
+        self,
+        data_pack: 'mz.DataPack',
+        verbose: int = 1
+    ) -> 'mz.DataPack':
         """
         Call fit-transform.
 
@@ -100,23 +111,24 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         data_file_path = dirpath.joinpath(self.DATA_FILENAME)
 
         if data_file_path.exists():
-            raise FileExistsError
+            raise FileExistsError(
+                f'{data_file_path} instance exist, fail to save.')
         elif not dirpath.exists():
             dirpath.mkdir()
 
         dill.dump(self, open(data_file_path, mode='wb'))
 
     @classmethod
-    def _default_processor_units(cls) -> list:
+    def _default_units(cls) -> list:
         """Prepare needed process units."""
         return [
-            processor_units.TokenizeUnit(),
-            processor_units.LowercaseUnit(),
-            processor_units.PuncRemovalUnit(),
+            mz.preprocessors.units.tokenize.Tokenize(),
+            mz.preprocessors.units.lowercase.Lowercase(),
+            mz.preprocessors.units.punc_removal.PuncRemoval(),
         ]
 
 
-def load_preprocessor(dirpath: typing.Union[str, Path]) -> DataPack:
+def load_preprocessor(dirpath: typing.Union[str, Path]) -> 'mz.DataPack':
     """
     Load the fitted `context`. The reverse function of :meth:`save`.
 

@@ -1,18 +1,17 @@
 """Naive Preprocessor."""
 
-import logging
-
 from tqdm import tqdm
 
-from matchzoo import engine, processor_units
+from matchzoo.engine.base_preprocessor import BasePreprocessor
 from matchzoo import DataPack
-from matchzoo import chain_transform, build_vocab_unit
+from .chain_transform import chain_transform
+from .build_vocab_unit import build_vocab_unit
+from . import units
 
-logger = logging.getLogger(__name__)
 tqdm.pandas()
 
 
-class NaivePreprocessor(engine.BasePreprocessor):
+class NaivePreprocessor(BasePreprocessor):
     """
     Naive preprocessor.
 
@@ -21,10 +20,12 @@ class NaivePreprocessor(engine.BasePreprocessor):
         >>> train_data = mz.datasets.toy.load_data()
         >>> test_data = mz.datasets.toy.load_data(stage='test')
         >>> preprocessor = mz.preprocessors.NaivePreprocessor()
-        >>> train_data_processed = preprocessor.fit_transform(train_data)
+        >>> train_data_processed = preprocessor.fit_transform(train_data,
+        ...                                                   verbose=0)
         >>> type(train_data_processed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
-        >>> test_data_transformed = preprocessor.transform(test_data)
+        >>> test_data_transformed = preprocessor.transform(test_data,
+        ...                                                verbose=0)
         >>> type(test_data_transformed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
 
@@ -38,14 +39,12 @@ class NaivePreprocessor(engine.BasePreprocessor):
         :param verbose: Verbosity.
         :return: class:`NaivePreprocessor` instance.
         """
-        units = self._default_processor_units()
-        data_pack = data_pack.apply_on_text(chain_transform(units),
-                                            verbose=verbose)
+        func = chain_transform(self._default_units())
+        data_pack = data_pack.apply_on_text(func, verbose=verbose)
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
         self._context['vocab_unit'] = vocab_unit
         return self
 
-    @engine.validate_context
     def transform(self, data_pack: DataPack, verbose: int = 1) -> DataPack:
         """
         Apply transformation on data, create `tri-letter` representation.
@@ -55,8 +54,8 @@ class NaivePreprocessor(engine.BasePreprocessor):
 
         :return: Transformed data as :class:`DataPack` object.
         """
-        units = self._default_processor_units()
-        units.append(self._context['vocab_unit'])
-        units.append(processor_units.FixedLengthUnit(text_length=30,
-                                                     pad_mode='post'))
-        return data_pack.apply_on_text(chain_transform(units), verbose=verbose)
+        units_ = self._default_units()
+        units_.append(self._context['vocab_unit'])
+        units_.append(units.FixedLength(text_length=30, pad_mode='post'))
+        func = chain_transform(units_)
+        return data_pack.apply_on_text(func, verbose=verbose)

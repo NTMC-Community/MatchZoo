@@ -172,9 +172,14 @@ class DataPack(object):
                         relation=relation.copy())
 
     @property
-    def relation(self) -> pd.DataFrame:
-        """Get :meth:`relation` of :class:`DataPack`."""
+    def relation(self):
+        """`relation` getter."""
         return self._relation
+
+    @relation.setter
+    def relation(self, value):
+        """`relation` setter."""
+        self._relation = value
 
     @property
     def left(self) -> pd.DataFrame:
@@ -206,7 +211,8 @@ class DataPack(object):
         data_file_path = dirpath.joinpath(self.DATA_FILENAME)
 
         if data_file_path.exists():
-            raise FileExistsError
+            raise FileExistsError(
+                f'{data_file_path} already exist, fail to save')
         elif not dirpath.exists():
             dirpath.mkdir()
 
@@ -295,18 +301,19 @@ class DataPack(object):
 
         :param inplace: `True` to modify inplace, `False` to return a modified
             copy. (default: `False`)
+        :param verbose: Verbosity.
 
         Example:
             >>> import matchzoo as mz
             >>> data_pack = mz.datasets.toy.load_data()
             >>> 'length_left' in data_pack.frame[0].columns
             False
-            >>> new_data_pack = data_pack.append_text_length()
+            >>> new_data_pack = data_pack.append_text_length(verbose=0)
             >>> 'length_left' in new_data_pack.frame[0].columns
             True
             >>> 'length_left' in data_pack.frame[0].columns
             False
-            >>> data_pack.append_text_length(inplace=True)
+            >>> data_pack.append_text_length(inplace=True, verbose=0)
             >>> 'length_left' in data_pack.frame[0].columns
             True
 
@@ -332,7 +339,6 @@ class DataPack(object):
         :param inplace: `True` to modify inplace, `False` to return a modified
             copy. (default: `False`)
         :param verbose: Verbosity.
-        :return:
 
         Examples::
             >>> import matchzoo as mz
@@ -342,7 +348,8 @@ class DataPack(object):
         To apply `len` on the left text and add the result as 'length_left':
             >>> data_pack.apply_on_text(len, mode='left',
             ...                         rename='length_left',
-            ...                         inplace=True)
+            ...                         inplace=True,
+            ...                         verbose=0)
             >>> list(frame[0].columns)
             ['id_left', 'text_left', 'length_left', 'id_right', 'text_right', \
 'label']
@@ -350,7 +357,8 @@ class DataPack(object):
         To do the same to the right text:
             >>> data_pack.apply_on_text(len, mode='right',
             ...                         rename='length_right',
-            ...                         inplace=True)
+            ...                         inplace=True,
+            ...                         verbose=0)
             >>> list(frame[0].columns)
             ['id_left', 'text_left', 'length_left', 'id_right', 'text_right', \
 'length_right', 'label']
@@ -358,7 +366,8 @@ class DataPack(object):
         To do the same to the both texts at the same time:
             >>> data_pack.apply_on_text(len, mode='both',
             ...                         rename=('extra_left', 'extra_right'),
-            ...                         inplace=True)
+            ...                         inplace=True,
+            ...                         verbose=0)
             >>> list(frame[0].columns)
             ['id_left', 'text_left', 'length_left', 'extra_left', 'id_right', \
 'text_right', 'length_right', 'extra_right', 'label']
@@ -375,7 +384,8 @@ class DataPack(object):
         elif mode == 'right':
             self._apply_on_text_right(func, rename, verbose=verbose)
         else:
-            raise ValueError("`mode` must be one of `left` `right` `both`.")
+            raise ValueError(f"{mode} is not a valid mode type."
+                             f"Must be one of `left` `right` `both`.")
 
     def _apply_on_text_right(self, func, rename, verbose=1):
         name = rename or 'text_right'
@@ -449,7 +459,7 @@ class DataPack(object):
             self._data_pack = data_pack
 
         def __getitem__(self, index: typing.Union[int, slice, np.array]
-                        ) -> 'DataPack':
+                        ) -> pd.DataFrame:
             """Slicer."""
             dp = self._data_pack
             index = _convert_to_list_index(index, len(dp))
