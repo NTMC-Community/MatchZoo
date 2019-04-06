@@ -12,7 +12,7 @@ from matchzoo.contrib.models import ESIM
 @pytest.fixture(scope='module')
 def train_data():
     return mz.datasets.toy.load_data(stage='train')
-    
+
 
 @pytest.fixture(scope='module')
 def valid_data():
@@ -38,10 +38,10 @@ def preprocessor():
 def train_data_processed(train_data, preprocessor) -> mz.DataPack:
     X, Y = preprocessor.fit_transform(train_data).unpack()
     Y = to_categorical(Y)
-    df = pd.DataFrame(data = {  'id_left': list(X['id_left']), 
-                                'text_left': list(X['text_left']), 
-                                'id_right': list(X['id_right']), 
-                                'text_right': list(X['text_right']), 
+    df = pd.DataFrame(data = {  'id_left': list(X['id_left']),
+                                'text_left': list(X['text_left']),
+                                'id_right': list(X['id_right']),
+                                'text_right': list(X['text_right']),
                                 'label': list(Y) })
     return mz.pack(df)
 
@@ -50,10 +50,10 @@ def train_data_processed(train_data, preprocessor) -> mz.DataPack:
 def valid_data_processed(valid_data, preprocessor) -> mz.DataPack:
     X, Y = preprocessor.transform(valid_data).unpack()
     Y = to_categorical(Y)
-    df = pd.DataFrame(data = {  'id_left': list(X['id_left']), 
-                                'text_left': list(X['text_left']), 
-                                'id_right': list(X['id_right']), 
-                                'text_right': list(X['text_right']), 
+    df = pd.DataFrame(data = {  'id_left': list(X['id_left']),
+                                'text_left': list(X['text_left']),
+                                'id_right': list(X['id_right']),
+                                'text_right': list(X['text_right']),
                                 'label': list(Y) })
     return mz.pack(df)
 
@@ -62,10 +62,10 @@ def valid_data_processed(valid_data, preprocessor) -> mz.DataPack:
 def test_data_processed(test_data, preprocessor) -> mz.DataPack:
     X, Y = preprocessor.transform(test_data).unpack()
     Y = to_categorical(Y)
-    df = pd.DataFrame(data = {  'id_left': list(X['id_left']), 
-                                'text_left': list(X['text_left']), 
-                                'id_right': list(X['id_right']), 
-                                'text_right': list(X['text_right']), 
+    df = pd.DataFrame(data = {  'id_left': list(X['id_left']),
+                                'text_left': list(X['text_left']),
+                                'id_right': list(X['id_right']),
+                                'text_right': list(X['text_right']),
                                 'label': list(Y) })
     return mz.pack(df)
 
@@ -76,7 +76,7 @@ def train_generator(request, train_data_processed):
 
 
 @pytest.mark.slow
-def test_duet(train_data_processed,
+def test_esim(train_data_processed,
                  task,
                  train_generator,
                  valid_data_processed,
@@ -101,14 +101,14 @@ def test_duet(train_data_processed,
     esim.guess_and_fill_missing_params()
     esim.build()
     esim.compile()
-    
+
     x_valid, y_valid = valid_data_processed.unpack()
     valid_eval = mz.callbacks.EvaluateAllMetrics(esim,
                                                  x_valid,
                                                  y_valid)
     esim.fit_generator(train_generator, epochs=1, callbacks=[valid_eval])
     esim.save('.tmpdir')
-    
+
     try:
         esim = mz.load_model('.tmpdir')
         x, y = test_data_processed.unpack()

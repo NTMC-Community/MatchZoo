@@ -28,6 +28,7 @@ class ESIM(BaseModel):
         >>> model.params['mlp_activation_func'] = 'tanh'
         >>> model.params['mask_value'] = 0
         >>> model.params['dropout_rate'] = 0.5
+        >>> model.params['optimizer'] = keras.optimizers.Adam(lr=4e-4)
         >>> model.guess_and_fill_missing_params()
         >>> model.build()
     """
@@ -69,7 +70,7 @@ class ESIM(BaseModel):
         )
         return [input_left, input_right]
 
-    def _make_embedding_layer(self, 
+    def _make_embedding_layer(self,
                               name: str = 'embedding') -> keras.layers.Layer:
         """
         Overwrite the :meth:`BaseModel._make_embedding_layer` to allow
@@ -180,6 +181,10 @@ class ESIM(BaseModel):
 
         a_ = lstm_compare(a_emb)          # [B, T_a, H*2]
         b_ = lstm_compare(b_emb)          # [B, T_b, H*2]
+
+        # mask a_ and b_, since the <pad> position is no more zero
+        a_ = keras.layers.Multiply()([a_, self._expand_dim(a_mask, axis=2)])
+        b_ = keras.layers.Multiply()([b_, self._expand_dim(b_mask, axis=2)])
 
         # local inference
         e = keras.layers.Dot(axes=-1)([a_, b_])   # [B, T_a, T_b]
