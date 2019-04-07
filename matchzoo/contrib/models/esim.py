@@ -59,17 +59,6 @@ class ESIM(BaseModel):
 
         return params
 
-    def _make_inputs(self) -> list:
-        input_left = keras.layers.Input(
-            name='text_left',
-            shape=self._params['input_shapes'][0]
-        )
-        input_right = keras.layers.Input(
-            name='text_right',
-            shape=self._params['input_shapes'][1]
-        )
-        return [input_left, input_right]
-
     def _make_embedding_layer(self,
                               name: str = 'embedding') -> keras.layers.Layer:
         """
@@ -104,7 +93,7 @@ class ESIM(BaseModel):
             lambda weight_mask: weight_mask[0] + (1.0 - weight_mask[1]) * -1e7,
             name="atten_mask")
 
-    def _make_BiLSTM_layer(self, lstm_dim: int) -> keras.layers.Layer:
+    def _make_bilstm_layer(self, lstm_dim: int) -> keras.layers.Layer:
         """
         Bidirectional LSTM layer in ESIM.
 
@@ -163,8 +152,8 @@ class ESIM(BaseModel):
                 K.cast(K.not_equal(x, self._params['mask_value']), K.floatx())
         )
         embedding = self._make_embedding_layer()
-        lstm_compare = self._make_BiLSTM_layer(lstm_dim)
-        lstm_compose = self._make_BiLSTM_layer(lstm_dim)
+        lstm_compare = self._make_bilstm_layer(lstm_dim)
+        lstm_compose = self._make_bilstm_layer(lstm_dim)
         dense_compare = keras.layers.Dense(units=lstm_dim,
                                            activation='relu',
                                            use_bias=True)
