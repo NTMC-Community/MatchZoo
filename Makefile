@@ -9,10 +9,13 @@ test:
 	flake8 $(FLAKE_ARGS)
 
 quick:
-	pytest -m 'not slow' $(TEST_ARGS)
+	pytest -m 'not slow and not cron' $(TEST_ARGS) ${ARGS}
 
 slow:
-	pytest -m 'slow' $(TEST_ARGS)
+	pytest -m 'slow and not cron' $(TEST_ARGS) ${ARGS}
+
+cron:
+	pytest -m 'cron' $(TEST_ARGS) ${ARGS}
 
 flake:
-	flake8 $(FLAKE_ARGS)
+	flake8 $(FLAKE_ARGS) ${ARGS}
