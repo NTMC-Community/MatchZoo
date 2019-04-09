@@ -405,6 +405,17 @@ class BaseModel(abc.ABC):
         h5 file saved by `keras`.
 
         :param dirpath: directory path of the saved model
+
+        Example:
+
+            >>> import matchzoo as mz
+            >>> model = mz.models.Naive()
+            >>> model.guess_and_fill_missing_params(verbose=0)
+            >>> model.build()
+            >>> model.save('temp-model')
+            >>> import shutil
+            >>> shutil.rmtree('temp-model')
+
         """
         dirpath = Path(dirpath)
         params_path = dirpath.joinpath(self.PARAMS_FILENAME)
@@ -508,7 +519,7 @@ class BaseModel(abc.ABC):
     def _make_embedding_layer(
         self,
         name: str = 'embedding',
-        **kwargs,
+        **kwargs
     ) -> keras.layers.Layer:
         return keras.layers.Embedding(
             self._params['embedding_input_dim'],
@@ -541,6 +552,19 @@ def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
 
     :param dirpath: directory path of the saved model
     :return: a :class:`BaseModel` instance
+
+    Example:
+
+            >>> import matchzoo as mz
+            >>> model = mz.models.Naive()
+            >>> model.guess_and_fill_missing_params(verbose=0)
+            >>> model.build()
+            >>> model.save('my-model')
+            >>> model.params.keys() == mz.load_model('my-model').params.keys()
+            True
+            >>> import shutil
+            >>> shutil.rmtree('my-model')
+
     """
     dirpath = Path(dirpath)
 
