@@ -59,22 +59,6 @@ class ESIM(BaseModel):
 
         return params
 
-    def _make_embedding_layer(self,
-                              name: str = 'embedding') -> keras.layers.Layer:
-        """
-        Overwrite the :meth:`BaseModel._make_embedding_layer` to allow
-        specifiying mask_zero.
-
-        :param name: name for embedding layer, default 'embedding'
-        """
-        return keras.layers.Embedding(
-            self._params['embedding_input_dim'],
-            self._params['embedding_output_dim'],
-            trainable=self._params['embedding_trainable'],
-            mask_zero=True,
-            name=name
-        )
-
     def _expand_dim(self, inp: tf.Tensor, axis: int) -> keras.layers.Layer:
         """
         Wrap keras.backend.expand_dims into a Lambda layer.

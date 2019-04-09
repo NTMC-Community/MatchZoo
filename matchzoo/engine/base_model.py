@@ -505,15 +505,19 @@ class BaseModel(abc.ABC):
             raise ValueError(f"{task} is not a valid task type."
                              f"Must be in `Ranking` and `Classification`.")
 
-    def _make_embedding_layer(self, name: str = 'embedding'
-                              ) -> keras.layers.Layer:
+    def _make_embedding_layer(
+        self,
+        name: str = 'embedding',
+        **kwargs,
+    ) -> keras.layers.Layer:
         return keras.layers.Embedding(
             self._params['embedding_input_dim'],
             self._params['embedding_output_dim'],
             trainable=self._params['embedding_trainable'],
-            name=name
+            name=name,
+            **kwargs
         )
-
+    
     def _make_multi_layer_perceptron_layer(self) -> keras.layers.Layer:
         # TODO: do not create new layers for a second call
         if not self._params['with_multi_layer_perceptron']:
