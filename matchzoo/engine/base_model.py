@@ -559,11 +559,11 @@ def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
             >>> model = mz.models.Naive()
             >>> model.guess_and_fill_missing_params(verbose=0)
             >>> model.build()
-            >>> model.save('temp-model')
-            >>> model.params.keys() == mz.load_model('temp-model').params.keys()
+            >>> model.save('my-model')
+            >>> model.params.keys() == mz.load_model('my-model').params.keys()
             True
             >>> import shutil
-            >>> shutil.rmtree('temp-model')
+            >>> shutil.rmtree('my-model')
 
     """
     dirpath = Path(dirpath)
