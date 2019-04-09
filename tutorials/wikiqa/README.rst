@@ -73,3 +73,22 @@ ArcII
   16  dropout_rate          0.0
 ====  ====================  =====================================
 
+MatchLSTM
+#########
+
+====  ====================  ======================================================
+  ..  Name                  Value
+====  ====================  ======================================================
+   0  model_class           <class 'matchzoo.contrib.models.match_lstm.MatchLSTM'>
+   1  input_shapes          [(10,), (40,)]
+   2  task                  Ranking Task
+   3  optimizer             adadelta
+   4  with_embedding        True
+   5  embedding_input_dim   16674
+   6  embedding_output_dim  100
+   7  embedding_trainable   True
+   8  lstm_num_units        100
+   9  fc_num_units          100
+  10  dropout_rate          0.5
+====  ====================  ======================================================
+
