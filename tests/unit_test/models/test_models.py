@@ -78,7 +78,7 @@ def test_model_fit_eval_predict(model, data):
     assert model.predict(x, batch_size=batch_size) is not None
 
 
-@pytest.mark.skip('too time consuming, need a better way to test this')
+@pytest.mark.cron
 def test_save_load_model(model):
     tmpdir = '.matchzoo_test_save_load_tmpdir'
 
@@ -95,7 +95,7 @@ def test_save_load_model(model):
             shutil.rmtree(tmpdir)
 
 
-@pytest.mark.skip('too time consuming, need a better way to test this')
+@pytest.mark.cron
 def test_hyper_space(model):
     for _ in range(8):
         new_params = copy.deepcopy(model.params)
