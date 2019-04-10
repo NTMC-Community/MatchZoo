@@ -18,7 +18,7 @@ class Vocabulary(StatefulUnit):
         >>> term_index['out-of-vocabulary-term']
         1
         >>> index_term[0]
-        '_PAD'
+        'PAD'
         >>> index_term[42]
         Traceback (most recent call last):
             ...
@@ -43,7 +43,7 @@ class Vocabulary(StatefulUnit):
             if key == 1:
                 return 'OOV'
             elif key == 0:
-                return '_PAD'
+                return 'PAD'
             else:
                 raise KeyError(key)
 
@@ -58,9 +58,9 @@ class Vocabulary(StatefulUnit):
         """Build a :class:`TermIndex` and a :class:`IndexTerm`."""
         self._state['term_index'] = self.TermIndex()
         self._state['index_term'] = self.IndexTerm()
-        self._state['term_index']['_PAD'] = 0
+        self._state['term_index']['PAD'] = 0
         self._state['term_index']['OOV'] = 1
-        self._state['index_term'][0] = '_PAD'
+        self._state['index_term'][0] = 'PAD'
         self._state['index_term'][1] = 'OOV'
         terms = set(tokens)
         for index, term in enumerate(terms):
