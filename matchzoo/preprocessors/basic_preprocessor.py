@@ -146,4 +146,5 @@ class BasicPreprocessor(BasePreprocessor):
         data_pack.right['length_right'] = \
             data_pack.right['length_right'].apply(
                 lambda val: min(val, max_len_right))
+        data_pack.drop_invalid(inplace=True)
         return data_pack

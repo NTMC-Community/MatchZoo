@@ -295,6 +295,35 @@ class DataPack(object):
         self._relation = self._relation.drop(columns='label')
 
     @_optional_inplace
+    def drop_invalid(self):
+        """
+        Remove rows from the data pack where the content is invalid.
+
+        :param inplace: `True` to modify inplace, `False` to return a modified
+            copy. (default: `False`)
+
+        Example:
+            >>> import matchzoo as mz
+            >>> data_pack = mz.datasets.toy.load_data()
+            >>> data_pack.append_text_length(inplace=True, verbose=0)
+            >>> data_pack.drop_invalid(inplace=True)
+        """
+        if not ('length_left' in self._left and 'length_right' in self._right):
+            raise ValueError(f"`length_left` or `length_right` is missed. "
+                             f"Please call `append_text_length` in advance.")
+        invalid_left = self._left.loc[
+            self._left.length_left == 0].reset_index()
+        invalid_right = self._right.loc[
+            self._right.length_right == 0].reset_index()
+        self._left = self._left[~(self._left.index.isin(invalid_left.id_left))]
+        self._right = self._right[~(self._right.index.isin(
+            invalid_right.id_right))]
+        self._relation = self._relation[~(self._relation.id_left.isin(
+            invalid_left.id_left) | self._relation.id_right.isin(
+                invalid_right.id_right))]
+        self._relation.reset_index(drop=True, inplace=True)
+
+    @_optional_inplace
     def append_text_length(self, verbose=1):
         """
         Append `length_left` and `length_right` columns.
