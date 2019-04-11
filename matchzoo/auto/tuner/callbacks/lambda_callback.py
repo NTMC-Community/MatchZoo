@@ -33,7 +33,7 @@ class LambdaCallback(Callback):
         <class 'matchzoo.auto.tuner.tuner.Tuner'> <class 'dict'>
         <class 'matchzoo.auto.tuner.tuner.Tuner'> <class 'matchzoo.models.naive.Naive'>
         <class 'matchzoo.auto.tuner.tuner.Tuner'> <class 'matchzoo.models.naive.Naive'> <class 'dict'>
-        >>> print('hello')
+
     """
 
     def __init__(
