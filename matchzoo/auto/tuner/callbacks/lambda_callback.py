@@ -16,7 +16,8 @@ class LambdaCallback(Callback):
         >>> data = mz.datasets.toy.load_data()
         >>> data = model.get_default_preprocessor().fit_transform(
         ...     data, verbose=0)
-        >>> show_inputs = lambda *args: print(*map(type, args))
+        >>> def show_inputs(*args):
+        ...     print(' '.join(map(str, map(type, args))))
         >>> callback = mz.auto.tuner.callbacks.LambdaCallback(
         ...     on_run_start=show_inputs,
         ...     on_build_end=show_inputs,
