@@ -8,10 +8,19 @@ class LambdaCallback(Callback):
     See :class:`matchzoo.data_generator.callbacks.Callback` for more details.
 
     Example:
+
+        >>> import matchzoo as mz
         >>> from matchzoo.data_generator.callbacks import LambdaCallback
-        >>> callback = LambdaCallback(on_batch_unpacked=print)
-        >>> callback.on_batch_unpacked('x', 'y')
-        x y
+        >>> data = mz.datasets.toy.load_data()
+        >>> batch_func = lambda x: print(type(x))
+        >>> unpack_func = lambda x, y: print(type(x), type(y))
+        >>> callback = LambdaCallback(on_batch_data_pack=batch_func,
+        ...                           on_batch_unpacked=unpack_func)
+        >>> data_gen = mz.DataGenerator(
+        ...     data, batch_size=len(data), callbacks=[callback])
+        >>> _ = data_gen[0]
+        <class 'matchzoo.data_pack.data_pack.DataPack'>
+        <class 'dict'> <class 'numpy.ndarray'>
 
     """
 

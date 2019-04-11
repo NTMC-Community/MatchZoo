@@ -3,7 +3,7 @@ import pytest
 import matchzoo as mz
 
 
-@pytest.mark.slow
+@pytest.mark.cron
 def test_load_data():
     train_data = mz.datasets.wiki_qa.load_data('train', task='ranking')
     assert len(train_data) == 20360
@@ -32,7 +32,7 @@ def test_load_data():
     assert tag == [False, True]
 
 
-@pytest.mark.slow
+@pytest.mark.cron
 def test_load_snli():
     train_data, classes = mz.datasets.snli.load_data('train',
                                                      'classification',
@@ -60,7 +60,7 @@ def test_load_snli():
     assert y.shape == (num_samples, 1)
 
 
-@pytest.mark.slow
+@pytest.mark.cron
 def test_load_quora_qp():
     train_data = mz.datasets.quora_qp.load_data(task='classification')
     assert len(train_data) == 363177

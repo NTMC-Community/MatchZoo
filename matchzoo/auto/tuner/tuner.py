@@ -129,18 +129,31 @@ class Tuner(object):
         logging.getLogger('hyperopt').setLevel(logging.CRITICAL)
 
         trials = hyperopt.Trials()
-        hyperopt.fmin(
+
+        self._fmin(trials)
+
+        return {
+            'best': trials.best_trial['result']['mz_result'],
+            'trials': [trial['result']['mz_result'] for trial in trials.trials]
+        }
+
+    def _fmin(self, trials):
+        # new version of hyperopt has keyword argument `show_progressbar` that
+        # breaks doctests, so here's a workaround
+        fmin_kwargs = dict(
             fn=self._run,
             space=self._params.hyper_space,
             algo=hyperopt.tpe.suggest,
             max_evals=self._num_runs,
             trials=trials
         )
-
-        return {
-            'best': trials.best_trial['result']['mz_result'],
-            'trials': [trial['result']['mz_result'] for trial in trials.trials]
-        }
+        try:
+            hyperopt.fmin(
+                **fmin_kwargs,
+                show_progressbar=False
+            )
+        except TypeError:
+            hyperopt.fmin(**fmin_kwargs)
 
     def _run(self, sample):
         self.__curr_run_num += 1
