@@ -528,7 +528,7 @@ class BaseModel(abc.ABC):
             name=name,
             **kwargs
         )
-    
+
     def _make_multi_layer_perceptron_layer(self) -> keras.layers.Layer:
         # TODO: do not create new layers for a second call
         if not self._params['with_multi_layer_perceptron']:
