@@ -113,7 +113,8 @@ class BasicPreprocessor(BasePreprocessor):
 
         return self
 
-    def transform(self, data_pack: DataPack, verbose: int = 1) -> DataPack:
+    def transform(self, data_pack: DataPack, drop_invalid: bool = False,
+                  verbose: int = 1) -> DataPack:
         """
         Apply transformation on data, create fixed length representation.
 
@@ -146,5 +147,6 @@ class BasicPreprocessor(BasePreprocessor):
         data_pack.right['length_right'] = \
             data_pack.right['length_right'].apply(
                 lambda val: min(val, max_len_right))
-        data_pack.drop_invalid(inplace=True)
+        if drop_invalid:
+            data_pack.drop_invalid(inplace=True)
         return data_pack

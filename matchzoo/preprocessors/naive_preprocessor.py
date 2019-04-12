@@ -45,7 +45,8 @@ class NaivePreprocessor(BasePreprocessor):
         self._context['vocab_unit'] = vocab_unit
         return self
 
-    def transform(self, data_pack: DataPack, verbose: int = 1) -> DataPack:
+    def transform(self, data_pack: DataPack, drop_invalid: bool = False,
+                  verbose: int = 1) -> DataPack:
         """
         Apply transformation on data, create `tri-letter` representation.
 

@@ -70,6 +70,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
     def transform(
         self,
         data_pack: 'mz.DataPack',
+        drop_invalid: bool = False,
         verbose: int = 1
     ) -> 'mz.DataPack':
         """
@@ -86,6 +87,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
     def fit_transform(
         self,
         data_pack: 'mz.DataPack',
+        drop_invalid: bool = False,
         verbose: int = 1
     ) -> 'mz.DataPack':
         """
@@ -95,7 +97,7 @@ class BasePreprocessor(metaclass=abc.ABCMeta):
         :param verbose: Verbosity.
         """
         return self.fit(data_pack, verbose=verbose) \
-            .transform(data_pack, verbose=verbose)
+            .transform(data_pack, drop_invalid=drop_invalid, verbose=verbose)
 
     def save(self, dirpath: typing.Union[str, Path]):
         """
