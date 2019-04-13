@@ -46,7 +46,7 @@
 init:
 	pip install -r requirements.txt
 
-TEST_ARGS = --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-report html --cov-config .coveragerc matchzoo/ tests/ -W ignore::DeprecationWarning --ignore=matchzoo/contrib
+TEST_ARGS = -v --full-trace -l --doctest-modules --doctest-continue-on-failure --cov matchzoo/ --cov-report term-missing --cov-report html --cov-config .coveragerc matchzoo/ tests/ -W ignore::DeprecationWarning --ignore=matchzoo/contrib
 FLAKE_ARGS = ./matchzoo --exclude=__init__.py,matchzoo/contrib
 
 test:
