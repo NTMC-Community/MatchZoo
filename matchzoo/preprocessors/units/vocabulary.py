@@ -40,11 +40,11 @@ class Vocabulary(StatefulUnit):
 
     def __init__(self, pad_value: str = '<PAD>', oov_value: str = '<OOV>'):
         """Vocabulary unit initializer."""
+        super().__init__()
         self._pad = pad_value
         self._oov = oov_value
-        self._state = {}
-        self._state['term_index'] = self.TermIndex()
-        self._state['index_term'] = dict()
+        self._context['term_index'] = self.TermIndex()
+        self._context['index_term'] = dict()
 
     class TermIndex(dict):
         """Map term to index."""
@@ -55,15 +55,15 @@ class Vocabulary(StatefulUnit):
 
     def fit(self, tokens: list):
         """Build a :class:`TermIndex` and a :class:`IndexTerm`."""
-        self._state['term_index'][self._pad] = 0
-        self._state['term_index'][self._oov] = 1
-        self._state['index_term'][0] = self._pad
-        self._state['index_term'][1] = self._oov
+        self._context['term_index'][self._pad] = 0
+        self._context['term_index'][self._oov] = 1
+        self._context['index_term'][0] = self._pad
+        self._context['index_term'][1] = self._oov
         terms = set(tokens)
         for index, term in enumerate(terms):
-            self._state['term_index'][term] = index + 2
-            self._state['index_term'][index + 2] = term
+            self._context['term_index'][term] = index + 2
+            self._context['index_term'][index + 2] = term
 
     def transform(self, input_: list) -> list:
         """Transform a list of tokens to corresponding indices."""
-        return [self._state['term_index'][token] for token in input_]
+        return [self._context['term_index'][token] for token in input_]

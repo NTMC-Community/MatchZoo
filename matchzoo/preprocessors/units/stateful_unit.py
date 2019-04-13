@@ -5,17 +5,32 @@ from .unit import Unit
 
 
 class StatefulUnit(Unit, metaclass=abc.ABCMeta):
-    """Process unit do persive state (i.e. need fit)."""
+    """
+    Unit with inner state.
+
+    Usually need to be fit before transforming. All information gathered in the
+    fit phrase will be stored into its `context`.
+    """
 
     def __init__(self):
         """Initialization."""
-        self._state = {}
+        self._context = {}
 
     @property
     def state(self):
-        """Get current state."""
-        return self._state
+        """
+        Get current context. Same as `unit.context`.
+
+        Deprecated since v2.2.0, and will be removed in the future.
+        Used `unit.context` instead.
+        """
+        return self._context
+
+    @property
+    def context(self):
+        """Get current context. Same as `unit.state`."""
+        return self._context
 
     @abc.abstractmethod
-    def fit(self, input: typing.Any):
+    def fit(self, input_: typing.Any):
         """Abstract base method, need to be implemented in subclass."""
