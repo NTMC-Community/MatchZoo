@@ -46,11 +46,13 @@ class BasicPreprocessor(BasePreprocessor):
         >>> preprocessor.context['vocab_size']
         226
         >>> processed_train_data = preprocessor.transform(train_data,
-        ...                                               verbose=0)
+        ...                                               verbose=0,
+        ...                                               drop_invalid=True)
         >>> type(processed_train_data)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
         >>> test_data_transformed = preprocessor.transform(test_data,
-        ...                                                verbose=0)
+        ...                                                verbose=0,
+        ...                                                drop_invalid=False)
         >>> type(test_data_transformed)
         <class 'matchzoo.data_pack.data_pack.DataPack'>
 
