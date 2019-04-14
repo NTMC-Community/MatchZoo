@@ -58,7 +58,7 @@ class DSSMPreprocessor(BasePreprocessor):
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
 
         self._context['vocab_unit'] = vocab_unit
-        vocab_size = len(vocab_unit.state['term_index']) + 1
+        vocab_size = len(vocab_unit.state['term_index'])
         self._context['vocab_size'] = vocab_size
         self._context['embedding_input_dim'] = vocab_size
         self._context['input_shapes'] = [(vocab_size,), (vocab_size,)]

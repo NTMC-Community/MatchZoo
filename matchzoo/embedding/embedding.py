@@ -25,13 +25,13 @@ class Embedding(object):
     To load from a file:
         >>> embedding = mz.embedding.load_from_file(embed_path)
         >>> matrix = embedding.build_matrix(term_index)
-        >>> matrix.shape[0] == len(term_index) + 1
+        >>> matrix.shape[0] == len(term_index)
         True
 
     To build your own:
         >>> data = pd.DataFrame(data=[[0, 1], [2, 3]], index=['A', 'B'])
         >>> embedding = mz.Embedding(data)
-        >>> matrix = embedding.build_matrix({'A': 2, 'B': 1})
+        >>> matrix = embedding.build_matrix({'A': 2, 'B': 1, '_PAD': 0})
         >>> matrix.shape == (3, 2)
         True
 
@@ -70,7 +70,7 @@ class Embedding(object):
             `(-0.2, 0.2)`).
         :return: A matrix.
         """
-        input_dim = len(term_index) + 1
+        input_dim = len(term_index)
 
         matrix = np.empty((input_dim, self.output_dim))
         for index in np.ndindex(*matrix.shape):
