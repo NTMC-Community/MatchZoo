@@ -23,7 +23,7 @@ class AttentionLayer(Layer):
     def __init__(self,
                  att_dim: int,
                  att_type: str = 'default',
-                 remove_diagonal: bool = False,
+                 # remove_diagonal: bool = False,
                  dropout_rate: float = 0.0):
         """
         class: `AttentionLayer` constructor.
@@ -35,7 +35,7 @@ class AttentionLayer(Layer):
         super(AttentionLayer, self).__init__()
         self._att_dim = att_dim
         self._att_type = att_type
-        self._remove_diagonal = remove_diagonal
+        # self._remove_diagonal = remove_diagonal
         self._dropout_rate = dropout_rate
 
     @property
@@ -128,16 +128,10 @@ class AttentionLayer(Layer):
         #     diagonal = tf.expand_dims(diagonal, axis=0)  # ['x', len1, len1]
         #     attn_value = attn_value * diagonal
 
-        if len(x) == 4:
-            mask_lt = x[2]
-            mask_rt = x[3]
-            attn_value = attn_value * K.expand_dims(mask_lt, axis=2)
-            attn_value = attn_value * K.expand_dims(mask_rt, axis=1)
-
         # softmax
         attn_prob = K.softmax(attn_value)  # [batch_size, len_1, len_2]
-
         # if remove_diagonal: attn_value = attn_value * diagonal
+
         if len(x) == 4:
             mask_lt = x[2]
             mask_rt = x[3]
