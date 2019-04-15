@@ -350,27 +350,24 @@ class DataPack(object):
             ...                         rename='length_left',
             ...                         inplace=True,
             ...                         verbose=0)
-            >>> list(frame[0].columns)
-            ['id_left', 'text_left', 'length_left', 'id_right', 'text_right', \
-'label']
+            >>> list(frame[0].columns) # noqa: E501
+            ['id_left', 'text_left', 'length_left', 'id_right', 'text_right', 'label']
 
         To do the same to the right text:
             >>> data_pack.apply_on_text(len, mode='right',
             ...                         rename='length_right',
             ...                         inplace=True,
             ...                         verbose=0)
-            >>> list(frame[0].columns)
-            ['id_left', 'text_left', 'length_left', 'id_right', 'text_right', \
-'length_right', 'label']
+            >>> list(frame[0].columns) # noqa: E501
+            ['id_left', 'text_left', 'length_left', 'id_right', 'text_right', 'length_right', 'label']
 
         To do the same to the both texts at the same time:
             >>> data_pack.apply_on_text(len, mode='both',
             ...                         rename=('extra_left', 'extra_right'),
             ...                         inplace=True,
             ...                         verbose=0)
-            >>> list(frame[0].columns)
-            ['id_left', 'text_left', 'length_left', 'extra_left', 'id_right', \
-'text_right', 'length_right', 'extra_right', 'label']
+            >>> list(frame[0].columns) # noqa: E501
+            ['id_left', 'text_left', 'length_left', 'extra_left', 'id_right', 'text_right', 'length_right', 'extra_right', 'label']
 
         To suppress outputs:
             >>> data_pack.apply_on_text(len, mode='both', verbose=0,
