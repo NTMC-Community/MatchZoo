@@ -52,7 +52,7 @@ class MVLSTM(BaseModel):
         query, doc = self._make_inputs()
 
         # Embedding layer
-        embedding = self._make_embedding_layer()
+        embedding = self._make_embedding_layer(mask_zero=True)
         embed_query = embedding(query)
         embed_doc = embedding(doc)
 

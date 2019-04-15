@@ -92,3 +92,20 @@ MatchLSTM
   10  dropout_rate          0.5
 ====  ====================  ======================================================
 
+DSSM
+####
+
+====  ===========================  ===================================
+  ..  Name                         Value
+====  ===========================  ===================================
+   0  model_class                  <class 'matchzoo.models.dssm.DSSM'>
+   1  input_shapes                 [(9645,), (9645,)]
+   2  task                         Ranking Task
+   3  optimizer                    adam
+   4  with_multi_layer_perceptron  True
+   5  mlp_num_units                300
+   6  mlp_num_layers               3
+   7  mlp_num_fan_out              128
+   8  mlp_activation_func          relu
+====  ===========================  ===================================
+
