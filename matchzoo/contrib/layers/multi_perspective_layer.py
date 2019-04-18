@@ -233,11 +233,11 @@ class MpAttentiveMatch(Layer):
         attention_layer = AttentionLayer(self.att_dim)
         attn_prob = attention_layer([reps_rt, reps_lt])
         # attention reps
-        reps_lt = K.batch_dot(attn_prob, reps_lt)
+        att_lt = K.batch_dot(attn_prob, reps_lt)
         # mp match
         attn_match_tensor, match_dim = _multi_perspective_match(self.mp_dim,
-                                                                reps_lt,
-                                                                reps_rt)
+                                                                reps_rt,
+                                                                att_lt)
         return attn_match_tensor
 
     def compute_output_shape(self, input_shape):
@@ -343,7 +343,7 @@ def collect_probs(probs, positions):
     return pair_probs
 
 
-def _multi_perspective_match(mp_dim, reps_lt, reps_rt,
+def _multi_perspective_match(mp_dim, reps_rt, att_lt,
                              with_cosine=True, with_mp_cosine=True):
     """
     The core function of zhiguowang's implementation.
@@ -351,20 +351,20 @@ def _multi_perspective_match(mp_dim, reps_lt, reps_rt,
     reference:
     https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L207-L223
     :param mp_dim: about 20
-    :param reps_lt: [batch, len_lt, dim]
     :param reps_rt: [batch, len_rt, dim]
+    :param att_lt: [batch, len_rt, dim]
     :param with_cosine: True
     :param with_mp_cosine: True
-    :return: [batch, len, feature_dim*2]
+    :return: [batch, len, 1 + mp_dim]
     """
-    shape_lt = K.shape(reps_lt)
-    batch_size = shape_lt[0]
-    len_lt = shape_lt[1]
+    shape_rt = K.shape(reps_rt)
+    batch_size = shape_rt[0]
+    len_lt = shape_rt[1]
 
     match_dim = 0
     match_result_list = []
     if with_cosine:
-        cosine_tensor = _safe_cosine_distance(reps_lt, reps_rt, False)
+        cosine_tensor = _cosine_distance(reps_rt, att_lt, False)
         cosine_tensor = K.reshape(cosine_tensor,
                                   [batch_size, len_lt, 1])
         match_result_list.append(cosine_tensor)
@@ -372,7 +372,7 @@ def _multi_perspective_match(mp_dim, reps_lt, reps_rt,
 
     if with_mp_cosine:
         mp_cosine_layer = MpCosineLayer(mp_dim)
-        mp_cosine_tensor = mp_cosine_layer([reps_lt, reps_rt])
+        mp_cosine_tensor = mp_cosine_layer([reps_rt, att_lt])
         mp_cosine_tensor = K.reshape(mp_cosine_tensor,
                                      [batch_size, len_lt, mp_dim])
         match_result_list.append(mp_cosine_tensor)
@@ -393,8 +393,8 @@ class MpCosineLayer(Layer):
         >>> import matchzoo as mz
         >>> layer = mz.contrib.layers.multi_perspective_layer.MpCosineLayer(
         ...     mp_dim=50)
-        >>> layer.compute_output_shape([(32, 10, 100), (32, 40, 100)])
-        (32, 10, 40, 50)
+        >>> layer.compute_output_shape([(32, 10, 100), (32, 10, 100)])
+        (32, 10, 50)
 
     """
 
@@ -416,13 +416,12 @@ class MpCosineLayer(Layer):
         """Call."""
         v1, v2 = x
         v1 = K.expand_dims(v1, 2) * self.kernel  # [b, s_lt, m, d]
-        v2 = K.expand_dims(v2, 2)  # [b, s_rt, 1, d]
-        return _safe_cosine_distance(v1, v2, False)
+        v2 = K.expand_dims(v2, 2)  # [b, s_lt, 1, d]
+        return _cosine_distance(v1, v2, False)
 
     def compute_output_shape(self, input_shape):
         """Compute output shape."""
-        return input_shape[0][0], input_shape[0][1], input_shape[1][1], \
-            self.mp_dim
+        return input_shape[0][0], input_shape[0][1], self.mp_dim
 
 
 def _calc_relevancy_matrix(reps_lt, reps_rt):
@@ -445,28 +444,6 @@ def _mask_relevancy_matrix(relevancy_matrix, mask_lt, mask_rt):
         relevancy_matrix = relevancy_matrix * K.expand_dims(mask_lt, 1)
     relevancy_matrix = relevancy_matrix * K.expand_dims(mask_rt, 2)
     return relevancy_matrix
-
-
-def _safe_cosine_distance(v1, v2, cosine_norm=True, eps=1e-6):
-    """
-    Only requires `K.sum(v1 * v2, axis=-1)`.
-
-    :param v1: [batch, time_steps(v1), 1, m, d]
-    :param v2: [batch, 1, time_steps(v2), m, d]
-    :param cosine_norm: True
-    :param eps: 1e-6
-    :return: [batch, time_steps(v1), time_steps(v2), m]
-    """
-    shape1, shape2 = K.shape(v1), K.shape(v2)
-    if shape1[1] != shape2[1]:
-        v1 = K.expand_dims(v1, 2)  # [b, s_lt, 1, m, d]
-        v2 = K.expand_dims(v2, 1)  # [b, 1, s_rt, m, d]
-    cosine_numerator = K.sum(v1 * v2, axis=-1)
-    if not cosine_norm:
-        return K.tanh(cosine_numerator)
-    v1_norm = K.sqrt(K.maximum(K.sum(K.square(v1), axis=-1), eps))
-    v2_norm = K.sqrt(K.maximum(K.sum(K.square(v2), axis=-1), eps))
-    return cosine_numerator / v1_norm / v2_norm
 
 
 def _cosine_distance(v1, v2, cosine_norm=True, eps=1e-6):
