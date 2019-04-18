@@ -38,7 +38,6 @@ def test_spatial_gru():
     for direction in ['lt', 'rb']:
         model = SpatialGRU(direction=direction)
         _ = K.eval(model(s_value))
-        _ = model.get_config()
     with pytest.raises(ValueError):
         SpatialGRU(direction='lr')(s_value)
 
@@ -57,6 +56,5 @@ def test_matching_tensor_layer():
     for init_diag in [True, False]:
         model = MatchingTensorLayer(init_diag=init_diag)
         _ = K.eval(model([s1_tensor, s2_tensor]))
-        _ = model.get_config()
     with pytest.raises(ValueError):
         MatchingTensorLayer()([s1_tensor, s3_tensor])

@@ -235,27 +235,6 @@ class SpatialGRU(Layer):
         output_shape = [input_shape[0], self._units]
         return tuple(output_shape)
 
-    def get_config(self) -> dict:
-        """Get the config dict of SpatialGRU."""
-        config = {
-            'units': self._units,
-            'normalize': self._normalize,
-            'init_diag': self._init_diag,
-            'activation': activations.serialize(self._activation),
-            'recurrent_activation':
-                activations.serialize(self._recurrent_activation),
-            'use_bias': self._use_bias,
-            'kernel_initializer':
-                initializers.serialize(self._kernel_initializer),
-            'recurrent_initializer':
-                initializers.serialize(self._recurrent_initializer),
-            'bias_initializer':
-                initializers.serialize(self._bias_initializer),
-            'direction': self._direction
-        }
-        base_config = super(SpatialGRU, self).get_config()
-        return dict(list(base_config.items()) + list(config.items()))
-
     @classmethod
     def _time_distributed_dense(cls, w, x, b):
         if K.backend() == 'tensorflow':

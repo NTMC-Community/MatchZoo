@@ -64,26 +64,23 @@ class MatchingTensorLayer(Layer):
                 )
 
         if self._init_diag:
-            if self._shape1[2] != self._shape2[2]:
-                raise ValueError('Use init_diag need same embedding shape.')
-            M_diag = np.float32(
+            interaction_matrix = np.float32(
                 np.random.uniform(
                     -0.05, 0.05,
                     [self._channels, self._shape1[2], self._shape2[2]]
                 )
             )
-            for i in range(self._channels):
-                for j in range(self._shape1[2]):
-                    M_diag[i][j][j] = 0.1
-            self.M = self.add_weight(
-                name='M',
+            for channel_index in range(self._channels):
+                np.fill_diagonal(interaction_matrix[channel_index], 0.1)
+            self.interaction_matrix = self.add_weight(
+                name='interaction_matrix',
                 shape=(self._channels, self._shape1[2], self._shape2[2]),
-                initializer=constant(M_diag),
+                initializer=constant(interaction_matrix),
                 trainable=True
             )
         else:
-            self.M = self.add_weight(
-                name='M',
+            self.interaction_matrix = self.add_weight(
+                name='interaction_matrix',
                 shape=(self._channels, self._shape1[2], self._shape2[2]),
                 initializer='uniform',
                 trainable=True
@@ -101,7 +98,7 @@ class MatchingTensorLayer(Layer):
         if self._normalize:
             x1 = K.l2_normalize(x1, axis=2)
             x2 = K.l2_normalize(x2, axis=2)
-        output = K.tf.einsum('abd,fde,ace->afbc', x1, self.M, x2)
+        output = K.tf.einsum('abd,fde,ace->afbc', x1, self.interaction_matrix, x2)
         return output
 
     def compute_output_shape(self, input_shape: list) -> tuple:
@@ -125,13 +122,3 @@ class MatchingTensorLayer(Layer):
 
         output_shape = [shape1[0], self._channels, shape1[1], shape2[1]]
         return tuple(output_shape)
-
-    def get_config(self) -> dict:
-        """Get the config dict of MatchingTensorLayer."""
-        config = {
-            'channels': self._channels,
-            'normalize': self._normalize,
-            'init_diag': self._init_diag,
-        }
-        base_config = super(MatchingTensorLayer, self).get_config()
-        return dict(list(base_config.items()) + list(config.items()))
