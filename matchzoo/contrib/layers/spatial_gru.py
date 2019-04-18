@@ -65,7 +65,7 @@ class SpatialGRU(Layer):
                  direction: str = 'lr',
                  **kwargs):
         """:class:`SpatialGRU` constructor."""
-        super(SpatialGRU, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self._units = units
         self._normalize = normalize
         self._init_diag = init_diag

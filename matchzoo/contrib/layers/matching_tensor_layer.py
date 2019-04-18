@@ -2,7 +2,6 @@
 import typing
 
 import numpy as np
-
 from keras import backend as K
 from keras.engine import Layer
 from keras.initializers import constant
@@ -35,7 +34,7 @@ class MatchingTensorLayer(Layer):
     def __init__(self, channels: int = 4, normalize: bool = True,
                  init_diag: bool = True, **kwargs):
         """:class:`MatchingTensorLayer` constructor."""
-        super(MatchingTensorLayer, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self._channels = channels
         self._normalize = normalize
         self._init_diag = init_diag
