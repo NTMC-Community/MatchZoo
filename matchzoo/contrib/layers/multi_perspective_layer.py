@@ -78,8 +78,8 @@ class MultiPerspectiveLayer(Layer):
         if self._perspective.get('full'):
             # Each forward & backward contextual embedding compare
             # with the last step of the last time step of the other sentence.
-            h_rt = K.concatenate([forward_h_rt, backward_h_rt], axis=-1)
-            full_match_tensor = self.full_match([lstm_reps_lt, h_rt])
+            h_lt = K.concatenate([forward_h_lt, backward_h_lt], axis=-1)
+            full_match_tensor = self.full_match([h_lt, lstm_reps_rt])
             match_tensor_list.append(full_match_tensor)
             match_dim += self._mp_dim + 1
 
@@ -144,18 +144,20 @@ class MpFullMatch(Layer):
         self.built = True
 
     def call(self, x, **kwargs):
-        """Call."""
-        reps_lt, rep_rt = x
-        reps_rt = K.expand_dims(rep_rt, 1)
-        # match_tensor: [batch, steps_lt, mp_dim+1]
+        """Call.
+        """
+        rep_lt, reps_rt = x
+        att_lt = K.expand_dims(rep_lt, 1)
+
         match_tensor, match_dim = _multi_perspective_match(self.mp_dim,
-                                                           reps_lt,
-                                                           reps_rt)
+                                                           reps_rt,
+                                                           att_lt)
+        # match_tensor => [b, len_rt, mp_dim+1]
         return match_tensor
 
     def compute_output_shape(self, input_shape):
         """Compute output shape."""
-        return input_shape[0][0], input_shape[0][1], self.mp_dim + 1
+        return input_shape[1][0], input_shape[1][1], self.mp_dim + 1
 
 
 class MpMaxPoolingMatch(Layer):
@@ -168,9 +170,9 @@ class MpMaxPoolingMatch(Layer):
 
     def build(self, input_shapes):
         """Build."""
+        d = input_shapes[0][-1]
         self.kernel = self.add_weight(name='kernel',
-                                      shape=(1, 1, 1,
-                                             self.mp_dim, input_shapes[0][-1]),
+                                      shape=(1, 1, 1, self.mp_dim, d),
                                       initializer='uniform',
                                       trainable=True)
         self.built = True
@@ -180,23 +182,23 @@ class MpMaxPoolingMatch(Layer):
         reps_lt, reps_rt = x
 
         # kernel: [1, 1, 1, mp_dim, d]
-        # lstm_lt -> [batch, steps_lt, 1, 1, d]
+        # lstm_lt => [b, len_lt, 1, 1, d]
         reps_lt = K.expand_dims(reps_lt, axis=2)
         reps_lt = K.expand_dims(reps_lt, axis=2)
         reps_lt = reps_lt * self.kernel
 
-        # lstm_rt -> [batch, 1, steps_rt, 1, d]
+        # lstm_rt -> [b, 1, len_rt, 1, d]
         reps_rt = K.expand_dims(reps_rt, axis=2)
         reps_rt = K.expand_dims(reps_rt, axis=1)
 
-        # match_tensor -> [batch, steps_lt, steps_rt, mp_dim]
         match_tensor = _cosine_distance(reps_lt, reps_rt, cosine_norm=False)
-        max_match_tensor = K.max(match_tensor, axis=2)
+        max_match_tensor = K.max(match_tensor, axis=1)
+        # match_tensor => [b, len_rt, m]
         return max_match_tensor
 
     def compute_output_shape(self, input_shape):
         """Compute output shape."""
-        return input_shape[0][0], input_shape[0][1], self.mp_dim
+        return input_shape[1][0], input_shape[1][1], self.mp_dim
 
 
 class MpAttentiveMatch(Layer):
@@ -211,7 +213,7 @@ class MpAttentiveMatch(Layer):
         >>> layer = mz.contrib.layers.multi_perspective_layer.MpAttentiveMatch(
         ...     att_dim=30, mp_dim=20)
         >>> layer.compute_output_shape([(32, 10, 100), (32, 40, 100)])
-        (32, 10, 20)
+        (32, 40, 20)
 
     """
 
@@ -242,7 +244,7 @@ class MpAttentiveMatch(Layer):
 
     def compute_output_shape(self, input_shape):
         """Compute output shape."""
-        return input_shape[0][0], input_shape[0][1], self.mp_dim
+        return input_shape[1][0], input_shape[1][1], self.mp_dim
 
 
 class MpMaxAttentiveMatch(Layer):
@@ -428,6 +430,7 @@ def _calc_relevancy_matrix(reps_lt, reps_rt):
     reps_lt = K.expand_dims(reps_lt, 1)  # [b, 1, len_lt, d]
     reps_rt = K.expand_dims(reps_rt, 2)  # [b, len_rt, 1, d]
     relevancy_matrix = _cosine_distance(reps_lt, reps_rt)
+    # => [b, len_rt, len_lt, d]
     return relevancy_matrix
 
 
