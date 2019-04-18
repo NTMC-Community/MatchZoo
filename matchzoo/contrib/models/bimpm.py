@@ -56,50 +56,6 @@ class BiMPM(BaseModel):
 
         return params
 
-    # @classmethod
-    # def get_default_preprocessor(cls):
-    #     """:return: Instance of :class:`NaivePreprocessor`."""
-    #     return preprocessors.NaivePreprocessor()
-    #
-    # @property
-    # def word_embedding_mat(self) -> np.ndarray:
-    #     """Get pretrained embedding for ArcI model."""
-    #     # Check if provided embedding matrix
-    #     if self._params['word_embedding_mat'] is None:
-    #         raise TypeError('No pre-trained word embeddings provided.')
-    #
-    # @word_embedding_mat.setter
-    # def word_embedding_mat(self, embedding_mat: np.ndarray):
-    #     """
-    #     Set pretrained embedding for ArcI model.
-    #
-    #     :param embedding_mat: pretrained embedding in numpy format.
-    #     """
-    #     self._params['word_embedding_mat'] = embedding_mat
-    #     self._params['vocab_size'], self._params['dim_word_embedding'] = \
-    #         embedding_mat.shape
-    #
-    # @property
-    # def char_embedding_mat(self) -> np.ndarray:
-    #     """Initialize character level embedding."""
-    #     s = self._params['embedding_random_scale']
-    #     self._params['char_embedding_mat'] = \
-    #         np.random.uniform(-s, s, (self._params['vocab_size'],
-    #                                   self._params['dim_char_embedding']))
-    #     return self._params['char_embedding_mat']
-    #
-    # def char_embedding(self, char_input_shape, char_vocab_size):
-    #     """Create a character level embedding model."""
-    #     input_char = Input(shape=char_input_shape)
-    #     embed_char = LSTM(self._params['dim_char_embedding'],
-    #                       kernel_initializer=self._params['w_initializer'],
-    #                       bias_initializer=self._params['b_initializer'])(
-    #                           input_char)
-    #     embed_char = Dense(char_vocab_size,
-    #                        activation=self._params['activation_embedding'])(
-    #                            embed_char)
-    #     return Model(input_char, embed_char)
-
     def build(self):
         """Build model structure."""
         # ~ Input Layer

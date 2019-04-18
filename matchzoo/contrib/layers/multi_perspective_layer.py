@@ -8,14 +8,21 @@ from matchzoo.contrib.layers.attention_layer import AttentionLayer
 
 class MultiPerspectiveLayer(Layer):
     """
-    A keras implementation of Bimpm multi-perspective layer.
+    A keras implementation of multi-perspective layer of BiMPM.
 
     For detailed information, see Bilateral Multi-Perspective
     Matching for Natural Language Sentences, section 3.2.
 
     Examples:
         >>> import matchzoo as mz
-        >>> layer = mz.contrib.layers.MultiPerspectiveLayer(50, 20, None)
+        >>> perspective={'full': True, 'max-pooling': True,
+        ...     'attentive': True, 'max-attentive': True}
+        >>> layer = mz.contrib.layers.MultiPerspectiveLayer(
+        ...     att_dim=50, mp_dim=20, perspective=perspective)
+        >>> layer.compute_output_shape(
+        ...     [(32, 10, 100), (32, 50), None, (32, 50), None,
+        ...     [(32, 40, 100), (32, 50), None, (32, 50), None]])
+        (32, 10, 83)
 
     """
 
@@ -54,7 +61,6 @@ class MultiPerspectiveLayer(Layer):
 
         if self._perspective.get('max-attentive'):
             self.max_attentive_match = MpMaxAttentiveMatch(self._att_dim)
-
         self.built = True
 
     def call(self, x: list, **kwargs):
@@ -105,14 +111,23 @@ class MultiPerspectiveLayer(Layer):
             match_dim += self._mp_dim + 1
 
         mp_tensor = K.concatenate(match_tensor_list, axis=-1)
-        self.output_dim = match_dim
-
         return mp_tensor
 
     def compute_output_shape(self, input_shape: list):
         """Compute output shape."""
         shape_a = input_shape[0]
-        return shape_a[0], shape_a[1], self.output_dim
+
+        match_dim = 0
+        if self._perspective.get('full'):
+            match_dim += self._mp_dim + 1
+        if self._perspective.get('max-pooling'):
+            match_dim += self._mp_dim
+        if self._perspective.get('attentive'):
+            match_dim += self._mp_dim + 1
+        if self._perspective.get('max-attentive'):
+            match_dim += self._mp_dim + 1
+
+        return shape_a[0], shape_a[1], match_dim
 
 
 class MpFullMatch(Layer):
@@ -191,6 +206,13 @@ class MpAttentiveMatch(Layer):
     Reference:
     https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L188-L193
 
+    Examples:
+        >>> import matchzoo as mz
+        >>> layer = mz.contrib.layers.multi_perspective_layer.MpAttentiveMatch(
+        ...     att_dim=30, mp_dim=20)
+        >>> layer.compute_output_shape([(32, 10, 100), (32, 40, 100)])
+        (32, 10, 20)
+
     """
 
     def __init__(self, att_dim, mp_dim):
@@ -265,8 +287,8 @@ def collect_representation(representation, positions):
     Collect_representation.
 
     :param representation: [batch_size, node_num, feature_dim]
-    :param positions: [batch_size, neigh_num]
-    :return:
+    :param positions: [batch_size, neighbour_num]
+    :return: [batch_size, neighbour_num]?
     """
     return collect_probs(representation, positions)
 
@@ -275,7 +297,7 @@ def collect_final_step_of_lstm(lstm_representation, lengths):
     """
     Collect final step of lstm.
 
-    :param lstm_representation: [batch_size, passsage_length, dim]
+    :param lstm_representation: [batch_size, len_rt, dim]
     :param lengths: [batch_size]
     :return: [batch_size, dim]
     """
@@ -294,7 +316,7 @@ def collect_final_step_of_lstm(lstm_representation, lengths):
 
 def collect_probs(probs, positions):
     """
-    Collect Probs.
+    Collect Probabilities.
 
     Reference:
     https://github.com/zhiguowang/BiMPM/blob/master/src/layer_utils.py#L128-L140
@@ -312,7 +334,7 @@ def collect_probs(probs, positions):
     batch_nums = K.tile(batch_nums, [1, pair_size])
 
     # shape (batch_size, pair_size, 2)
-    # alert: to solve error message
+    # Alert: to solve error message
     positions = K.tf.to_int32(positions)
     indices = K.stack([batch_nums, positions], axis=2)
 
@@ -329,28 +351,31 @@ def _multi_perspective_match(mp_dim, reps_lt, reps_rt,
     reference:
     https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L207-L223
     :param mp_dim: about 20
-    :param reps_lt: [batch, len, dim]
-    :param reps_rt: [batch, len, dim]
+    :param reps_lt: [batch, len_lt, dim]
+    :param reps_rt: [batch, len_rt, dim]
     :param with_cosine: True
     :param with_mp_cosine: True
     :return: [batch, len, feature_dim*2]
     """
-    input_shape = K.shape(reps_lt)
-    batch_size = input_shape[0]
-    seq_length = input_shape[1]
+    shape_lt = K.shape(reps_lt)
+    batch_size = shape_lt[0]
+    len_lt = shape_lt[1]
 
     match_dim = 0
     match_result_list = []
     if with_cosine:
-        cosine_value = _cosine_distance(reps_lt, reps_rt, False)
-        cosine_value = K.reshape(cosine_value, [batch_size, seq_length, 1])
-        match_result_list.append(cosine_value)
+        cosine_tensor = _safe_cosine_distance(reps_lt, reps_rt, False)
+        cosine_tensor = K.reshape(cosine_tensor,
+                                  [batch_size, len_lt, 1])
+        match_result_list.append(cosine_tensor)
         match_dim += 1
 
     if with_mp_cosine:
         mp_cosine_layer = MpCosineLayer(mp_dim)
-        match_tensor = mp_cosine_layer([reps_lt, reps_rt])
-        match_result_list.append(match_tensor)
+        mp_cosine_tensor = mp_cosine_layer([reps_lt, reps_rt])
+        mp_cosine_tensor = K.reshape(mp_cosine_tensor,
+                                     [batch_size, len_lt, mp_dim])
+        match_result_list.append(mp_cosine_tensor)
         match_dim += mp_cosine_layer.mp_dim
 
     match_result = K.concatenate(match_result_list, 2)
@@ -363,6 +388,14 @@ class MpCosineLayer(Layer):
 
     Reference:
     https://github.com/zhiguowang/BiMPM/blob/master/src/match_utils.py#L121-L129
+
+    Examples:
+        >>> import matchzoo as mz
+        >>> layer = mz.contrib.layers.multi_perspective_layer.MpCosineLayer(
+        ...     mp_dim=50)
+        >>> layer.compute_output_shape([(32, 10, 100), (32, 40, 100)])
+        (32, 10, 40, 50)
+
     """
 
     def __init__(self, mp_dim, **kwargs):
@@ -382,44 +415,69 @@ class MpCosineLayer(Layer):
     def call(self, x, **kwargs):
         """Call."""
         v1, v2 = x
-        v1 = K.expand_dims(v1, 2) * self.kernel
-        v2 = K.expand_dims(v2, 2)
-        return _cosine_distance(v1, v2, False)
+        v1 = K.expand_dims(v1, 2) * self.kernel  # [b, s_lt, m, d]
+        v2 = K.expand_dims(v2, 2)  # [b, s_rt, 1, d]
+        return _safe_cosine_distance(v1, v2, False)
 
     def compute_output_shape(self, input_shape):
         """Compute output shape."""
-        return input_shape[0][0], input_shape[0][1], self.mp_dim
+        return input_shape[0][0], input_shape[0][1], input_shape[1][1], \
+            self.mp_dim
 
 
 def _calc_relevancy_matrix(reps_lt, reps_rt):
-    # -> [batch_size, 1, len_lt, dim]
-    reps_lt = K.expand_dims(reps_lt, 1)
-    reps_rt = K.expand_dims(reps_rt, 2)
-    # -> [batch_size, len_rt, 1, dim]
-    # in_passage_repres_tmp = K.expand_dims(reps_rt, 2)
+    reps_lt = K.expand_dims(reps_lt, 1)  # [b, 1, len_lt, d]
+    reps_rt = K.expand_dims(reps_rt, 2)  # [b, len_rt, 1, d]
     relevancy_matrix = _cosine_distance(reps_lt, reps_rt)
     return relevancy_matrix
 
 
-def _mask_relevancy_matrix(relevancy_matrix, question_mask, passage_mask):
-    # relevancy_matrix: [batch_size, passage_len, question_len]
-    # question_mask: [batch_size, question_len]
-    # passage_mask: [batch_size, passsage_len]
-    if question_mask is not None:
-        relevancy_matrix = relevancy_matrix * K.expand_dims(question_mask, 1)
-    relevancy_matrix = relevancy_matrix * K.expand_dims(passage_mask, 2)
+def _mask_relevancy_matrix(relevancy_matrix, mask_lt, mask_rt):
+    """
+    Mask relevancy matrix.
+
+    :param relevancy_matrix: [b, len_rt, len_lt]
+    :param mask_lt: [b, len_lt]
+    :param mask_rt: [b, len_rt]
+    :return: masked_matrix: [b, len_rt, len_lt]
+    """
+    if mask_lt is not None:
+        relevancy_matrix = relevancy_matrix * K.expand_dims(mask_lt, 1)
+    relevancy_matrix = relevancy_matrix * K.expand_dims(mask_rt, 2)
     return relevancy_matrix
+
+
+def _safe_cosine_distance(v1, v2, cosine_norm=True, eps=1e-6):
+    """
+    Only requires `K.sum(v1 * v2, axis=-1)`.
+
+    :param v1: [batch, time_steps(v1), 1, m, d]
+    :param v2: [batch, 1, time_steps(v2), m, d]
+    :param cosine_norm: True
+    :param eps: 1e-6
+    :return: [batch, time_steps(v1), time_steps(v2), m]
+    """
+    shape1, shape2 = K.shape(v1), K.shape(v2)
+    if shape1[1] != shape2[1]:
+        v1 = K.expand_dims(v1, 2)  # [b, s_lt, 1, m, d]
+        v2 = K.expand_dims(v2, 1)  # [b, 1, s_rt, m, d]
+    cosine_numerator = K.sum(v1 * v2, axis=-1)
+    if not cosine_norm:
+        return K.tanh(cosine_numerator)
+    v1_norm = K.sqrt(K.maximum(K.sum(K.square(v1), axis=-1), eps))
+    v2_norm = K.sqrt(K.maximum(K.sum(K.square(v2), axis=-1), eps))
+    return cosine_numerator / v1_norm / v2_norm
 
 
 def _cosine_distance(v1, v2, cosine_norm=True, eps=1e-6):
     """
     Only requires `K.sum(v1 * v2, axis=-1)`.
 
-    :param v1: [batch, time_steps(v1), 1, l, d]
-    :param v2: [batch, 1, time_steps(v2), l, d]
+    :param v1: [batch, time_steps(v1), 1, m, d]
+    :param v2: [batch, 1, time_steps(v2), m, d]
     :param cosine_norm: True
     :param eps: 1e-6
-    :return: [batch, time_steps(v1), time_steps(v2), l]
+    :return: [batch, time_steps(v1), time_steps(v2), m]
     """
     cosine_numerator = K.sum(v1 * v2, axis=-1)
     if not cosine_norm:
