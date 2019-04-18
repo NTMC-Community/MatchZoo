@@ -23,7 +23,7 @@ class MatchingTensorLayer(Layer):
 
     Examples:
         >>> import matchzoo as mz
-        >>> layer = mz.contrib.layers.MatchingTensorLayer(channels=10,
+        >>> layer = mz.contrib.layers.MatchingTensorLayer(channels=4,
         ...                                               normalize=True,
         ...                                               init_diag=True)
         >>> num_batch, left_len, right_len, num_dim = 5, 3, 2, 10
@@ -32,7 +32,7 @@ class MatchingTensorLayer(Layer):
 
     """
 
-    def __init__(self, channels: int = 10, normalize: bool = False,
+    def __init__(self, channels: int = 4, normalize: bool = True,
                  init_diag: bool = True, **kwargs):
         """:class:`MatchingTensorLayer` constructor."""
         super(MatchingTensorLayer, self).__init__(**kwargs)

@@ -45,15 +45,15 @@ class SpatialGRU(Layer):
 
     Examples:
         >>> import matchzoo as mz
-        >>> layer = mz.contrib.layers.SpatialGRU(units=50,
+        >>> layer = mz.contrib.layers.SpatialGRU(units=10,
         ...                                      direction='lt')
-        >>> num_batch, channel, left_len, right_len = 5, 10, 3, 2
+        >>> num_batch, channel, left_len, right_len = 5, 5, 3, 2
         >>> layer.build([num_batch, channel, left_len, right_len])
 
     """
 
     def __init__(self,
-                 units: int = 50,
+                 units: int = 10,
                  normalize: bool = False,
                  init_diag: bool = False,
                  activation: str = 'tanh',
@@ -166,9 +166,9 @@ class SpatialGRU(Layer):
         z = self._time_distributed_dense(self._wz, q, self._bz)
         zi, zl, zt, zd = self.softmax_by_row(z)
 
-        hij_1 = self._time_distributed_dense(self._w_ij, s_ij, self._b_ij)
-        hij_2 = K.dot(r * (K.tf.concat([h_left, h_top, h_diag], 1)), self._U)
-        hij_ = self._activation(hij_1 + hij_2)
+        hij_l = self._time_distributed_dense(self._w_ij, s_ij, self._b_ij)
+        hij_r = K.dot(r * (K.tf.concat([h_left, h_top, h_diag], 1)), self._U)
+        hij_ = self._activation(hij_l + hij_r)
         hij = zl * h_left + zt * h_top + zd * h_diag + zi * hij_
         states = states.write(((i + 1) * (self._text2_maxlen + 1) + j + 1),
                               hij)
@@ -261,7 +261,4 @@ class SpatialGRU(Layer):
         if K.backend() == 'tensorflow':
             x = K.dot(x, w)
             x = K.bias_add(x, b)
-        else:
-            raise Exception("time_distributed_dense doesn't "
-                            "backend tensorflow")
         return x
