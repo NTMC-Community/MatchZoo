@@ -16,7 +16,7 @@ _test_url = "http://alt.qcri.org/semeval2016/task3/data/uploads/semeval2016_task
 
 def load_data(
     stage: str = 'train',
-    pair_type: str = 'qa',
+    pair_type: str = 'answer',
     method: str = 'both',
     task: str = 'classification',
     target_label: str = 'Good',
@@ -26,15 +26,11 @@ def load_data(
         raise ValueError(f"{stage} is not a valid stage."
                          f"Must be one of `train`, `dev`, and `test`.")
 
-    if stage not in ('train', 'dev', 'test'):
-        raise ValueError(f"{stage} is not a valid stage."
-                         f"Must be one of `train`, `dev`, and `test`.")
-
     if method not in ('part1', 'part2', 'both'):
         raise ValueError(f"{method} is not a valid method."
                          f"Must be one of `part1`, `part2`, `both`.")
 
-    if pair_type not in ('part1', 'part2', 'both'):
+    if pair_type not in ('question', 'answer', 'external_answer'):
         raise ValueError(f"{method} is not a valid method."
                          f"Must be one of `part1`, `part2`, `both`.")
 
