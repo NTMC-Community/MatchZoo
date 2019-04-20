@@ -13,6 +13,7 @@ from .stop_removal import StopRemoval
 from .tokenize import Tokenize
 from .vocabulary import Vocabulary
 from .word_hashing import WordHashing
+from .bert_tokenize import BertTokenize
 
 
 def list_available() -> list:

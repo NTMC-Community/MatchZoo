@@ -136,3 +136,29 @@ def test_this():
     type(train_data_processed)
     test_data_transformed = dssm_preprocessor.transform(test_data)
     type(test_data_transformed)
+
+
+import tempfile
+import os
+
+
+def test_bert_tokenizer_unit():
+    vocab_tokens = [
+        "[UNK]", "[CLS]", "[SEP]", "want", "##want", "##ed", "wa", "un", "runn",
+        "##ing", ","
+    ]
+    with tempfile.NamedTemporaryFile(delete=False) as vocab_writer:
+        vocab_writer.write("".join(
+            [x + "\n" for x in vocab_tokens]).encode("utf-8"))
+
+    vocab_file = vocab_writer.name
+
+    tokenizer_unit = units.BertTokenize(vocab_file, do_lower_case=True)
+    os.unlink(vocab_file)
+
+    tokens = tokenizer_unit.transform(u"UNwant\u00E9d,running")
+    assert tokens == ["un", "##want", "##ed", ",", "runn", "##ing"]
+
+    assert tokenizer_unit.tokenizer.convert_tokens_to_ids(tokens) == [7, 4, 5, 10, 8, 9]
+
+    assert tokenizer_unit.tokenizer.basic_tokenizer.tokenize(u"ah\u535A\u63A8zz") == [u"ah", u"\u535A", u"\u63A8", u"zz"]
