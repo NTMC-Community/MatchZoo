@@ -9,6 +9,8 @@ from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
 from matchzoo.engine import hyper_spaces
+from matchzoo.contrib.layers import SpatialGRU
+from matchzoo.contrib.layers import MatchingTensorLayer
 
 
 class MatchSRNN(BaseModel):
@@ -60,34 +62,35 @@ class MatchSRNN(BaseModel):
         #   C = number of channels
 
         # Left input and right input.
-        # shape = [B, L]
-        # shape = [B, R]
+        # query = [B, L]
+        # doc = [B, R]
         query, doc = self._make_inputs()
 
-        embedding = self._make_embedding_layer()
         # Process left and right input.
-        # shape = [B, L, D]
+        # embed_query = [B, L, D]
+        # embed_doc = [B, R, D]
+        embedding = self._make_embedding_layer()
         embed_query = embedding(query)
-        # shape = [B, R, D]
         embed_doc = embedding(doc)
 
         # Get matching tensor
-        # shape = [B, C, L, R]
-        matching_tensor_layer = matchzoo.contrib.layers.MatchingTensorLayer(
+        # matching_tensor = [B, C, L, R]
+        matching_tensor_layer = MatchingTensorLayer(
             channels=self._params['channels'])
         matching_tensor = matching_tensor_layer([embed_query, embed_doc])
-        # shape = [B, L, R, C]
-        matching_tensor = keras.layers.Permute((2, 3, 1))(matching_tensor)
 
-        spatial_gru = matchzoo.contrib.layers.SpatialGRU(
+        # Apply spatial GRU to the word level interaction tensor
+        # h_ij = [B, U]
+        spatial_gru = SpatialGRU(
             units=self._params['units'],
             direction=self._params['direction'])
-
         h_ij = spatial_gru(matching_tensor)
 
+        # Apply Dropout
         x = keras.layers.Dropout(
             rate=self._params['dropout_rate'])(h_ij)
 
+        # Make output layer
         x_out = self._make_output_layer()(x)
 
         self._backend = keras.Model(inputs=[query, doc], outputs=x_out)

@@ -94,10 +94,21 @@ class MatchingTensorLayer(Layer):
         """
         x1 = inputs[0]
         x2 = inputs[1]
+        # Normalize x1 and x2
         if self._normalize:
             x1 = K.l2_normalize(x1, axis=2)
             x2 = K.l2_normalize(x2, axis=2)
-        output = K.tf.einsum('abd,fde,ace->afbc', x1, self.interaction_matrix, x2)
+
+        # b = batch size
+        # l = length of `x1`
+        # r = length of `x2`
+        # d, e = embedding size
+        # c = number of channels
+        # output = [b, c, l, r]
+        output = K.tf.einsum(
+            'bld,cde,bre->bclr',
+            x1, self.interaction_matrix, x2
+        )
         return output
 
     def compute_output_shape(self, input_shape: list) -> tuple:
