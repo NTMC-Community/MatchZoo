@@ -15,13 +15,16 @@ class MultiOptimizer(Optimizer):
     """
 
     def __init__(self, **kwargs):
+        """Initialization."""
         super().__init__()
 
     @interfaces.legacy_get_updates_support
     def get_updates(self, loss, params):
+        """Update params."""
         raise NotImplementedError
 
-    def get_multiplier(self, param):
+    def get_multiplier(self, param) -> float:
+        """Get multiplier."""
         if self.multipliers is not None:
             for k in self.multipliers.keys():
                 if k in param.name:

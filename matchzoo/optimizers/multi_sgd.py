@@ -31,8 +31,10 @@ class MultiSGD(MultiOptimizer):
         ... )
     """
 
-    def __init__(self, lr=0.01, momentum=0., decay=0.,
-                 nesterov=False, multipliers=None, **kwargs):
+    def __init__(self, lr: float = 0.01, momentum: float = 0.,
+                 decay: float = 0., nesterov: float = False,
+                 multipliers: dict = None, **kwargs):
+        """Initialization."""
         super().__init__()
         with K.name_scope(self.__class__.__name__):
             self.iterations = K.variable(0, dtype='int64', name='iterations')
@@ -44,7 +46,8 @@ class MultiSGD(MultiOptimizer):
         self.multipliers = multipliers
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params) -> typing.Any:
+        """Update params."""
         grads = self.get_gradients(loss, params)
         self.updates = [K.update_add(self.iterations, 1)]
 
@@ -81,7 +84,8 @@ class MultiSGD(MultiOptimizer):
             self.updates.append(K.update(p, new_p))
         return self.updates
 
-    def get_config(self):
+    def get_config(self) -> dict:
+        """Get config dict."""
         config = {'lr': float(K.get_value(self.lr)),
                   'momentum': float(K.get_value(self.momentum)),
                   'decay': float(K.get_value(self.decay)),

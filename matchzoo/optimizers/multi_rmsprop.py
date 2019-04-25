@@ -40,8 +40,10 @@ class MultiRMSprop(MultiOptimizer):
            slides/lecture_slides_lec6.pdf)
     """
 
-    def __init__(self, lr=0.001, rho=0.9, epsilon=None, decay=0.,
-                 multipliers=None, **kwargs):
+    def __init__(self, lr: float = 0.001, rho: float = 0.9,
+                 epsilon: float = None, decay: float = 0.,
+                 multipliers: dict = None, **kwargs):
+        """Initialization."""
         super().__init__()
         with K.name_scope(self.__class__.__name__):
             self.lr = K.variable(lr, name='lr')
@@ -55,7 +57,8 @@ class MultiRMSprop(MultiOptimizer):
         self.multipliers = multipliers
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params) -> typing.Any:
+        """Update params."""
         grads = self.get_gradients(loss, params)
         accumulators = [
             K.zeros(K.int_shape(p), dtype=K.dtype(p)) for p in params
@@ -90,7 +93,8 @@ class MultiRMSprop(MultiOptimizer):
             self.updates.append(K.update(p, new_p))
         return self.updates
 
-    def get_config(self):
+    def get_config(self) -> dict:
+        """Get config dict."""
         config = {'lr': float(K.get_value(self.lr)),
                   'rho': float(K.get_value(self.rho)),
                   'decay': float(K.get_value(self.decay)),

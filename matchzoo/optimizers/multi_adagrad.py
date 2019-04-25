@@ -23,7 +23,6 @@ class MultiAdagrad(MultiOptimizer):
     :param lr: Float >= 0. Initial learning rate.
     :param epsilon: Float >= 0. If `None`, defaults to `K.epsilon()`.
     :param decay: Float >= 0. Learning rate decay over each update.
-
     :param nesterov: Bool. Whether to apply Nesterov momentum.
     :param multipliers: Dict. Different learning rate multiplier for
         different layers. For example, `multipliers={'dense_1':0.8,
@@ -40,8 +39,10 @@ class MultiAdagrad(MultiOptimizer):
            Optimization](http://www.jmlr.org/papers/volume12/duchi11a/duchi11a.pdf)
     """
 
-    def __init__(self, lr=0.01, epsilon=None, decay=0.,
-                 multipliers=None, **kwargs):
+    def __init__(self, lr: float = 0.01, epsilon: float = None,
+                 decay: float = 0., multipliers: dict = None,
+                 **kwargs):
+        """Initialization."""
         super().__init__()
         with K.name_scope(self.__class__.__name__):
             self.lr = K.variable(lr, name='lr')
@@ -54,7 +55,8 @@ class MultiAdagrad(MultiOptimizer):
         self.multipliers = multipliers
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params) -> typing.Any:
+        """Update params."""
         grads = self.get_gradients(loss, params)
         shapes = [K.int_shape(p) for p in params]
         accumulators = [K.zeros(shape) for shape in shapes]
@@ -87,7 +89,8 @@ class MultiAdagrad(MultiOptimizer):
             self.updates.append(K.update(p, new_p))
         return self.updates
 
-    def get_config(self):
+    def get_config(self) -> dict:
+        """Get config dict."""
         config = {'lr': float(K.get_value(self.lr)),
                   'decay': float(K.get_value(self.decay)),
                   'epsilon': self.epsilon,

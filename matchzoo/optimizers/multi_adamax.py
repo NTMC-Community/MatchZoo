@@ -32,9 +32,11 @@ class MultiAdamax(MultiOptimizer):
           (https://arxiv.org/abs/1412.6980v8)
     """
 
-    def __init__(self, lr=0.002, beta_1=0.9, beta_2=0.999,
-                 epsilon=None, decay=0., multipliers=None,
+    def __init__(self, lr: float = 0.002, beta_1: float = 0.9,
+                 beta_2: float = 0.999, epsilon: float = None,
+                 decay: float = 0., multipliers: dict = None,
                  **kwargs):
+        """Initialization."""
         super().__init__()
         with K.name_scope(self.__class__.__name__):
             self.iterations = K.variable(0, dtype='int64', name='iterations')
@@ -49,7 +51,8 @@ class MultiAdamax(MultiOptimizer):
         self.multipliers = multipliers
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params) -> typing.Any:
+        """Update params."""
         grads = self.get_gradients(loss, params)
         self.updates = [K.update_add(self.iterations, 1)]
 
@@ -93,7 +96,8 @@ class MultiAdamax(MultiOptimizer):
             self.updates.append(K.update(p, new_p))
         return self.updates
 
-    def get_config(self):
+    def get_config(self) -> dict:
+        """Get config dict."""
         config = {'lr': float(K.get_value(self.lr)),
                   'beta_1': float(K.get_value(self.beta_1)),
                   'beta_2': float(K.get_value(self.beta_2)),

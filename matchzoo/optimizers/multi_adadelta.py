@@ -27,8 +27,9 @@ class MultiAdadelta(MultiOptimizer):
         It is recommended to leave it at the default value.
     :param rho: Float >= 0. Adadelta decay factor, corresponding to fraction of
         gradient to keep at each time step.
-        epsilon: float >= 0. Fuzz factor. If `None`, defaults to `K.epsilon()`.
-        decay: float >= 0. Initial learning rate decay.
+    :param epsilon: float >= 0. Fuzz factor. If `None`, defaults to
+        `K.epsilon()`.
+    :param decay: float >= 0. Initial learning rate decay.
     :param multipliers: Dict. Different learning rate multiplier for
         different layers. For example, `multipliers={'dense_1':0.8,
         'conv_1/kernel':0.5}.
@@ -44,8 +45,10 @@ class MultiAdadelta(MultiOptimizer):
           (https://arxiv.org/abs/1212.5701)
     """
 
-    def __init__(self, lr=1.0, rho=0.95, epsilon=None, decay=0.,
-                 multipliers=None, **kwargs):
+    def __init__(self, lr: float = 1.0, rho: float = 0.95,
+                 epsilon: float = None, decay: float = 0.,
+                 multipliers: dict = None, **kwargs):
+        """Initialization."""
         super().__init__()
         with K.name_scope(self.__class__.__name__):
             self.lr = K.variable(lr, name='lr')
@@ -59,7 +62,8 @@ class MultiAdadelta(MultiOptimizer):
         self.multipliers = multipliers
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params) -> typing.Any:
+        """Update params."""
         grads = self.get_gradients(loss, params)
         shapes = [K.int_shape(p) for p in params]
         accumulators = [K.zeros(shape) for shape in shapes]
@@ -103,7 +107,8 @@ class MultiAdadelta(MultiOptimizer):
             self.updates.append(K.update(d_a, new_d_a))
         return self.updates
 
-    def get_config(self):
+    def get_config(self) -> dict:
+        """Get config dict."""
         config = {'lr': float(K.get_value(self.lr)),
                   'rho': self.rho,
                   'decay': float(K.get_value(self.decay)),
