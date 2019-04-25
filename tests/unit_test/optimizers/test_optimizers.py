@@ -9,7 +9,7 @@ import matchzoo as mz
 
 
 @pytest.fixture(scope='module')
-def data(num_train=1000, num_test=500, input_shape=(10,),
+def data(num_train=200, num_test=0, input_shape=(10,),
          output_shape=(2,), classification=True, num_classes=2):
     """Generates test data to train a model on.
     classification=True overrides output_shape
@@ -48,9 +48,7 @@ def model(data):
 
 
 @pytest.fixture(scope='module', params=[
-    {'dense_1/kernel:0': 0.8},
-    {'dense_1': 0.5},
-    {}
+    {'dense_1': 0.8},
 ])
 def multipliers(request):
     return request.param
@@ -67,12 +65,12 @@ def optimizer(optimizer_class, multipliers):
     return optimizer
 
 
-def test_optimizer(data, model, optimizer, target=0.75):
+def test_optimizer(data, model, optimizer, target=0.65):
     x_train, y_train = data
     model.compile(loss='categorical_crossentropy',
                   optimizer=optimizer,
                   metrics=['accuracy'])
-    history = model.fit(x_train, y_train, epochs=10, batch_size=16, verbose=0)
+    history = model.fit(x_train, y_train, epochs=5, batch_size=16, verbose=0)
     assert history.history['acc'][-1] >= target
 
     config = keras.optimizers.serialize(optimizer)
