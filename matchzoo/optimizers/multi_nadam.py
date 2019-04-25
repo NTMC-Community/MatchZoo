@@ -29,7 +29,7 @@ class MultiNadam(MultiOptimizer):
 
     Example:
         >>> import matchzoo as mz
-        >>> multi_optimizer = mz.optimizer.MultiNadam(
+        >>> multi_optimizer = mz.optimizers.MultiNadam(
         ...    multipliers={'dense_1':0.8, 'conv_1/kernel':0.5}
         ... )
 

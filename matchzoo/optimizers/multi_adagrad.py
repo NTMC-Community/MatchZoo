@@ -31,7 +31,7 @@ class MultiAdagrad(MultiOptimizer):
 
     Example:
         >>> import matchzoo as mz
-        >>> multi_optimizer = mz.optimizer.MultiAdagrad(
+        >>> multi_optimizer = mz.optimizers.MultiAdagrad(
         ...    multipliers={'dense_1':0.8, 'conv_1/kernel':0.5}
         ... )
 

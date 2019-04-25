@@ -67,7 +67,6 @@ def optimizer(optimizer_class, multipliers):
     return optimizer
 
 
-@pytest.mark.cron
 def test_optimizer(data, model, optimizer, target=0.75):
     x_train, y_train = data
     model.compile(loss='categorical_crossentropy',

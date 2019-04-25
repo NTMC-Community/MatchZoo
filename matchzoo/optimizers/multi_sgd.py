@@ -26,7 +26,7 @@ class MultiSGD(MultiOptimizer):
 
     Example:
         >>> import matchzoo as mz
-        >>> multi_optimizer = mz.optimizer.MultiSGD(
+        >>> multi_optimizer = mz.optimizers.MultiSGD(
         ...    multipliers={'dense_1':0.8, 'conv_1/kernel':0.5}
         ... )
     """

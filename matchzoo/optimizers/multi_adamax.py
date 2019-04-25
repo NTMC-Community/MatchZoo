@@ -23,7 +23,7 @@ class MultiAdamax(MultiOptimizer):
 
     Example:
         >>> import matchzoo as mz
-        >>> multi_optimizer = mz.optimizer.MultiAdamax(
+        >>> multi_optimizer = mz.optimizers.MultiAdamax(
         ...    multipliers={'dense_1':0.8, 'conv_1/kernel':0.5}
         ... )
 
