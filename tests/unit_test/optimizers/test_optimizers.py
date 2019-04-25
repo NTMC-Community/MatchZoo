@@ -65,7 +65,7 @@ def optimizer(optimizer_class, multipliers):
     return optimizer
 
 
-def test_optimizer(data, model, optimizer, target=0.65):
+def test_optimizer(data, model, optimizer, target=0.55):
     x_train, y_train = data
     model.compile(loss='categorical_crossentropy',
                   optimizer=optimizer,
