@@ -33,6 +33,7 @@ from . import datasets
 from . import layers
 from . import auto
 from . import contrib
+from . import optimizers
 
 from .engine import hyper_spaces
 from .engine.base_model import load_model
