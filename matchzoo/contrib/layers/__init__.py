@@ -8,6 +8,6 @@ from .encoding_layer import EncodingLayer
 layer_dict = {
     "MatchingTensorLayer": MatchingTensorLayer,
     "SpatialGRU": SpatialGRU,
-	"DecayingDropoutLayer": DecayingDropoutLayer,
+    "DecayingDropoutLayer": DecayingDropoutLayer,
     "EncodingLayer": EncodingLayer
 }
