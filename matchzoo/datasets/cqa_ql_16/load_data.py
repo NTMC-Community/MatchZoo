@@ -69,7 +69,8 @@ def load_data(
             raise ValueError(f"{target_label} is not a valid target label."
                              f"Must be one of `Good`, `PotentiallyUseful`,"
                              f" `Bad`.")
-        elif match_type == 'question' and target_label not in ['PerfectMatch', 'Relevant', 'Irrelevant']:
+        elif match_type == 'question' and target_label not in [
+                'PerfectMatch', 'Relevant', 'Irrelevant']:
             raise ValueError(f"{target_label} is not a valid target label."
                              f" Must be one of `PerfectMatch`, `Relevant`,"
                              f" `Irrelevant`.")
@@ -183,7 +184,8 @@ def _load_answer(path):
             for comment in thread.iterfind('RelComment'):
                 aid = comment.attrib['RELC_ID']
                 answer = comment.findtext('RelCText')
-                dataset.append([qid, aid, question, answer, comment.attrib['RELC_RELEVANCE2RELQ']])
+                dataset.append([qid, aid, question, answer,
+                                comment.attrib['RELC_RELEVANCE2RELQ']])
     df = pd.DataFrame(dataset, columns=[
         'id_left', 'id_right', 'text_left', 'text_right', 'label'])
     return df
@@ -199,7 +201,8 @@ def _load_external_answer(path):
         for comment in thread.iterfind('RelComment'):
             answer = comment.findtext('RelCText')
             aid = comment.attrib['RELC_ID']
-            dataset.append([qid, aid, query, answer, comment.attrib['RELC_RELEVANCE2ORGQ']])
+            dataset.append([qid, aid, query, answer,
+                            comment.attrib['RELC_RELEVANCE2ORGQ']])
     df = pd.DataFrame(dataset, columns=[
         'id_left', 'id_right', 'text_left', 'text_right', 'label'])
     return df
