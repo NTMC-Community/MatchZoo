@@ -3,9 +3,9 @@
 import typing
 from pathlib import Path
 
+import xml
 import keras
 import pandas as pd
-from xml.etree.ElementTree import parse
 
 import matchzoo
 
@@ -22,25 +22,25 @@ def load_data(
     target_label: str = 'PerfectMatch',
     return_classes: bool = False,
     match_type: str = 'question',
-    method: str = 'both',
+    mode: str = 'both',
 ) -> typing.Union[matchzoo.DataPack, tuple]:
     """
     Load CQA-QL-16 data.
 
     :param stage: One of `train`, `dev`, and `test`.
         (default: `train`)
-    :param task: Could be one of `ranking`, `classification` or a
-        :class:`matchzoo.engine.BaseTask` instance. (default: `ranking`)
+    :param task: Could be one of `ranking`, `classification` or instance
+        of :class:`matchzoo.engine.BaseTask`. (default: `classification`)
     :param target_label: If `ranking`, choose one of classification
-        label as the positive label. (default: `Good`)
+        label as the positive label. (default: `PerfectMatch`)
     :param return_classes: `True` to return classes for classification
         task, `False` otherwise.
     :param match_type: Matching text types. One of `question`,
         `answer`, and `external_answer`. (default: `question`)
-    :param method: Train data use method. One of `part1`, `part2`,
+    :param mode: Train data use method. One of `part1`, `part2`,
         and `both`. (default: `both`)
 
-    :return: A DataPack unless `task` is `classificiation` and `return_classes`
+    :return: A DataPack unless `task` is `classification` and `return_classes`
         is `True`: a tuple of `(DataPack, classes)` in that case.
     """
     if stage not in ('train', 'dev', 'test'):
@@ -48,22 +48,17 @@ def load_data(
                          f"Must be one of `train`, `dev`, and `test`.")
 
     if match_type not in ('question', 'answer', 'external_answer'):
-        raise ValueError(f"{match_type} is not a valid method. Must be one of "
-                         f"`question`, `answer`, `external_answer`.")
+        raise ValueError(f"{match_type} is not a valid method. Must be one of"
+                         f" `question`, `answer`, `external_answer`.")
 
-    if method not in ('part1', 'part2', 'both'):
-        raise ValueError(f"{method} is not a valid method."
+    if mode not in ('part1', 'part2', 'both'):
+        raise ValueError(f"{mode} is not a valid method."
                          f"Must be one of `part1`, `part2`, `both`.")
 
     data_root = _download_data(stage)
-    data_pack = _read_data(data_root, stage, match_type, method)
+    data_pack = _read_data(data_root, stage, match_type, mode)
 
     if task == 'ranking':
-        task = matchzoo.tasks.Ranking()
-    if task == 'classification':
-        task = matchzoo.tasks.Classification()
-
-    if isinstance(task, matchzoo.tasks.Ranking):
         if match_type in ('anwer', 'external_answer') and target_label not in [
                 'Good', 'PotentiallyUseful', 'Bad']:
             raise ValueError(f"{target_label} is not a valid target label."
@@ -77,7 +72,7 @@ def load_data(
         binary = (data_pack.relation['label'] == target_label).astype(float)
         data_pack.relation['label'] = binary
         return data_pack
-    elif isinstance(task, matchzoo.tasks.Classification):
+    elif task == 'classification':
         if match_type in ('answer', 'external_answer'):
             classes = ['Good', 'PotentiallyUseful', 'Bad']
         else:
@@ -119,13 +114,13 @@ def _download_test_data():
     return Path(ref_path).parent.joinpath('SemEval2016_task3_test/English')
 
 
-def _read_data(path, stage, match_type, method='both'):
+def _read_data(path, stage, match_type, mode='both'):
     if stage == 'train':
-        if method == 'part1':
+        if mode == 'part1':
             path = path.joinpath(
                 'train/SemEval2016-Task3-CQA-QL-train-part1.xml')
             data = _load_data_by_type(path, match_type)
-        elif method == 'part2':
+        elif mode == 'part2':
             path = path.joinpath(
                 'train/SemEval2016-Task3-CQA-QL-train-part2.xml')
             data = _load_data_by_type(path, match_type)
@@ -158,7 +153,7 @@ def _load_data_by_type(path, match_type):
 
 
 def _load_question(path):
-    doc = parse(path)
+    doc = xml.etree.ElementTree.parse(path)
     dataset = []
     for question in doc.iterfind('OrgQuestion'):
         qid = question.attrib['ORGQ_ID']
@@ -174,7 +169,7 @@ def _load_question(path):
 
 
 def _load_answer(path):
-    doc = parse(path)
+    doc = xml.etree.ElementTree.parse(path)
     dataset = []
     for org_q in doc.iterfind('OrgQuestion'):
         for thread in org_q.iterfind('Thread'):
@@ -192,7 +187,7 @@ def _load_answer(path):
 
 
 def _load_external_answer(path):
-    doc = parse(path)
+    doc = xml.etree.ElementTree.parse(path)
     dataset = []
     for question in doc.iterfind('OrgQuestion'):
         qid = question.attrib['ORGQ_ID']
