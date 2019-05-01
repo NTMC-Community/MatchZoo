@@ -1,9 +1,9 @@
 """CQA-QL-16 data loader."""
 
+import xml
 import typing
 from pathlib import Path
 
-import xml
 import keras
 import pandas as pd
 
