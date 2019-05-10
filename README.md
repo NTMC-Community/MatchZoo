@@ -8,7 +8,6 @@
 > MatchZoo 是一个通用的文本匹配工具包，它旨在方便大家快速的实现、比较、以及分享最新的深度文本匹配模型。
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6%20%7C%203.7-blue.svg)](https://www.python.org/downloads/release/python-360/)
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/NTMC-Community/community)
 [![Pypi Downloads](https://img.shields.io/pypi/dm/matchzoo.svg?label=pypi)](https://pypi.org/project/MatchZoo/)
 [![Documentation Status](https://readthedocs.org/projects/matchzoo/badge/?version=master)](https://matchzoo.readthedocs.io/en/master/?badge=master)
 [![Build Status](https://travis-ci.org/NTMC-Community/MatchZoo.svg?branch=master)](https://travis-ci.org/NTMC-Community/MatchZoo/)
