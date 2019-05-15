@@ -23,7 +23,7 @@ class BertPreprocessor(BasePreprocessor):
                  remove_stop_words: bool = False,
                  lower_case: bool=True,
                  chinese_version: bool=True,
-                 bert_vocab_path: str="bert_dir/vocab.txt"):
+                 bert_vocab_path: str="bert_resources/vocab.txt"):
         """
         Bert-base Model preprocessor.
 
@@ -31,18 +31,13 @@ class BertPreprocessor(BasePreprocessor):
 
 
         Example:
-            >>> import matchzoo as mz
-            >>> train_data = mz.datasets.toy.load_data()
-            >>> test_data = mz.datasets.toy.load_data(stage='test')
-            >>> bert_preprocessor = mz.preprocessors.BertPreprocessor()
-            >>> train_data_processed = bert_preprocessor.fit_transform(
-            ...     train_data
-            ... )
-            >>> type(train_data_processed)
-            <class 'matchzoo.data_pack.data_pack.DataPack'>
-            >>> test_data_transformed = bert_preprocessor.transform(test_data)
-            >>> type(test_data_transformed)
-            <class 'matchzoo.data_pack.data_pack.DataPack'>
+            import matchzoo as mz
+            train_data = mz.datasets.toy.load_data()
+            test_data = mz.datasets.toy.load_data(stage='test')
+            # the argument 'bert_vocab_path' must feed the bert vocab path
+            bert_preprocessor = mz.preprocessors.BertPreprocessor(bert_vocab_path='vocab.txt')
+            train_data_processed = bert_preprocessor.fit_transform(train_data)
+            test_data_processed = bert_preprocessor.transform(test_data)
 
         """
         super().__init__()
