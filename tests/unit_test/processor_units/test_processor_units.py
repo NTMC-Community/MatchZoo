@@ -144,21 +144,25 @@ import os
 
 def test_bert_tokenizer_unit():
     vocab_tokens = [
-        "[UNK]", "[CLS]", "[SEP]", "want", "##want", "##ed", "wa", "un", "runn",
-        "##ing", ","
+        "[PAD]", "further", "##more", ",", "under", "the", "micro", "##scope", "neither",
+        "entity", "contains", "glands", ".", "此", "外", "在", "显", "微", "镜", "下"
     ]
-    with tempfile.NamedTemporaryFile(delete=False) as vocab_writer:
-        vocab_writer.write("".join(
-            [x + "\n" for x in vocab_tokens]).encode("utf-8"))
+    raw_text = "furthermore, \r under the microscope \t neither entity  \n contains sebaceous glands. 此外, 在显微镜下"
 
-    vocab_file = vocab_writer.name
+    golden_tokens = ['further', '##more', ',', 'under', 'the', 'micro', '##scope', 'neither', 'entity', 'contains',
+                     '[UNK]', 'glands', '.', '此', '外', ',', '在', '显', '微', '镜', '下']
 
-    tokenizer_unit = units.BertTokenize(vocab_file, do_lower_case=True)
-    os.unlink(vocab_file)
+    vocab_dict = {}
+    for idx, token in enumerate(vocab_tokens):
+        vocab_dict[token] = idx
 
-    tokens = tokenizer_unit.transform(u"UNwant\u00E9d,running")
-    assert tokens == ["un", "##want", "##ed", ",", "runn", "##ing"]
+    clean_unit = units.BertClean()
+    cleaned_text = clean_unit.transform(raw_text)
+    chinese_tokenize_unit = units.ChineseTokenize()
+    chinese_tokenized_text = chinese_tokenize_unit.transform(cleaned_text)
+    basic_tokenize_unit = units.BasicTokenize()
+    basic_tokens = basic_tokenize_unit.transform(chinese_tokenized_text)
+    wordpiece_unit = units.WordPieceTokenize(vocab_dict)
+    wordpiece_tokens = wordpiece_unit.transform(basic_tokens)
 
-    assert tokenizer_unit.tokenizer.convert_tokens_to_ids(tokens) == [7, 4, 5, 10, 8, 9]
-
-    assert tokenizer_unit.tokenizer.basic_tokenizer.tokenize(u"ah\u535A\u63A8zz") == [u"ah", u"\u535A", u"\u63A8", u"zz"]
+    assert wordpiece_tokens == golden_tokens
