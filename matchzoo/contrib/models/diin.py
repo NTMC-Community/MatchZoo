@@ -44,12 +44,8 @@ class DIIN(BaseModel):
         """:return: model default parameters."""
         params = super().get_default_params(with_embedding=True)
         params['optimizer'] = 'adam'
-        params.add(Param(name='dropout_initial_keep_rate', value=1.0,
-                         desc="The initial keep rate of decaying_dropout."))
         params.add(Param(name='dropout_decay_interval', value=10000,
                          desc="The decay interval of decaying_dropout."))
-        params.add(Param(name='dropout_decay_rate', value=0.977,
-                         desc="The decay rate of decaying_dropout."))
         params.add(Param(name='char_embedding_input_dim', value=100,
                          desc="The input dimension of character embedding "
                               "layer."))
@@ -76,6 +72,18 @@ class DIIN(BaseModel):
         params.add(Param(name='transition_scale_down_ratio', value=0.5,
                          desc="The channel scale down ratio of the "
                               "convolution layer in transition block."))
+        params.add(Param(
+            name='dropout_initial_keep_rate', value=1.0,
+            hyper_space=hyper_spaces.quniform(
+                low=0.8, high=1.0, q=0.02),
+            desc="The initial keep rate of decaying_dropout."
+        ))
+        params.add(Param(
+            name='dropout_decay_rate', value=0.97,
+            hyper_space=hyper_spaces.quniform(
+                low=0.90, high=0.99, q=0.01),
+            desc="The decay rate of decaying_dropout."
+        ))
         return params
 
     @classmethod
@@ -143,21 +151,21 @@ class DIIN(BaseModel):
         #   R = 'input_right' sequence length
         #   C = fixed word length
 
+        inputs = self._make_inputs()
         # Left text and right text.
         # shape = [B, L]
         # shape = [B, R]
-        text_left, text_right = self._make_inputs()[0:2]
+        text_left, text_right = inputs[0:2]
         # Left character and right character.
         # shape = [B, L, C]
         # shape = [B, R, C]
-        char_left, char_right = self._make_inputs()[2:4]
+        char_left, char_right = inputs[2:4]
         # Left exact match and right exact match.
         # shape = [B, L]
         # shape = [B, R]
-        match_left, match_right = self._make_inputs()[4:6]
+        match_left, match_right = inputs[4:6]
 
         # Embedding module
-        inputs = []
         left_embeddings = []
         right_embeddings = []
 
@@ -179,8 +187,6 @@ class DIIN(BaseModel):
         )(right_word_embedding)
         left_embeddings.append(left_word_embedding)
         right_embeddings.append(right_word_embedding)
-        inputs.append(text_left)
-        inputs.append(text_right)
 
         # Exact match feature
         # shape = [B, L, 1]
@@ -193,8 +199,6 @@ class DIIN(BaseModel):
         )(match_right)
         left_embeddings.append(left_exact_match)
         right_embeddings.append(right_exact_match)
-        inputs.append(match_left)
-        inputs.append(match_right)
 
         # Char embedding feature
         char_embedding = self._make_char_embedding_layer()
@@ -204,8 +208,6 @@ class DIIN(BaseModel):
         right_char_embedding = char_embedding(char_right)
         left_embeddings.append(left_char_embedding)
         right_embeddings.append(right_char_embedding)
-        inputs.append(char_left)
-        inputs.append(char_right)
 
         # Concatenate
         left_embedding = keras.layers.Concatenate()(left_embeddings)
