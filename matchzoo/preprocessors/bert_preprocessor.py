@@ -31,13 +31,13 @@ class BertPreprocessor(BasePreprocessor):
 
 
         Example:
-            import matchzoo as mz
-            train_data = mz.datasets.toy.load_data()
-            test_data = mz.datasets.toy.load_data(stage='test')
-            # the argument 'bert_vocab_path' must feed the bert vocab path
-            bert_preprocessor = mz.preprocessors.BertPreprocessor(bert_vocab_path='vocab.txt')
-            train_data_processed = bert_preprocessor.fit_transform(train_data)
-            test_data_processed = bert_preprocessor.transform(test_data)
+            >>> import matchzoo as mz
+            >>> train_data = mz.datasets.toy.load_data()
+            >>> test_data = mz.datasets.toy.load_data(stage='test')
+            >>> # the argument 'bert_vocab_path' must feed the bert vocab path
+            >>> bert_preprocessor = mz.preprocessors.BertPreprocessor(bert_vocab_path='../datasets/bert_resources/uncased_vocab.txt')
+            >>> train_data_processed = bert_preprocessor.fit_transform(train_data)
+            >>> test_data_processed = bert_preprocessor.transform(test_data)
 
         """
         super().__init__()
