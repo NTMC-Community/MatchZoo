@@ -6,7 +6,7 @@ Subpackages
 
 .. toctree::
 
-    matchzoo.contrib
+    matchzoo.auto
     matchzoo.data_generator
     matchzoo.data_pack
     matchzoo.datasets
@@ -16,22 +16,12 @@ Subpackages
     matchzoo.losses
     matchzoo.metrics
     matchzoo.models
-    matchzoo.prepare
     matchzoo.preprocessors
     matchzoo.tasks
-    matchzoo.tune
     matchzoo.utils
 
 Submodules
 ----------
-
-matchzoo.logger module
-----------------------
-
-.. automodule:: matchzoo.logger
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 matchzoo.version module
 -----------------------
