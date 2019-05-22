@@ -66,7 +66,7 @@ class WordPieceTokenize(Unit):
     """Process unit for text tokenization."""
 
     def __init__(self, vocab: dict, max_input_chars_per_word: int = 200):
-        """Initialization. """
+        """Initialization."""
         self.vocab = vocab
         self.unk_token = '[UNK]'
         self.max_input_chars_per_word = max_input_chars_per_word
