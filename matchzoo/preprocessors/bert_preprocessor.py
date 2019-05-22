@@ -21,9 +21,9 @@ class BertPreprocessor(BasePreprocessor):
                  filter_low_freq: float = 2,
                  filter_high_freq: float = float('inf'),
                  remove_stop_words: bool = False,
-                 lower_case: bool=True,
-                 chinese_version: bool=True,
-                 bert_vocab_path: str="bert_resources/vocab.txt"):
+                 lower_case: bool = True,
+                 chinese_version: bool = True,
+                 bert_vocab_path: str = "bert_resources/vocab.txt"):
         """
         Bert-base Model preprocessor.
 
@@ -35,8 +35,11 @@ class BertPreprocessor(BasePreprocessor):
             >>> train_data = mz.datasets.toy.load_data()
             >>> test_data = mz.datasets.toy.load_data(stage='test')
             >>> # the argument 'bert_vocab_path' must feed the bert vocab path
-            >>> bert_preprocessor = mz.preprocessors.BertPreprocessor(bert_vocab_path='matchzoo/datasets/bert_resources/uncased_vocab_100.txt')
-            >>> train_data_processed = bert_preprocessor.fit_transform(train_data)
+            >>> bert_preprocessor = mz.preprocessors.BertPreprocessor(
+            ...     bert_vocab_path=
+            ...     'matchzoo/datasets/bert_resources/uncased_vocab_100.txt')
+            >>> train_data_processed = bert_preprocessor.fit_transform(
+            ...     train_data)
             >>> test_data_processed = bert_preprocessor.transform(test_data)
 
         """
@@ -65,7 +68,8 @@ class BertPreprocessor(BasePreprocessor):
         if lower_case:
             self._units.append(units.Lowercase())
             self._units.append(units.StripAccent())
-        self._units.append(units.WordPieceTokenize(self._vocab_unit.state['term_index']))
+        self._units.append(units.WordPieceTokenize(
+            self._vocab_unit.state['term_index']))
         if remove_stop_words:
             self._units.append(units.StopRemoval())
 
@@ -135,6 +139,3 @@ class BertPreprocessor(BasePreprocessor):
             units.BertClean(),
             units.BasicTokenize()
         ]
-
-
-

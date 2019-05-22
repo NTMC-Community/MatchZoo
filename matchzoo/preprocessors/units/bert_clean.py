@@ -1,5 +1,6 @@
 from .unit import Unit
-from matchzoo.utils.bert_utils import is_whitespace, is_control, run_strip_accents
+from matchzoo.utils.bert_utils import \
+    is_whitespace, is_control, run_strip_accents
 
 
 class BertClean(Unit):

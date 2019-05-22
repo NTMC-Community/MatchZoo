@@ -108,4 +108,3 @@ class BertVocabulary(StatefulUnit):
     def transform(self, input_: list) -> list:
         """Transform a list of tokens to corresponding indices."""
         return [self._context['term_index'][token] for token in input_]
-

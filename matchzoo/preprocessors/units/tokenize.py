@@ -1,5 +1,6 @@
 import nltk
-from matchzoo.utils.bert_utils import is_chinese_char, whitespace_tokenize, run_split_on_punc
+from matchzoo.utils.bert_utils import is_chinese_char, \
+    whitespace_tokenize, run_split_on_punc
 
 from .unit import Unit
 
@@ -64,7 +65,7 @@ class BasicTokenize(Unit):
 class WordPieceTokenize(Unit):
     """Process unit for text tokenization."""
 
-    def __init__(self, vocab: dict, max_input_chars_per_word: int=200):
+    def __init__(self, vocab: dict, max_input_chars_per_word: int = 200):
         """Initialization. """
         self.vocab = vocab
         self.unk_token = '[UNK]'
@@ -73,8 +74,9 @@ class WordPieceTokenize(Unit):
     def transform(self, input_: list) -> list:
         """
         Tokenizes a piece of text into its word pieces.
-        This uses a greedy longest-match-first algorithm to perform tokenization
-        using the given vocabulary.
+
+        This uses a greedy longest-match-first algorithm to perform
+         tokenization using the given vocabulary.
 
         For example:
           input = "unaffable"
