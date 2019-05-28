@@ -5,12 +5,11 @@ def is_whitespace(char):
     """Checks whether `chars` is a whitespace character."""
     # \t, \n, and \r are technically contorl characters but we treat them
     # as whitespace since they are generally considered as such.
-    if char == " " or char == "\t" or char == "\n" or char == "\r":
-        return True
-    cat = unicodedata.category(char)
-    if cat == "Zs":
-        return True
-    return False
+    return (char == " ") or \
+           (char == "\t") or \
+           (char == "\n") or \
+           (char == "\r") or \
+           (unicodedata.category(char) == "Zs")
 
 
 def is_control(char):
@@ -34,10 +33,8 @@ def is_punctuation(char):
     # consistency.
     condition = (33 <= cp <= 47) or (58 <= cp <= 64) or \
                 (91 <= cp <= 96) or (123 <= cp <= 126)
-    if condition:
-        return True
     cat = unicodedata.category(char)
-    if cat.startswith("P"):
+    if condition or cat.startswith("P"):
         return True
     return False
 
@@ -98,7 +95,5 @@ def run_split_on_punc(text):
 def whitespace_tokenize(text):
     """Runs basic whitespace cleaning and splitting on a piece of text."""
     text = text.strip()
-    if not text:
-        return []
     tokens = text.split()
     return tokens

@@ -28,7 +28,8 @@ class ChineseTokenize(Unit):
 
         :param input_: raw textual input.
 
-        :return output: text with a blank between adjacent Chinese tokens.
+        :return output: text with at least one blank between adjacent
+                        Chinese tokens.
         """
         output = []
         for char in input_:
@@ -89,15 +90,16 @@ class WordPieceTokenize(Unit):
         output_tokens = []
         for token in input_:
             chars = list(token)
-            if len(chars) > self.max_input_chars_per_word:
+            token_length = len(chars)
+            if token_length > self.max_input_chars_per_word:
                 output_tokens.append(self.unk_token)
                 continue
 
-            is_bad = False
+            unknown_suffix = False
             start = 0
             sub_tokens = []
-            while start < len(chars):
-                end = len(chars)
+            while start < token_length:
+                end = token_length
                 cur_substr = None
                 while start < end:
                     substr = "".join(chars[start:end])
@@ -108,12 +110,12 @@ class WordPieceTokenize(Unit):
                         break
                     end -= 1
                 if cur_substr is None:
-                    is_bad = True
+                    unknown_suffix = True
                     break
                 sub_tokens.append(cur_substr)
                 start = end
 
-            if is_bad:
+            if unknown_suffix:
                 output_tokens.append(self.unk_token)
             else:
                 output_tokens.extend(sub_tokens)

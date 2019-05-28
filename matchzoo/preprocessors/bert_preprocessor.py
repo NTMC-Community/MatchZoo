@@ -15,26 +15,24 @@ tqdm.pandas()
 class BertPreprocessor(BasePreprocessor):
     """Bert-base Model preprocessor."""
 
-    def __init__(self, fixed_length_left: int = 30,
+    def __init__(self, bert_vocab_path: str,
+                 fixed_length_left: int = 30,
                  fixed_length_right: int = 30,
                  filter_mode: str = 'df',
                  filter_low_freq: float = 2,
                  filter_high_freq: float = float('inf'),
                  remove_stop_words: bool = False,
                  lower_case: bool = True,
-                 chinese_version: bool = True,
-                 bert_vocab_path: str = "bert_resources/vocab.txt"):
+                 chinese_version: bool = False,
+                 ):
         """
         Bert-base Model preprocessor.
-
-        TODO: doc here.
-
 
         Example:
             >>> import matchzoo as mz
             >>> train_data = mz.datasets.toy.load_data()
             >>> test_data = mz.datasets.toy.load_data(stage='test')
-            >>> # the argument 'bert_vocab_path' must feed the bert vocab path
+            >>> # The argument 'bert_vocab_path' must feed the bert vocab path
             >>> bert_preprocessor = mz.preprocessors.BertPreprocessor(
             ...     bert_vocab_path=
             ...     'matchzoo/datasets/bert_resources/uncased_vocab_100.txt')
