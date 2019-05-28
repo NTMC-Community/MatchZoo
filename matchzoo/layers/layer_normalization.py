@@ -1,13 +1,24 @@
-"""Cite from https://github.com/CyberZHG/keras-layer-normalization."""
-
-import typing
+"""Referenced from https://github.com/CyberZHG/keras-layer-normalization."""
 
 import keras
 import keras.backend as K
 
 
-# TODO: require more check
 class LayerNormalization(keras.layers.Layer):
+    """Layer normalization layer.
+
+    See: [Layer Normalization](https://arxiv.org/pdf/1607.06450.pdf)
+
+    :param center: Add an offset parameter if it is True.
+    :param scale: Add a scale parameter if it is True.
+    :param epsilon: Epsilon for calculating variance.
+    :param gamma_initializer: Initializer for the gamma weight.
+    :param beta_initializer: Initializer for the beta weight.
+    :param gamma_regularizer: Optional regularizer for the gamma weight.
+    :param beta_regularizer: Optional regularizer for the beta weight.
+    :param gamma_constraint: Optional constraint for the gamma weight.
+    :param beta_constraint: Optional constraint for the beta weight.
+    """
 
     def __init__(self,
                  center=True,
@@ -20,21 +31,7 @@ class LayerNormalization(keras.layers.Layer):
                  gamma_constraint=None,
                  beta_constraint=None,
                  **kwargs):
-        """Layer normalization layer
-
-        See: [Layer Normalization](https://arxiv.org/pdf/1607.06450.pdf)
-
-        :param center: Add an offset parameter if it is True.
-        :param scale: Add a scale parameter if it is True.
-        :param epsilon: Epsilon for calculating variance.
-        :param gamma_initializer: Initializer for the gamma weight.
-        :param beta_initializer: Initializer for the beta weight.
-        :param gamma_regularizer: Optional regularizer for the gamma weight.
-        :param beta_regularizer: Optional regularizer for the beta weight.
-        :param gamma_constraint: Optional constraint for the gamma weight.
-        :param beta_constraint: Optional constraint for the beta weight.
-        :param kwargs:
-        """
+        """Layer initialization."""
         super(LayerNormalization, self).__init__(**kwargs)
         self.supports_masking = True
         self.center = center
@@ -51,27 +48,37 @@ class LayerNormalization(keras.layers.Layer):
         self.gamma, self.beta = None, None
 
     def get_config(self):
+        """Get layer configure."""
         config = {
             'center': self.center,
             'scale': self.scale,
             'epsilon': self.epsilon,
-            'gamma_initializer': keras.initializers.serialize(self.gamma_initializer),
-            'beta_initializer': keras.initializers.serialize(self.beta_initializer),
-            'gamma_regularizer': keras.regularizers.serialize(self.gamma_regularizer),
-            'beta_regularizer': keras.regularizers.serialize(self.beta_regularizer),
-            'gamma_constraint': keras.constraints.serialize(self.gamma_constraint),
-            'beta_constraint': keras.constraints.serialize(self.beta_constraint),
+            'gamma_initializer': keras.initializers.serialize(
+                self.gamma_initializer),
+            'beta_initializer': keras.initializers.serialize(
+                self.beta_initializer),
+            'gamma_regularizer': keras.regularizers.serialize(
+                self.gamma_regularizer),
+            'beta_regularizer': keras.regularizers.serialize(
+                self.beta_regularizer),
+            'gamma_constraint': keras.constraints.serialize(
+                self.gamma_constraint),
+            'beta_constraint': keras.constraints.serialize(
+                self.beta_constraint),
         }
         base_config = super(LayerNormalization, self).get_config()
-        return dict(list(base_config.items()) + list(config.items()))
+        return {**config, **base_config}
 
-    def compute_output_shape(self, input_shape):
+    def compute_output_shape(self, input_shape: list):
+        """Get output tensor shape."""
         return input_shape
 
-    def compute_mask(self, inputs, input_mask=None):
+    def compute_mask(self, inputs: list, input_mask: list = None):
+        """Get input mask if used."""
         return input_mask
 
-    def build(self, input_shape):
+    def build(self, input_shape: list):
+        """Build layer."""
         self.input_spec = keras.engine.InputSpec(shape=input_shape)
         shape = input_shape[-1:]
         if self.scale:
@@ -92,7 +99,8 @@ class LayerNormalization(keras.layers.Layer):
             )
         super(LayerNormalization, self).build(input_shape)
 
-    def call(self, inputs, training=None):
+    def call(self, inputs: list):
+        """Layer call."""
         mean = K.mean(inputs, axis=-1, keepdims=True)
         variance = K.mean(K.square(inputs - mean), axis=-1, keepdims=True)
         std = K.sqrt(variance + self.epsilon)

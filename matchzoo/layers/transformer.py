@@ -1,3 +1,5 @@
+"""Transformer layer referenced from Bert."""
+
 import math
 import typing
 
@@ -6,10 +8,13 @@ from keras.engine import Layer
 from keras import backend as K
 
 import matchzoo
-from matchzoo.layers import LayerNormalization
 
 
 class Transformer(Layer):
+    """Bert version transformer layer.
+
+    See: https://github.com/google-research/bert
+    """
 
     def __init__(self,
                  hidden_size: int,
@@ -17,16 +22,18 @@ class Transformer(Layer):
                  ffn_size: int,
                  attention_probs_dropout_prob: float,
                  hidden_dropout_prob: float,
-                 initializer_stddev: float=0.02,
-                 query_act: typing.Optional[typing.Callable, str]=None,
-                 key_act: typing.Optional[typing.Callable, str]=None,
-                 value_act: typing.Optional[typing.Callable, str]=None,
-                 ffn_act: typing.Optional[typing.Callable, str]=None,
+                 initializer_stddev: float = 0.02,
+                 query_act: typing.Union[typing.Callable, str, None] = None,
+                 key_act: typing.Union[typing.Callable, str, None] = None,
+                 value_act: typing.Union[typing.Callable, str, None] = None,
+                 ffn_act: typing.Union[typing.Callable, str, None] = None,
                  **kwargs):
+        """Layer parameters initialization."""
         super().__init__(**kwargs)
         if hidden_size % num_heads != 0:
-            raise ValueError(f"The hidden size {hidden_size} is not a multiple"
-                             f" of the number of attention heads {num_heads}")
+            raise ValueError(f"The hidden size {hidden_size} is not a"
+                             f" multiple of the number of attention heads"
+                             f" {num_heads}")
         self._hidden_size = hidden_size
         self._num_heads = num_heads
         self._size_per_head = int(hidden_size / num_heads)
@@ -40,6 +47,7 @@ class Transformer(Layer):
         self._ffn_act = ffn_act
 
     def build(self, input_shape: list):
+        """Build layer."""
         if len(input_shape) < 3:
             raise ValueError("Input 3 tensor at least as "
                              "`query`, `key` and `value`.")
@@ -93,6 +101,7 @@ class Transformer(Layer):
         super().build(input_shape)
 
     def call(self, x: list):
+        """Layer call."""
         if len(x) == 3:
             x.append(None)
         query, key, value, attention_mask = x
@@ -148,9 +157,11 @@ class Transformer(Layer):
         return output
 
     def compute_output_shape(self, input_shape: list) -> list:
+        """Get output tensor shape."""
         return input_shape[0]
 
     def get_config(self) -> dict:
+        """Layer configuration."""
         config = {
             'hidden_size': self._hidden_size,
             'num_heads': self._num_heads,
@@ -158,27 +169,10 @@ class Transformer(Layer):
             'attention_probs_dropout_prob': self._attention_probs_dropout_prob,
             'hidden_dropout_prob': self._hidden_dropout_prob,
             'initializer_stddev': self._initializer_stddev,
-            'query_act': self._query_act,
-            'key_act': self._key_act,
-            'value_act': self._value_act,
-            'ffn_act': self._ffn_act
+            'query_act': keras.activation.serialize(self._query_act),
+            'key_act': keras.activation.serialize(self._key_act),
+            'value_act': keras.activation.serialize(self._value_act),
+            'ffn_act': keras.activation.serialize(self._ffn_act)
         }
         base_config = super().get_config()
         return {**base_config, **config}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

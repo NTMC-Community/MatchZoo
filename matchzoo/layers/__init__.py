@@ -6,6 +6,6 @@ from .transformer import Transformer
 layer_dict = {
     "MatchingLayer": MatchingLayer,
     "DynamicPoolingLayer": DynamicPoolingLayer,
-    "LayerNormalization": LayerNNormalization,
+    "LayerNormalization": LayerNormalization,
     "Transformer": Transformer
 }
