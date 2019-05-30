@@ -80,8 +80,12 @@ class WordPieceTokenize(Unit):
          tokenization using the given vocabulary.
 
         For example:
-          input = "unaffable"
-          output = ["un", "##aff", "##able"]
+        >>> input_list = ["unaffable"]
+        >>> vocab = {"un": 0, "##aff": 1, "##able":2}
+        >>> wordpiece_unit = WordPieceTokenize(vocab)
+        >>> output = wordpiece_unit.transform(input_list)
+        >>> golden_output = ["un", "##aff", "##able"]
+        >>> assert output == golden_output
 
         :param input_: token list.
 

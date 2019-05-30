@@ -15,7 +15,7 @@ from .vocabulary import Vocabulary
 from .word_hashing import WordHashing
 from .bert_clean import BertClean
 from .bert_clean import StripAccent
-from.tokenize import ChineseTokenize
+from .tokenize import ChineseTokenize
 from .tokenize import BasicTokenize
 from .tokenize import WordPieceTokenize
 from .vocabulary import BertVocabulary

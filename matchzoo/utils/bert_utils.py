@@ -19,7 +19,7 @@ def is_control(char):
     if char == "\t" or char == "\n" or char == "\r":
         return False
     cat = unicodedata.category(char)
-    if cat in ("Cc", "Cf"):
+    if cat in ["Cc", "Cf"]:
         return True
     return False
 
@@ -62,12 +62,7 @@ def is_chinese_char(cp):
 def run_strip_accents(text):
     """Strips accents from a piece of text."""
     text = unicodedata.normalize("NFD", text)
-    output = []
-    for char in text:
-        cat = unicodedata.category(char)
-        if cat == "Mn":
-            continue
-        output.append(char)
+    output = [char for char in text if not unicodedata.category(char) == 'Mn']
     return "".join(output)
 
 

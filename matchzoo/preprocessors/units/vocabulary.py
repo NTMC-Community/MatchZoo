@@ -88,7 +88,7 @@ class BertVocabulary(StatefulUnit):
         self._pad = pad_value
         self._oov = oov_value
         self._context['term_index'] = self.TermIndex()
-        self._context['index_term'] = dict()
+        self._context['index_term'] = {}
 
     class TermIndex(dict):
         """Map term to index."""
