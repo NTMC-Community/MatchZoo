@@ -12,6 +12,14 @@ matchzoo.utils.list\_recursive\_subclasses module
     :undoc-members:
     :show-inheritance:
 
+matchzoo.utils.make\_keras\_optimizer\_picklable module
+-------------------------------------------------------
+
+.. automodule:: matchzoo.utils.make_keras_optimizer_picklable
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 matchzoo.utils.one\_hot module
 ------------------------------
 
