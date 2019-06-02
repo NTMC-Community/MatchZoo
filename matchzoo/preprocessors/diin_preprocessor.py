@@ -16,9 +16,9 @@ class DIINPreprocessor(BasePreprocessor):
     """DIIN Model preprocessor."""
 
     def __init__(self,
-                 fixed_length_left: int = 10,
-                 fixed_length_right: int = 10,
-                 fixed_length_word: int = 5):
+                 fixed_length_left: int = 5,
+                 fixed_length_right: int = 5,
+                 fixed_length_word: int = 3):
         """
         DIIN Model preprocessor.
 
