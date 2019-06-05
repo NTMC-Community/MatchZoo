@@ -34,6 +34,7 @@ class WordExactMatch(Unit):
         [0.0, 1.0, 1.0, 0.0, 0.0]
         >>> right_out[1]
         [0.0, 0.0, 1.0, 0.0, 0.0]
+
     """
 
     def __init__(

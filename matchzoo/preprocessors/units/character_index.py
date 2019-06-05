@@ -24,6 +24,7 @@ class CharacterIndex(Unit):
         >>> index = character_index.transform(input_)
         >>> index
         [[5.0, 2.0, 5.0, 0.0, 0.0], [5.0, 1.0, 3.0, 4.0, 5.0]]
+
     """
 
     def __init__(

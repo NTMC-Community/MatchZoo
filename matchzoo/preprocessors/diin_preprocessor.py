@@ -51,6 +51,7 @@ class DIINPreprocessor(BasePreprocessor):
             ...     test_data, verbose=0)
             >>> type(test_data_processed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
+
         """
         super().__init__()
         self._fixed_length_left = fixed_length_left
@@ -103,8 +104,7 @@ class DIINPreprocessor(BasePreprocessor):
 
     def transform(self, data_pack: DataPack, verbose: int = 1) -> DataPack:
         """
-        Apply transformation on data, create fixed length word representation,
-        character representation and exact match representation.
+        Apply transformation on data.
 
         :param data_pack: Inputs to be preprocessed.
         :param verbose: Verbosity.
