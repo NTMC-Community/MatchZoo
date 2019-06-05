@@ -18,12 +18,12 @@ class CharacterIndex(Unit):
         >>> input_ = [['#', 'a', '#'],['#', 'o', 'n', 'e', '#']]
         >>> character_index = CharacterIndex(
         ...     char_index={
-                 '<PAD>': 0, '<OOV>': 1, 'a': 2, 'n': 3, 'e':4, '#':5},
-        ...     fixed_length_text=3,
+        ...      '<PAD>': 0, '<OOV>': 1, 'a': 2, 'n': 3, 'e':4, '#':5},
+        ...     fixed_length_text=2,
         ...     fixed_length_word=5)
         >>> index = character_index.transform(input_)
         >>> index
-        [[5, 2, 5, 0, 0], [5, 1, 3, 4, 5], [0, 0, 0, 0, 0]]
+        [[5.0, 2.0, 5.0, 0.0, 0.0], [5.0, 1.0, 3.0, 4.0, 5.0]]
     """
 
     def __init__(

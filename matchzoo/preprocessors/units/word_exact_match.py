@@ -1,4 +1,5 @@
 import numpy as np
+import pandas
 
 from .unit import Unit
 
@@ -20,15 +21,19 @@ class WordExactMatch(Unit):
         ...     match='text_left', to_match='text_right'
         ... )
         >>> left_out = input_.apply(left_word_exact_match.transform, axis=1)
-        >>> left_out
-        [[0, 1, 1, 0, 0],[0, 1, 0, 0, 0]]
+        >>> left_out[0]
+        [0.0, 1.0, 1.0, 0.0, 0.0]
+        >>> left_out[1]
+        [0.0, 1.0, 0.0, 0.0, 0.0]
         >>> right_word_exact_match = WordExactMatch(
         ...     fixed_length_text=5,
         ...     match='text_right', to_match='text_left'
         ... )
         >>> right_out = input_.apply(right_word_exact_match.transform, axis=1)
-        >>> right_out
-        [[0, 1, 1, 0, 0], [0, 0, 1, 0, 0]]
+        >>> right_out[0]
+        [0.0, 1.0, 1.0, 0.0, 0.0]
+        >>> right_out[1]
+        [0.0, 0.0, 1.0, 0.0, 0.0]
     """
 
     def __init__(

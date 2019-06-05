@@ -16,9 +16,9 @@ class DIINPreprocessor(BasePreprocessor):
     """DIIN Model preprocessor."""
 
     def __init__(self,
-                 fixed_length_left: int = 5,
-                 fixed_length_right: int = 5,
-                 fixed_length_word: int = 3):
+                 fixed_length_left: int = 10,
+                 fixed_length_right: int = 10,
+                 fixed_length_word: int = 5):
         """
         DIIN Model preprocessor.
 
@@ -30,26 +30,26 @@ class DIINPreprocessor(BasePreprocessor):
 
         Example:
             >>> import matchzoo as mz
-            >>> train_data = mz.datasets.snli.load_data('train')
-            >>> test_data = mz.datasets.snli.load_data('test')
+            >>> train_data = mz.datasets.toy.load_data()
+            >>> test_data = mz.datasets.toy.load_data(stage='test')
             >>> diin_preprocessor = mz.preprocessors.DIINPreprocessor(
-            ...     fixed_length_left=32,
-            ...     fixed_length_right=32,
-            ...     fixed_length_word=16,
+            ...     fixed_length_left=5,
+            ...     fixed_length_right=5,
+            ...     fixed_length_word=3,
             ... )
             >>> diin_preprocessor = diin_preprocessor.fit(
             ...     train_data, verbose=0)
             >>> diin_preprocessor.context['input_shapes']
-            [(32,), (32,), (32,16,), (32,16,), (32,), (32,)]
+            [(5,), (5,), (5, 3), (5, 3), (5,), (5,)]
             >>> diin_preprocessor.context['vocab_size']
-            33061
+            859
             >>> train_data_processed = diin_preprocessor.transform(
             ...     train_data, verbose=0)
             >>> type(train_data_processed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
             >>> test_data_processed = diin_preprocessor.transform(
             ...     test_data, verbose=0)
-            >>> type(test_data_transformed)
+            >>> type(test_data_processed)
             <class 'matchzoo.data_pack.data_pack.DataPack'>
         """
         super().__init__()
