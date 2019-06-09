@@ -13,6 +13,8 @@ from .stop_removal import StopRemoval
 from .tokenize import Tokenize
 from .vocabulary import Vocabulary
 from .word_hashing import WordHashing
+from .character_index import CharacterIndex
+from .word_exact_match import WordExactMatch
 
 
 def list_available() -> list:
