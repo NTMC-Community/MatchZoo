@@ -1,25 +1,13 @@
 matchzoo.auto package
 =====================
 
-Submodules
-----------
+Subpackages
+-----------
 
-matchzoo.auto.prepare module
-----------------------------
+.. toctree::
 
-.. automodule:: matchzoo.auto.prepare
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-matchzoo.auto.tune module
--------------------------
-
-.. automodule:: matchzoo.auto.tune
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+    matchzoo.auto.preparer
+    matchzoo.auto.tuner
 
 Module contents
 ---------------

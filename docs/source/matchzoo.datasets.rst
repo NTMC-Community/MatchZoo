@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
 
     matchzoo.datasets.embeddings
+    matchzoo.datasets.quora_qp
     matchzoo.datasets.snli
     matchzoo.datasets.toy
     matchzoo.datasets.wiki_qa
