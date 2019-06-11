@@ -67,3 +67,44 @@ class Vocabulary(StatefulUnit):
     def transform(self, input_: list) -> list:
         """Transform a list of tokens to corresponding indices."""
         return [self._context['term_index'][token] for token in input_]
+
+
+class BertVocabulary(StatefulUnit):
+    """
+    Vocabulary class.
+
+    :param pad_value: The string value for the padding position.
+    :param oov_value: The string value for the out-of-vocabulary terms.
+
+    Examples:
+        >>> vocab = BertVocabulary(pad_value='[PAD]', oov_value='[UNK]')
+        >>> indices = vocab.transform(list('ABCDDZZZ'))
+
+    """
+
+    def __init__(self, pad_value: str = '[PAD]', oov_value: str = '[UNK]'):
+        """Vocabulary unit initializer."""
+        super().__init__()
+        self._pad = pad_value
+        self._oov = oov_value
+        self._context['term_index'] = self.TermIndex()
+        self._context['index_term'] = {}
+
+    class TermIndex(dict):
+        """Map term to index."""
+
+        def __missing__(self, key):
+            """Map out-of-vocabulary terms to index 100 ."""
+            return 100
+
+    def fit(self, vocab_path: str):
+        """Build a :class:`TermIndex` and a :class:`IndexTerm`."""
+        with open(vocab_path, 'r', encoding='utf-8') as vocab_file:
+            for idx, line in enumerate(vocab_file):
+                term = line.strip()
+                self._context['term_index'][term] = idx
+                self._context['index_term'][idx] = term
+
+    def transform(self, input_: list) -> list:
+        """Transform a list of tokens to corresponding indices."""
+        return [self._context['term_index'][token] for token in input_]
