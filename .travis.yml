@@ -16,11 +16,8 @@ matrix:
       dist: trusty
       python: 3.6
     - os: osx
-      language: generic
-      env: PYTHON_VERSION=3.6
-    - os: osx
-      language: generic
-      env: PYTHON_VERSION=3.7
+      osx_image: xcode10.2
+      language: shell
 
 install:
   - pip3 install -r requirements.txt
