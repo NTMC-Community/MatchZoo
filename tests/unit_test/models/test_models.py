@@ -21,7 +21,7 @@ def task(request):
 
 @pytest.fixture(scope='module')
 def train_raw(task):
-    return mz.datasets.toy.load_data('train', task)
+    return mz.datasets.toy.load_data('train', task)[:5]
 
 
 @pytest.fixture(scope='module', params=mz.models.list_available())
