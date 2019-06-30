@@ -43,9 +43,9 @@ class BiMPM(BaseModel):
                                          'max-pooling': True,
                                          'attentive': True,
                                          'max-attentive': True}))
-        params.add(Param('mp_dim', 20))
-        params.add(Param('att_dim', 20))
-        params.add(Param('hidden_size', 32))
+        params.add(Param('mp_dim', 3))
+        params.add(Param('att_dim', 3))
+        params.add(Param('hidden_size', 4))
         params.add(Param('dropout_rate', 0.0))
         params.add(Param('w_initializer', 'glorot_uniform'))
         params.add(Param('b_initializer', 'zeros'))

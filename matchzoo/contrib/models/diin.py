@@ -49,24 +49,24 @@ class DIIN(BaseModel):
         params.add(Param(name='char_embedding_input_dim', value=100,
                          desc="The input dimension of character embedding "
                               "layer."))
-        params.add(Param(name='char_embedding_output_dim', value=8,
+        params.add(Param(name='char_embedding_output_dim', value=2,
                          desc="The output dimension of character embedding "
                               "layer."))
-        params.add(Param(name='char_conv_filters', value=100,
+        params.add(Param(name='char_conv_filters', value=8,
                          desc="The filter size of character convolution "
                               "layer."))
-        params.add(Param(name='char_conv_kernel_size', value=5,
+        params.add(Param(name='char_conv_kernel_size', value=2,
                          desc="The kernel size of character convolution "
                               "layer."))
         params.add(Param(name='first_scale_down_ratio', value=0.3,
                          desc="The channel scale down ratio of the "
                               "convolution layer before densenet."))
-        params.add(Param(name='nb_dense_blocks', value=3,
+        params.add(Param(name='nb_dense_blocks', value=1,
                          desc="The number of blocks in densenet."))
-        params.add(Param(name='layers_per_dense_block', value=8,
+        params.add(Param(name='layers_per_dense_block', value=2,
                          desc="The number of convolution layers in dense "
                               "block."))
-        params.add(Param(name='growth_rate', value=20,
+        params.add(Param(name='growth_rate', value=2,
                          desc="The filter size of each convolution layer in "
                               "dense block."))
         params.add(Param(name='transition_scale_down_ratio', value=0.5,

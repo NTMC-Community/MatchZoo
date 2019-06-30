@@ -47,7 +47,7 @@ class ESIM(BaseModel):
 
         params.add(Param(
             name='lstm_dim',
-            value=300,
+            value=8,
             desc="The dimension of LSTM layer."
         ))
 
