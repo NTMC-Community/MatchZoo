@@ -15,13 +15,13 @@ class HBMP(BaseModel):
     Examples:
         >>> model = HBMP()
         >>> model.guess_and_fill_missing_params(verbose=0)
-        >>> model.params['embedding_input_dim'] = 10000
+        >>> model.params['embedding_input_dim'] = 200
         >>> model.params['embedding_output_dim'] = 100
         >>> model.params['embedding_trainable'] = True
         >>> model.params['alpha'] = 0.1
         >>> model.params['mlp_num_layers'] = 3
-        >>> model.params['mlp_num_units'] = [600, 600]
-        >>> model.params['lstm_num_units'] = 600
+        >>> model.params['mlp_num_units'] = [10, 10]
+        >>> model.params['lstm_num_units'] = 5
         >>> model.params['dropout_rate'] = 0.1
         >>> model.build()
     """
@@ -36,10 +36,10 @@ class HBMP(BaseModel):
                               "function."))
         params.add(Param(name='mlp_num_layers', value=3,
                          desc="The number of layers of mlp."))
-        params.add(Param(name='mlp_num_units', value=[600, 600],
+        params.add(Param(name='mlp_num_units', value=[10, 10],
                          desc="The hidden size of the FC layers, but not "
                               "include the final layer."))
-        params.add(Param(name='lstm_num_units', value=600,
+        params.add(Param(name='lstm_num_units', value=5,
                          desc="The hidden size of the LSTM layer."))
         params.add(Param(
             name='dropout_rate', value=0.1,

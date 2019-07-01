@@ -21,7 +21,7 @@ def task(request):
 
 @pytest.fixture(scope='module')
 def train_raw(task):
-    return mz.datasets.toy.load_data('train', task)
+    return mz.datasets.toy.load_data('train', task)[:5]
 
 
 @pytest.fixture(scope='module', params=mz.models.list_available())
@@ -97,7 +97,7 @@ def test_save_load_model(model):
 
 @pytest.mark.cron
 def test_hyper_space(model):
-    for _ in range(8):
+    for _ in range(2):
         new_params = copy.deepcopy(model.params)
         sample = mz.hyper_spaces.sample(new_params.hyper_space)
         for key, value in sample.items():
