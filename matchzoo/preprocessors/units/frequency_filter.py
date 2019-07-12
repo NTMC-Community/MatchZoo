@@ -66,11 +66,11 @@ class FrequencyFilter(StatefulUnit):
             if self._low <= v < self._high:
                 valid_terms.add(k)
 
-        self._state[self._mode] = valid_terms
+        self._context[self._mode] = valid_terms
 
     def transform(self, input_: list) -> list:
         """Transform a list of tokens by filtering out unwanted words."""
-        valid_terms = self._state[self._mode]
+        valid_terms = self._context[self._mode]
         return list(filter(lambda token: token in valid_terms, input_))
 
     @classmethod

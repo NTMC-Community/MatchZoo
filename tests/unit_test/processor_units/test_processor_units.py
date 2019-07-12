@@ -136,3 +136,33 @@ def test_this():
     type(train_data_processed)
     test_data_transformed = dssm_preprocessor.transform(test_data)
     type(test_data_transformed)
+
+
+import tempfile
+import os
+
+
+def test_bert_tokenizer_unit():
+    vocab_tokens = [
+        "[PAD]", "further", "##more", ",", "under", "the", "micro", "##scope", "neither",
+        "entity", "contains", "glands", ".", "此", "外", "在", "显", "微", "镜", "下"
+    ]
+    raw_text = "furthermore, \r under the microscope \t neither entity  \n contains sebaceous glands. 此外, 在显微镜下"
+
+    golden_tokens = ['further', '##more', ',', 'under', 'the', 'micro', '##scope', 'neither', 'entity', 'contains',
+                     '[UNK]', 'glands', '.', '此', '外', ',', '在', '显', '微', '镜', '下']
+
+    vocab_dict = {}
+    for idx, token in enumerate(vocab_tokens):
+        vocab_dict[token] = idx
+
+    clean_unit = units.BertClean()
+    cleaned_text = clean_unit.transform(raw_text)
+    chinese_tokenize_unit = units.ChineseTokenize()
+    chinese_tokenized_text = chinese_tokenize_unit.transform(cleaned_text)
+    basic_tokenize_unit = units.BasicTokenize()
+    basic_tokens = basic_tokenize_unit.transform(chinese_tokenized_text)
+    wordpiece_unit = units.WordPieceTokenize(vocab_dict)
+    wordpiece_tokens = wordpiece_unit.transform(basic_tokens)
+
+    assert wordpiece_tokens == golden_tokens

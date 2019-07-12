@@ -19,12 +19,14 @@ class WordHashing(Unit):
     Examples:
        >>> letters = [['#te', 'tes','est', 'st#'], ['oov']]
        >>> word_hashing = WordHashing(
-       ...     term_index={'': 0,'st#': 1, '#te': 2, 'est': 3, 'tes': 4})
+       ...     term_index={
+       ...      '_PAD': 0, 'OOV': 1, 'st#': 2, '#te': 3, 'est': 4, 'tes': 5
+       ...      })
        >>> hashing = word_hashing.transform(letters)
        >>> hashing[0]
-       [0.0, 1.0, 1.0, 1.0, 1.0, 0.0]
+       [0.0, 0.0, 1.0, 1.0, 1.0, 1.0]
        >>> hashing[1]
-       [1.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+       [0.0, 1.0, 0.0, 0.0, 0.0, 0.0]
 
     """
 
@@ -52,18 +54,18 @@ class WordHashing(Unit):
         if any([isinstance(elem, list) for elem in input_]):
             # The input shape for CDSSM is
             # [[word1 ngram, ngram], [word2, ngram, ngram], ...].
-            hashing = np.zeros((len(input_), len(self._term_index) + 1))
+            hashing = np.zeros((len(input_), len(self._term_index)))
             for idx, word in enumerate(input_):
                 counted_letters = collections.Counter(word)
                 for key, value in counted_letters.items():
-                    letter_id = self._term_index.get(key, 0)
+                    letter_id = self._term_index.get(key, 1)
                     hashing[idx, letter_id] = value
         else:
             # The input shape for DSSM model [ngram, ngram, ...].
-            hashing = np.zeros((len(self._term_index) + 1))
+            hashing = np.zeros(len(self._term_index))
             counted_letters = collections.Counter(input_)
             for key, value in counted_letters.items():
-                letter_id = self._term_index.get(key, 0)
+                letter_id = self._term_index.get(key, 1)
                 hashing[letter_id] = value
 
         return hashing.tolist()
