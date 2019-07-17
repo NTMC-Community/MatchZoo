@@ -49,7 +49,7 @@ class DynamicPoolingLayer(Layer):
 
         :param inputs: two input tensors.
         """
-        self.validate_dpool_size()
+        self._validate_dpool_size()
         x, dpool_index = inputs
         dpool_shape = K.tf.shape(dpool_index)
         batch_index_one = K.tf.expand_dims(
@@ -89,20 +89,38 @@ class DynamicPoolingLayer(Layer):
         base_config = super(DynamicPoolingLayer, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
 
-    def validate_dpool_size(self):
+    def _validate_dpool_size(self):
         suggestion = self.get_size_suggestion(
             self._msize1, self._msize2, self._psize1, self._psize2
         )
         if suggestion != (self._psize1, self._psize2):
             raise ValueError(
                 "DynamicPooling Layer can not "
-                f"generate ({self._psize1} x {self._psize2}) output feature map, "
-                f"please use ({suggestion[0]} x {suggestion[1]}) instead. "
-                f" `model.params['dpool_size'] = {suggestion}` "
+                f"generate ({self._psize1} x {self._psize2}) output "
+                f"feature map, please use ({suggestion[0]} x {suggestion[1]})"
+                f" instead. `model.params['dpool_size'] = {suggestion}` "
             )
 
     @classmethod
-    def get_size_suggestion(cls, msize1, msize2, psize1, psize2):
+    def get_size_suggestion(
+        cls,
+        msize1: int,
+        msize2: int,
+        psize1: int,
+        psize2: int
+    ) -> typing.Tuple[int, int]:
+        """
+        Get `dpool_size` suggestion for a given shape.
+
+        Returns the nearest legal `dpool_size` for the given combination of
+        `(psize1, psize2)`.
+
+        :param msize1: size of the left text.
+        :param msize2: size of the right text.
+        :param psize1: base size of the pool.
+        :param psize2: base size of the pool.
+        :return:
+        """
         stride1 = msize1 // psize1
         stride2 = msize2 // psize2
         suggestion1 = msize1 // stride1
