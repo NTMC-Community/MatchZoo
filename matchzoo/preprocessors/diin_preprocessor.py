@@ -42,7 +42,7 @@ class DIINPreprocessor(BasePreprocessor):
             >>> diin_preprocessor.context['input_shapes']
             [(5,), (5,), (5, 3), (5, 3), (5,), (5,)]
             >>> diin_preprocessor.context['vocab_size']
-            859
+            893
             >>> train_data_processed = diin_preprocessor.transform(
             ...     train_data, verbose=0)
             >>> type(train_data_processed)

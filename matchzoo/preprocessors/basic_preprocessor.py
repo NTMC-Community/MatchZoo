@@ -44,7 +44,7 @@ class BasicPreprocessor(BasePreprocessor):
         >>> preprocessor.context['input_shapes']
         [(10,), (20,)]
         >>> preprocessor.context['vocab_size']
-        226
+        228
         >>> processed_train_data = preprocessor.transform(train_data,
         ...                                               verbose=0)
         >>> type(processed_train_data)
