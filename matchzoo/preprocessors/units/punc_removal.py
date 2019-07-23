@@ -1,12 +1,10 @@
-import re
+import string
 
 from .unit import Unit
 
 
 class PuncRemoval(Unit):
     """Process unit for remove punctuations."""
-
-    _MATCH_PUNC = re.compile(r'[^\w\s]')
 
     def transform(self, input_: list) -> list:
         """
@@ -16,5 +14,5 @@ class PuncRemoval(Unit):
 
         :return rv: tokens  without punctuation.
         """
-        return [token for token in input_ if
-                not self._MATCH_PUNC.search(token)]
+        table = str.maketrans({key: None for key in string.punctuation})
+        return [item.translate(table) for item in input_]
