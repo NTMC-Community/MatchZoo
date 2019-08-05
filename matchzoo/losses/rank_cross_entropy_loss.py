@@ -48,7 +48,7 @@ class RankCrossEntropyLoss(object):
             labels.append(neg_labels)
         logits = K.concatenate(logits, axis=-1)
         labels = K.concatenate(labels, axis=-1)
-        return -K.mean(K.sum(labels * K.log(K.softmax(logits)), axis=-1))
+        return -K.mean(K.sum(labels * K.log(K.softmax(logits) + np.finfo(float).eps ), axis=-1))
 
     @property
     def num_neg(self):
