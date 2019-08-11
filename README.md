@@ -175,18 +175,29 @@ python setup.py install
 If you use MatchZoo in your research, please use the following BibTex entry.
 
 ```
-@article{fan2017matchzoo,
-  title={Matchzoo: A toolkit for deep text matching},
-  author={Fan, Yixing and Pang, Liang and Hou, JianPeng and Guo, Jiafeng and Lan, Yanyan and Cheng, Xueqi},
-  journal={arXiv preprint arXiv:1707.07270},
-  year={2017}
-}
+@inproceedings{Guo:2019:MLP:3331184.3331403,
+ author = {Guo, Jiafeng and Fan, Yixing and Ji, Xiang and Cheng, Xueqi},
+ title = {MatchZoo: A Learning, Practicing, and Developing System for Neural Text Matching},
+ booktitle = {Proceedings of the 42Nd International ACM SIGIR Conference on Research and Development in Information Retrieval},
+ series = {SIGIR'19},
+ year = {2019},
+ isbn = {978-1-4503-6172-9},
+ location = {Paris, France},
+ pages = {1297--1300},
+ numpages = {4},
+ url = {http://doi.acm.org/10.1145/3331184.3331403},
+ doi = {10.1145/3331184.3331403},
+ acmid = {3331403},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {matchzoo, neural network, text matching},
+} 
 ```
 
 
 ## Development Team
 
-​ ​ ​ ​ ​
+ ​ ​ ​ ​
 <table border="0">
   <tbody>
     <tr align="center">
