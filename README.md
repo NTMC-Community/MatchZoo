@@ -134,7 +134,7 @@ python setup.py install
 ```
 
 
-## Models:
+## Models
 
 1. [DRMM](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/drmm.py): this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf">A Deep Relevance Matching Model for Ad-hoc Retrieval</a>.
 
