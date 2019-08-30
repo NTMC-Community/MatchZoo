@@ -16,6 +16,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Requirements Status](https://requires.io/github/NTMC-Community/MatchZoo/requirements.svg?branch=master)](https://requires.io/github/NTMC-Community/MatchZoo/requirements/?branch=master)
 ---
+🔥**News: [MatchZoo-py](https://github.com/NTMC-Community/MatchZoo-py) (PyTorch version of MatchZoo) is ready now.**
 
 The goal of MatchZoo is to provide a high-quality codebase for deep text matching research, such as document retrieval, question answering, conversational response ranking, and paraphrase identification. With the unified data processing pipeline, simplified model configuration and automatic hyper-parameters tunning features equipped, MatchZoo is flexible and easy to use.
 
