@@ -2,7 +2,7 @@
 import typing
 
 import keras
-import keras.backend as K
+import tensorflow as tf
 
 import matchzoo
 from matchzoo.engine.base_model import BaseModel
@@ -73,7 +73,7 @@ class MVLSTM(BaseModel):
             axes=[2, 2], normalize=False)([rep_query, rep_doc])
         matching_signals = keras.layers.Reshape((-1,))(matching_matrix)
         matching_topk = keras.layers.Lambda(
-            lambda x: K.tf.nn.top_k(x, k=self._params['top_k'], sorted=True)[0]
+            lambda x: tf.nn.top_k(x, k=self._params['top_k'], sorted=True)[0]
         )(matching_signals)
 
         # Multilayer perceptron layer.

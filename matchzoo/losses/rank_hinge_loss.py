@@ -1,10 +1,12 @@
 """The rank hinge loss."""
+
 import numpy as np
-
 from keras import layers, backend as K
+from keras.losses import Loss
+from keras.utils import losses_utils
 
 
-class RankHingeLoss(object):
+class RankHingeLoss(Loss):
     """
     Rank hinge loss.
 
@@ -28,13 +30,16 @@ class RankHingeLoss(object):
         :param num_neg: number of negative instances in hinge loss.
         :param margin: the margin between positive and negative scores.
         """
+        super().__init__(reduction=losses_utils.Reduction.SUM_OVER_BATCH_SIZE, name="rank_hinge")
+
         self._num_neg = num_neg
         self._margin = margin
 
-    def __call__(self, y_true: np.array, y_pred: np.array) -> np.array:
+    def call(self, y_true: np.array, y_pred: np.array, sample_weight=None) -> np.array:
         """
         Calculate rank hinge loss.
 
+        :param **kwargs:
         :param y_true: Label.
         :param y_pred: Predicted result.
         :return: Hinge loss computed by user-defined margin.
@@ -49,7 +54,8 @@ class RankHingeLoss(object):
                     output_shape=(1,))(y_pred))
         y_neg = K.mean(K.concatenate(y_neg, axis=-1), axis=-1, keepdims=True)
         loss = K.maximum(0., self._margin + y_neg - y_pos)
-        return K.mean(loss)
+        return losses_utils.compute_weighted_loss(
+            loss, sample_weight, reduction=self.reduction)
 
     @property
     def num_neg(self):
