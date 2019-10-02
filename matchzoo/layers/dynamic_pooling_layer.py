@@ -74,9 +74,9 @@ class DynamicPoolingLayer(Layer):
                                      suggestion1, suggestion2))
 
         x_pool = tf.nn.max_pool(x_expand,
-                                  [1, stride1, stride2, 1],
-                                  [1, stride1, stride2, 1],
-                                  "VALID")
+                                [1, stride1, stride2, 1],
+                                [1, stride1, stride2, 1],
+                                "VALID")
         return x_pool
 
     def compute_output_shape(self, input_shape: list) -> tuple:

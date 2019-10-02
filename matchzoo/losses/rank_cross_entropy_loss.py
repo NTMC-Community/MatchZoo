@@ -5,6 +5,7 @@ import numpy as np
 from keras.losses import Loss
 from keras.utils import losses_utils
 
+
 class RankCrossEntropyLoss(Loss):
     """
     Rank cross entropy loss.
@@ -27,10 +28,12 @@ class RankCrossEntropyLoss(Loss):
 
         :param num_neg: number of negative instances in cross entropy loss.
         """
-        super().__init__(reduction=losses_utils.Reduction.SUM_OVER_BATCH_SIZE, name="rank_crossentropy")
+        super().__init__(reduction=losses_utils.Reduction.SUM_OVER_BATCH_SIZE,
+                         name="rank_crossentropy")
         self._num_neg = num_neg
 
-    def call(self, y_true: np.array, y_pred: np.array,  sample_weight=None) -> np.array:
+    def call(self, y_true: np.array, y_pred: np.array,
+             sample_weight=None) -> np.array:
         """
         Calculate rank cross entropy loss.
 

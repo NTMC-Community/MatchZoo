@@ -30,12 +30,14 @@ class RankHingeLoss(Loss):
         :param num_neg: number of negative instances in hinge loss.
         :param margin: the margin between positive and negative scores.
         """
-        super().__init__(reduction=losses_utils.Reduction.SUM_OVER_BATCH_SIZE, name="rank_hinge")
+        super().__init__(reduction=losses_utils.Reduction.SUM_OVER_BATCH_SIZE,
+                         name="rank_hinge")
 
         self._num_neg = num_neg
         self._margin = margin
 
-    def call(self, y_true: np.array, y_pred: np.array, sample_weight=None) -> np.array:
+    def call(self, y_true: np.array, y_pred: np.array,
+             sample_weight=None) -> np.array:
         """
         Calculate rank hinge loss.
 
