@@ -1,9 +1,8 @@
 """An implementation of Decaying Dropout Layer."""
-import typing
 
 import keras.backend as K
+import tensorflow as tf
 from keras.engine import Layer
-
 
 class DecayingDropoutLayer(Layer):
     """
@@ -61,6 +60,7 @@ class DecayingDropoutLayer(Layer):
         :param input_shape: the shape of the input tensor,
             for DecayingDropoutLayer we need one input tensor.
         """
+
         self._iterations = self.add_weight(name='iterations',
                                            shape=(1,),
                                            dtype=K.floatx(),
@@ -81,9 +81,9 @@ class DecayingDropoutLayer(Layer):
         keep_rate = self._initial_keep_rate * K.pow(self._decay_rate, p)
 
         def dropped_inputs():
-            self.add_update([K.update_add(self._iterations, [1])], inputs)
-            return K.dropout(inputs, 1 - keep_rate[0], noise_shape,
-                             seed=self._seed)
+            with tf.control_dependencies([self._iterations.assign_add([1])]):
+                return K.dropout(inputs, 1 - keep_rate[0], noise_shape,
+                                 seed=self._seed)
 
         return K.in_train_phase(dropped_inputs, inputs, training=training)
 
