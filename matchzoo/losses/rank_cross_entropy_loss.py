@@ -53,8 +53,8 @@ class RankCrossEntropyLoss(Loss):
             labels.append(neg_labels)
         logits = K.concatenate(logits, axis=-1)
         labels = K.concatenate(labels, axis=-1)
-
-        loss = -(K.sum(labels * K.log(K.softmax(logits) + np.finfo(float).eps), axis=-1))
+        smoothed_prob = K.softmax(logits) + np.finfo(float).eps
+        loss = -(K.sum(labels * K.log(smoothed_prob), axis=-1))
         return losses_utils.compute_weighted_loss(
             loss, sample_weight, reduction=self.reduction)
 

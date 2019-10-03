@@ -81,7 +81,8 @@ class DecayingDropoutLayer(Layer):
         keep_rate = self._initial_keep_rate * K.pow(self._decay_rate, p)
 
         def dropped_inputs():
-            with tf.control_dependencies([self._iterations.assign_add([1])]):
+            update_op = self._iterations.assign_add([1])
+            with tf.control_dependencies([update_op]):
                 return K.dropout(inputs, 1 - keep_rate[0], noise_shape,
                                  seed=self._seed)
 
