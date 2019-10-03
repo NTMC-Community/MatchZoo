@@ -1,12 +1,12 @@
 """An implementation of Spatial GRU Layer."""
 import typing
-
+import tensorflow as tf
 from keras import backend as K
 from keras.engine import Layer
 from keras.layers import Permute
 from keras.layers import Reshape
-from keras.layers import activations
-from keras.layers import initializers
+from keras import activations
+from keras import initializers
 
 
 class SpatialGRU(Layer):
@@ -133,13 +133,13 @@ class SpatialGRU(Layer):
         for i in range(0, self._units):
             begin = [0, i, 0]
             # z_slice: [B, 1, 4]
-            z_slice = K.tf.slice(z_transform, begin, size)
+            z_slice = tf.slice(z_transform, begin, size)
             if i == 0:
-                z_s = K.tf.nn.softmax(z_slice)
+                z_s = tf.nn.softmax(z_slice)
             else:
-                z_s = K.tf.concat([z_s, K.tf.nn.softmax(z_slice)], 1)
+                z_s = tf.concat([z_s, tf.nn.softmax(z_slice)], 1)
         # zi, zl, zt, zd: [B, U]
-        zi, zl, zt, zd = K.tf.unstack(z_s, axis=2)
+        zi, zl, zt, zd = tf.unstack(z_s, axis=2)
         return zi, zl, zt, zd
 
     def calculate_recurrent_unit(
@@ -160,8 +160,8 @@ class SpatialGRU(Layer):
         :param h: Hidden state from last operation.
         """
         # Get index i, j
-        i = K.tf.floordiv(step, K.tf.constant(self._text2_maxlen))
-        j = K.tf.mod(step, K.tf.constant(self._text2_maxlen))
+        i = tf.math.floordiv(step, tf.constant(self._text2_maxlen))
+        j = tf.math.mod(step, tf.constant(self._text2_maxlen))
 
         # Get hidden state h_diag, h_top, h_left
         # h_diag, h_top, h_left = [B, U]
@@ -175,8 +175,8 @@ class SpatialGRU(Layer):
 
         # Concatenate h_top, h_left, h_diag, s_ij
         # q = [B, 3*U+C]
-        q = K.tf.concat([K.tf.concat([h_top, h_left], 1),
-                        K.tf.concat([h_diag, s_ij], 1)], 1)
+        q = tf.concat([tf.concat([h_top, h_left], 1),
+                        tf.concat([h_diag, s_ij], 1)], 1)
 
         # Calculate reset gate
         # r = [B, 3*U]
@@ -194,7 +194,7 @@ class SpatialGRU(Layer):
         # Get h_ij_
         # h_ij_ = [B, U]
         h_ij_l = self._time_distributed_dense(self._w_ij, s_ij, self._b_ij)
-        h_ij_r = K.dot(r * (K.tf.concat([h_left, h_top, h_diag], 1)), self._U)
+        h_ij_r = K.dot(r * (tf.concat([h_left, h_top, h_diag], 1)), self._U)
         h_ij_ = self._activation(h_ij_l + h_ij_r)
 
         # Calculate h_ij
@@ -214,39 +214,39 @@ class SpatialGRU(Layer):
 
         :param inputs: input tensors.
         """
-        batch_size = K.tf.shape(inputs)[0]
+        batch_size = tf.shape(inputs)[0]
         # h0 = [B, U]
-        self._bounder_state_h0 = K.tf.zeros([batch_size, self._units])
+        self._bounder_state_h0 = tf.zeros([batch_size, self._units])
 
         # input_x = [L, R, B, C]
-        input_x = K.tf.transpose(inputs, [2, 3, 0, 1])
+        input_x = tf.transpose(inputs, [2, 3, 0, 1])
         if self._direction == 'rb':
             # input_x: [R, L, B, C]
-            input_x = K.tf.reverse(input_x, [0, 1])
+            input_x = tf.reverse(input_x, [0, 1])
         elif self._direction != 'lt':
             raise ValueError(f"Invalid direction. "
                              f"`{self._direction}` received. "
                              f"Must be in `lt`, `rb`.")
         # input_x = [L*R*B, C]
-        input_x = K.tf.reshape(input_x, [-1, self._channel])
+        input_x = tf.reshape(input_x, [-1, self._channel])
         # input_x = L*R * [B, C]
-        input_x = K.tf.split(
+        input_x = tf.split(
             axis=0,
             num_or_size_splits=self._text1_maxlen * self._text2_maxlen,
             value=input_x
         )
 
         # inputs = L*R * [B, C]
-        inputs = K.tf.TensorArray(
-            dtype=K.tf.float32,
+        inputs = tf.TensorArray(
+            dtype=tf.float32,
             size=self._text1_maxlen * self._text2_maxlen,
             name='inputs'
         )
         inputs = inputs.unstack(input_x)
 
         # states = (L+1)*(R+1) * [B, U]
-        states = K.tf.TensorArray(
-            dtype=K.tf.float32,
+        states = tf.TensorArray(
+            dtype=tf.float32,
             size=(self._text1_maxlen + 1) * (self._text2_maxlen + 1),
             name='states',
             clear_after_read=False
@@ -260,13 +260,13 @@ class SpatialGRU(Layer):
 
         # Calculate h_ij
         # h_ij = [B, U]
-        _, _, _, h_ij = K.tf.while_loop(
-            cond=lambda _0, _1, i, _3: K.tf.less(i, self._recurrent_step),
+        _, _, _, h_ij = tf.while_loop(
+            cond=lambda _0, _1, i, _3: tf.less(i, self._recurrent_step),
             body=self.calculate_recurrent_unit,
             loop_vars=(
                 inputs,
                 states,
-                K.tf.constant(0, dtype=K.tf.int32),
+                tf.constant(0, dtype=tf.int32),
                 self._bounder_state_h0
             ),
             parallel_iterations=1,

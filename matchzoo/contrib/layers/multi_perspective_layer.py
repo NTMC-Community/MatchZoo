@@ -1,5 +1,6 @@
 """An implementation of MultiPerspectiveLayer for Bimpm model."""
 
+import tensorflow as tf
 from keras import backend as K
 from keras.engine import Layer
 
@@ -307,10 +308,10 @@ def collect_final_step_of_lstm(lstm_representation, lengths):
 
     batch_size = K.shape(lengths)[0]
     # shape (batch_size)
-    batch_nums = K.tf.range(0, limit=batch_size)
+    batch_nums = tf.range(0, limit=batch_size)
     # shape (batch_size, 2)
     indices = K.stack((batch_nums, lengths), axis=1)
-    result = K.tf.gather_nd(lstm_representation, indices,
+    result = tf.gather_nd(lstm_representation, indices,
                             name='last-forwar-lstm')
     # [batch_size, dim]
     return result
@@ -337,10 +338,10 @@ def collect_probs(probs, positions):
 
     # shape (batch_size, pair_size, 2)
     # Alert: to solve error message
-    positions = K.tf.to_int32(positions)
+    positions = tf.cast(positions, tf.int32)
     indices = K.stack([batch_nums, positions], axis=2)
 
-    pair_probs = K.tf.gather_nd(probs, indices)
+    pair_probs = tf.gather_nd(probs, indices)
     # pair_probs = tf.reshape(pair_probs, shape=[batch_size, pair_size])
     return pair_probs
 
