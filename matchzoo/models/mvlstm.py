@@ -1,14 +1,12 @@
 """An implementation of MVLSTM Model."""
-import typing
 
 import keras
 import tensorflow as tf
 
-import matchzoo
+from matchzoo.engine import hyper_spaces
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
-from matchzoo.engine import hyper_spaces
 
 
 class MVLSTM(BaseModel):

@@ -2,7 +2,6 @@
 import typing
 
 import tensorflow as tf
-from keras import backend as K
 from keras.engine import Layer
 
 
@@ -75,9 +74,9 @@ class MatchingLayer(Layer):
         x2 = inputs[1]
         if self._matching_type == 'dot':
             if self._normalize:
-                x1 = K.l2_normalize(x1, axis=2)
-                x2 = K.l2_normalize(x2, axis=2)
-            return K.expand_dims(tf.einsum('abd,acd->abc', x1, x2), 3)
+                x1 = tf.math.l2_normalize(x1, axis=2)
+                x2 = tf.math.l2_normalize(x2, axis=2)
+            return tf.expand_dims(tf.einsum('abd,acd->abc', x1, x2), 3)
         else:
             if self._matching_type == 'mul':
                 def func(x, y):
@@ -96,8 +95,8 @@ class MatchingLayer(Layer):
                                  f"{self._matching_type} received."
                                  f"Mut be in `dot`, `mul`, `plus`, "
                                  f"`minus` and `concat`.")
-            x1_exp = K.stack([x1] * self._shape2[1], 2)
-            x2_exp = K.stack([x2] * self._shape1[1], 1)
+            x1_exp = tf.stack([x1] * self._shape2[1], 2)
+            x2_exp = tf.stack([x2] * self._shape1[1], 1)
             return func(x1_exp, x2_exp)
 
     def compute_output_shape(self, input_shape: list) -> tuple:

@@ -1,16 +1,13 @@
 """An implementation of Match-SRNN Model."""
-import typing
 
 import keras
-import keras.backend as K
 
-import matchzoo
+from matchzoo.contrib.layers import MatchingTensorLayer
+from matchzoo.contrib.layers import SpatialGRU
+from matchzoo.engine import hyper_spaces
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
-from matchzoo.engine import hyper_spaces
-from matchzoo.contrib.layers import SpatialGRU
-from matchzoo.contrib.layers import MatchingTensorLayer
 
 
 class MatchSRNN(BaseModel):

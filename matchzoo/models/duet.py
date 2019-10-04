@@ -1,13 +1,11 @@
 """DUET Model."""
 
 import keras
-import keras.backend as K
 import tensorflow as tf
 
+from matchzoo.engine import hyper_spaces
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
-from matchzoo.engine.param_table import ParamTable
-from matchzoo.engine import hyper_spaces
 
 
 class DUET(BaseModel):

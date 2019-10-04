@@ -127,7 +127,7 @@ class DRMMTKS(BaseModel):
             )(dense_input)
         # shape = [B, L, 1]
         attention_probs = keras.layers.Lambda(
-            lambda x: keras.activations.softmax(x, axis=1),
+            lambda x: tf.nn.softmax(x, axis=1),
             output_shape=lambda s: (s[0], s[1], s[2]),
             name="attention_probs"
         )(dense_input)

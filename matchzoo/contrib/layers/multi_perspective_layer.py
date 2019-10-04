@@ -79,7 +79,7 @@ class MultiPerspectiveLayer(Layer):
         if self._perspective.get('full'):
             # Each forward & backward contextual embedding compare
             # with the last step of the last time step of the other sentence.
-            h_lt = K.concatenate([forward_h_lt, backward_h_lt], axis=-1)
+            h_lt = tf.concat([forward_h_lt, backward_h_lt], axis=-1)
             full_match_tensor = self.full_match([h_lt, lstm_reps_rt])
             match_tensor_list.append(full_match_tensor)
             match_dim += self._mp_dim + 1
@@ -111,7 +111,7 @@ class MultiPerspectiveLayer(Layer):
             match_tensor_list.append(max_attentive_tensor)
             match_dim += self._mp_dim + 1
 
-        mp_tensor = K.concatenate(match_tensor_list, axis=-1)
+        mp_tensor = tf.concat(match_tensor_list, axis=-1)
         return mp_tensor
 
     def compute_output_shape(self, input_shape: list):
@@ -148,7 +148,7 @@ class MpFullMatch(Layer):
         """Call.
         """
         rep_lt, reps_rt = x
-        att_lt = K.expand_dims(rep_lt, 1)
+        att_lt = tf.expand_dims(rep_lt, 1)
 
         match_tensor, match_dim = _multi_perspective_match(self.mp_dim,
                                                            reps_rt,
@@ -184,16 +184,16 @@ class MpMaxPoolingMatch(Layer):
 
         # kernel: [1, 1, 1, mp_dim, d]
         # lstm_lt => [b, len_lt, 1, 1, d]
-        reps_lt = K.expand_dims(reps_lt, axis=2)
-        reps_lt = K.expand_dims(reps_lt, axis=2)
+        reps_lt = tf.expand_dims(reps_lt, axis=2)
+        reps_lt = tf.expand_dims(reps_lt, axis=2)
         reps_lt = reps_lt * self.kernel
 
         # lstm_rt -> [b, 1, len_rt, 1, d]
-        reps_rt = K.expand_dims(reps_rt, axis=2)
-        reps_rt = K.expand_dims(reps_rt, axis=1)
+        reps_rt = tf.expand_dims(reps_rt, axis=2)
+        reps_rt = tf.expand_dims(reps_rt, axis=1)
 
         match_tensor = _cosine_distance(reps_lt, reps_rt, cosine_norm=False)
-        max_match_tensor = K.max(match_tensor, axis=1)
+        max_match_tensor = tf.reduce_max(match_tensor, axis=1)
         # match_tensor => [b, len_rt, m]
         return max_match_tensor
 
@@ -280,7 +280,7 @@ def cal_max_question_representation(reps_lt, attn_scores):
     :param attn_scores: []
     :return: [batch_size, passage_len, hidden_size].
     """
-    attn_positions = K.argmax(attn_scores, axis=2)
+    attn_positions = tf.argmax(attn_scores, axis=2)
     max_reps_lt = collect_representation(reps_lt, attn_positions)
     return max_reps_lt
 
@@ -304,13 +304,13 @@ def collect_final_step_of_lstm(lstm_representation, lengths):
     :param lengths: [batch_size]
     :return: [batch_size, dim]
     """
-    lengths = K.maximum(lengths, K.zeros_like(lengths))
+    lengths = tf.maximum(lengths, K.zeros_like(lengths))
 
-    batch_size = K.shape(lengths)[0]
+    batch_size = tf.shape(lengths)[0]
     # shape (batch_size)
     batch_nums = tf.range(0, limit=batch_size)
     # shape (batch_size, 2)
-    indices = K.stack((batch_nums, lengths), axis=1)
+    indices = tf.stack((batch_nums, lengths), axis=1)
     result = tf.gather_nd(lstm_representation, indices,
                             name='last-forwar-lstm')
     # [batch_size, dim]
@@ -327,19 +327,19 @@ def collect_probs(probs, positions):
     :param positions: [batch_size, pair_size]
     :return: [batch_size, pair_size]
     """
-    batch_size = K.shape(probs)[0]
-    pair_size = K.shape(positions)[1]
+    batch_size = tf.shape(probs)[0]
+    pair_size = tf.shape(positions)[1]
     # shape (batch_size)
     batch_nums = K.arange(0, batch_size)
     # [batch_size, 1]
-    batch_nums = K.reshape(batch_nums, shape=[-1, 1])
+    batch_nums = tf.reshape(batch_nums, shape=[-1, 1])
     # [batch_size, pair_size]
     batch_nums = K.tile(batch_nums, [1, pair_size])
 
     # shape (batch_size, pair_size, 2)
     # Alert: to solve error message
     positions = tf.cast(positions, tf.int32)
-    indices = K.stack([batch_nums, positions], axis=2)
+    indices = tf.stack([batch_nums, positions], axis=2)
 
     pair_probs = tf.gather_nd(probs, indices)
     # pair_probs = tf.reshape(pair_probs, shape=[batch_size, pair_size])
@@ -360,7 +360,7 @@ def _multi_perspective_match(mp_dim, reps_rt, att_lt,
     :param with_mp_cosine: True
     :return: [batch, len, 1 + mp_dim]
     """
-    shape_rt = K.shape(reps_rt)
+    shape_rt = tf.shape(reps_rt)
     batch_size = shape_rt[0]
     len_lt = shape_rt[1]
 
@@ -368,7 +368,7 @@ def _multi_perspective_match(mp_dim, reps_rt, att_lt,
     match_result_list = []
     if with_cosine:
         cosine_tensor = _cosine_distance(reps_rt, att_lt, False)
-        cosine_tensor = K.reshape(cosine_tensor,
+        cosine_tensor = tf.reshape(cosine_tensor,
                                   [batch_size, len_lt, 1])
         match_result_list.append(cosine_tensor)
         match_dim += 1
@@ -376,12 +376,12 @@ def _multi_perspective_match(mp_dim, reps_rt, att_lt,
     if with_mp_cosine:
         mp_cosine_layer = MpCosineLayer(mp_dim)
         mp_cosine_tensor = mp_cosine_layer([reps_rt, att_lt])
-        mp_cosine_tensor = K.reshape(mp_cosine_tensor,
+        mp_cosine_tensor = tf.reshape(mp_cosine_tensor,
                                      [batch_size, len_lt, mp_dim])
         match_result_list.append(mp_cosine_tensor)
         match_dim += mp_cosine_layer.mp_dim
 
-    match_result = K.concatenate(match_result_list, 2)
+    match_result = tf.concat(match_result_list, 2)
     return match_result, match_dim
 
 
@@ -418,8 +418,8 @@ class MpCosineLayer(Layer):
     def call(self, x, **kwargs):
         """Call."""
         v1, v2 = x
-        v1 = K.expand_dims(v1, 2) * self.kernel  # [b, s_lt, m, d]
-        v2 = K.expand_dims(v2, 2)  # [b, s_lt, 1, d]
+        v1 = tf.expand_dims(v1, 2) * self.kernel  # [b, s_lt, m, d]
+        v2 = tf.expand_dims(v2, 2)  # [b, s_lt, 1, d]
         return _cosine_distance(v1, v2, False)
 
     def compute_output_shape(self, input_shape):
@@ -428,8 +428,8 @@ class MpCosineLayer(Layer):
 
 
 def _calc_relevancy_matrix(reps_lt, reps_rt):
-    reps_lt = K.expand_dims(reps_lt, 1)  # [b, 1, len_lt, d]
-    reps_rt = K.expand_dims(reps_rt, 2)  # [b, len_rt, 1, d]
+    reps_lt = tf.expand_dims(reps_lt, 1)  # [b, 1, len_lt, d]
+    reps_rt = tf.expand_dims(reps_rt, 2)  # [b, len_rt, 1, d]
     relevancy_matrix = _cosine_distance(reps_lt, reps_rt)
     # => [b, len_rt, len_lt, d]
     return relevancy_matrix
@@ -445,14 +445,14 @@ def _mask_relevancy_matrix(relevancy_matrix, mask_lt, mask_rt):
     :return: masked_matrix: [b, len_rt, len_lt]
     """
     if mask_lt is not None:
-        relevancy_matrix = relevancy_matrix * K.expand_dims(mask_lt, 1)
-    relevancy_matrix = relevancy_matrix * K.expand_dims(mask_rt, 2)
+        relevancy_matrix = relevancy_matrix * tf.expand_dims(mask_lt, 1)
+    relevancy_matrix = relevancy_matrix * tf.expand_dims(mask_rt, 2)
     return relevancy_matrix
 
 
 def _cosine_distance(v1, v2, cosine_norm=True, eps=1e-6):
     """
-    Only requires `K.sum(v1 * v2, axis=-1)`.
+    Only requires `tf.reduce_sum(v1 * v2, axis=-1)`.
 
     :param v1: [batch, time_steps(v1), 1, m, d]
     :param v2: [batch, 1, time_steps(v2), m, d]
@@ -460,9 +460,9 @@ def _cosine_distance(v1, v2, cosine_norm=True, eps=1e-6):
     :param eps: 1e-6
     :return: [batch, time_steps(v1), time_steps(v2), m]
     """
-    cosine_numerator = K.sum(v1 * v2, axis=-1)
+    cosine_numerator = tf.reduce_sum(v1 * v2, axis=-1)
     if not cosine_norm:
         return K.tanh(cosine_numerator)
-    v1_norm = K.sqrt(K.maximum(K.sum(K.square(v1), axis=-1), eps))
-    v2_norm = K.sqrt(K.maximum(K.sum(K.square(v2), axis=-1), eps))
+    v1_norm = K.sqrt(tf.maximum(tf.reduce_sum(tf.square(v1), axis=-1), eps))
+    v2_norm = K.sqrt(tf.maximum(tf.reduce_sum(tf.square(v2), axis=-1), eps))
     return cosine_numerator / v1_norm / v2_norm
