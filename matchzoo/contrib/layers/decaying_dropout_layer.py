@@ -1,7 +1,7 @@
 """An implementation of Decaying Dropout Layer."""
 
-import keras.backend as K
 import tensorflow as tf
+from keras import backend as K
 from keras.engine import Layer
 
 class DecayingDropoutLayer(Layer):

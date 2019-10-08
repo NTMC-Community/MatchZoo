@@ -1,7 +1,7 @@
 """An implementation of EncodingModule for DIIN model."""
 
-import keras.backend as K
 import tensorflow as tf
+from keras import backend as K
 from keras.engine import Layer
 
 from matchzoo.contrib.layers import DecayingDropoutLayer

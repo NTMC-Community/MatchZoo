@@ -1,7 +1,7 @@
 """Match LSTM model."""
 import keras
-import tensorflow as tf
 import keras.backend as K
+import tensorflow as tf
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
