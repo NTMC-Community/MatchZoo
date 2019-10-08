@@ -2,6 +2,7 @@
 import typing
 
 import numpy as np
+import tensorflow as tf
 from keras import backend as K
 from keras.engine import Layer
 from keras.initializers import constant
@@ -105,7 +106,7 @@ class MatchingTensorLayer(Layer):
         # d, e = embedding size
         # c = number of channels
         # output = [b, c, l, r]
-        output = K.tf.einsum(
+        output = tf.einsum(
             'bld,cde,bre->bclr',
             x1, self.interaction_matrix, x2
         )

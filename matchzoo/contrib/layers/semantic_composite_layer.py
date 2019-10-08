@@ -1,8 +1,7 @@
 """An implementation of EncodingModule for DIIN model."""
-import typing
 
-import keras
-import keras.backend as K
+import tensorflow as tf
+from keras import backend as K
 from keras.engine import Layer
 
 from matchzoo.contrib.layers import DecayingDropoutLayer
@@ -84,38 +83,38 @@ class EncodingLayer(Layer):
 
         # The input shape is [b, p, d]
         # shape = [b, 1, p, d]
-        x = K.expand_dims(inputs, 1) * 0
+        x = tf.expand_dims(inputs, 1) * 0
         # shape = [b, 1, d, p]
-        x = K.permute_dimensions(x, (0, 1, 3, 2))
+        x = tf.transpose(x, (0, 1, 3, 2))
         # shape = [b, p, d, p]
-        mid = x + K.expand_dims(inputs)
+        mid = x + tf.expand_dims(inputs, -1)
         # shape = [b, p, d, p]
-        up = K.permute_dimensions(mid, pattern=(0, 3, 2, 1))
+        up = tf.transpose(mid, (0, 3, 2, 1))
         # shape = [b, p, 3d, p]
-        inputs_concat = K.concatenate([up, mid, up * mid], axis=2)
+        inputs_concat = tf.concat([up, mid, up * mid], axis=2)
 
         # Self-attention layer.
         # shape = [b, p, p]
         A = K.dot(self._w_itr_att, inputs_concat)
         # shape = [b, p, p]
-        SA = keras.activations.softmax(A, axis=2)
+        SA = tf.nn.softmax(A, axis=2)
         # shape = [b, p, d]
         itr_attn = K.batch_dot(SA, inputs)
 
         # Semantic composite fuse gate.
         # shape = [b, p, 2d]
-        inputs_attn_concat = K.concatenate([inputs, itr_attn], axis=2)
+        inputs_attn_concat = tf.concat([inputs, itr_attn], axis=2)
         concat_dropout = DecayingDropoutLayer(
             initial_keep_rate=self._initial_keep_rate,
             decay_interval=self._decay_interval,
             decay_rate=self._decay_rate
         )(inputs_attn_concat)
         # shape = [b, p, d]
-        z = K.tanh(K.dot(concat_dropout, self._w1) + self._b1)
+        z = tf.tanh(K.dot(concat_dropout, self._w1) + self._b1)
         # shape = [b, p, d]
-        r = K.sigmoid(K.dot(concat_dropout, self._w2) + self._b2)
+        r = tf.sigmoid(K.dot(concat_dropout, self._w2) + self._b2)
         # shape = [b, p, d]
-        f = K.sigmoid(K.dot(concat_dropout, self._w3) + self._b3)
+        f = tf.sigmoid(K.dot(concat_dropout, self._w3) + self._b3)
         # shape = [b, p, d]
         encoding = r * inputs + f * z
 

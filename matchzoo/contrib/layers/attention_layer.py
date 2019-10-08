@@ -1,5 +1,6 @@
 """An implementation of Attention Layer for Bimpm model."""
 
+import tensorflow as tf
 from keras import backend as K
 from keras.engine import Layer
 
@@ -97,40 +98,40 @@ class AttentionLayer(Layer):
         reps_lt, reps_rt = x
 
         attn_w1 = self.attn_w1
-        attn_w1 = K.expand_dims(K.expand_dims(attn_w1, axis=0), axis=0)
+        attn_w1 = tf.expand_dims(tf.expand_dims(attn_w1, axis=0), axis=0)
         # => [1, 1, d, a]
 
-        reps_lt = K.expand_dims(reps_lt, axis=-1)
-        attn_reps_lt = K.sum(reps_lt * attn_w1, axis=2)
+        reps_lt = tf.expand_dims(reps_lt, axis=-1)
+        attn_reps_lt = tf.reduce_sum(reps_lt * attn_w1, axis=2)
         # => [b, s_lt, d, -1]
 
         attn_w2 = self.attn_w2
-        attn_w2 = K.expand_dims(K.expand_dims(attn_w2, axis=0), axis=0)
+        attn_w2 = tf.expand_dims(tf.expand_dims(attn_w2, axis=0), axis=0)
         # => [1, 1, d, a]
 
-        reps_rt = K.expand_dims(reps_rt, axis=-1)
-        attn_reps_rt = K.sum(reps_rt * attn_w2, axis=2)  # [b, s_rt, d, -1]
+        reps_rt = tf.expand_dims(reps_rt, axis=-1)
+        attn_reps_rt = tf.reduce_sum(reps_rt * attn_w2, axis=2)  # [b, s_rt, d, -1]
 
-        attn_reps_lt = K.tanh(attn_reps_lt)  # [b, s_lt, a]
-        attn_reps_rt = K.tanh(attn_reps_rt)  # [b, s_rt, a]
+        attn_reps_lt = tf.tanh(attn_reps_lt)  # [b, s_lt, a]
+        attn_reps_rt = tf.tanh(attn_reps_rt)  # [b, s_rt, a]
 
         # diagonal_W
         attn_reps_lt = attn_reps_lt * self.diagonal_W  # [b, s_lt, a]
-        attn_reps_rt = K.permute_dimensions(attn_reps_rt, (0, 2, 1))
+        attn_reps_rt = tf.transpose(attn_reps_rt, (0, 2, 1))
         # => [b, a, s_rt]
 
         attn_value = K.batch_dot(attn_reps_lt, attn_reps_rt)  # [b, s_lt, s_rt]
 
         # Softmax operation
-        attn_prob = K.softmax(attn_value)  # [b, s_lt, s_rt]
+        attn_prob = tf.nn.softmax(attn_value)  # [b, s_lt, s_rt]
 
         # TODO(tjf) remove diagonal or not for normalization
         # if remove_diagonal: attn_value = attn_value * diagonal
 
         if len(x) == 4:
             mask_lt, mask_rt = x[2], x[3]
-            attn_prob *= K.expand_dims(mask_lt, axis=2)
-            attn_prob *= K.expand_dims(mask_rt, axis=1)
+            attn_prob *= tf.expand_dims(mask_lt, axis=2)
+            attn_prob *= tf.expand_dims(mask_rt, axis=1)
 
         return attn_prob
 

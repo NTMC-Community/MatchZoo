@@ -1,9 +1,8 @@
 """An implementation of Decaying Dropout Layer."""
-import typing
 
-import keras.backend as K
+import tensorflow as tf
+from keras import backend as K
 from keras.engine import Layer
-
 
 class DecayingDropoutLayer(Layer):
     """
@@ -49,7 +48,7 @@ class DecayingDropoutLayer(Layer):
         if self._noise_shape is None:
             return self._noise_shape
 
-        symbolic_shape = K.shape(inputs)
+        symbolic_shape = tf.shape(inputs)
         noise_shape = [symbolic_shape[axis] if shape is None else shape
                        for axis, shape in enumerate(self._noise_shape)]
         return tuple(noise_shape)
@@ -61,6 +60,7 @@ class DecayingDropoutLayer(Layer):
         :param input_shape: the shape of the input tensor,
             for DecayingDropoutLayer we need one input tensor.
         """
+
         self._iterations = self.add_weight(name='iterations',
                                            shape=(1,),
                                            dtype=K.floatx(),
@@ -75,15 +75,16 @@ class DecayingDropoutLayer(Layer):
         :param inputs: an input tensor.
         """
         noise_shape = self._get_noise_shape(inputs)
-        t = K.cast(self._iterations, K.floatx()) + 1
+        t = tf.cast(self._iterations, K.floatx()) + 1
         p = t / float(self._decay_interval)
 
-        keep_rate = self._initial_keep_rate * K.pow(self._decay_rate, p)
+        keep_rate = self._initial_keep_rate * tf.pow(self._decay_rate, p)
 
         def dropped_inputs():
-            self.add_update([K.update_add(self._iterations, [1])], inputs)
-            return K.dropout(inputs, 1 - keep_rate[0], noise_shape,
-                             seed=self._seed)
+            update_op = self._iterations.assign_add([1])
+            with tf.control_dependencies([update_op]):
+                return tf.nn.dropout(inputs, 1 - keep_rate[0], noise_shape,
+                                 seed=self._seed)
 
         return K.in_train_phase(dropped_inputs, inputs, training=training)
 

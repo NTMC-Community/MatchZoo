@@ -1,13 +1,11 @@
 """DUET Model."""
 
 import keras
-import keras.backend as K
 import tensorflow as tf
 
+from matchzoo.engine import hyper_spaces
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
-from matchzoo.engine.param_table import ParamTable
-from matchzoo.engine import hyper_spaces
 
 
 class DUET(BaseModel):
@@ -149,10 +147,10 @@ class DUET(BaseModel):
         t2 = x[1]
         t1_shape = t1.get_shape()
         t2_shape = t2.get_shape()
-        t1_expand = K.tf.stack([t1] * t2_shape[1], 2)
-        t2_expand = K.tf.stack([t2] * t1_shape[1], 1)
-        out_bool = K.tf.equal(t1_expand, t2_expand)
-        out = K.tf.cast(out_bool, K.tf.float32)
+        t1_expand = tf.stack([t1] * t2_shape[1], 2)
+        t2_expand = tf.stack([t2] * t1_shape[1], 1)
+        out_bool = tf.equal(t1_expand, t2_expand)
+        out = tf.cast(out_bool, tf.float32)
         return out
 
     @classmethod

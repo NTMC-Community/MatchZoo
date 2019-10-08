@@ -1,11 +1,12 @@
 """ESIM model."""
+
 import keras
-import tensorflow as tf
 import keras.backend as K
+import tensorflow as tf
 
 import matchzoo as mz
-from matchzoo.engine.param import Param
 from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
 
 
@@ -66,7 +67,7 @@ class ESIM(BaseModel):
         :param inp: input tensor to expand the dimension
         :param axis: the axis of new dimension
         """
-        return keras.layers.Lambda(lambda x: K.expand_dims(x, axis=axis))(inp)
+        return keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=axis))(inp)
 
     def _make_atten_mask_layer(self) -> keras.layers.Layer:
         """
@@ -100,7 +101,7 @@ class ESIM(BaseModel):
         new_texts = keras.layers.Multiply()([texts, mask])
 
         text_max = keras.layers.Lambda(
-            lambda x: K.max(x, axis=1),
+            lambda x: tf.reduce_max(x, axis=1),
         )(new_texts)
 
         return text_max
@@ -119,7 +120,7 @@ class ESIM(BaseModel):
         # timestep-wise division, exclude the PAD number when calc avg
         text_avg = keras.layers.Lambda(
             lambda text_mask:
-                K.sum(text_mask[0], axis=1) / K.sum(text_mask[1], axis=1),
+                tf.reduce_sum(text_mask[0], axis=1) / tf.reduce_sum(text_mask[1], axis=1),
         )([new_texts, mask])
 
         return text_avg
@@ -133,7 +134,7 @@ class ESIM(BaseModel):
         # layers
         create_mask = keras.layers.Lambda(
             lambda x:
-                K.cast(K.not_equal(x, self._params['mask_value']), K.floatx())
+                tf.cast(tf.not_equal(x, self._params['mask_value']), K.floatx())
         )
         embedding = self._make_embedding_layer()
         lstm_compare = self._make_bilstm_layer(lstm_dim)

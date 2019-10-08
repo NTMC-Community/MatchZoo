@@ -1,12 +1,10 @@
 """ConvKNRM model."""
 
 import keras
-import keras.backend as K
+import tensorflow as tf
 
 from .knrm import KNRM
 from matchzoo.engine.param import Param
-from matchzoo.engine.param_table import ParamTable
-from matchzoo.engine import hyper_spaces
 
 
 class ConvKNRM(KNRM):
@@ -87,13 +85,13 @@ class ConvKNRM(KNRM):
                         mu = 1.0
                     mm_exp = self._kernel_layer(mu, sigma)(mm)
                     mm_doc_sum = keras.layers.Lambda(
-                        lambda x: K.tf.reduce_sum(x, 2))(
+                        lambda x: tf.reduce_sum(x, 2))(
                         mm_exp)
-                    mm_log = keras.layers.Activation(K.tf.log1p)(mm_doc_sum)
+                    mm_log = keras.layers.Activation(tf.math.log1p)(mm_doc_sum)
                     mm_sum = keras.layers.Lambda(
-                        lambda x: K.tf.reduce_sum(x, 1))(mm_log)
+                        lambda x: tf.reduce_sum(x, 1))(mm_log)
                     KM.append(mm_sum)
 
-        phi = keras.layers.Lambda(lambda x: K.tf.stack(x, 1))(KM)
+        phi = keras.layers.Lambda(lambda x: tf.stack(x, 1))(KM)
         out = self._make_output_layer()(phi)
         self._backend = keras.Model(inputs=[query, doc], outputs=[out])

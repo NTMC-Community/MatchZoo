@@ -2,7 +2,7 @@
 import typing
 
 import keras
-import keras.backend as K
+import tensorflow as tf
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
@@ -67,11 +67,11 @@ class DRMMTKS(BaseModel):
         # shape = [B, R, D]
         embed_doc = embedding(doc)
         # shape = [B, L]
-        atten_mask = K.not_equal(query, self._params['mask_value'])
+        atten_mask = tf.not_equal(query, self._params['mask_value'])
         # shape = [B, L]
-        atten_mask = K.cast(atten_mask, K.floatx())
+        atten_mask = tf.cast(atten_mask, keras.backend.floatx())
         # shape = [B, L, 1]
-        atten_mask = K.expand_dims(atten_mask, axis=2)
+        atten_mask = tf.expand_dims(atten_mask, axis=2)
         # shape = [B, L, 1]
         attention_probs = self.attention_layer(embed_query, atten_mask)
 
@@ -85,7 +85,7 @@ class DRMMTKS(BaseModel):
                               self.params['input_shapes'][0][0],
                               self.params['input_shapes'][1][0])
         matching_topk = keras.layers.Lambda(
-            lambda x: K.tf.nn.top_k(x, k=effective_top_k, sorted=True)[0]
+            lambda x: tf.nn.top_k(x, k=effective_top_k, sorted=True)[0]
         )(matching_matrix)
 
         # Process right input.
@@ -127,7 +127,7 @@ class DRMMTKS(BaseModel):
             )(dense_input)
         # shape = [B, L, 1]
         attention_probs = keras.layers.Lambda(
-            lambda x: keras.layers.activations.softmax(x, axis=1),
+            lambda x: tf.nn.softmax(x, axis=1),
             output_shape=lambda s: (s[0], s[1], s[2]),
             name="attention_probs"
         )(dense_input)
