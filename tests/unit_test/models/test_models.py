@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 
 import matchzoo as mz
-
+from keras.backend import clear_session
 
 @pytest.fixture(scope='module', params=[
     mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=2)),
@@ -21,7 +21,7 @@ def task(request):
 
 @pytest.fixture(scope='module')
 def train_raw(task):
-    return mz.datasets.toy.load_data('train', task)
+    return mz.datasets.toy.load_data('train', task)[:5]
 
 
 @pytest.fixture(scope='module', params=mz.models.list_available())
@@ -31,11 +31,12 @@ def model_class(request):
 
 @pytest.fixture(scope='module')
 def embedding():
-    return mz.datasets.embeddings.load_glove_embedding(dimension=50)
+    return mz.datasets.toy.load_embedding()
 
 
 @pytest.fixture(scope='module')
 def setup(task, model_class, train_raw, embedding):
+    clear_session() # prevent OOM during CI tests
     return mz.auto.prepare(
         task=task,
         model_class=model_class,
@@ -65,19 +66,20 @@ def embedding_matrix(setup):
 
 
 @pytest.fixture(scope='module')
-def gen(train_raw, preprocessor, gen_builder):
-    return gen_builder.build(preprocessor.transform(train_raw))
+def data(train_raw, preprocessor, gen_builder):
+    return gen_builder.build(preprocessor.transform(train_raw))[0]
 
 
 @pytest.mark.slow
-def test_model_fit_eval_predict(model, gen):
-    x, y = gen[0]
-    assert model.fit(x, y, verbose=0)
-    assert model.evaluate(x, y)
-    assert model.predict(x) is not None
+def test_model_fit_eval_predict(model, data):
+    x, y = data
+    batch_size = len(x['id_left'])
+    assert model.fit(x, y, batch_size=batch_size, verbose=0)
+    assert model.evaluate(x, y, batch_size=batch_size)
+    assert model.predict(x, batch_size=batch_size) is not None
 
 
-@pytest.mark.slow
+@pytest.mark.cron
 def test_save_load_model(model):
     tmpdir = '.matchzoo_test_save_load_tmpdir'
 
@@ -94,9 +96,9 @@ def test_save_load_model(model):
             shutil.rmtree(tmpdir)
 
 
-@pytest.mark.slow
+@pytest.mark.cron
 def test_hyper_space(model):
-    for _ in range(8):
+    for _ in range(2):
         new_params = copy.deepcopy(model.params)
         sample = mz.hyper_spaces.sample(new_params.hyper_space)
         for key, value in sample.items():

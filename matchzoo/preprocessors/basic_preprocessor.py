@@ -44,7 +44,7 @@ class BasicPreprocessor(BasePreprocessor):
         >>> preprocessor.context['input_shapes']
         [(10,), (20,)]
         >>> preprocessor.context['vocab_size']
-        225
+        228
         >>> processed_train_data = preprocessor.transform(train_data,
         ...                                               verbose=0)
         >>> type(processed_train_data)
@@ -105,7 +105,7 @@ class BasicPreprocessor(BasePreprocessor):
         vocab_unit = build_vocab_unit(data_pack, verbose=verbose)
         self._context['vocab_unit'] = vocab_unit
 
-        vocab_size = len(vocab_unit.state['term_index']) + 1
+        vocab_size = len(vocab_unit.state['term_index'])
         self._context['vocab_size'] = vocab_size
         self._context['embedding_input_dim'] = vocab_size
         self._context['input_shapes'] = [(self._fixed_length_left,),

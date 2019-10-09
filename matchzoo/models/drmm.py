@@ -3,11 +3,11 @@ import typing
 
 import keras
 import keras.backend as K
+import tensorflow as tf
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
-from matchzoo.engine import hyper_spaces
 
 
 class DRMM(BaseModel):
@@ -67,11 +67,11 @@ class DRMM(BaseModel):
         # shape = [B, L, D]
         embed_query = embedding(query)
         # shape = [B, L]
-        atten_mask = K.not_equal(query, self._params['mask_value'])
+        atten_mask = tf.not_equal(query, self._params['mask_value'])
         # shape = [B, L]
-        atten_mask = K.cast(atten_mask, K.floatx())
+        atten_mask = tf.cast(atten_mask, K.floatx())
         # shape = [B, L, D]
-        atten_mask = K.expand_dims(atten_mask, axis=2)
+        atten_mask = tf.expand_dims(atten_mask, axis=2)
         # shape = [B, L, D]
         attention_probs = self.attention_layer(embed_query, atten_mask)
 
@@ -114,7 +114,7 @@ class DRMM(BaseModel):
             )(dense_input)
         # shape = [B, L, 1]
         attention_probs = keras.layers.Lambda(
-            lambda x: keras.layers.activations.softmax(x, axis=1),
+            lambda x: tf.nn.softmax(x, axis=1),
             output_shape=lambda s: (s[0], s[1], s[2]),
             name="attention_probs"
         )(dense_input)

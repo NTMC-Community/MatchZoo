@@ -1,7 +1,7 @@
 """An implementation of Dynamic Pooling Layer."""
 import typing
 
-from keras import backend as K
+import tensorflow as tf
 from keras.engine import Layer
 
 
@@ -49,34 +49,25 @@ class DynamicPoolingLayer(Layer):
 
         :param inputs: two input tensors.
         """
+        self._validate_dpool_size()
         x, dpool_index = inputs
-        dpool_shape = K.tf.shape(dpool_index)
-        batch_index_one = K.tf.expand_dims(
-            K.tf.expand_dims(
-                K.tf.range(dpool_shape[0]), axis=-1),
+        dpool_shape = tf.shape(dpool_index)
+        batch_index_one = tf.expand_dims(
+            tf.expand_dims(
+                tf.range(dpool_shape[0]), axis=-1),
             axis=-1)
-        batch_index = K.tf.expand_dims(
-            K.tf.tile(batch_index_one, [1, self._msize1, self._msize2]),
+        batch_index = tf.expand_dims(
+            tf.tile(batch_index_one, [1, self._msize1, self._msize2]),
             axis=-1)
-        dpool_index_ex = K.tf.concat([batch_index, dpool_index], axis=3)
-        x_expand = K.tf.gather_nd(x, dpool_index_ex)
-        stride1 = self._msize1 / self._psize1
-        stride2 = self._msize2 / self._psize2
+        dpool_index_ex = tf.concat([batch_index, dpool_index], axis=3)
+        x_expand = tf.gather_nd(x, dpool_index_ex)
+        stride1 = self._msize1 // self._psize1
+        stride2 = self._msize2 // self._psize2
 
-        suggestion1 = self._msize1 / stride1
-        suggestion2 = self._msize2 / stride2
-
-        if suggestion1 != self._psize1 or suggestion2 != self._psize2:
-            raise ValueError("DynamicPooling Layer can not "
-                             "generate ({} x {}) output feature map, "
-                             "please use ({} x {} instead.)"
-                             .format(self._psize1, self._psize2,
-                                     suggestion1, suggestion2))
-
-        x_pool = K.tf.nn.max_pool(x_expand,
-                                  [1, stride1, stride2, 1],
-                                  [1, stride1, stride2, 1],
-                                  "VALID")
+        x_pool = tf.nn.max_pool(x_expand,
+                                [1, stride1, stride2, 1],
+                                [1, stride1, stride2, 1],
+                                "VALID")
         return x_pool
 
     def compute_output_shape(self, input_shape: list) -> tuple:
@@ -97,3 +88,41 @@ class DynamicPoolingLayer(Layer):
         }
         base_config = super(DynamicPoolingLayer, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
+
+    def _validate_dpool_size(self):
+        suggestion = self.get_size_suggestion(
+            self._msize1, self._msize2, self._psize1, self._psize2
+        )
+        if suggestion != (self._psize1, self._psize2):
+            raise ValueError(
+                "DynamicPooling Layer can not "
+                f"generate ({self._psize1} x {self._psize2}) output "
+                f"feature map, please use ({suggestion[0]} x {suggestion[1]})"
+                f" instead. `model.params['dpool_size'] = {suggestion}` "
+            )
+
+    @classmethod
+    def get_size_suggestion(
+        cls,
+        msize1: int,
+        msize2: int,
+        psize1: int,
+        psize2: int
+    ) -> typing.Tuple[int, int]:
+        """
+        Get `dpool_size` suggestion for a given shape.
+
+        Returns the nearest legal `dpool_size` for the given combination of
+        `(psize1, psize2)`.
+
+        :param msize1: size of the left text.
+        :param msize2: size of the right text.
+        :param psize1: base size of the pool.
+        :param psize2: base size of the pool.
+        :return:
+        """
+        stride1 = msize1 // psize1
+        stride2 = msize2 // psize2
+        suggestion1 = msize1 // stride1
+        suggestion2 = msize2 // stride2
+        return (suggestion1, suggestion2)

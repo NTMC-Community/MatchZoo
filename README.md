@@ -8,7 +8,6 @@
 > MatchZoo 是一个通用的文本匹配工具包，它旨在方便大家快速的实现、比较、以及分享最新的深度文本匹配模型。
 
 [![Python 3.6](https://img.shields.io/badge/python-3.6%20%7C%203.7-blue.svg)](https://www.python.org/downloads/release/python-360/)
-[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/NTMC-Community/community)
 [![Pypi Downloads](https://img.shields.io/pypi/dm/matchzoo.svg?label=pypi)](https://pypi.org/project/MatchZoo/)
 [![Documentation Status](https://readthedocs.org/projects/matchzoo/badge/?version=master)](https://matchzoo.readthedocs.io/en/master/?badge=master)
 [![Build Status](https://travis-ci.org/NTMC-Community/MatchZoo.svg?branch=master)](https://travis-ci.org/NTMC-Community/MatchZoo/)
@@ -68,7 +67,6 @@ import matchzoo as mz
 
 train_pack = mz.datasets.wiki_qa.load_data('train', task='ranking')
 valid_pack = mz.datasets.wiki_qa.load_data('dev', task='ranking')
-predict_pack = mz.datasets.wiki_qa.load_data('test', task='ranking')
 ```
 
 Preprocess your input data in three lines of code, keep track parameters to be passed into the model.
@@ -85,7 +83,6 @@ Make use of MatchZoo customized loss functions and evaluation metrics:
 ranking_task = mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=4))
 ranking_task.metrics = [
     mz.metrics.NormalizedDiscountedCumulativeGain(k=3),
-    mz.metrics.NormalizedDiscountedCumulativeGain(k=5),
     mz.metrics.MeanAveragePrecision()
 ]
 ```
@@ -96,10 +93,6 @@ Initialize the model, fine-tune the hyper-parameters.
 model = mz.models.DSSM()
 model.params['input_shapes'] = preprocessor.context['input_shapes']
 model.params['task'] = ranking_task
-model.params['mlp_num_layers'] = 3
-model.params['mlp_num_units'] = 300
-model.params['mlp_num_fan_out'] = 128
-model.params['mlp_activation_func'] = 'relu'
 model.guess_and_fill_missing_params()
 model.build()
 model.compile()
@@ -109,10 +102,8 @@ Generate pair-wise training data on-the-fly, evaluate model performance using cu
 
 ```python
 train_generator = mz.PairDataGenerator(train_processed, num_dup=1, num_neg=4, batch_size=64, shuffle=True)
-
 valid_x, valid_y = valid_processed.unpack()
-evaluate = mz.callbacks.EvaluateAllMetrics(model, x=valid_x, y=valid_y, batch_size=len(pred_x))
-
+evaluate = mz.callbacks.EvaluateAllMetrics(model, x=valid_x, y=valid_y, batch_size=len(valid_x))
 history = model.fit_generator(train_generator, epochs=20, callbacks=[evaluate], workers=5, use_multiprocessing=False)
 ```
 
@@ -127,7 +118,7 @@ If you're interested in the cutting-edge research progress, please take a look a
 
 ## Install
 
-MatchZoo is dependent on [Keras](https://github.com/keras-team/keras), please install one of its backend engines: TensorFlow, Theano, or CNTK. We recommend the TensorFlow backend. Two ways to install MatchZoo:
+MatchZoo is dependent on [Keras](https://github.com/keras-team/keras) and [Tensorflow](https://github.com/tensorflow/tensorflow). Two ways to install MatchZoo:
 
 **Install MatchZoo from Pypi:**
 
@@ -144,7 +135,7 @@ python setup.py install
 ```
 
 
-## Models:
+## Models
 
 1. [DRMM](https://github.com/NTMC-Community/MatchZoo/tree/master/matchzoo/models/drmm.py): this model is an implementation of <a href="http://www.bigdatalab.ac.cn/~gjf/papers/2016/CIKM2016a_guo.pdf">A Deep Relevance Matching Model for Ad-hoc Retrieval</a>.
 

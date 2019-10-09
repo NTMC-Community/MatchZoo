@@ -137,6 +137,7 @@ class Preparer(object):
         else:
             embedding_matrix = None
 
+        self._handle_match_pyramid_dpool_size(model)
         self._handle_drmm_input_shapes(model)
 
         assert model.params.completed()
@@ -147,6 +148,16 @@ class Preparer(object):
             model.load_embedding_matrix(embedding_matrix)
 
         return model, embedding_matrix
+
+    def _handle_match_pyramid_dpool_size(self, model):
+        if isinstance(model, mz.models.MatchPyramid):
+            suggestion = mz.layers.DynamicPoolingLayer.get_size_suggestion(
+                msize1=model.params['input_shapes'][0][0],
+                msize2=model.params['input_shapes'][1][0],
+                psize1=model.params['dpool_size'][0],
+                psize2=model.params['dpool_size'][1],
+            )
+            model.params['dpool_size'] = suggestion
 
     def _handle_drmm_input_shapes(self, model):
         if isinstance(model, mz.models.DRMM):

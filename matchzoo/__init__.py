@@ -43,7 +43,7 @@ from .engine.param_table import ParamTable
 
 from .embedding.embedding import Embedding
 
-from .utils import one_hot
+from .utils import one_hot, make_keras_optimizer_picklable
 from .preprocessors.build_unit_from_data_pack import build_unit_from_data_pack
 from .preprocessors.build_vocab_unit import build_vocab_unit
 

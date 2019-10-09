@@ -21,9 +21,12 @@ class SaveModel(Callback):
 
     """
 
-    def __init__(self, dir_path: typing.Union[str, Path]):
+    def __init__(
+        self,
+        dir_path: typing.Union[str, Path] = mz.USER_TUNED_MODELS_DIR
+    ):
         """Init."""
-        self._dir_path = dir_path or mz.USER_TUNED_MODELS_DIR
+        self._dir_path = dir_path
 
     def on_run_end(self, tuner, model: BaseModel, result: dict):
         """Save model on run end."""
