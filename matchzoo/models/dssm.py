@@ -1,6 +1,6 @@
 """An implementation of DSSM, Deep Structured Semantic Model."""
-from keras.models import Model
-from keras.layers import Input, Dot
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Dot
 
 from matchzoo.engine.param_table import ParamTable
 from matchzoo.engine.base_model import BaseModel

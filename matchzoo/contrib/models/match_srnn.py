@@ -1,6 +1,6 @@
 """An implementation of Match-SRNN Model."""
 
-import keras
+from tensorflow import keras
 
 from matchzoo.contrib.layers import MatchingTensorLayer
 from matchzoo.contrib.layers import SpatialGRU

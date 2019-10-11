@@ -2,7 +2,7 @@
 import typing
 
 import tensorflow as tf
-from keras.engine import Layer
+from tensorflow.keras.layers import Layer
 
 
 class DynamicPoolingLayer(Layer):
@@ -59,6 +59,7 @@ class DynamicPoolingLayer(Layer):
         batch_index = tf.expand_dims(
             tf.tile(batch_index_one, [1, self._msize1, self._msize2]),
             axis=-1)
+        dpool_index = tf.cast(dpool_index, batch_index.dtype)
         dpool_index_ex = tf.concat([batch_index, dpool_index], axis=3)
         x_expand = tf.gather_nd(x, dpool_index_ex)
         stride1 = self._msize1 // self._psize1

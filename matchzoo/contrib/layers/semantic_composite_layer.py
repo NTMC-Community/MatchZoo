@@ -1,8 +1,8 @@
 """An implementation of EncodingModule for DIIN model."""
 
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import Layer
 
 from matchzoo.contrib.layers import DecayingDropoutLayer
 
@@ -51,7 +51,7 @@ class EncodingLayer(Layer):
         :param input_shape: the shape of the input tensor,
             for EncodingLayer we need one input tensor.
         """
-        d = input_shape[-1]
+        d = int(input_shape[-1])
 
         self._w_itr_att = self.add_weight(
             name='w_itr_att', shape=(3 * d,), initializer='glorot_uniform')
@@ -67,7 +67,10 @@ class EncodingLayer(Layer):
             name='b2', shape=(d,), initializer='zeros')
         self._b3 = self.add_weight(
             name='b3', shape=(d,), initializer='zeros')
-
+        self._dropout = DecayingDropoutLayer(
+            initial_keep_rate=self._initial_keep_rate,
+            decay_interval=self._decay_interval,
+            decay_rate=self._decay_rate)
         super(EncodingLayer, self).build(input_shape)
 
     def call(self, inputs, **kwargs):
@@ -104,11 +107,7 @@ class EncodingLayer(Layer):
         # Semantic composite fuse gate.
         # shape = [b, p, 2d]
         inputs_attn_concat = tf.concat([inputs, itr_attn], axis=2)
-        concat_dropout = DecayingDropoutLayer(
-            initial_keep_rate=self._initial_keep_rate,
-            decay_interval=self._decay_interval,
-            decay_rate=self._decay_rate
-        )(inputs_attn_concat)
+        concat_dropout = self._dropout(inputs_attn_concat)
         # shape = [b, p, d]
         z = tf.tanh(K.dot(concat_dropout, self._w1) + self._b1)
         # shape = [b, p, d]

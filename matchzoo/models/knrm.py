@@ -1,5 +1,5 @@
 """KNRM model."""
-import keras
+from tensorflow import keras
 import tensorflow as tf
 
 from matchzoo.engine.base_model import BaseModel

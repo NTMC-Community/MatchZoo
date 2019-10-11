@@ -1,6 +1,6 @@
 """A simple densely connected baseline model."""
 
-import keras.layers
+from tensorflow import keras
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param_table import ParamTable

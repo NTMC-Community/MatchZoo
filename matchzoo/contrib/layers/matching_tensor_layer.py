@@ -3,9 +3,9 @@ import typing
 
 import numpy as np
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
-from keras.initializers import constant
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import Layer
+from tensorflow.keras.initializers import constant
 
 
 class MatchingTensorLayer(Layer):

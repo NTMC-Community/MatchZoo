@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 
 import matchzoo as mz
-from keras.backend import clear_session
+from tensorflow.keras import backend as K
 
 @pytest.fixture(scope='module', params=[
     mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=2)),
@@ -36,7 +36,7 @@ def embedding():
 
 @pytest.fixture(scope='module')
 def setup(task, model_class, train_raw, embedding):
-    clear_session() # prevent OOM during CI tests
+    K.clear_session() # prevent OOM during CI tests
     return mz.auto.prepare(
         task=task,
         model_class=model_class,

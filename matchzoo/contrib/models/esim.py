@@ -1,8 +1,8 @@
 """ESIM model."""
 
-import keras
-import keras.backend as K
 import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import backend as K
 
 import matchzoo as mz
 from matchzoo.engine.base_model import BaseModel

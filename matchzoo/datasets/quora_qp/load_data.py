@@ -3,8 +3,8 @@
 import typing
 from pathlib import Path
 
-import keras
 import pandas as pd
+from tensorflow import keras
 
 import matchzoo
 
@@ -57,7 +57,7 @@ def load_data(
 
 
 def _download_data():
-    ref_path = keras.utils.data_utils.get_file(
+    ref_path = keras.utils.get_file(
         'quora_qp', _url, extract=True,
         cache_dir=matchzoo.USER_DATA_DIR,
         cache_subdir='quora_qp'

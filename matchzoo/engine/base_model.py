@@ -6,18 +6,18 @@ from pathlib import Path
 
 import dill
 import numpy as np
-import keras
-import keras.backend as K
 import pandas as pd
+from tensorflow import keras
+from tensorflow.keras import backend as K
 
 import matchzoo
 from matchzoo import DataGenerator
-from matchzoo.engine import hyper_spaces
-from matchzoo.engine.base_preprocessor import BasePreprocessor
-from matchzoo.engine.base_metric import BaseMetric
-from matchzoo.engine.param_table import ParamTable
-from matchzoo.engine.param import Param
 from matchzoo import tasks
+from matchzoo.engine import hyper_spaces
+from matchzoo.engine.base_metric import BaseMetric
+from matchzoo.engine.base_preprocessor import BasePreprocessor
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
 
 
 class BaseModel(abc.ABC):
@@ -196,7 +196,7 @@ class BaseModel(abc.ABC):
     def build(self):
         """Build model, each subclass need to impelemnt this method."""
 
-    def compile(self):
+    def compile(self, **kwargs):
         """
         Compile model for training.
 
@@ -217,7 +217,8 @@ class BaseModel(abc.ABC):
 
         """
         self._backend.compile(optimizer=self._params['optimizer'],
-                              loss=self._params['task'].loss)
+                              loss=self._params['task'].loss,
+                              **kwargs)
 
     def fit(
         self,
@@ -426,7 +427,7 @@ class BaseModel(abc.ABC):
         else:
             raise FileExistsError(f'{dirpath} already exist, fail to save.')
 
-        self._backend.save_weights(weights_path)
+        self._backend.save_weights(str(weights_path))
         with open(params_path, mode='wb') as params_file:
             dill.dump(self._params, params_file)
 
@@ -577,5 +578,5 @@ def load_model(dirpath: typing.Union[str, Path]) -> BaseModel:
     model_instance = params['model_class'](params=params)
     model_instance.build()
     model_instance.compile()
-    model_instance.backend.load_weights(weights_path)
+    model_instance.backend.load_weights(str(weights_path))
     return model_instance

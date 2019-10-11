@@ -1,6 +1,6 @@
 """An implementation of MVLSTM Model."""
 
-import keras
+from tensorflow import keras
 import tensorflow as tf
 
 from matchzoo.engine import hyper_spaces

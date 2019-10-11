@@ -117,7 +117,7 @@ If you're interested in the cutting-edge research progress, please take a look a
 
 ## Install
 
-MatchZoo is dependent on [Keras](https://github.com/keras-team/keras) and [Tensorflow](https://github.com/tensorflow/tensorflow). Two ways to install MatchZoo:
+MatchZoo is dependent on [Tensorflow](https://github.com/tensorflow/tensorflow). Two ways to install MatchZoo:
 
 **Install MatchZoo from Pypi:**
 

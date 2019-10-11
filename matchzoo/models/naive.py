@@ -1,6 +1,6 @@
 """Naive model with a simplest structure for testing purposes."""
 
-import keras
+from tensorflow import keras
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine import hyper_spaces

@@ -1,9 +1,9 @@
 """DIIN model."""
 import typing
 
-import keras
-import keras.backend as K
 import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import backend as K
 
 from matchzoo import preprocessors
 from matchzoo.contrib.layers import DecayingDropoutLayer

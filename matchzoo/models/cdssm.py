@@ -1,8 +1,8 @@
 """An implementation of CDSSM (CLSM) model."""
 import typing
 
-import keras
-from keras.models import Model
+from tensorflow import keras
+from tensorflow.keras.models import Model
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param

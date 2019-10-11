@@ -3,9 +3,9 @@
 import math
 import typing
 
-import keras
 import numpy as np
 import pandas as pd
+from tensorflow import keras
 
 import matchzoo as mz
 from matchzoo.data_generator.callbacks import Callback

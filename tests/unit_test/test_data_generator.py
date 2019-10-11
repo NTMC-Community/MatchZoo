@@ -1,7 +1,7 @@
 import copy
 
 import pytest
-import keras
+from tensorflow import keras
 
 import matchzoo as mz
 

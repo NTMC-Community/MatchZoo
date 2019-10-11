@@ -1,11 +1,9 @@
 """Callbacks."""
 import typing
-from pathlib import Path
 
 import numpy as np
-import keras
+from tensorflow import keras
 
-import matchzoo
 from matchzoo.engine.base_model import BaseModel
 
 

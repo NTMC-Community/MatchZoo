@@ -1,8 +1,8 @@
 """An implementation of aNMM Model."""
 
-import keras
-from keras.activations import softmax
-from keras.initializers import RandomUniform
+from tensorflow import keras
+from tensorflow.keras.activations import softmax
+from tensorflow.keras.initializers import RandomUniform
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param

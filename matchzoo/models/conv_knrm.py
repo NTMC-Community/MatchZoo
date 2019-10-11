@@ -1,6 +1,6 @@
 """ConvKNRM model."""
 
-import keras
+from tensorflow import keras
 import tensorflow as tf
 
 from .knrm import KNRM

@@ -1,12 +1,10 @@
 """An implementation of Spatial GRU Layer."""
 import typing
+
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
-from keras.layers import Permute
-from keras.layers import Reshape
-from keras import activations
-from keras import initializers
+from tensorflow.keras import activations, initializers
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import Layer, Permute, Reshape
 
 
 class SpatialGRU(Layer):

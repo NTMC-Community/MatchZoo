@@ -1,13 +1,13 @@
 """BiMPM."""
 
-from keras.models import Model
-from keras.layers import Dense, Concatenate, Dropout
-from keras.layers import Bidirectional, LSTM
+from tensorflow.keras.layers import Bidirectional, LSTM
+from tensorflow.keras.layers import Dense, Concatenate, Dropout
+from tensorflow.keras.models import Model
 
+from matchzoo.contrib.layers import MultiPerspectiveLayer
+from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
-from matchzoo.engine.base_model import BaseModel
-from matchzoo.contrib.layers import MultiPerspectiveLayer
 
 
 class BiMPM(BaseModel):

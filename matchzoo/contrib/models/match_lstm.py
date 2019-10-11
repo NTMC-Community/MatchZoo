@@ -1,11 +1,11 @@
 """Match LSTM model."""
-import keras
-import keras.backend as K
 import tensorflow as tf
+import tensorflow.keras.backend as K
+from tensorflow import keras
 
+from matchzoo.engine import hyper_spaces
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
-from matchzoo.engine import hyper_spaces
 
 
 class MatchLSTM(BaseModel):
@@ -66,17 +66,15 @@ class MatchLSTM(BaseModel):
         encoded_left = lstm_left(embed_left)
         encoded_right = lstm_right(embed_right)
 
-        def attention(tensors):
+        def attn_layer(left, right):
             """Attention layer."""
-            left, right = tensors
             tensor_left = tf.expand_dims(left, axis=2)
             tensor_right = tf.expand_dims(right, axis=1)
             tensor_left = K.repeat_elements(tensor_left, len_right, 2)
             tensor_right = K.repeat_elements(tensor_right, len_left, 1)
             tensor_merged = tf.concat([tensor_left, tensor_right], axis=-1)
             middle_output = keras.layers.Dense(self._params['fc_num_units'],
-                                               activation='tanh')(
-                tensor_merged)
+                                               activation='tanh')(tensor_merged)
             attn_scores = keras.layers.Dense(1)(middle_output)
             attn_scores = tf.squeeze(attn_scores, axis=3)
             exp_attn_scores = tf.math.exp(
@@ -85,8 +83,7 @@ class MatchLSTM(BaseModel):
             attention_weights = exp_attn_scores / exp_sum
             return K.batch_dot(attention_weights, right)
 
-        attn_layer = keras.layers.Lambda(attention)
-        left_attn_vec = attn_layer([encoded_left, encoded_right])
+        left_attn_vec = attn_layer(encoded_left, encoded_right)
         concat = keras.layers.Concatenate(axis=1)(
             [left_attn_vec, encoded_right])
         lstm_merge = keras.layers.LSTM(self._params['lstm_num_units'] * 2,

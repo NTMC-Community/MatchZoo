@@ -1,11 +1,12 @@
 """HBMP model."""
-import keras
 import typing
 
+from tensorflow import keras
+
 from matchzoo.engine import hyper_spaces
-from matchzoo.engine.param_table import ParamTable
-from matchzoo.engine.param import Param
 from matchzoo.engine.base_model import BaseModel
+from matchzoo.engine.param import Param
+from matchzoo.engine.param_table import ParamTable
 
 
 class HBMP(BaseModel):

@@ -1,8 +1,8 @@
 """An implementation of Attention Layer for Bimpm model."""
 
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import Layer
 
 
 class AttentionLayer(Layer):

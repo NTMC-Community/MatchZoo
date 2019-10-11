@@ -2,7 +2,7 @@
 import typing
 
 import tensorflow as tf
-from keras.engine import Layer
+from tensorflow.keras.layers import Layer
 
 
 class MatchingLayer(Layer):

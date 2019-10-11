@@ -1,7 +1,7 @@
 """An implementation of ArcI Model."""
 import typing
 
-import keras
+from tensorflow import keras
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param

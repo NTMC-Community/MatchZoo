@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from keras import backend as K
+from tensorflow.keras import backend as K
 
 from matchzoo import layers
 from matchzoo.contrib.layers import SpatialGRU

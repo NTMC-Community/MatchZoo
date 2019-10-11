@@ -1,8 +1,8 @@
 """An implementation of MultiPerspectiveLayer for Bimpm model."""
 
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import Layer
 
 from matchzoo.contrib.layers.attention_layer import AttentionLayer
 

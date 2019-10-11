@@ -1,13 +1,13 @@
 """An implementation of DRMMTKS Model."""
 import typing
 
-import keras
 import tensorflow as tf
+from tensorflow import keras
 
+from matchzoo.engine import hyper_spaces
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
-from matchzoo.engine import hyper_spaces
 
 
 class DRMMTKS(BaseModel):
@@ -120,15 +120,13 @@ class DRMMTKS(BaseModel):
             # which is 0.0 for positions we want to attend and -10000.0 for
             # masked positions.
 
-            # shape = [B, L, 1]
-            dense_input = keras.layers.Lambda(
-                lambda x: x + (1.0 - attention_mask) * -10000.0,
-                name="attention_mask"
-            )(dense_input)
+            dense_input + (1.0 - attention_mask) * -10000.0,
         # shape = [B, L, 1]
-        attention_probs = keras.layers.Lambda(
-            lambda x: tf.nn.softmax(x, axis=1),
-            output_shape=lambda s: (s[0], s[1], s[2]),
-            name="attention_probs"
-        )(dense_input)
+        attention_probs = tf.nn.softmax(dense_input, axis=1)
         return attention_probs
+
+    def compile(self, **kwargs):
+        if kwargs.get("experimental_run_tf_function"):
+            raise ValueError("experimental_run_tf_function should be False")
+        kwargs["experimental_run_tf_function"] = False
+        super().compile(**kwargs)

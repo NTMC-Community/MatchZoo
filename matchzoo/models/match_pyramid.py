@@ -1,7 +1,7 @@
 """An implementation of MatchPyramid Model."""
 import typing
 
-import keras
+from tensorflow import keras
 
 import matchzoo
 from matchzoo.engine.base_model import BaseModel
