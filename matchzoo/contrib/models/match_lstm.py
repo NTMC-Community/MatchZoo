@@ -98,3 +98,9 @@ class MatchLSTM(BaseModel):
         inputs = [input_left, input_right]
         out = self._make_output_layer()(phi)
         self._backend = keras.Model(inputs=inputs, outputs=[out])
+
+    def compile(self, **kwargs):
+        if kwargs.get("experimental_run_tf_function"):
+            raise ValueError("experimental_run_tf_function should be False")
+        kwargs["experimental_run_tf_function"] = False
+        super().compile(**kwargs)
