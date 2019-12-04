@@ -98,7 +98,8 @@ def load_from_file(file_path: str, mode: str = 'word2vec') -> Embedding:
                            sep=" ",
                            index_col=0,
                            header=None,
-                           skiprows=1)
+                           skiprows=1,
+                           quoting=csv.QUOTE_NONE)
     elif mode == 'glove':
         data = pd.read_csv(file_path,
                            sep=" ",
