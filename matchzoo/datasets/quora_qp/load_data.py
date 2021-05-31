@@ -3,14 +3,12 @@
 import typing
 from pathlib import Path
 
-import keras
+from tensorflow import keras
 import pandas as pd
 
 import matchzoo
 
-_url = "https://firebasestorage.googleapis.com/v0/b/mtl-sentence" \
-       "-representations.appspot.com/o/data%2FQQP.zip?alt=media&" \
-       "token=700c6acf-160d-4d89-81d1-de4191d02cb5"
+_url = "https://dl.fbaipublicfiles.com/glue/data/QQP.zip"
 
 
 def load_data(
@@ -57,7 +55,7 @@ def load_data(
 
 
 def _download_data():
-    ref_path = keras.utils.data_utils.get_file(
+    ref_path = keras.utils.get_file(
         'quora_qp', _url, extract=True,
         cache_dir=matchzoo.USER_DATA_DIR,
         cache_subdir='quora_qp'

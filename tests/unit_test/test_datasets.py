@@ -63,25 +63,25 @@ def test_load_snli():
 @pytest.mark.cron
 def test_load_quora_qp():
     train_data = mz.datasets.quora_qp.load_data(task='classification')
-    assert len(train_data) == 363177
+    assert len(train_data) == 363846
 
     dev_data, tag = mz.datasets.quora_qp.load_data(
         'dev',
         task='classification',
         return_classes=True)
     assert tag == [False, True]
-    assert len(dev_data) == 40371
+    assert len(dev_data) == 40430
     x, y = dev_data.unpack()
-    assert len(x['text_left']) == 40371
-    assert len(x['text_right']) == 40371
-    assert y.shape == (40371, 2)
+    assert len(x['text_left']) == 40430
+    assert len(x['text_right']) == 40430
+    assert y.shape == (40430, 2)
 
     test_data = mz.datasets.quora_qp.load_data('test')
     assert len(test_data) == 390965
 
     dev_data = mz.datasets.quora_qp.load_data('dev', 'ranking')
     x, y = dev_data.unpack()
-    assert y.shape == (40371, 1)
+    assert y.shape == (40430, 1)
 
 
 @pytest.mark.cron
