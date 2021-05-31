@@ -309,8 +309,8 @@ class DataPack(object):
             >>> data_pack.drop_invalid(inplace=True)
         """
         if not ('length_left' in self._left and 'length_right' in self._right):
-            raise ValueError(f"`lenght_left` or `length_right` is missing. "
-                             f"Please call `append_text_length` in advance.")
+            raise ValueError("`lenght_left` or `length_right` is missing. "
+                             "Please call `append_text_length` in advance.")
         valid_left = self._left.loc[self._left.length_left != 0]
         valid_right = self._right.loc[self._right.length_right != 0]
         self._left = self._left[self._left.index.isin(valid_left.index)]
