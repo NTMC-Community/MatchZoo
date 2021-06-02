@@ -1,6 +1,7 @@
 """A simple densely connected baseline model."""
 
-import keras.layers
+from tensorflow.keras import layers
+from tensorflow.keras import models
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param_table import ParamTable
@@ -37,7 +38,7 @@ class DenseBaseline(BaseModel):
     def build(self):
         """Model structure."""
         x_in = self._make_inputs()
-        x = keras.layers.concatenate(x_in)
+        x = layers.concatenate(x_in)
         x = self._make_multi_layer_perceptron_layer()(x)
         x_out = self._make_output_layer()(x)
-        self._backend = keras.models.Model(inputs=x_in, outputs=x_out)
+        self._backend = models.Model(inputs=x_in, outputs=x_out)

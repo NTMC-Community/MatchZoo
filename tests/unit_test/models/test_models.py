@@ -9,7 +9,11 @@ from pathlib import Path
 import shutil
 
 import matchzoo as mz
-from keras.backend import clear_session
+from tensorflow.keras.backend import clear_session
+import tensorflow as tf
+
+tf.config.run_functions_eagerly(True)
+
 
 @pytest.fixture(scope='module', params=[
     mz.tasks.Ranking(loss=mz.losses.RankCrossEntropyLoss(num_neg=2)),

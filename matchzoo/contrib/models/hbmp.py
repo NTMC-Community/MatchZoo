@@ -1,6 +1,8 @@
 """HBMP model."""
-import keras
 import typing
+
+from tensorflow.keras import layers
+from tensorflow.keras import models
 
 from matchzoo.engine import hyper_spaces
 from matchzoo.engine.param_table import ParamTable
@@ -69,12 +71,12 @@ class HBMP(BaseModel):
 
         # Concatenate two sentence embedding: [embed_sen_left, embed_sen_right,
         # |embed_sen_left-embed_sen_right|, embed_sen_left*embed_sen_right]
-        embed_minus = keras.layers.Subtract()(
+        embed_minus = layers.Subtract()(
             [embed_sen_left, embed_sen_right])
-        embed_minus_abs = keras.layers.Lambda(lambda x: abs(x))(embed_minus)
-        embed_multiply = keras.layers.Multiply()(
+        embed_minus_abs = layers.Lambda(lambda x: abs(x))(embed_minus)
+        embed_multiply = layers.Multiply()(
             [embed_sen_left, embed_sen_right])
-        concat = keras.layers.Concatenate(axis=1)(
+        concat = layers.Concatenate(axis=1)(
             [embed_sen_left, embed_sen_right, embed_minus_abs, embed_multiply])
 
         # Multiply perception layers to classify
@@ -86,7 +88,7 @@ class HBMP(BaseModel):
             leaky_relu_alpah=self._params['alpha'])
         out = self._make_output_layer()(mlp_out)
 
-        self._backend = keras.Model(
+        self._backend = models.Model(
             inputs=[input_left, input_right], outputs=out)
 
     def _classifier(
@@ -98,9 +100,9 @@ class HBMP(BaseModel):
         leaky_relu_alpah: float
     ) -> typing.Any:
         for i in range(mlp_num_layers - 1):
-            input_ = keras.layers.Dropout(rate=drop_rate)(input_)
-            input_ = keras.layers.Dense(mlp_num_units[i])(input_)
-            input_ = keras.layers.LeakyReLU(alpha=leaky_relu_alpah)(input_)
+            input_ = layers.Dropout(rate=drop_rate)(input_)
+            input_ = layers.Dense(mlp_num_units[i])(input_)
+            input_ = layers.LeakyReLU(alpha=leaky_relu_alpah)(input_)
 
         return input_
 
@@ -118,37 +120,37 @@ class HBMP(BaseModel):
         hidden state and the cell state) with the final state of the previous
         layer.
         """
-        emb1 = keras.layers.Bidirectional(
-            keras.layers.LSTM(
+        emb1 = layers.Bidirectional(
+            layers.LSTM(
                 units=lstm_num_units,
                 return_sequences=True,
                 return_state=True,
                 dropout=drop_rate,
                 recurrent_dropout=drop_rate),
             merge_mode='concat')(input_)
-        emb1_maxpooling = keras.layers.GlobalMaxPooling1D()(emb1[0])
+        emb1_maxpooling = layers.GlobalMaxPooling1D()(emb1[0])
 
-        emb2 = keras.layers.Bidirectional(
-            keras.layers.LSTM(
+        emb2 = layers.Bidirectional(
+            layers.LSTM(
                 units=lstm_num_units,
                 return_sequences=True,
                 return_state=True,
                 dropout=drop_rate,
                 recurrent_dropout=drop_rate),
             merge_mode='concat')(input_, initial_state=emb1[1:5])
-        emb2_maxpooling = keras.layers.GlobalMaxPooling1D()(emb2[0])
+        emb2_maxpooling = layers.GlobalMaxPooling1D()(emb2[0])
 
-        emb3 = keras.layers.Bidirectional(
-            keras.layers.LSTM(
+        emb3 = layers.Bidirectional(
+            layers.LSTM(
                 units=lstm_num_units,
                 return_sequences=True,
                 return_state=True,
                 dropout=drop_rate,
                 recurrent_dropout=drop_rate),
             merge_mode='concat')(input_, initial_state=emb2[1:5])
-        emb3_maxpooling = keras.layers.GlobalMaxPooling1D()(emb3[0])
+        emb3_maxpooling = layers.GlobalMaxPooling1D()(emb3[0])
 
-        emb = keras.layers.Concatenate(axis=1)(
+        emb = layers.Concatenate(axis=1)(
             [emb1_maxpooling, emb2_maxpooling, emb3_maxpooling])
 
         return emb

@@ -1,6 +1,7 @@
 """An implementation of Match-SRNN Model."""
 
-import keras
+from tensorflow.keras import layers
+from tensorflow.keras import models
 
 from matchzoo.contrib.layers import MatchingTensorLayer
 from matchzoo.contrib.layers import SpatialGRU
@@ -84,10 +85,10 @@ class MatchSRNN(BaseModel):
         h_ij = spatial_gru(matching_tensor)
 
         # Apply Dropout
-        x = keras.layers.Dropout(
+        x = layers.Dropout(
             rate=self._params['dropout_rate'])(h_ij)
 
         # Make output layer
         x_out = self._make_output_layer()(x)
 
-        self._backend = keras.Model(inputs=[query, doc], outputs=x_out)
+        self._backend = models.Model(inputs=[query, doc], outputs=x_out)
