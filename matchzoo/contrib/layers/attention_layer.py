@@ -1,11 +1,11 @@
 """An implementation of Attention Layer for Bimpm model."""
 
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
+from tensorflow.keras import backend as K
+from tensorflow.keras import layers
 
 
-class AttentionLayer(Layer):
+class AttentionLayer(layers.Layer):
     """
     Layer that compute attention for BiMPM model.
 
@@ -119,7 +119,7 @@ class AttentionLayer(Layer):
         attn_reps_lt = attn_reps_lt * self.diagonal_W  # [b, s_lt, a]
         attn_reps_rt = tf.transpose(attn_reps_rt, (0, 2, 1))
         # => [b, a, s_rt]
-
+        
         attn_value = K.batch_dot(attn_reps_lt, attn_reps_rt)  # [b, s_lt, s_rt]
 
         # Softmax operation

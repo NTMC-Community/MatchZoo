@@ -1,10 +1,10 @@
 """An implementation of Decaying Dropout Layer."""
 
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
+from tensorflow.keras import backend as K
+from tensorflow.keras import layers
 
-class DecayingDropoutLayer(Layer):
+class DecayingDropoutLayer(layers.Layer):
     """
     Layer that processes dropout with exponential decayed keep rate during
     training.

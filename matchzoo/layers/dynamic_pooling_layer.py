@@ -2,10 +2,10 @@
 import typing
 
 import tensorflow as tf
-from keras.engine import Layer
+from tensorflow.keras import layers
 
 
-class DynamicPoolingLayer(Layer):
+class DynamicPoolingLayer(layers.Layer):
     """
     Layer that computes dynamic pooling of one tensor.
 

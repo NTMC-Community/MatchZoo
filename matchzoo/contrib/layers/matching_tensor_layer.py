@@ -3,12 +3,12 @@ import typing
 
 import numpy as np
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
-from keras.initializers import constant
+from tensorflow.keras import backend as K
+from tensorflow.keras import initializers
+from tensorflow.keras import layers
 
 
-class MatchingTensorLayer(Layer):
+class MatchingTensorLayer(layers.Layer):
     """
     Layer that captures the basic interactions between two tensors.
 
@@ -75,7 +75,7 @@ class MatchingTensorLayer(Layer):
             self.interaction_matrix = self.add_weight(
                 name='interaction_matrix',
                 shape=(self._channels, self._shape1[2], self._shape2[2]),
-                initializer=constant(interaction_matrix),
+                initializer=initializers.constant(interaction_matrix),
                 trainable=True
             )
         else:

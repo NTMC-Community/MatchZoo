@@ -2,10 +2,10 @@
 import typing
 
 import tensorflow as tf
-from keras.engine import Layer
+from tensorflow.keras import layers
 
 
-class MatchingLayer(Layer):
+class MatchingLayer(layers.Layer):
     """
     Layer that computes a matching matrix between samples in two tensors.
 

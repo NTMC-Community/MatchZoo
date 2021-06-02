@@ -1,13 +1,13 @@
 """An implementation of EncodingModule for DIIN model."""
 
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
+from tensorflow.keras import backend as K
+from tensorflow.keras import layers
 
 from matchzoo.contrib.layers import DecayingDropoutLayer
 
 
-class EncodingLayer(Layer):
+class EncodingLayer(layers.Layer):
     """
     Apply a self-attention layer and a semantic composite fuse gate
     to compute the encoding result of one tensor.

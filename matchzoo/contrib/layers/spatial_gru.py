@@ -1,15 +1,13 @@
 """An implementation of Spatial GRU Layer."""
 import typing
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
-from keras.layers import Permute
-from keras.layers import Reshape
-from keras import activations
-from keras import initializers
+from tensorflow.keras import activations
+from tensorflow.keras import backend as K
+from tensorflow.keras import initializers
+from tensorflow.keras import layers
 
 
-class SpatialGRU(Layer):
+class SpatialGRU(layers.Layer):
     """
     Spatial GRU layer.
 
@@ -127,7 +125,8 @@ class SpatialGRU(Layer):
         """Conduct softmax on each dimension across the four gates."""
 
         # z_transform: [B, U, 4]
-        z_transform = Permute((2, 1))(Reshape((4, self._units))(z))
+        z_transform = layers.Permute((2, 1))(
+            layers.Reshape((4, self._units))(z))
         size = [-1, 1, -1]
         # Perform softmax on each slice
         for i in range(0, self._units):
@@ -176,7 +175,7 @@ class SpatialGRU(Layer):
         # Concatenate h_top, h_left, h_diag, s_ij
         # q = [B, 3*U+C]
         q = tf.concat([tf.concat([h_top, h_left], 1),
-                        tf.concat([h_diag, s_ij], 1)], 1)
+                       tf.concat([h_diag, s_ij], 1)], 1)
 
         # Calculate reset gate
         # r = [B, 3*U]
