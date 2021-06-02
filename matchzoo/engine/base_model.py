@@ -6,9 +6,9 @@ from pathlib import Path
 
 import dill
 import numpy as np
-import keras
-import keras.backend as K
 import pandas as pd
+from tensorflow import keras
+from tensorflow.keras import backend as K
 
 import matchzoo
 from matchzoo import DataGenerator
