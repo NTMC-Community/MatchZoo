@@ -27,7 +27,7 @@ The goal of MatchZoo is to provide a high-quality codebase for deep text matchin
     <th width="20%", bgcolor=#999999>Objective</th>
   </tr>
   <tr>
-    <td align="center", bgcolor=#eeeeee> Paraphrase Indentification </td>
+    <td align="center", bgcolor=#eeeeee> Paraphrase Identification </td>
     <td align="center", bgcolor=#eeeeee> string 1 </td>
     <td align="center", bgcolor=#eeeeee> string 2 </td>
     <td align="center", bgcolor=#eeeeee> classification </td>
