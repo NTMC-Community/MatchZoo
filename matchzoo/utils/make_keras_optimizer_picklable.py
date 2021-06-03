@@ -1,4 +1,4 @@
-import keras
+from tensorflow import keras
 
 
 def make_keras_optimizer_picklable():

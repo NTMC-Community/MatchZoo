@@ -1,13 +1,13 @@
 """An implementation of MultiPerspectiveLayer for Bimpm model."""
 
 import tensorflow as tf
-from keras import backend as K
-from keras.engine import Layer
+from tensorflow.keras import backend as K
+from tensorflow.keras import layers
 
 from matchzoo.contrib.layers.attention_layer import AttentionLayer
 
 
-class MultiPerspectiveLayer(Layer):
+class MultiPerspectiveLayer(layers.Layer):
     """
     A keras implementation of multi-perspective layer of BiMPM.
 
@@ -131,7 +131,7 @@ class MultiPerspectiveLayer(Layer):
         return shape_a[0], shape_a[1], match_dim
 
 
-class MpFullMatch(Layer):
+class MpFullMatch(layers.Layer):
     """Mp Full Match Layer."""
 
     def __init__(self, mp_dim):
@@ -161,7 +161,7 @@ class MpFullMatch(Layer):
         return input_shape[1][0], input_shape[1][1], self.mp_dim + 1
 
 
-class MpMaxPoolingMatch(Layer):
+class MpMaxPoolingMatch(layers.Layer):
     """MpMaxPoolingMatch."""
 
     def __init__(self, mp_dim):
@@ -202,7 +202,7 @@ class MpMaxPoolingMatch(Layer):
         return input_shape[1][0], input_shape[1][1], self.mp_dim
 
 
-class MpAttentiveMatch(Layer):
+class MpAttentiveMatch(layers.Layer):
     """
     MpAttentiveMatch Layer.
 
@@ -248,7 +248,7 @@ class MpAttentiveMatch(Layer):
         return input_shape[1][0], input_shape[1][1], self.mp_dim
 
 
-class MpMaxAttentiveMatch(Layer):
+class MpMaxAttentiveMatch(layers.Layer):
     """MpMaxAttentiveMatch."""
 
     def __init__(self, mp_dim):
@@ -312,7 +312,7 @@ def collect_final_step_of_lstm(lstm_representation, lengths):
     # shape (batch_size, 2)
     indices = tf.stack((batch_nums, lengths), axis=1)
     result = tf.gather_nd(lstm_representation, indices,
-                            name='last-forwar-lstm')
+                          name='last-forwar-lstm')
     # [batch_size, dim]
     return result
 
@@ -369,7 +369,7 @@ def _multi_perspective_match(mp_dim, reps_rt, att_lt,
     if with_cosine:
         cosine_tensor = _cosine_distance(reps_rt, att_lt, False)
         cosine_tensor = tf.reshape(cosine_tensor,
-                                  [batch_size, len_lt, 1])
+                                   [batch_size, len_lt, 1])
         match_result_list.append(cosine_tensor)
         match_dim += 1
 
@@ -377,7 +377,7 @@ def _multi_perspective_match(mp_dim, reps_rt, att_lt,
         mp_cosine_layer = MpCosineLayer(mp_dim)
         mp_cosine_tensor = mp_cosine_layer([reps_rt, att_lt])
         mp_cosine_tensor = tf.reshape(mp_cosine_tensor,
-                                     [batch_size, len_lt, mp_dim])
+                                      [batch_size, len_lt, mp_dim])
         match_result_list.append(mp_cosine_tensor)
         match_dim += mp_cosine_layer.mp_dim
 
@@ -385,7 +385,7 @@ def _multi_perspective_match(mp_dim, reps_rt, att_lt,
     return match_result, match_dim
 
 
-class MpCosineLayer(Layer):
+class MpCosineLayer(layers.Layer):
     """
     Implementation of Multi-Perspective Cosine Distance.
 

@@ -4,7 +4,7 @@ import xml
 import typing
 from pathlib import Path
 
-import keras
+from tensorflow import keras
 import pandas as pd
 
 import matchzoo
@@ -97,7 +97,7 @@ def _download_data(stage):
 
 
 def _download_train_dev_data():
-    ref_path = keras.utils.data_utils.get_file(
+    ref_path = keras.utils.get_file(
         'semeval_train', _train_dev_url, extract=True,
         cache_dir=matchzoo.USER_DATA_DIR,
         cache_subdir='semeval_train'
@@ -106,7 +106,7 @@ def _download_train_dev_data():
 
 
 def _download_test_data():
-    ref_path = keras.utils.data_utils.get_file(
+    ref_path = keras.utils.get_file(
         'semeval_test', _test_url, extract=True,
         cache_dir=matchzoo.USER_DATA_DIR,
         cache_subdir='semeval_test'

@@ -1,8 +1,7 @@
 """BiMPM."""
 
-from keras.models import Model
-from keras.layers import Dense, Concatenate, Dropout
-from keras.layers import Bidirectional, LSTM
+from tensorflow.keras import models
+from tensorflow.keras import layers
 
 from matchzoo.engine.param import Param
 from matchzoo.engine.param_table import ParamTable
@@ -69,8 +68,8 @@ class BiMPM(BaseModel):
 
         # L119-L121
         # https://github.com/zhiguowang/BiMPM/blob/master/src/SentenceMatchModelGraph.py#L119-L121
-        embed_left = Dropout(self._params['dropout_rate'])(embed_left)
-        embed_right = Dropout(self._params['dropout_rate'])(embed_right)
+        embed_left = layers.Dropout(self._params['dropout_rate'])(embed_left)
+        embed_right = layers.Dropout(self._params['dropout_rate'])(embed_right)
 
         # ~ Word Level Matching Layer
         # Reference:
@@ -82,13 +81,13 @@ class BiMPM(BaseModel):
         # Note: When merge_mode = None, output will be [forward, backward],
         # The default merge_mode is concat, and the output will be [lstm].
         # If with return_state, then the output would append [h,c,h,c].
-        bi_lstm = Bidirectional(
-            LSTM(self._params['hidden_size'],
-                 return_sequences=True,
-                 return_state=True,
-                 dropout=self._params['dropout_rate'],
-                 kernel_initializer=self._params['w_initializer'],
-                 bias_initializer=self._params['b_initializer']),
+        bi_lstm = layers.Bidirectional(
+            layers.LSTM(self._params['hidden_size'],
+                        return_sequences=True,
+                        return_state=True,
+                        dropout=self._params['dropout_rate'],
+                        kernel_initializer=self._params['w_initializer'],
+                        bias_initializer=self._params['b_initializer']),
             merge_mode='concat')
         # x_left = [lstm_lt, forward_h_lt, _, backward_h_lt, _ ]
         x_left = bi_lstm(embed_left)
@@ -105,8 +104,8 @@ class BiMPM(BaseModel):
         mp_right = multi_perspective(x_right + x_left)
 
         # ~ Dropout Layer
-        mp_left = Dropout(self._params['dropout_rate'])(mp_left)
-        mp_right = Dropout(self._params['dropout_rate'])(mp_right)
+        mp_left = layers.Dropout(self._params['dropout_rate'])(mp_left)
+        mp_right = layers.Dropout(self._params['dropout_rate'])(mp_right)
 
         # ~ Highway Layer
         # reference:
@@ -117,19 +116,19 @@ class BiMPM(BaseModel):
 
         # ~ Aggregation layer
         # TODO: mask the above layer
-        aggregation = Bidirectional(
-            LSTM(self._params['hidden_size'],
-                 return_sequences=False,
-                 return_state=False,
-                 dropout=self._params['dropout_rate'],
-                 kernel_initializer=self._params['w_initializer'],
-                 bias_initializer=self._params['b_initializer']),
+        aggregation = layers.Bidirectional(
+            layers.LSTM(self._params['hidden_size'],
+                        return_sequences=False,
+                        return_state=False,
+                        dropout=self._params['dropout_rate'],
+                        kernel_initializer=self._params['w_initializer'],
+                        bias_initializer=self._params['b_initializer']),
             merge_mode='concat')
         rep_left = aggregation(mp_left)
         rep_right = aggregation(mp_right)
 
         # Concatenate the concatenated vector of left and right.
-        x = Concatenate()([rep_left, rep_right])
+        x = layers.Concatenate()([rep_left, rep_right])
 
         # ~ Highway Network
         # reference:
@@ -140,10 +139,10 @@ class BiMPM(BaseModel):
         # ~ Prediction layer.
         # reference:
         # https://github.com/zhiguowang/BiMPM/blob/master/src/SentenceMatchModelGraph.py#L140-L153
-        x = Dense(self._params['hidden_size'],
-                  activation=self._params['activation_hidden'])(x)
-        x = Dense(self._params['hidden_size'],
-                  activation=self._params['activation_hidden'])(x)
+        x = layers.Dense(self._params['hidden_size'],
+                         activation=self._params['activation_hidden'])(x)
+        x = layers.Dense(self._params['hidden_size'],
+                         activation=self._params['activation_hidden'])(x)
         x_out = self._make_output_layer()(x)
-        self._backend = Model(inputs=[input_left, input_right],
-                              outputs=x_out)
+        self._backend = models.Model(inputs=[input_left, input_right],
+                                     outputs=x_out)

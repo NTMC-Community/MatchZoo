@@ -1,8 +1,9 @@
 """An implementation of aNMM Model."""
 
-import keras
-from keras.activations import softmax
-from keras.initializers import RandomUniform
+from tensorflow.keras import activations
+from tensorflow.keras import initializers
+from tensorflow.keras import layers
+from tensorflow.keras import models
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
@@ -54,26 +55,26 @@ class ANMM(BaseModel):
         embedding = self._make_embedding_layer()
 
         q_embed = embedding(query)
-        q_attention = keras.layers.Dense(
-            1, kernel_initializer=RandomUniform(), use_bias=False)(q_embed)
+        q_attention = layers.Dense(
+            1, kernel_initializer=initializers.RandomUniform(), use_bias=False)(q_embed)
         q_text_len = self._params['input_shapes'][0][0]
 
-        q_attention = keras.layers.Lambda(
-            lambda x: softmax(x, axis=1),
+        q_attention = layers.Lambda(
+            lambda x: activations.softmax(x, axis=1),
             output_shape=(q_text_len,)
         )(q_attention)
-        d_bin = keras.layers.Dropout(
+        d_bin = layers.Dropout(
             rate=self._params['dropout_rate'])(doc)
         for layer_id in range(self._params['num_layers'] - 1):
-            d_bin = keras.layers.Dense(
+            d_bin = layers.Dense(
                 self._params['hidden_sizes'][layer_id],
-                kernel_initializer=RandomUniform())(d_bin)
-            d_bin = keras.layers.Activation('tanh')(d_bin)
-        d_bin = keras.layers.Dense(
+                kernel_initializer=initializers.RandomUniform())(d_bin)
+            d_bin = layers.Activation('tanh')(d_bin)
+        d_bin = layers.Dense(
             self._params['hidden_sizes'][self._params['num_layers'] - 1])(
             d_bin)
-        d_bin = keras.layers.Reshape((q_text_len,))(d_bin)
-        q_attention = keras.layers.Reshape((q_text_len,))(q_attention)
-        score = keras.layers.Dot(axes=[1, 1])([d_bin, q_attention])
+        d_bin = layers.Reshape((q_text_len,))(d_bin)
+        q_attention = layers.Reshape((q_text_len,))(q_attention)
+        score = layers.Dot(axes=[1, 1])([d_bin, q_attention])
         x_out = self._make_output_layer()(score)
-        self._backend = keras.Model(inputs=[query, doc], outputs=x_out)
+        self._backend = models.Model(inputs=[query, doc], outputs=x_out)

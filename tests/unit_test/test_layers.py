@@ -1,6 +1,6 @@
 import numpy as np
 import pytest
-from keras import backend as K
+from tensorflow.keras import backend as K
 
 from matchzoo import layers
 from matchzoo.contrib.layers import SpatialGRU
@@ -23,7 +23,7 @@ def test_matching_layers():
     s3_tensor = K.variable(s3_value)
     for matching_type in ['dot', 'mul', 'plus', 'minus', 'concat']:
         model = layers.MatchingLayer(matching_type=matching_type)([s1_tensor, s2_tensor])
-        ret = K.eval(model)
+        _ = K.eval(model)
     with pytest.raises(ValueError):
         layers.MatchingLayer(matching_type='error')
     with pytest.raises(ValueError):

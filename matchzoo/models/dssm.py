@@ -1,6 +1,6 @@
 """An implementation of DSSM, Deep Structured Semantic Model."""
-from keras.models import Model
-from keras.layers import Input, Dot
+from tensorflow.keras import layers
+from tensorflow.keras import models
 
 from matchzoo.engine.param_table import ParamTable
 from matchzoo.engine.base_model import BaseModel
@@ -38,15 +38,15 @@ class DSSM(BaseModel):
         input_shape = (dim_triletter,)
         base_network = self._make_multi_layer_perceptron_layer()
         # Left input and right input.
-        input_left = Input(name='text_left', shape=input_shape)
-        input_right = Input(name='text_right', shape=input_shape)
+        input_left = layers.Input(name='text_left', shape=input_shape)
+        input_right = layers.Input(name='text_right', shape=input_shape)
         # Process left & right input.
         x = [base_network(input_left),
              base_network(input_right)]
         # Dot product with cosine similarity.
-        x = Dot(axes=[1, 1], normalize=True)(x)
+        x = layers.Dot(axes=[1, 1], normalize=True)(x)
         x_out = self._make_output_layer()(x)
-        self._backend = Model(
+        self._backend = models.Model(
             inputs=[input_left, input_right],
             outputs=x_out)
 

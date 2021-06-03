@@ -1,9 +1,10 @@
 """DIIN model."""
 import typing
 
-import keras
-import keras.backend as K
 import tensorflow as tf
+from tensorflow.keras import backend as K
+from tensorflow.keras import layers
+from tensorflow.keras import models
 
 from matchzoo import preprocessors
 from matchzoo.contrib.layers import DecayingDropoutLayer
@@ -114,27 +115,27 @@ class DIIN(BaseModel):
         super().guess_and_fill_missing_params(verbose)
 
     def _make_inputs(self) -> list:
-        text_left = keras.layers.Input(
+        text_left = layers.Input(
             name='text_left',
             shape=self._params['input_shapes'][0]
         )
-        text_right = keras.layers.Input(
+        text_right = layers.Input(
             name='text_right',
             shape=self._params['input_shapes'][1]
         )
-        char_left = keras.layers.Input(
+        char_left = layers.Input(
             name='char_left',
             shape=self._params['input_shapes'][2]
         )
-        char_right = keras.layers.Input(
+        char_right = layers.Input(
             name='char_right',
             shape=self._params['input_shapes'][3]
         )
-        match_left = keras.layers.Input(
+        match_left = layers.Input(
             name='match_left',
             shape=self._params['input_shapes'][4]
         )
-        match_right = keras.layers.Input(
+        match_right = layers.Input(
             name='match_right',
             shape=self._params['input_shapes'][5]
         )
@@ -191,11 +192,11 @@ class DIIN(BaseModel):
 
         # Exact match feature
         # shape = [B, L, 1]
-        left_exact_match = keras.layers.Reshape(
+        left_exact_match = layers.Reshape(
             target_shape=(K.int_shape(match_left)[1], 1,)
         )(match_left)
         # shape = [B, R, 1]
-        right_exact_match = keras.layers.Reshape(
+        right_exact_match = layers.Reshape(
             target_shape=(K.int_shape(match_left)[1], 1,)
         )(match_right)
         left_embeddings.append(left_exact_match)
@@ -211,8 +212,8 @@ class DIIN(BaseModel):
         right_embeddings.append(right_char_embedding)
 
         # Concatenate
-        left_embedding = keras.layers.Concatenate()(left_embeddings)
-        right_embedding = keras.layers.Concatenate()(right_embeddings)
+        left_embedding = layers.Concatenate()(left_embeddings)
+        right_embedding = layers.Concatenate()(right_embeddings)
         d = K.int_shape(left_embedding)[-1]
 
         # Encoding module
@@ -228,11 +229,11 @@ class DIIN(BaseModel):
         )(right_embedding)
 
         # Interaction module
-        interaction = keras.layers.Lambda(self._make_interaction)(
+        interaction = layers.Lambda(self._make_interaction)(
             [left_encoding, right_encoding])
 
         # Feature extraction module
-        feature_extractor_input = keras.layers.Conv2D(
+        feature_extractor_input = layers.Conv2D(
             filters=int(d * self._params['first_scale_down_ratio']),
             kernel_size=(1, 1),
             activation=None)(interaction)
@@ -246,9 +247,9 @@ class DIIN(BaseModel):
             decay_rate=self._params['dropout_decay_rate'])(features)
         out = self._make_output_layer()(features)
 
-        self._backend = keras.Model(inputs=inputs, outputs=out)
+        self._backend = models.Model(inputs=inputs, outputs=out)
 
-    def _make_char_embedding_layer(self) -> keras.layers.Layer:
+    def _make_char_embedding_layer(self) -> layers.Layer:
         """
         Apply embedding, conv and maxpooling operation over time dimension
         for each token to obtain a vector.
@@ -257,15 +258,15 @@ class DIIN(BaseModel):
             extractor.
         """
 
-        return keras.layers.TimeDistributed(keras.Sequential([
-            keras.layers.Embedding(
+        return layers.TimeDistributed(models.Sequential([
+            layers.Embedding(
                 input_dim=self._params['char_embedding_input_dim'],
                 output_dim=self._params['char_embedding_output_dim'],
                 input_length=self._params['input_shapes'][2][-1]),
-            keras.layers.Conv1D(
+            layers.Conv1D(
                 filters=self._params['char_conv_filters'],
                 kernel_size=self._params['char_conv_kernel_size']),
-            keras.layers.GlobalMaxPooling1D()]))
+            layers.GlobalMaxPooling1D()]))
 
     def _make_interaction(self, inputs_) -> typing.Any:
         left_encoding = inputs_[0]
@@ -289,25 +290,25 @@ class DIIN(BaseModel):
                 # Dense block
                 # Apply 'layers_per_dense_block' convolution layers.
                 for _ in range(self._params['layers_per_dense_block']):
-                    out_conv = keras.layers.Conv2D(
+                    out_conv = layers.Conv2D(
                         filters=self._params['growth_rate'],
                         kernel_size=(3, 3),
                         padding='same',
                         activation='relu')(x)
-                    x = keras.layers.Concatenate(axis=-1)([x, out_conv])
+                    x = layers.Concatenate(axis=-1)([x, out_conv])
 
                 # Transition block
                 # Apply a convolution layer and a maxpooling layer.
                 scale_down_ratio = self._params['transition_scale_down_ratio']
                 nb_filter = int(K.int_shape(x)[-1] * scale_down_ratio)
-                x = keras.layers.Conv2D(
+                x = layers.Conv2D(
                     filters=nb_filter,
                     kernel_size=(1, 1),
                     padding='same',
                     activation=None)(x)
-                x = keras.layers.MaxPool2D(strides=(2, 2))(x)
+                x = layers.MaxPool2D(strides=(2, 2))(x)
 
-            out_densenet = keras.layers.Flatten()(x)
+            out_densenet = layers.Flatten()(x)
             return out_densenet
 
         return _wrapper

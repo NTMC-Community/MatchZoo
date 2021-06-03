@@ -1,8 +1,9 @@
 """ESIM model."""
 
-import keras
-import keras.backend as K
 import tensorflow as tf
+from tensorflow.keras import backend as K
+from tensorflow.keras import layers
+from tensorflow.keras import models
 
 import matchzoo as mz
 from matchzoo.engine.base_model import BaseModel
@@ -60,33 +61,33 @@ class ESIM(BaseModel):
 
         return params
 
-    def _expand_dim(self, inp: tf.Tensor, axis: int) -> keras.layers.Layer:
+    def _expand_dim(self, inp: tf.Tensor, axis: int) -> layers.Layer:
         """
         Wrap keras.backend.expand_dims into a Lambda layer.
 
         :param inp: input tensor to expand the dimension
         :param axis: the axis of new dimension
         """
-        return keras.layers.Lambda(lambda x: tf.expand_dims(x, axis=axis))(inp)
+        return layers.Lambda(lambda x: tf.expand_dims(x, axis=axis))(inp)
 
-    def _make_atten_mask_layer(self) -> keras.layers.Layer:
+    def _make_atten_mask_layer(self) -> layers.Layer:
         """
         Make mask layer for attention weight matrix so that
         each word won't pay attention to <PAD> timestep.
         """
-        return keras.layers.Lambda(
+        return layers.Lambda(
             lambda weight_mask: weight_mask[0] + (1.0 - weight_mask[1]) * -1e7,
             name="atten_mask")
 
-    def _make_bilstm_layer(self, lstm_dim: int) -> keras.layers.Layer:
+    def _make_bilstm_layer(self, lstm_dim: int) -> layers.Layer:
         """
         Bidirectional LSTM layer in ESIM.
 
         :param lstm_dim: int, dimension of LSTM layer
-        :return: `keras.layers.Layer`.
+        :return: `layers.Layer`.
         """
-        return keras.layers.Bidirectional(
-            layer=keras.layers.LSTM(lstm_dim, return_sequences=True),
+        return layers.Bidirectional(
+            layer=layers.LSTM(lstm_dim, return_sequences=True),
             merge_mode='concat')
 
     def _max(self, texts: tf.Tensor, mask: tf.Tensor) -> tf.Tensor:
@@ -98,9 +99,9 @@ class ESIM(BaseModel):
             where 1 means valid, 0 means pad
         """
         mask = self._expand_dim(mask, axis=2)
-        new_texts = keras.layers.Multiply()([texts, mask])
+        new_texts = layers.Multiply()([texts, mask])
 
-        text_max = keras.layers.Lambda(
+        text_max = layers.Lambda(
             lambda x: tf.reduce_max(x, axis=1),
         )(new_texts)
 
@@ -115,12 +116,13 @@ class ESIM(BaseModel):
             where 1 means valid, 0 means pad
         """
         mask = self._expand_dim(mask, axis=2)
-        new_texts = keras.layers.Multiply()([texts, mask])
+        new_texts = layers.Multiply()([texts, mask])
 
         # timestep-wise division, exclude the PAD number when calc avg
-        text_avg = keras.layers.Lambda(
+        text_avg = layers.Lambda(
             lambda text_mask:
-                tf.reduce_sum(text_mask[0], axis=1) / tf.reduce_sum(text_mask[1], axis=1),
+                tf.reduce_sum(text_mask[0], axis=1) /
+            tf.reduce_sum(text_mask[1], axis=1),
         )([new_texts, mask])
 
         return text_avg
@@ -132,17 +134,18 @@ class ESIM(BaseModel):
         dropout_rate = self._params['dropout_rate']
 
         # layers
-        create_mask = keras.layers.Lambda(
+        create_mask = layers.Lambda(
             lambda x:
-                tf.cast(tf.not_equal(x, self._params['mask_value']), K.floatx())
+                tf.cast(tf.not_equal(
+                    x, self._params['mask_value']), K.floatx())
         )
         embedding = self._make_embedding_layer()
         lstm_compare = self._make_bilstm_layer(lstm_dim)
         lstm_compose = self._make_bilstm_layer(lstm_dim)
-        dense_compare = keras.layers.Dense(units=lstm_dim,
-                                           activation='relu',
-                                           use_bias=True)
-        dropout = keras.layers.Dropout(dropout_rate)
+        dense_compare = layers.Dense(units=lstm_dim,
+                                     activation='relu',
+                                     use_bias=True)
+        dropout = layers.Dropout(dropout_rate)
 
         # model
         a, b = self._make_inputs()      # [B, T_a], [B, T_b]
@@ -157,37 +160,37 @@ class ESIM(BaseModel):
         b_ = lstm_compare(b_emb)          # [B, T_b, H*2]
 
         # mask a_ and b_, since the <pad> position is no more zero
-        a_ = keras.layers.Multiply()([a_, self._expand_dim(a_mask, axis=2)])
-        b_ = keras.layers.Multiply()([b_, self._expand_dim(b_mask, axis=2)])
+        a_ = layers.Multiply()([a_, self._expand_dim(a_mask, axis=2)])
+        b_ = layers.Multiply()([b_, self._expand_dim(b_mask, axis=2)])
 
         # local inference
-        e = keras.layers.Dot(axes=-1)([a_, b_])   # [B, T_a, T_b]
-        _ab_mask = keras.layers.Multiply()(       # _ab_mask: [B, T_a, T_b]
+        e = layers.Dot(axes=-1)([a_, b_])   # [B, T_a, T_b]
+        _ab_mask = layers.Multiply()(       # _ab_mask: [B, T_a, T_b]
             [self._expand_dim(a_mask, axis=2),    # [B, T_a, 1]
              self._expand_dim(b_mask, axis=1)])   # [B, 1, T_b]
 
-        pm = keras.layers.Permute((2, 1))
+        pm = layers.Permute((2, 1))
         mask_layer = self._make_atten_mask_layer()
-        softmax_layer = keras.layers.Softmax(axis=-1)
+        softmax_layer = layers.Softmax(axis=-1)
 
         e_a = softmax_layer(mask_layer([e, _ab_mask]))          # [B, T_a, T_b]
         e_b = softmax_layer(mask_layer([pm(e), pm(_ab_mask)]))  # [B, T_b, T_a]
 
         # alignment (a_t = a~, b_t = b~ )
-        a_t = keras.layers.Dot(axes=(2, 1))([e_a, b_])   # [B, T_a, H*2]
-        b_t = keras.layers.Dot(axes=(2, 1))([e_b, a_])   # [B, T_b, H*2]
+        a_t = layers.Dot(axes=(2, 1))([e_a, b_])   # [B, T_a, H*2]
+        b_t = layers.Dot(axes=(2, 1))([e_b, a_])   # [B, T_b, H*2]
 
         # local inference info enhancement
-        m_a = keras.layers.Concatenate(axis=-1)([
+        m_a = layers.Concatenate(axis=-1)([
             a_,
             a_t,
-            keras.layers.Subtract()([a_, a_t]),
-            keras.layers.Multiply()([a_, a_t])])    # [B, T_a, H*2*4]
-        m_b = keras.layers.Concatenate(axis=-1)([
+            layers.Subtract()([a_, a_t]),
+            layers.Multiply()([a_, a_t])])    # [B, T_a, H*2*4]
+        m_b = layers.Concatenate(axis=-1)([
             b_,
             b_t,
-            keras.layers.Subtract()([b_, b_t]),
-            keras.layers.Multiply()([b_, b_t])])    # [B, T_b, H*2*4]
+            layers.Subtract()([b_, b_t]),
+            layers.Multiply()([b_, b_t])])    # [B, T_b, H*2*4]
 
         # project m_a and m_b from 4*H*2 dim to H dim
         m_a = dropout(dense_compare(m_a))   # [B, T_a, H]
@@ -198,15 +201,15 @@ class ESIM(BaseModel):
         v_b = lstm_compose(m_b)          # [B, T_b, H*2]
 
         # pooling
-        v_a = keras.layers.Concatenate(axis=-1)(
+        v_a = layers.Concatenate(axis=-1)(
             [self._avg(v_a, a_mask), self._max(v_a, a_mask)])   # [B, H*4]
-        v_b = keras.layers.Concatenate(axis=-1)(
+        v_b = layers.Concatenate(axis=-1)(
             [self._avg(v_b, b_mask), self._max(v_b, b_mask)])   # [B, H*4]
-        v = keras.layers.Concatenate(axis=-1)([v_a, v_b])       # [B, H*8]
+        v = layers.Concatenate(axis=-1)([v_a, v_b])       # [B, H*8]
 
         # mlp (multilayer perceptron) classifier
         output = self._make_multi_layer_perceptron_layer()(v)  # [B, H]
         output = dropout(output)
         output = self._make_output_layer()(output)             # [B, #classes]
 
-        self._backend = keras.Model(inputs=[a, b], outputs=output)
+        self._backend = models.Model(inputs=[a, b], outputs=output)

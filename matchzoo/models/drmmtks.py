@@ -1,8 +1,10 @@
 """An implementation of DRMMTKS Model."""
 import typing
 
-import keras
 import tensorflow as tf
+from tensorflow.keras import backend as K
+from tensorflow.keras import layers
+from tensorflow.keras import models
 
 from matchzoo.engine.base_model import BaseModel
 from matchzoo.engine.param import Param
@@ -69,7 +71,7 @@ class DRMMTKS(BaseModel):
         # shape = [B, L]
         atten_mask = tf.not_equal(query, self._params['mask_value'])
         # shape = [B, L]
-        atten_mask = tf.cast(atten_mask, keras.backend.floatx())
+        atten_mask = tf.cast(atten_mask, K.floatx())
         # shape = [B, L, 1]
         atten_mask = tf.expand_dims(atten_mask, axis=2)
         # shape = [B, L, 1]
@@ -77,14 +79,14 @@ class DRMMTKS(BaseModel):
 
         # Matching histogram of top-k
         # shape = [B, L, R]
-        matching_matrix = keras.layers.Dot(axes=[2, 2], normalize=True)(
+        matching_matrix = layers.Dot(axes=[2, 2], normalize=True)(
             [embed_query,
              embed_doc])
         # shape = [B, L, K]
         effective_top_k = min(self._params['top_k'],
                               self.params['input_shapes'][0][0],
                               self.params['input_shapes'][1][0])
-        matching_topk = keras.layers.Lambda(
+        matching_topk = layers.Lambda(
             lambda x: tf.nn.top_k(x, k=effective_top_k, sorted=True)[0]
         )(matching_matrix)
 
@@ -93,18 +95,18 @@ class DRMMTKS(BaseModel):
         dense_output = self._make_multi_layer_perceptron_layer()(matching_topk)
 
         # shape = [B, 1, 1]
-        dot_score = keras.layers.Dot(axes=[1, 1])(
+        dot_score = layers.Dot(axes=[1, 1])(
             [attention_probs, dense_output])
 
-        flatten_score = keras.layers.Flatten()(dot_score)
+        flatten_score = layers.Flatten()(dot_score)
 
         x_out = self._make_output_layer()(flatten_score)
-        self._backend = keras.Model(inputs=[query, doc], outputs=x_out)
+        self._backend = models.Model(inputs=[query, doc], outputs=x_out)
 
     @classmethod
     def attention_layer(cls, attention_input: typing.Any,
                         attention_mask: typing.Any = None
-                        ) -> keras.layers.Layer:
+                        ) -> layers.Layer:
         """
         Performs attention on the input.
 
@@ -113,7 +115,7 @@ class DRMMTKS(BaseModel):
         :return: The masked output tensor.
         """
         # shape = [B, L, 1]
-        dense_input = keras.layers.Dense(1, use_bias=False)(attention_input)
+        dense_input = layers.Dense(1, use_bias=False)(attention_input)
         if attention_mask is not None:
             # Since attention_mask is 1.0 for positions we want to attend and
             # 0.0 for masked positions, this operation will create a tensor
@@ -121,12 +123,9 @@ class DRMMTKS(BaseModel):
             # masked positions.
 
             # shape = [B, L, 1]
-            dense_input = keras.layers.Lambda(
-                lambda x: x + (1.0 - attention_mask) * -10000.0,
-                name="attention_mask"
-            )(dense_input)
+            dense_input += (1.0 - attention_mask) * -10000.0
         # shape = [B, L, 1]
-        attention_probs = keras.layers.Lambda(
+        attention_probs = layers.Lambda(
             lambda x: tf.nn.softmax(x, axis=1),
             output_shape=lambda s: (s[0], s[1], s[2]),
             name="attention_probs"
